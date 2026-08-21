@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "admin",
+      "password": "ergunbas2026",
+      "role": "admin",
+      "name": "Sistem Yöneticisi"
+    },
+    {
+      "id": "u2",
+      "username": "vardiya1",
+      "password": "vardiya1",
+      "role": "operator",
+      "name": "Gündüz Operatörü"
+    },
+    {
+      "id": "u3",
+      "username": "vardiya2",
+      "password": "vardiya2",
+      "role": "operator",
+      "name": "Gece Operatörü"
+    }
+  ]
+}

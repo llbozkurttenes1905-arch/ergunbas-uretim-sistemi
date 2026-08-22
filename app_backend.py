@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Body, Header
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
@@ -31,6 +31,17 @@ def load_users():
 def save_users(users_data):
     with open(USERS_FILE, "w", encoding="utf-8") as f:
         json.dump(users_data, f, ensure_ascii=False, indent=2)
+
+def require_editor(x_username: Optional[str]):
+    """Sadece 'admin' veya 'operator' rolündeki kullanıcılar veri girişi/düzenleme yapabilir.
+    'viewer' (görüntüleyici) rolündeki kullanıcılar salt okunur erişime sahiptir ve
+    veri kaydetme/düzenleme isteklerinde reddedilir."""
+    if not x_username:
+        return  # header gönderilmediyse (eski istemci) engelleme, geriye dönük uyumluluk
+    users_data = load_users()
+    user = next((u for u in users_data.get("users", []) if u.get("username") == x_username), None)
+    if user and user.get("role") == "viewer":
+        raise HTTPException(status_code=403, detail="Salt okunur yetkiniz var, veri girişi/düzenleme yapamazsınız.")
 
 app = FastAPI(title="ERGUNBAS Group Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
@@ -217,6 +228,7 @@ def get_dashboard_summary():
         day_fire_kg = 0.0
         day_emp = 0
         day_hours = 0.0
+        day_machine_totals = {}  # Bu güne özel makine/hat bazında kırılım
 
         for shift in ["gunduz", "gece"]:
             s_data = day_obj.get(shift, {})
@@ -227,6 +239,7 @@ def get_dashboard_summary():
                 p_kg = ext.get("prod_kg", 0)
                 f_kg = ext.get("fire_kg", 0)
                 h_name = ext.get("hat", "Bilinmeyen Hat")
+                h_product = ext.get("product", "")
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
@@ -235,11 +248,20 @@ def get_dashboard_summary():
                     machine_totals[h_name] = {"prod": 0.0, "fire": 0.0}
                 machine_totals[h_name]["prod"] += p_kg
                 machine_totals[h_name]["fire"] += f_kg
+
+                dm_key = f"ext_{h_name}"
+                if dm_key not in day_machine_totals:
+                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Ekstrüder", "products": set(), "prod_kg": 0.0, "fire_kg": 0.0}
+                if h_product:
+                    day_machine_totals[dm_key]["products"].add(h_product)
+                day_machine_totals[dm_key]["prod_kg"] += p_kg
+                day_machine_totals[dm_key]["fire_kg"] += f_kg
 
             for lev in s_data.get("levha", []):
                 p_kg = lev.get("total_kg", 0)
                 f_kg = lev.get("dead_fire_kg", 0)
                 h_name = lev.get("hat", "Levha Hattı")
+                h_product = lev.get("product", "")
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
@@ -249,7 +271,17 @@ def get_dashboard_summary():
                 machine_totals[h_name]["prod"] += p_kg
                 machine_totals[h_name]["fire"] += f_kg
 
+                dm_key = f"lev_{h_name}"
+                if dm_key not in day_machine_totals:
+                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Levha", "products": set(), "prod_kg": 0.0, "fire_kg": 0.0}
+                if h_product:
+                    day_machine_totals[dm_key]["products"].add(h_product)
+                day_machine_totals[dm_key]["prod_kg"] += p_kg
+                day_machine_totals[dm_key]["fire_kg"] += f_kg
+
+        day_downtime_min = 0.0
         for dt in day_obj.get("downtimes", []):
+            day_downtime_min += dt.get("down_min", 0)
             total_downtime_min += dt.get("down_min", 0)
             r_reason = dt.get("fire_reason") or dt.get("down_reason") or "Diğer Sebepler"
             r_fire = dt.get("fire_kg", 0)
@@ -265,13 +297,39 @@ def get_dashboard_summary():
         fire_ratio = (day_fire_kg / (day_prod_kg + day_fire_kg) * 100) if (day_prod_kg + day_fire_kg) > 0 else 0
         date_label = day_obj.get("date") or (f"{int(d_str):02d}.08.2026" if d_str.isdigit() else d_str)
 
+        # Bu güne ait makine/hat bazında kırılım listesi (üretim çoktan aza sıralı)
+        day_machines_list = []
+        for dm in day_machine_totals.values():
+            dm_prod = round(dm["prod_kg"], 2)
+            dm_fire = round(dm["fire_kg"], 2)
+            dm_fire_ratio = round((dm_fire / (dm_prod + dm_fire) * 100), 2) if (dm_prod + dm_fire) > 0 else 0
+            day_machines_list.append({
+                "hat": dm["hat"],
+                "type": dm["type"],
+                "products": ", ".join(sorted(dm["products"])) if dm["products"] else "-",
+                "prod_kg": dm_prod,
+                "fire_kg": dm_fire,
+                "fire_ratio": dm_fire_ratio
+            })
+        day_machines_list.sort(key=lambda x: x["prod_kg"], reverse=True)
+
         daily_chart.append({
             "key": d_str,
             "date": date_label,
             "prod_kg": round(day_prod_kg, 2),
             "fire_kg": round(day_fire_kg, 2),
-            "fire_ratio": round(fire_ratio, 2)
+            "fire_ratio": round(fire_ratio, 2),
+            "employees": day_emp,
+            "hours": round(day_hours, 2),
+            "downtime_min": round(day_downtime_min, 2),
+            "machines": day_machines_list
         })
+
+    # Toplam kayıtlı gün sayısı (varsayılan görüntülenecek gün = verisi olan en güncel gün)
+    latest_day_key = sorted_keys[-1] if sorted_keys else None
+    days_with_data = [d["key"] for d in daily_chart if (d["prod_kg"] > 0 or d["fire_kg"] > 0)]
+    if days_with_data:
+        latest_day_key = days_with_data[-1]
 
     # Weekly summary
     weekly_summary = []
@@ -345,6 +403,7 @@ def get_dashboard_summary():
         "weekly_summary": weekly_summary,
         "monthly_summary": monthly_summary,
         "available_dates": [{"key": k, "date": data["daily_data"][k].get("date", k)} for k in sorted_keys],
+        "latest_day_key": latest_day_key,
         "machines_count": len(data.get("machines", [])),
         "products_count": len(data.get("products", []))
     }
@@ -385,7 +444,8 @@ def get_machines():
     return data.get("machines", [])
 
 @app.post("/api/machines")
-def add_machine(machine: MachineCreate):
+def add_machine(machine: MachineCreate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
     data = load_data()
     new_id = f"{machine.type[:3]}_{len(data['machines']) + 1}"
     new_machine = {
@@ -398,7 +458,8 @@ def add_machine(machine: MachineCreate):
     return new_machine
 
 @app.delete("/api/machines/{machine_id}")
-def delete_machine(machine_id: str):
+def delete_machine(machine_id: str, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
     data = load_data()
     data["machines"] = [m for m in data["machines"] if m["id"] != machine_id]
     save_data(data)
@@ -410,7 +471,8 @@ def get_products():
     return data.get("products", [])
 
 @app.post("/api/products")
-def add_product(product: ProductCreate):
+def add_product(product: ProductCreate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
     data = load_data()
     new_id = f"p_{len(data['products']) + 1}"
     new_prod = {
@@ -633,7 +695,8 @@ def get_daily_data(date_key: str):
     }
 
 @app.post("/api/daily/add_date")
-def add_new_date(req: AddDateRequest):
+def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
     data = load_data()
     date_str = req.date_str.strip()
 
@@ -654,7 +717,8 @@ def add_new_date(req: AddDateRequest):
     return {"status": "success", "key": key, "date": date_str}
 
 @app.post("/api/daily/{date_key}")
-def update_daily_data(date_key: str, update: DailyDataUpdate):
+def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
     data = load_data()
     date_label = data["daily_data"].get(date_key, {}).get("date") or (f"{int(date_key):02d}.08.2026" if date_key.isdigit() else date_key)
 

@@ -371,6 +371,7 @@
                                     <th class="p-2.5">Ürün İsmi</th>
                                     <th class="p-2.5">Uzunluk (m)</th>
                                     <th class="p-2.5">Hız (m/dk)</th>
+                                    <th class="p-2.5" title="Bu hattan aynı anda kaç ürün çıkıyor? (çift kafalı hatlar için 2 girin)">Kafa Sayısı</th>
                                     <th class="p-2.5">Çalışma Süresi (sa)</th>
                                     <th class="p-2.5">Üretim (kg)</th>
                                     <th class="p-2.5">Fire (kg)</th>
@@ -455,6 +456,7 @@
                                     <th class="p-2.5">Ürün İsmi</th>
                                     <th class="p-2.5">Uzunluk (m)</th>
                                     <th class="p-2.5">Hız (m/dk)</th>
+                                    <th class="p-2.5" title="Bu hattan aynı anda kaç ürün çıkıyor? (çift kafalı hatlar için 2 girin)">Kafa Sayısı</th>
                                     <th class="p-2.5">Çalışma Süresi (sa)</th>
                                     <th class="p-2.5">Üretim (kg)</th>
                                     <th class="p-2.5">Fire (kg)</th>
@@ -1313,10 +1315,9 @@
             const qty     = parseInt(tr.querySelector('.input-qty')?.value)          || 0;
             const hatName = tr.querySelector('.input-hat-ext')?.value || '';
 
-            // Hat 3,4,5,9 => çift çıkışlı (2x hız)
-            const hatNum = hatName.replace(/[^0-9]/g, '');
-            const isDouble = ['3','4','5','9'].includes(hatNum);
-            const mult = isDouble ? 2 : 1;
+            // Kafa Sayısı: bu hattan aynı anda kaç ürün çıkıyor (kullanıcı girer, varsayılan 1)
+            const heads = parseFloat(tr.querySelector('.input-ext-heads')?.value) || 1;
+            const mult = heads;
 
             let fireKg = 0;
             if (hours > 0 && speed > 0 && length > 0 && qty > 0 && prodKg > 0) {
@@ -1367,6 +1368,9 @@
                     </td>
                     <td class="p-2.5">
                         <input type="number" step="0.01" value="${item.speed || ''}" class="input-ext-speed bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-20 text-center">
+                    </td>
+                    <td class="p-2.5">
+                        <input type="number" step="1" min="1" value="${item.heads || 1}" class="input-ext-heads bg-slate-950 border border-sky-700/40 text-sky-300 font-bold text-xs rounded px-2 py-1 w-14 text-center" title="Bu hattan aynı anda kaç ürün çıkıyor? Tek çıkışlı hatlarda 1, çift kafalı (çift çıkışlı) hatlarda 2 girin. Hız bu değerle çarpılır.">
                     </td>
                     <td class="p-2.5">
                         <input type="number" step="0.1" value="${hours}" placeholder="sa" class="input-ext-hours bg-slate-950 border border-amber-700/40 text-amber-300 text-xs rounded px-2 py-1 w-16 text-center" title="Bu hattın çalışma süresi (saat). Boş bırakılırsa fire hesaplanmaz.">
@@ -1598,12 +1602,13 @@
                 const product = r.querySelector('.input-prod-name')?.value || '';
                 const length  = parseFloat(r.querySelector('.input-ext-length')?.value) || 0;
                 const speed   = parseFloat(r.querySelector('.input-ext-speed')?.value)  || 0;
+                const heads   = parseFloat(r.querySelector('.input-ext-heads')?.value)  || 1;
                 const hours   = parseFloat(r.querySelector('.input-ext-hours')?.value)  || 0;
                 const prodKg  = parseFloat(r.querySelector('.input-prod-kg')?.value)    || 0;
                 const fireKg  = parseFloat(r.querySelector('.input-fire-kg')?.value)    || 0;
                 const qty     = parseInt(r.querySelector('.input-qty')?.value)          || 0;
                 if (hat || product) {
-                    list.push({ hat, product, length, speed, hours, prod_kg: prodKg, fire_kg: fireKg, qty, sets: 0 });
+                    list.push({ hat, product, length, speed, heads, hours, prod_kg: prodKg, fire_kg: fireKg, qty, sets: 0 });
                 }
             });
             return list;

@@ -60,6 +60,7 @@ class ExtruderEntry(BaseModel):
     product: str
     length: Optional[float] = 0
     speed: Optional[float] = 0
+    heads: Optional[float] = 1
     hours: Optional[float] = 0
     prod_kg: float = 0
     fire_kg: float = 0
@@ -570,6 +571,7 @@ class ExtruderCalcRequest(BaseModel):
     calisma_suresi_dk: Optional[float] = None  # Çalışma süresi (dakika)
     hiz_m_dk: Optional[float] = None           # Hız (m/dk)
     uzunluk_m: Optional[float] = None          # Profil uzunluğu (m)
+    heads: Optional[float] = 1                 # Kafa sayısı (aynı anda çıkan ürün sayısı)
 
 @app.post("/api/calc/extruder")
 def calc_extruder(req: ExtruderCalcRequest):
@@ -594,9 +596,10 @@ def calc_extruder(req: ExtruderCalcRequest):
         sets = round(qty / 2.0, 1)
 
     # Teorik üretim (eğer hız ve süre verilmişse)
+    heads = req.heads or 1
     teorik_adet = None
     if req.calisma_suresi_dk and req.hiz_m_dk and req.uzunluk_m and req.uzunluk_m > 0:
-        teorik_uzunluk_m = req.hiz_m_dk * req.calisma_suresi_dk
+        teorik_uzunluk_m = req.hiz_m_dk * req.calisma_suresi_dk * heads
         teorik_adet = int(teorik_uzunluk_m / req.uzunluk_m)
 
     return {
@@ -674,10 +677,10 @@ def update_daily_data(date_key: str, update: DailyDataUpdate):
             prod_kg = ext.get("prod_kg", 0) or 0
 
             # Otomatik Ekstrüder Fire Hesabı
+            # Kafa Sayısı: bu hattan aynı anda kaç ürün çıkıyor (kullanıcı girer, varsayılan 1)
+            heads = ext.get("heads") or 1
             if hours > 0 and speed > 0 and length > 0 and q > 0 and prod_kg > 0:
-                is_double = any(num in hat_str for num in ["3", "4", "5", "9"])
-                mult = 2 if is_double else 1
-                teorik_m = hours * 60 * speed * mult
+                teorik_m = hours * 60 * speed * heads
                 net_m = q * length
                 kg_m = prod_kg / net_m if net_m > 0 else 0
                 if teorik_m > net_m and kg_m > 0:

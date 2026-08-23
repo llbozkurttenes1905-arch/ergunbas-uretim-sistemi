@@ -235,37 +235,115 @@
                 </div>
             </div>
 
-            <!-- GÜNLÜK DETAY - MAKİNE BAZINDA -->
+            <!-- GÜNLÜK DETAY - YÖNETİCİ ÖZETİ (TÜM FORMÜLLER DAHİL) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4 border-b border-slate-800 pb-3">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="list-checks" class="w-5 h-5 text-ergunbas-500"></i> Günlük Üretim Detayı — Makine / Hat Bazında
+                        <i data-lucide="list-checks" class="w-5 h-5 text-ergunbas-500"></i> Günlük Yönetici Özeti — Detaylı
                     </h2>
                     <select id="dash-day-select" onchange="renderDashDailyDetail()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
                         <option value="">Yükleniyor...</option>
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="dash-day-summary">
-                    <!-- JS ile doldurulacak: gün toplamları -->
+                <!-- Genel Gün Özeti KPI'ları -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="dash-day-summary"></div>
+
+                <!-- Verimlilik Kartları -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="dash-day-efficiency"></div>
+
+                <!-- Vardiya Bazında Kırılım (Gündüz / Gece) -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="sun-moon" class="w-4 h-4 text-ergunbas-500"></i> Vardiya Bazında Kırılım
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="dash-day-shifts"></div>
                 </div>
 
-                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
-                            <tr>
-                                <th class="p-2.5">Tip</th>
-                                <th class="p-2.5">Hat No</th>
-                                <th class="p-2.5">Ürün(ler)</th>
-                                <th class="p-2.5 text-right">Üretim (kg)</th>
-                                <th class="p-2.5 text-right">Fire (kg)</th>
-                                <th class="p-2.5 text-right">Fire Oranı</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dash-day-machines-tbody" class="divide-y divide-slate-800">
-                            <tr><td colspan="6" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
-                        </tbody>
-                    </table>
+                <!-- Kapı Kapasitesi / Reçete Eşdeğeri -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="door-open" class="w-4 h-4 text-emerald-500"></i> Kapı Kapasitesi (Reçete Eşdeğeri)
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2">Kategori</th>
+                                    <th class="p-2 text-right">Üretilen Adet</th>
+                                    <th class="p-2 text-right">Reçete Katsayısı</th>
+                                    <th class="p-2 text-right">Kapı Eşdeğeri</th>
+                                    <th class="p-2 text-right">Devir (Fazla)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-day-doors-tbody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Tamamlanabilir Tam Kapı = <span id="dash-day-doors-completable" class="font-bold text-emerald-400">-</span> adet (en düşük eşdeğere göre)</p>
+                </div>
+
+                <!-- Makine / Hat Bazında Kırılım -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="factory" class="w-4 h-4 text-sky-500"></i> Makine / Hat Bazında Üretim ve Fire
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Tip</th>
+                                    <th class="p-2.5">Hat No</th>
+                                    <th class="p-2.5">Ürün(ler)</th>
+                                    <th class="p-2.5 text-right">Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-day-machines-tbody" class="divide-y divide-slate-800">
+                                <tr><td colspan="6" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Fire / Duruş Sebepleri -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> Fire ve Duruş Sebepleri Özeti
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2">Sebep</th>
+                                    <th class="p-2 text-right">Fire (kg)</th>
+                                    <th class="p-2 text-right">Duruş (dk)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-day-reasons-tbody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ham Duruş / Fire Kayıtları -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-purple-500"></i> Duruş / Fire Kayıt Detayları
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2">Hat / Makine</th>
+                                    <th class="p-2">Sebep</th>
+                                    <th class="p-2 text-right">Duruş (dk)</th>
+                                    <th class="p-2 text-right">Fire (kg)</th>
+                                    <th class="p-2">Not</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-day-downtimes-tbody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1032,7 +1110,13 @@
         function renderDashDailyDetail() {
             const sel = document.getElementById('dash-day-select');
             const summaryEl = document.getElementById('dash-day-summary');
+            const effEl = document.getElementById('dash-day-efficiency');
+            const shiftsEl = document.getElementById('dash-day-shifts');
+            const doorsBody = document.getElementById('dash-day-doors-tbody');
+            const doorsCompletable = document.getElementById('dash-day-doors-completable');
             const tbody = document.getElementById('dash-day-machines-tbody');
+            const reasonsBody = document.getElementById('dash-day-reasons-tbody');
+            const downtimesBody = document.getElementById('dash-day-downtimes-tbody');
             if (!sel || !dashboardData || !dashboardData.daily_chart) return;
 
             const dayKey = sel.value;
@@ -1040,10 +1124,17 @@
 
             if (!day) {
                 summaryEl.innerHTML = '';
+                effEl.innerHTML = '';
+                shiftsEl.innerHTML = '';
+                doorsBody.innerHTML = '';
+                doorsCompletable.textContent = '-';
                 tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                reasonsBody.innerHTML = '';
+                downtimesBody.innerHTML = '';
                 return;
             }
 
+            // Genel KPI kartları
             summaryEl.innerHTML = `
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
                     <span class="text-[10px] text-slate-400 uppercase font-bold block">Üretim</span>
@@ -1054,7 +1145,7 @@
                     <span class="text-lg font-black text-amber-400">${day.fire_kg.toLocaleString('tr-TR')} kg</span>
                 </div>
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı</span>
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı (Formül: Fire/(Üretim+Fire)*100)</span>
                     <span class="text-lg font-black text-orange-400">%${day.fire_ratio}</span>
                 </div>
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
@@ -1063,23 +1154,107 @@
                 </div>
             `;
 
+            // Verimlilik kartları (Formüller: Kg/Çalışan, Kg/Saat)
+            effEl.innerHTML = `
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Kg / Çalışan</span>
+                    <span class="text-base font-black text-emerald-400">${day.kg_per_employee.toLocaleString('tr-TR')}</span>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Kg / Saat</span>
+                    <span class="text-base font-black text-sky-400">${day.kg_per_hour.toLocaleString('tr-TR')}</span>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Çalışılan Saat</span>
+                    <span class="text-base font-black text-white">${day.hours}</span>
+                </div>
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Duruş</span>
+                    <span class="text-base font-black text-red-400">${day.downtime_min} dk</span>
+                </div>
+            `;
+
+            // Vardiya bazında kırılım (Gündüz / Gece)
+            const shiftCard = (label, icon, color, s) => {
+                const sFireRatio = (s.prod_kg + s.fire_kg) > 0 ? Math.round((s.fire_kg / (s.prod_kg + s.fire_kg)) * 10000) / 100 : 0;
+                return `
+                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-2.5">
+                        <i data-lucide="${icon}" class="w-4 h-4 ${color}"></i>
+                        <span class="text-sm font-bold text-white">${label}</span>
+                        <span class="text-xs text-slate-500 ml-auto">${s.employees} kişi · ${s.hours} sa</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div><span class="text-[10px] text-slate-500 block">Üretim</span><span class="text-sm font-bold text-white">${s.prod_kg.toLocaleString('tr-TR')} kg</span></div>
+                        <div><span class="text-[10px] text-slate-500 block">Fire</span><span class="text-sm font-bold text-amber-400">${s.fire_kg.toLocaleString('tr-TR')} kg</span></div>
+                        <div><span class="text-[10px] text-slate-500 block">Fire Oranı</span><span class="text-sm font-bold text-orange-400">%${sFireRatio}</span></div>
+                    </div>
+                </div>`;
+            };
+            shiftsEl.innerHTML = shiftCard('Gündüz Vardiyası', 'sun', 'text-yellow-400', day.shifts.gunduz) + shiftCard('Gece Vardiyası', 'moon', 'text-indigo-400', day.shifts.gece);
+
+            // Kapı kapasitesi tablosu (Formül: Kapı Eşdeğeri = Üretim Adedi / Reçete Katsayısı)
+            const doorLabels = { pervaz: 'Pervaz', kasa: 'Kasa', seren: 'Seren', levha: 'Levha' };
+            doorsCompletable.textContent = day.door_stats.completable_doors;
+            doorsBody.innerHTML = Object.keys(doorLabels).map(k => {
+                const d = day.door_stats.details[k];
+                return `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-2 font-bold text-white">${doorLabels[k]}</td>
+                    <td class="p-2 text-right">${d.produced.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-right text-slate-400">${d.req_per_door}</td>
+                    <td class="p-2 text-right font-bold text-emerald-400">${d.door_eq}</td>
+                    <td class="p-2 text-right ${d.carryover > 0 ? 'text-sky-400' : 'text-slate-500'}">${d.carryover.toLocaleString('tr-TR')}</td>
+                </tr>`;
+            }).join('');
+
+            // Makine / hat bazında kırılım
             if (!day.machines || day.machines.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
-                return;
+            } else {
+                tbody.innerHTML = day.machines.map(m => `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-2.5">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${m.type === 'Ekstrüder' ? 'bg-sky-600/20 text-sky-400 border border-sky-600/30' : 'bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-600/30'}">${m.type}</span>
+                        </td>
+                        <td class="p-2.5 font-bold text-white">Hat ${m.hat}</td>
+                        <td class="p-2.5 text-slate-300">${m.products}</td>
+                        <td class="p-2.5 text-right font-semibold text-white">${m.prod_kg.toLocaleString('tr-TR')}</td>
+                        <td class="p-2.5 text-right font-semibold text-amber-400">${m.fire_kg.toLocaleString('tr-TR')}</td>
+                        <td class="p-2.5 text-right font-semibold ${m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${m.fire_ratio}</td>
+                    </tr>
+                `).join('');
             }
 
-            tbody.innerHTML = day.machines.map(m => `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-2.5">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${m.type === 'Ekstrüder' ? 'bg-sky-600/20 text-sky-400 border border-sky-600/30' : 'bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-600/30'}">${m.type}</span>
-                    </td>
-                    <td class="p-2.5 font-bold text-white">Hat ${m.hat}</td>
-                    <td class="p-2.5 text-slate-300">${m.products}</td>
-                    <td class="p-2.5 text-right font-semibold text-white">${m.prod_kg.toLocaleString('tr-TR')}</td>
-                    <td class="p-2.5 text-right font-semibold text-amber-400">${m.fire_kg.toLocaleString('tr-TR')}</td>
-                    <td class="p-2.5 text-right font-semibold ${m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${m.fire_ratio}</td>
-                </tr>
-            `).join('');
+            // Fire / duruş sebepleri özeti
+            if (!day.fire_reasons || day.fire_reasons.length === 0) {
+                reasonsBody.innerHTML = '<tr><td colspan="3" class="p-3 text-center text-slate-500">Bu gün için fire/duruş sebebi girilmemiş.</td></tr>';
+            } else {
+                reasonsBody.innerHTML = day.fire_reasons.map(r => `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-2 text-slate-200">${r.reason}</td>
+                        <td class="p-2 text-right font-bold text-amber-400">${r.fire_kg.toLocaleString('tr-TR')}</td>
+                        <td class="p-2 text-right text-slate-400">${r.down_min}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Ham duruş / fire kayıt detayları
+            if (!day.downtimes || day.downtimes.length === 0) {
+                downtimesBody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-500">Bu gün için duruş kaydı girilmemiş.</td></tr>';
+            } else {
+                downtimesBody.innerHTML = day.downtimes.map(dt => `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-2 font-bold text-white">${dt.machine}</td>
+                        <td class="p-2 text-slate-200">${dt.reason}</td>
+                        <td class="p-2 text-right ${dt.down_min > 0 ? 'text-red-400 font-semibold' : 'text-slate-500'}">${dt.down_min}</td>
+                        <td class="p-2 text-right ${dt.fire_kg > 0 ? 'text-amber-400 font-semibold' : 'text-slate-500'}">${dt.fire_kg}</td>
+                        <td class="p-2 text-slate-400">${dt.note || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            safeCreateIcons();
         }
 
         async function loadDashboard() {

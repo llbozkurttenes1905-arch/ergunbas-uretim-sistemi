@@ -229,11 +229,19 @@ def get_dashboard_summary():
         day_emp = 0
         day_hours = 0.0
         day_machine_totals = {}  # Bu güne özel makine/hat bazında kırılım
+        day_shifts = {
+            "gunduz": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0},
+            "gece": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0}
+        }
 
         for shift in ["gunduz", "gece"]:
             s_data = day_obj.get(shift, {})
-            day_emp += s_data.get("employees", 10)
-            day_hours += s_data.get("hours", 12)
+            s_emp = s_data.get("employees", 10)
+            s_hours = s_data.get("hours", 12)
+            day_emp += s_emp
+            day_hours += s_hours
+            day_shifts[shift]["employees"] = s_emp
+            day_shifts[shift]["hours"] = s_hours
 
             for ext in s_data.get("extruders", []):
                 p_kg = ext.get("prod_kg", 0)
@@ -243,6 +251,8 @@ def get_dashboard_summary():
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
+                day_shifts[shift]["prod_kg"] += p_kg
+                day_shifts[shift]["fire_kg"] += f_kg
 
                 if h_name not in machine_totals:
                     machine_totals[h_name] = {"prod": 0.0, "fire": 0.0}
@@ -265,6 +275,8 @@ def get_dashboard_summary():
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
+                day_shifts[shift]["prod_kg"] += p_kg
+                day_shifts[shift]["fire_kg"] += f_kg
 
                 if h_name not in machine_totals:
                     machine_totals[h_name] = {"prod": 0.0, "fire": 0.0}
@@ -280,14 +292,32 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
 
         day_downtime_min = 0.0
+        day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
+        day_downtimes_list = []  # Bu güne özel ham duruş kayıtları
         for dt in day_obj.get("downtimes", []):
-            day_downtime_min += dt.get("down_min", 0)
-            total_downtime_min += dt.get("down_min", 0)
+            dt_min = dt.get("down_min", 0)
             r_reason = dt.get("fire_reason") or dt.get("down_reason") or "Diğer Sebepler"
             r_fire = dt.get("fire_kg", 0)
+
+            day_downtime_min += dt_min
+            total_downtime_min += dt_min
+
             if r_reason not in fire_reasons_summary:
                 fire_reasons_summary[r_reason] = 0.0
             fire_reasons_summary[r_reason] += r_fire
+
+            if r_reason not in day_fire_reasons:
+                day_fire_reasons[r_reason] = {"fire_kg": 0.0, "down_min": 0.0}
+            day_fire_reasons[r_reason]["fire_kg"] += r_fire
+            day_fire_reasons[r_reason]["down_min"] += dt_min
+
+            day_downtimes_list.append({
+                "machine": dt.get("machine") or dt.get("hat") or "-",
+                "reason": r_reason,
+                "down_min": dt_min,
+                "fire_kg": r_fire,
+                "note": dt.get("note", "")
+            })
 
         total_prod_kg += day_prod_kg
         total_fire_kg += day_fire_kg
@@ -313,6 +343,19 @@ def get_dashboard_summary():
             })
         day_machines_list.sort(key=lambda x: x["prod_kg"], reverse=True)
 
+        # Bu güne ait fire/duruş sebepleri kırılımı (fire kg'ye göre çoktan aza)
+        day_fire_reasons_list = sorted(
+            [{"reason": k, "fire_kg": round(v["fire_kg"], 2), "down_min": round(v["down_min"], 1)} for k, v in day_fire_reasons.items()],
+            key=lambda x: x["fire_kg"], reverse=True
+        )
+
+        # Bu güne özel kapı kapasitesi/reçete eşdeğeri hesabı
+        day_door_stats = compute_door_capacity(data, filter_date_keys=[d_str])
+
+        # Bu güne özel verimlilik metrikleri
+        day_kg_per_employee = round((day_prod_kg / day_emp), 2) if day_emp > 0 else 0
+        day_kg_per_hour = round((day_prod_kg / day_hours), 2) if day_hours > 0 else 0
+
         daily_chart.append({
             "key": d_str,
             "date": date_label,
@@ -322,7 +365,26 @@ def get_dashboard_summary():
             "employees": day_emp,
             "hours": round(day_hours, 2),
             "downtime_min": round(day_downtime_min, 2),
-            "machines": day_machines_list
+            "kg_per_employee": day_kg_per_employee,
+            "kg_per_hour": day_kg_per_hour,
+            "machines": day_machines_list,
+            "shifts": {
+                "gunduz": {
+                    "employees": day_shifts["gunduz"]["employees"],
+                    "hours": round(day_shifts["gunduz"]["hours"], 2),
+                    "prod_kg": round(day_shifts["gunduz"]["prod_kg"], 2),
+                    "fire_kg": round(day_shifts["gunduz"]["fire_kg"], 2)
+                },
+                "gece": {
+                    "employees": day_shifts["gece"]["employees"],
+                    "hours": round(day_shifts["gece"]["hours"], 2),
+                    "prod_kg": round(day_shifts["gece"]["prod_kg"], 2),
+                    "fire_kg": round(day_shifts["gece"]["fire_kg"], 2)
+                }
+            },
+            "door_stats": day_door_stats,
+            "fire_reasons": day_fire_reasons_list,
+            "downtimes": day_downtimes_list
         })
 
     # Toplam kayıtlı gün sayısı (varsayılan görüntülenecek gün = verisi olan en güncel gün)

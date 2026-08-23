@@ -68,6 +68,20 @@
             display: flex !important;
         }
 
+        /* ==== Günlük Veri Girişi Kilidi (sadece 'operator' rolü girebilir; 'admin' ve
+             'viewer' günlük veri girişi sekmesinde salt okunur kalır) ==== */
+        body.daily-locked #view-daily :is(input,select,textarea):not(#select-day) {
+            pointer-events: none !important;
+            opacity: .55;
+            cursor: not-allowed;
+        }
+        body.daily-locked .daily-edit-action {
+            display: none !important;
+        }
+        body.daily-locked #viewer-banner {
+            display: flex !important;
+        }
+
         /* ==== Mobil kayma/kaydırma sabitleme ==== */
         html, body {
             overflow-x: hidden;
@@ -536,7 +550,7 @@
         <!-- TAB 2: GÜNLÜK VERİ GİRİŞİ -->
         <div id="view-daily" class="space-y-6 hidden">
             <div id="viewer-banner" class="hidden items-center gap-2.5 bg-sky-950/50 border border-sky-700/40 text-sky-300 text-xs font-bold rounded-xl px-4 py-3">
-                <i data-lucide="eye" class="w-4 h-4"></i> Salt Okunur Mod — Sadece görüntüleme yetkiniz var, veri girişi/düzenleme yapamazsınız.
+                <i data-lucide="eye" class="w-4 h-4"></i> <span id="viewer-banner-text">Salt Okunur Mod — Sadece görüntüleme yetkiniz var, veri girişi/düzenleme yapamazsınız.</span>
             </div>
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
                 <div class="flex flex-wrap items-center gap-3">
@@ -544,14 +558,14 @@
                         <i data-lucide="calendar" class="w-4 h-4 text-ergunbas-500"></i> Giriş Yapılacak Tarih:
                     </label>
                     <select id="select-day" onchange="loadDayData()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none"></select>
-                    <button onclick="promptAddNewDate()" class="edit-action px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
+                    <button onclick="promptAddNewDate()" class="edit-action daily-edit-action px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-ergunbas-500"></i> Yeni Tarih / Gün Ekle
                     </button>
                 </div>
 
                 <div class="flex items-center space-x-3">
                     <span class="text-sm font-black text-slate-300" id="current-day-label">01.08.2026</span>
-                    <button onclick="saveCurrentDay()" class="edit-action px-6 py-2.5 bg-ergunbas-600 hover:bg-ergunbas-500 text-white font-extrabold text-sm rounded-xl transition flex items-center gap-2 shadow-lg shadow-ergunbas-600/30">
+                    <button onclick="saveCurrentDay()" class="edit-action daily-edit-action px-6 py-2.5 bg-ergunbas-600 hover:bg-ergunbas-500 text-white font-extrabold text-sm rounded-xl transition flex items-center gap-2 shadow-lg shadow-ergunbas-600/30">
                         <i data-lucide="save" class="w-4.5 h-4.5"></i> Tüm Verileri Kaydet
                     </button>
                 </div>
@@ -582,7 +596,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ekstrüder Hatları Üretimi</h4>
-                        <button onclick="addExtruderRow('tbl-gunduz-ext')" class="edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-400 rounded-lg border border-slate-700 flex items-center gap-1">
+                        <button onclick="addExtruderRow('tbl-gunduz-ext')" class="edit-action daily-edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-400 rounded-lg border border-slate-700 flex items-center gap-1">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Satır Ekle
                         </button>
                     </div>
@@ -612,7 +626,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Levha Hatları Üretimi</h4>
-                        <button onclick="addLevhaRow('tbl-gunduz-lev')" class="edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 rounded-lg border border-slate-700 flex items-center gap-1">
+                        <button onclick="addLevhaRow('tbl-gunduz-lev')" class="edit-action daily-edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 rounded-lg border border-slate-700 flex items-center gap-1">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Satır Ekle
                         </button>
                     </div>
@@ -667,7 +681,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ekstrüder Hatları Üretimi</h4>
-                        <button onclick="addExtruderRow('tbl-gece-ext')" class="edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-400 rounded-lg border border-slate-700 flex items-center gap-1">
+                        <button onclick="addExtruderRow('tbl-gece-ext')" class="edit-action daily-edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-400 rounded-lg border border-slate-700 flex items-center gap-1">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Satır Ekle
                         </button>
                     </div>
@@ -697,7 +711,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Levha Hatları Üretimi</h4>
-                        <button onclick="addLevhaRow('tbl-gece-lev')" class="edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 rounded-lg border border-slate-700 flex items-center gap-1">
+                        <button onclick="addLevhaRow('tbl-gece-lev')" class="edit-action daily-edit-action px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-400 rounded-lg border border-slate-700 flex items-center gap-1">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Satır Ekle
                         </button>
                     </div>
@@ -732,7 +746,7 @@
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i> Günlük Fire ve Duruş Sebepleri
                     </h3>
-                    <button onclick="addDowntimeRow()" class="edit-action px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition flex items-center gap-1 border border-slate-700">
+                    <button onclick="addDowntimeRow()" class="edit-action daily-edit-action px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition flex items-center gap-1 border border-slate-700">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Kayıt Ekle
                     </button>
                 </div>
@@ -1030,7 +1044,20 @@
 
         function applyRolePermissions() {
             const isViewer = !!(currentUser && currentUser.role === 'viewer');
+            const isDailyOperator = !!(currentUser && currentUser.role === 'operator');
             document.body.classList.toggle('role-viewer', isViewer);
+            // Günlük veri girişi sadece 'operator' rolüne açık; admin ve viewer için kilitli
+            document.body.classList.toggle('daily-locked', !isDailyOperator);
+
+            const banner = document.getElementById('viewer-banner');
+            const bannerText = document.getElementById('viewer-banner-text');
+            if (banner && bannerText) {
+                if (isViewer) {
+                    bannerText.textContent = 'Salt Okunur Mod — Sadece görüntüleme yetkiniz var, veri girişi/düzenleme yapamazsınız.';
+                } else if (!isDailyOperator) {
+                    bannerText.textContent = 'Günlük veri girişi sadece yetkili operatör (Sorumlu Mühendis) tarafından yapılabilir. Bu sekmede salt okunur görüntüleme yapıyorsunuz.';
+                }
+            }
         }
 
         // Service Worker kaydı (Ana Ekrana Ekle / PWA desteği için)
@@ -1909,7 +1936,7 @@
                     <td class="p-2.5 font-bold text-amber-400 text-xs text-center val-fire-ratio">%${ratio}</td>
                     <td class="p-2.5 font-bold text-emerald-400 text-xs text-center val-sets">${item.sets ? Math.round(item.sets*10)/10 : '-'}</td>
                     <td class="p-2.5 text-center">
-                        <button onclick="this.closest('tr').remove()" class="edit-action p-1 text-red-400 hover:text-red-300">
+                        <button onclick="this.closest('tr').remove()" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -1980,7 +2007,7 @@
                     <td class="p-2.5 font-bold text-amber-400 text-xs text-center val-fire-ratio">%${ratio}</td>
                     <td class="p-2.5 font-bold text-emerald-400 text-xs text-center val-sets">${item.sets ? item.sets.toFixed(1) : '-'}</td>
                     <td class="p-2.5 text-center">
-                        <button onclick="this.closest('tr').remove()" class="edit-action p-1 text-red-400 hover:text-red-300">
+                        <button onclick="this.closest('tr').remove()" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -2046,7 +2073,7 @@
                         <input type="text" value="${dt.desc || ''}" class="bg-slate-950 border border-slate-800 text-slate-400 text-xs rounded px-2 py-1 w-full" placeholder="Açıklama">
                     </td>
                     <td class="p-2.5 text-center">
-                        <button onclick="this.closest('tr').remove()" class="edit-action p-1 text-red-400 hover:text-red-300">
+                        <button onclick="this.closest('tr').remove()" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -2103,15 +2130,24 @@
                 downtimes: getDowntimesFromUI()
             };
 
-            const res = await fetch(`/api/daily/${currentDateKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch(`/api/daily/${currentDateKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify(payload)
+                });
 
-            if (res.ok) {
-                showToast("Günlük veriler ERGUNBAS veritabanına başarıyla kaydedildi!");
-                loadDashboard();
+                if (res.ok) {
+                    showToast("Günlük veriler ERGUNBAS veritabanına başarıyla kaydedildi!");
+                    loadDashboard();
+                } else {
+                    let msg = 'Veriler kaydedilemedi!';
+                    try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                    alert(msg);
+                }
+            } catch (networkErr) {
+                console.error(networkErr);
+                alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
             }
         }
 
@@ -2349,6 +2385,7 @@
             document.getElementById('header-username').textContent = '';
             document.getElementById('header-role').textContent = '';
             document.body.classList.remove('role-viewer');
+            document.body.classList.remove('daily-locked');
             
             const userTab = document.getElementById('tab-users');
             if (userTab) userTab.style.display = 'none';

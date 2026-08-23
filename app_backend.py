@@ -44,6 +44,20 @@ def require_editor(x_username: Optional[str]):
     if user and user.get("role") == "viewer":
         raise HTTPException(status_code=403, detail="Salt okunur yetkiniz var, veri girişi/düzenleme yapamazsınız.")
 
+def require_daily_operator(x_username: Optional[str]):
+    """GÜNLÜK ÜRETİM VERİ GİRİŞİ sadece 'operator' rolündeki kullanıcı tarafından yapılabilir.
+    'admin' rolü sistem yönetimi (kullanıcı/makine/ürün) için ayrılmıştır ve günlük veri
+    girişi yapamaz. 'viewer' zaten hiçbir şekilde veri giremez."""
+    if not x_username:
+        return  # header gönderilmediyse (eski istemci) engelleme, geriye dönük uyumluluk
+    users_data = load_users()
+    user = next((u for u in users_data.get("users", []) if u.get("username") == x_username), None)
+    if user and user.get("role") != "operator":
+        raise HTTPException(
+            status_code=403,
+            detail="Günlük üretim veri girişi sadece yetkili operatör (Sorumlu Mühendis) tarafından yapılabilir."
+        )
+
 app = FastAPI(title="ERGUNBAS Group Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
 def load_data():
@@ -787,7 +801,7 @@ def get_daily_data(date_key: str):
 
 @app.post("/api/daily/add_date")
 def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
-    require_editor(x_username)
+    require_daily_operator(x_username)
     data = load_data()
     date_str = req.date_str.strip()
 
@@ -809,7 +823,7 @@ def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
 
 @app.post("/api/daily/{date_key}")
 def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Optional[str] = Header(None)):
-    require_editor(x_username)
+    require_daily_operator(x_username)
     data = load_data()
     date_label = data["daily_data"].get(date_key, {}).get("date") or (f"{int(date_key):02d}.08.2026" if date_key.isdigit() else date_key)
 

@@ -119,6 +119,73 @@
         </div>
     </div>
 
+    <!-- ============ ÖZEL UYGULAMA MODALLARI (native prompt/confirm yerine) ============ -->
+    <!-- Bunlar, telefonda "Ana Ekrana Ekle" (PWA/standalone) modunda native tarayıcı
+         dialog'larının (prompt/confirm) güvenilmez şekilde çalışmasını önlemek için
+         kullanılıyor. -->
+
+    <!-- MODAL: Yeni Tarih / Gün Ekle -->
+    <div id="modal-add-date" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="calendar-plus" class="w-5 h-5 text-ergunbas-500"></i> Yeni Tarih / Gün Ekle
+            </h3>
+            <div>
+                <label class="text-xs text-slate-400 font-medium mb-1.5 block">Giriş yapmak istediğiniz tarihi seçin</label>
+                <input type="date" id="modal-add-date-input" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeAddDateModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">İptal</button>
+                <button onclick="confirmAddDateModal()" class="flex-1 py-2.5 bg-ergunbas-600 hover:bg-ergunbas-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-ergunbas-600/30">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Genel Onay (Sil vb.) -->
+    <div id="modal-confirm" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i> <span id="modal-confirm-title">Emin misiniz?</span>
+            </h3>
+            <p id="modal-confirm-message" class="text-sm text-slate-400"></p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">İptal</button>
+                <button id="modal-confirm-ok-btn" onclick="confirmModalOk()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-red-600/30">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Kullanıcı Düzenle -->
+    <div id="modal-edit-user" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="user-cog" class="w-5 h-5 text-violet-400"></i> Kullanıcıyı Düzenle
+            </h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Ad Soyad</label>
+                    <input type="text" id="modal-edit-user-name" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Rol</label>
+                    <select id="modal-edit-user-role" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none">
+                        <option value="viewer">Görüntüleyici (Salt Okunur)</option>
+                        <option value="operator">Operatör (Veri Girişi Yapabilir)</option>
+                        <option value="admin">Yönetici (Admin)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Yeni Şifre <span class="text-slate-600">(değiştirmek istemiyorsanız boş bırakın)</span></label>
+                    <input type="password" id="modal-edit-user-password" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeEditUserModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">İptal</button>
+                <button onclick="confirmEditUserModal()" class="flex-1 py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-violet-600/30">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ERGUNBAS Corporate Header -->
     <header class="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4 sticky top-0 z-50 shadow-xl">
         <div class="flex items-center space-x-3 sm:space-x-4 shrink-0">
@@ -1037,9 +1104,31 @@
             }
         }
 
-        async function promptAddNewDate() {
-            const dateStr = prompt("Yeni giriş yapmak istediğiniz tarihi giriniz (Örn: 01.09.2026):", "01.09.2026");
-            if (dateStr) {
+        // ============ ÖZEL MODAL YÖNETİMİ (native prompt/confirm yerine) ============
+
+        function openAddDateModal() {
+            const input = document.getElementById('modal-add-date-input');
+            // Varsayılan olarak bugünün tarihini öner (YYYY-MM-DD formatında, <input type="date"> için gerekli)
+            const today = new Date();
+            input.value = today.toISOString().slice(0, 10);
+            document.getElementById('modal-add-date').classList.remove('hidden');
+        }
+
+        function closeAddDateModal() {
+            document.getElementById('modal-add-date').classList.add('hidden');
+        }
+
+        async function confirmAddDateModal() {
+            const input = document.getElementById('modal-add-date-input');
+            const rawVal = input.value; // YYYY-MM-DD
+            if (!rawVal) {
+                alert('Lütfen bir tarih seçin.');
+                return;
+            }
+            const [y, m, d] = rawVal.split('-');
+            const dateStr = `${d}.${m}.${y}`; // DD.MM.YYYY - backend'in beklediği format
+
+            try {
                 const res = await fetch('/api/daily/add_date', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
@@ -1047,12 +1136,97 @@
                 });
                 if (res.ok) {
                     const result = await res.json();
+                    closeAddDateModal();
                     showToast(`${dateStr} günü sisteme eklendi!`);
                     await fetchDashboardAndDates();
                     document.getElementById('select-day').value = result.key;
                     loadDayData();
+                } else {
+                    let msg = 'Tarih eklenemedi!';
+                    try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                    alert(msg);
                 }
+            } catch (networkErr) {
+                console.error(networkErr);
+                alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
             }
+        }
+
+        // Genel onay modalı (silme işlemleri için)
+        let _confirmModalCallback = null;
+
+        function openConfirmModal(title, message, onConfirm) {
+            document.getElementById('modal-confirm-title').textContent = title;
+            document.getElementById('modal-confirm-message').textContent = message;
+            _confirmModalCallback = onConfirm;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            _confirmModalCallback = null;
+        }
+
+        function confirmModalOk() {
+            const cb = _confirmModalCallback;
+            closeConfirmModal();
+            if (cb) cb();
+        }
+
+        // Kullanıcı düzenleme modalı
+        let _editUserId = null;
+
+        function openEditUserModal(id, currentName, currentRole) {
+            _editUserId = id;
+            document.getElementById('modal-edit-user-name').value = currentName;
+            document.getElementById('modal-edit-user-role').value = currentRole;
+            document.getElementById('modal-edit-user-password').value = '';
+            document.getElementById('modal-edit-user').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('modal-edit-user').classList.add('hidden');
+            _editUserId = null;
+        }
+
+        async function confirmEditUserModal() {
+            if (!_editUserId) return;
+            const newName = document.getElementById('modal-edit-user-name').value.trim();
+            const newRole = document.getElementById('modal-edit-user-role').value;
+            const newPassword = document.getElementById('modal-edit-user-password').value;
+
+            if (!newName) {
+                alert('Ad Soyad boş olamaz.');
+                return;
+            }
+
+            const payload = { name: newName, role: newRole };
+            if (newPassword) payload.password = newPassword;
+
+            try {
+                const res = await fetch(`/api/users/${_editUserId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    closeEditUserModal();
+                    showToast('Kullanıcı güncellendi!');
+                    await loadUsers();
+                } else {
+                    let msg = 'Kullanıcı güncellenemedi!';
+                    try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                    alert(msg);
+                }
+            } catch (networkErr) {
+                console.error(networkErr);
+                alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+            }
+        }
+
+        async function promptAddNewDate() {
+            // Geriye dönük uyumluluk için: artık modal kullanılıyor (openAddDateModal)
+            openAddDateModal();
         }
 
         function switchTab(tabId) {
@@ -2080,11 +2254,20 @@
         }
 
         async function deleteMachine(id) {
-            if (confirm('Bu makineyi silmek istediğinizden emin misiniz?')) {
-                await fetch(`/api/machines/${id}`, { method: 'DELETE', headers: { 'X-Username': currentUser?.username || '' } });
-                showToast("Makine silindi!");
-                loadSettings();
-            }
+            openConfirmModal(
+                'Makineyi Sil',
+                'Bu makineyi silmek istediğinizden emin misiniz?',
+                async () => {
+                    try {
+                        await fetch(`/api/machines/${id}`, { method: 'DELETE', headers: { 'X-Username': currentUser?.username || '' } });
+                        showToast("Makine silindi!");
+                        loadSettings();
+                    } catch (networkErr) {
+                        console.error(networkErr);
+                        alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+                    }
+                }
+            );
         }
 
         async function handleAddProduct(e) {
@@ -2225,77 +2408,71 @@
 
         async function handleAddUser(e) {
             e.preventDefault();
-            const username = document.getElementById('new-user-username').value;
-            const name = document.getElementById('new-user-name').value;
+            const username = document.getElementById('new-user-username').value.trim();
+            const name = document.getElementById('new-user-name').value.trim();
             const password = document.getElementById('new-user-password').value;
             const role = document.getElementById('new-user-role').value;
 
-            const res = await fetch('/api/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, name, password, role })
-            });
+            if (!username || !name || !password) {
+                alert('Lütfen tüm alanları doldurun (Kullanıcı Adı, Ad Soyad, Şifre).');
+                return;
+            }
 
-            if (res.ok) {
-                document.getElementById('new-user-username').value = '';
-                document.getElementById('new-user-name').value = '';
-                document.getElementById('new-user-password').value = '';
-                showToast(`Yeni kullanıcı (${name}) sisteme kaydedildi!`);
-                loadUsers();
-            } else {
-                const err = await res.json();
-                alert(err.detail || 'Kullanıcı eklenemedi!');
+            try {
+                const res = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify({ username, name, password, role })
+                });
+
+                if (res.ok) {
+                    document.getElementById('new-user-username').value = '';
+                    document.getElementById('new-user-name').value = '';
+                    document.getElementById('new-user-password').value = '';
+                    showToast(`Yeni kullanıcı (${name}) sisteme kaydedildi!`);
+                    await loadUsers();
+                } else {
+                    let msg = 'Kullanıcı eklenemedi!';
+                    try {
+                        const err = await res.json();
+                        msg = err.detail || msg;
+                    } catch (parseErr) { /* yanıt JSON değilse varsayılan mesaj kullanılır */ }
+                    alert(msg);
+                }
+            } catch (networkErr) {
+                console.error(networkErr);
+                alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
             }
         }
 
         async function deleteUser(id) {
-            if (confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
-                const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    showToast("Kullanıcı silindi!");
-                    loadUsers();
-                } else {
-                    const err = await res.json();
-                    alert(err.detail || 'Kullanıcı silinemedi!');
+            openConfirmModal(
+                'Kullanıcıyı Sil',
+                'Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+                async () => {
+                    try {
+                        const res = await fetch(`/api/users/${id}`, {
+                            method: 'DELETE',
+                            headers: { 'X-Username': currentUser?.username || '' }
+                        });
+                        if (res.ok) {
+                            showToast("Kullanıcı silindi!");
+                            await loadUsers();
+                        } else {
+                            let msg = 'Kullanıcı silinemedi!';
+                            try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                            alert(msg);
+                        }
+                    } catch (networkErr) {
+                        console.error(networkErr);
+                        alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+                    }
                 }
-            }
+            );
         }
 
         async function promptUpdateUser(id, currentName, currentRole) {
-            const newName = prompt("Kullanıcı adı/soyadı güncelleyin:", currentName);
-            if (newName === null) return;
-            
-            const newRole = prompt("Rolü güncelleyin ('admin', 'operator' veya 'viewer'/salt okunur):", currentRole);
-            if (newRole === null) return;
-            
-            if (newRole !== 'admin' && newRole !== 'operator' && newRole !== 'viewer') {
-                alert("Geçersiz rol! Sadece 'admin', 'operator' veya 'viewer' olmalıdır.");
-                return;
-            }
-            
-            const newPassword = prompt("Yeni şifre (Değiştirmek istemiyorsanız boş bırakın):", "");
-            
-            const payload = {
-                name: newName,
-                role: newRole
-            };
-            if (newPassword) {
-                payload.password = newPassword;
-            }
-
-            const res = await fetch(`/api/users/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                showToast("Kullanıcı bilgileri güncellendi!");
-                loadUsers();
-            } else {
-                const err = await res.json();
-                alert(err.detail || 'Kullanıcı güncellenemedi!');
-            }
+            openEditUserModal(id, currentName, currentRole);
         }
     </script>
 </body>

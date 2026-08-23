@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import json
 import os
+import re
 import math
 import openpyxl
 from io import BytesIO
@@ -589,13 +590,29 @@ def get_users():
     return [{"id": u["id"], "username": u["username"], "role": u["role"], "name": u["name"]} for u in users_data["users"]]
 
 @app.post("/api/users")
-def create_user(user: UserCreate):
+def create_user(user: UserCreate, x_username: Optional[str] = Header(None)):
     users_data = load_users()
+
+    # Sadece 'admin' rolündeki kullanıcılar yeni kullanıcı ekleyebilir
+    if x_username:
+        acting_user = next((u for u in users_data["users"] if u.get("username") == x_username), None)
+        if acting_user and acting_user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Kullanıcı eklemek için yönetici (admin) yetkisi gereklidir.")
+
     # Check if username already exists
     for u in users_data["users"]:
         if u["username"] == user.username:
             raise HTTPException(status_code=400, detail="Bu kullanıcı adı zaten mevcut!")
-    new_id = f"u{len(users_data['users']) + 1}_{user.username[:3]}"
+
+    # ID çakışmasını önlemek için mevcut en yüksek numaradan devam et (silme sonrası sayıya dayalı çakışma riskini ortadan kaldırır)
+    existing_nums = []
+    for u in users_data["users"]:
+        m = re.match(r"^u(\d+)", u.get("id", ""))
+        if m:
+            existing_nums.append(int(m.group(1)))
+    next_num = (max(existing_nums) + 1) if existing_nums else 1
+    new_id = f"u{next_num}_{user.username[:3]}"
+
     new_user = {
         "id": new_id,
         "username": user.username,
@@ -608,8 +625,14 @@ def create_user(user: UserCreate):
     return {"status": "success", "id": new_id}
 
 @app.delete("/api/users/{user_id}")
-def delete_user(user_id: str):
+def delete_user(user_id: str, x_username: Optional[str] = Header(None)):
     users_data = load_users()
+
+    if x_username:
+        acting_user = next((u for u in users_data["users"] if u.get("username") == x_username), None)
+        if acting_user and acting_user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Kullanıcı silmek için yönetici (admin) yetkisi gereklidir.")
+
     if user_id == "u1":
         raise HTTPException(status_code=400, detail="Admin kullanıcısı silinemez!")
     users_data["users"] = [u for u in users_data["users"] if u["id"] != user_id]
@@ -617,8 +640,14 @@ def delete_user(user_id: str):
     return {"status": "success"}
 
 @app.put("/api/users/{user_id}")
-def update_user(user_id: str, update: UserUpdate):
+def update_user(user_id: str, update: UserUpdate, x_username: Optional[str] = Header(None)):
     users_data = load_users()
+
+    if x_username:
+        acting_user = next((u for u in users_data["users"] if u.get("username") == x_username), None)
+        if acting_user and acting_user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Kullanıcı güncellemek için yönetici (admin) yetkisi gereklidir.")
+
     for u in users_data["users"]:
         if u["id"] == user_id:
             if update.password:

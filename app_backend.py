@@ -221,6 +221,25 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
     }
 
 
+def get_day_category_qty(day_obj):
+    """Bir günün ham üretim adetlerini kategori bazında döndürür (pervaz, kasa, seren, levha).
+    Kapı devir zincirinde (gün gün kümülatif aktarım) kullanılır."""
+    qty = {"pervaz": 0.0, "kasa": 0.0, "seren": 0.0, "levha": 0.0}
+    for shift in ["gunduz", "gece"]:
+        for item in day_obj.get(shift, {}).get("extruders", []):
+            p_name = item.get("product", "").lower()
+            q = item.get("qty", 0)
+            if "pervaz" in p_name:
+                qty["pervaz"] += q
+            elif "kasa" in p_name:
+                qty["kasa"] += q
+            elif "seren" in p_name:
+                qty["seren"] += q
+        for item in day_obj.get(shift, {}).get("levha", []):
+            qty["levha"] += item.get("qty", 0)
+    return qty
+
+
 @app.get("/api/dashboard")
 def get_dashboard_summary():
     data = load_data()
@@ -235,6 +254,11 @@ def get_dashboard_summary():
 
     daily_chart = []
     sorted_keys = sorted(data["daily_data"].keys(), key=lambda k: int(k) if k.isdigit() else 999)
+
+    # Kapı kapasitesi DEVİR ZİNCİRİ: bir günün fazlası, sıradaki güne (kronolojik
+    # sırada) taşınır. Kategori bazında koşan (running) bakiye.
+    door_req = {"pervaz": 5.0, "kasa": 2.5, "seren": 3.5, "levha": 2.0}
+    running_carryover = {"pervaz": 0.0, "kasa": 0.0, "seren": 0.0, "levha": 0.0}
 
     for d_str in sorted_keys:
         day_obj = data["daily_data"][d_str]
@@ -364,8 +388,34 @@ def get_dashboard_summary():
             key=lambda x: x["fire_kg"], reverse=True
         )
 
-        # Bu güne özel kapı kapasitesi/reçete eşdeğeri hesabı
-        day_door_stats = compute_door_capacity(data, filter_date_keys=[d_str])
+        # Bu güne özel kapı kapasitesi/reçete eşdeğeri hesabı — DEVİR ZİNCİRİ:
+        # önceki günden gelen fazlalık (running_carryover) bugünün üretimine eklenir,
+        # tamamlanan kapılar düşüldükten sonra kalan fazlalık bir sonraki güne aktarılır.
+        today_qty = get_day_category_qty(day_obj)
+        available = {cat: running_carryover[cat] + today_qty[cat] for cat in door_req}
+        eq = {cat: (available[cat] / door_req[cat] if door_req[cat] else 0) for cat in door_req}
+        has_any = any(available[cat] > 0 for cat in door_req)
+        day_completable_doors = math.floor(min(eq.values())) if has_any else 0
+        used = {cat: day_completable_doors * door_req[cat] for cat in door_req}
+        carryover_out = {cat: available[cat] - used[cat] for cat in door_req}
+
+        day_door_stats = {
+            "completable_doors": day_completable_doors,
+            "details": {
+                cat: {
+                    "produced": today_qty[cat],
+                    "carryover_in": round(running_carryover[cat], 2),
+                    "available": round(available[cat], 2),
+                    "req_per_door": door_req[cat],
+                    "door_eq": round(eq[cat], 2),
+                    "used": used[cat],
+                    "carryover": round(carryover_out[cat], 2)
+                } for cat in door_req
+            }
+        }
+
+        # Bir sonraki güne devret
+        running_carryover = carryover_out
 
         # Bu güne özel verimlilik metrikleri
         day_kg_per_employee = round((day_prod_kg / day_emp), 2) if day_emp > 0 else 0

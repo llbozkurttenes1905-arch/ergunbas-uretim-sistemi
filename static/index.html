@@ -344,17 +344,19 @@
                 <!-- Kapı Kapasitesi / Reçete Eşdeğeri -->
                 <div class="mb-5">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <i data-lucide="door-open" class="w-4 h-4 text-emerald-500"></i> Kapı Kapasitesi (Reçete Eşdeğeri)
+                        <i data-lucide="door-open" class="w-4 h-4 text-emerald-500"></i> Kapı Kapasitesi (Reçete Eşdeğeri) — Devir Zinciri Dahil
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-950/60 text-slate-400 uppercase tracking-wider">
                                 <tr>
                                     <th class="p-2">Kategori</th>
-                                    <th class="p-2 text-right">Üretilen Adet</th>
+                                    <th class="p-2 text-right">Dünden Devir</th>
+                                    <th class="p-2 text-right">Bugünkü Üretim</th>
+                                    <th class="p-2 text-right">Toplam Havuz</th>
                                     <th class="p-2 text-right">Reçete Katsayısı</th>
                                     <th class="p-2 text-right">Kapı Eşdeğeri</th>
-                                    <th class="p-2 text-right">Devir (Fazla)</th>
+                                    <th class="p-2 text-right">Yarına Devir</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-day-doors-tbody" class="divide-y divide-slate-800"></tbody>
@@ -1394,7 +1396,7 @@
             };
             shiftsEl.innerHTML = shiftCard('Gündüz Vardiyası', 'sun', 'text-yellow-400', day.shifts.gunduz) + shiftCard('Gece Vardiyası', 'moon', 'text-indigo-400', day.shifts.gece);
 
-            // Kapı kapasitesi tablosu (Formül: Kapı Eşdeğeri = Üretim Adedi / Reçete Katsayısı)
+            // Kapı kapasitesi tablosu (Formül: Kapı Eşdeğeri = (Dünden Devir + Bugünkü Üretim) / Reçete Katsayısı)
             const doorLabels = { pervaz: 'Pervaz', kasa: 'Kasa', seren: 'Seren', levha: 'Levha' };
             doorsCompletable.textContent = day.door_stats.completable_doors;
             doorsBody.innerHTML = Object.keys(doorLabels).map(k => {
@@ -1402,10 +1404,12 @@
                 return `
                 <tr class="hover:bg-slate-800/40 transition">
                     <td class="p-2 font-bold text-white">${doorLabels[k]}</td>
+                    <td class="p-2 text-right ${d.carryover_in > 0 ? 'text-sky-400 font-semibold' : 'text-slate-500'}">${d.carryover_in.toLocaleString('tr-TR')}</td>
                     <td class="p-2 text-right">${d.produced.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-right font-semibold text-white">${d.available.toLocaleString('tr-TR')}</td>
                     <td class="p-2 text-right text-slate-400">${d.req_per_door}</td>
                     <td class="p-2 text-right font-bold text-emerald-400">${d.door_eq}</td>
-                    <td class="p-2 text-right ${d.carryover > 0 ? 'text-sky-400' : 'text-slate-500'}">${d.carryover.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-right ${d.carryover > 0 ? 'text-sky-400 font-semibold' : 'text-slate-500'}">${d.carryover.toLocaleString('tr-TR')}</td>
                 </tr>`;
             }).join('');
 

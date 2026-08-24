@@ -7,6 +7,7 @@ import json
 import os
 import re
 import math
+from datetime import datetime
 import openpyxl
 from io import BytesIO
 
@@ -221,6 +222,26 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
     }
 
 
+def parse_date_label(date_label):
+    """DD.MM.YYYY formatındaki tarih etiketini datetime objesine çevirir. Ayrıştırılamazsa None döner."""
+    try:
+        return datetime.strptime(date_label, "%d.%m.%Y")
+    except (ValueError, TypeError):
+        return None
+
+
+def get_sorted_day_keys(daily_data):
+    """Günleri, kayıt anahtarına değil GERÇEK TAKVİM TARİHİNE göre kronolojik sıraya dizer.
+    Bu sayede günler ay/yıl sınırı olmadan (Ağustos->Eylül->...) ve hangi sırayla
+    eklenmiş olursa olsun her zaman doğru sıralanır."""
+    def sort_key(k):
+        dt = parse_date_label(daily_data.get(k, {}).get("date", ""))
+        if dt:
+            return (0, dt)
+        return (1, int(k) if k.isdigit() else 999999)
+    return sorted(daily_data.keys(), key=sort_key)
+
+
 def get_day_category_qty(day_obj):
     """Bir günün ham üretim adetlerini kategori bazında döndürür (pervaz, kasa, seren, levha).
     Kapı devir zincirinde (gün gün kümülatif aktarım) kullanılır."""
@@ -253,7 +274,7 @@ def get_dashboard_summary():
     fire_reasons_summary = {}
 
     daily_chart = []
-    sorted_keys = sorted(data["daily_data"].keys(), key=lambda k: int(k) if k.isdigit() else 999)
+    sorted_keys = get_sorted_day_keys(data["daily_data"])
 
     # Kapı kapasitesi DEVİR ZİNCİRİ: bir günün fazlası, sıradaki güne (kronolojik
     # sırada) taşınır. Kategori bazında koşan (running) bakiye.
@@ -458,21 +479,24 @@ def get_dashboard_summary():
     if days_with_data:
         latest_day_key = days_with_data[-1]
 
-    # Weekly summary
+    # Weekly summary — AY/YIL SINIRI YOK: kronolojik sıradaki günler 7'şerli gruplara
+    # ayrılır (takvim ayına göre sabit aralıklar yerine). Böylece Ağustos bittiğinde
+    # Eylül (ve sonrası) günleri de sorunsuz şekilde haftalara dahil olur.
     weekly_summary = []
-    weeks = [
-        {"name": "1. Hafta (1 - 7 Ağu)", "range": range(1, 8)},
-        {"name": "2. Hafta (8 - 14 Ağu)", "range": range(8, 15)},
-        {"name": "3. Hafta (15 - 21 Ağu)", "range": range(15, 22)},
-        {"name": "4. Hafta (22 - 28 Ağu)", "range": range(22, 29)},
-        {"name": "5. Hafta (29 - 31 Ağu+)", "range": range(29, 32)},
-    ]
+    chunk_size = 7
+    for i in range(0, len(sorted_keys), chunk_size):
+        w_keys = sorted_keys[i:i + chunk_size]
+        if not w_keys:
+            continue
 
-    for w in weeks:
+        week_num = (i // chunk_size) + 1
+        first_label = data["daily_data"][w_keys[0]].get("date", w_keys[0])
+        last_label = data["daily_data"][w_keys[-1]].get("date", w_keys[-1])
+        w_name = f"{week_num}. Hafta ({first_label} - {last_label})" if first_label != last_label else f"{week_num}. Hafta ({first_label})"
+
         w_prod = 0.0
         w_fire = 0.0
         w_emp = 0
-        w_keys = [str(d) for d in w["range"] if str(d) in data["daily_data"]]
 
         for k in w_keys:
             d_obj = data["daily_data"][k]
@@ -489,7 +513,7 @@ def get_dashboard_summary():
         w_door_stats = compute_door_capacity(data, filter_date_keys=w_keys)
 
         weekly_summary.append({
-            "name": w["name"],
+            "name": w_name,
             "keys": w_keys,
             "prod_ton": round(w_prod / 1000.0, 2),
             "fire_ton": round(w_fire / 1000.0, 2),
@@ -855,9 +879,21 @@ def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
     data = load_data()
     date_str = req.date_str.strip()
 
-    key = date_str
-    if date_str.endswith(".08.2026") and date_str[:2].isdigit():
-        key = str(int(date_str[:2]))
+    # Aynı tarih zaten kayıtlıysa mevcut kaydı döndür (tekrar eklemeyi önle)
+    existing_key = None
+    for k, v in data["daily_data"].items():
+        if v.get("date") == date_str:
+            existing_key = k
+            break
+
+    if existing_key:
+        key = existing_key
+    else:
+        # AY/YIL SINIRI YOK: her yeni gün, mevcut en yüksek gün numarasından devam eder.
+        # Böylece Ağustos bittiğinde Eylül (ve sonrası) günleri sorunsuz sıraya eklenir,
+        # kronolojik sıralama ve devir zinciri bozulmadan çalışmaya devam eder.
+        existing_nums = [int(k) for k in data["daily_data"].keys() if k.isdigit()]
+        key = str((max(existing_nums) + 1) if existing_nums else 1)
 
     if key not in data["daily_data"]:
         data["daily_data"][key] = {
@@ -875,7 +911,7 @@ def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
 def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Optional[str] = Header(None)):
     require_daily_operator(x_username)
     data = load_data()
-    date_label = data["daily_data"].get(date_key, {}).get("date") or (f"{int(date_key):02d}.08.2026" if date_key.isdigit() else date_key)
+    date_label = data["daily_data"].get(date_key, {}).get("date") or date_key
 
     data["daily_data"][date_key] = {
         "day": date_key,
@@ -958,7 +994,7 @@ def export_excel():
     ws_summary.append([])
     ws_summary.append(["Tarih Key", "Tarih", "Gündüz Çalışan", "Gece Çalışan", "Toplam Üretim (kg)", "Toplam Fire (kg)", "Fire Oranı (%)"])
 
-    sorted_keys = sorted(data["daily_data"].keys(), key=lambda k: int(k) if k.isdigit() else 999)
+    sorted_keys = get_sorted_day_keys(data["daily_data"])
     
     for k in sorted_keys:
         d = data["daily_data"][k]

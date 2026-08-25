@@ -409,7 +409,8 @@ def get_dashboard_summary():
             dm_fire = round(dm["fire_kg"], 2)
             dm_fire_ratio = round((dm_fire / (dm_prod + dm_fire) * 100), 2) if (dm_prod + dm_fire) > 0 else 0
             dm_hours = round(dm.get("hours", 0), 2)
-            dm_kg_per_hour = round((dm_prod / dm_hours), 2) if dm_hours > 0 else 0
+            dm_kg_per_hour_net = round((dm_prod / dm_hours), 2) if dm_hours > 0 else 0
+            dm_kg_per_hour_gross = round(((dm_prod + dm_fire) / dm_hours), 2) if dm_hours > 0 else 0
 
             products_list = sorted(
                 [
@@ -434,7 +435,8 @@ def get_dashboard_summary():
                 "fire_kg": dm_fire,
                 "fire_ratio": dm_fire_ratio,
                 "hours": dm_hours,
-                "kg_per_hour": dm_kg_per_hour
+                "kg_per_hour": dm_kg_per_hour_net,
+                "kg_per_hour_gross": dm_kg_per_hour_gross
             })
         day_machines_list.sort(key=lambda x: x["prod_kg"], reverse=True)
 
@@ -620,7 +622,9 @@ def get_formulas():
         },
         "efficiency_formulas": {
             "kg_per_employee": "Kg / Çalışan = Toplam Üretim (kg) / Vardiyadaki Çalışan Sayısı",
-            "kg_per_hour": "Üretim Hızı (kg/saat) = Toplam Üretim (kg) / Vardiya Saati"
+            "kg_per_hour_net": "Net Verimlilik (kg/saat) = Sağlam Üretim (kg) / Çalışma Saati — Fire HARİÇ, satılabilir çıktıyı ölçer",
+            "kg_per_hour_gross": "Brüt Verimlilik (kg/saat) = (Sağlam Üretim (kg) + Fire (kg)) / Çalışma Saati — makinenin toplam işlem hızını ölçer, fire DAHİL",
+            "efficiency_note": "İkisi birlikte değerlendirilir: Net verimlilik düşükken Brüt verimlilik yüksekse sorun HIZ değil FIRE'dır (Fire Oranı sütununa bakın). İkisi de düşükse makine hattı gerçekten yavaş çalışıyordur."
         }
     }
 

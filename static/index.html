@@ -381,11 +381,12 @@
                                     <th class="p-2.5 text-right">Üretim (kg)</th>
                                     <th class="p-2.5 text-right">Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
-                                    <th class="p-2.5 text-right">Verimlilik (kg/saat)</th>
+                                    <th class="p-2.5 text-right" title="Sağlam Üretim / Çalışma Saati — fire hariç, satılabilir çıktı hızı">Net Verimlilik (kg/sa)</th>
+                                    <th class="p-2.5 text-right" title="(Üretim + Fire) / Çalışma Saati — fire dahil, makinenin toplam işlem hızı">Brüt Verimlilik (kg/sa)</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-day-machines-tbody" class="divide-y divide-slate-800">
-                                <tr><td colspan="8" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
+                                <tr><td colspan="9" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -900,7 +901,7 @@
 
                     <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
                         <h3 class="text-sm font-extrabold text-purple-400 flex items-center gap-2">
-                            <i data-lucide="trending-up" class="w-4 h-4"></i> Vardiya Performans Formülleri
+                            <i data-lucide="trending-up" class="w-4 h-4"></i> Vardiya ve Hat Bazında Verimlilik Formülleri
                         </h3>
                         <div class="space-y-2 text-xs font-mono text-slate-300">
                             <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
@@ -908,8 +909,22 @@
                                 <code>Kg / Çalışan = Toplam Üretim (kg) / Vardiya Çalışan Sayısı</code>
                             </div>
                             <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-purple-400 font-bold block mb-1">Üretim Hızı (kg/saat):</span>
-                                <code>Üretim Hızı = Toplam Üretim (kg) / Vardiya Çalışma Saati</code>
+                                <span class="text-emerald-400 font-bold block mb-1">Net Verimlilik (kg/saat) — Fire HARİÇ:</span>
+                                <code>Net Verimlilik = Sağlam Üretim (kg) / Çalışma Saati</code>
+                                <p class="text-slate-500 mt-1.5 font-sans normal-case">Satılabilir/kullanılabilir çıktıyı ölçer. Fire'ı hesaba katmaz çünkü fire zaten kayıptır.</p>
+                            </div>
+                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
+                                <span class="text-sky-400 font-bold block mb-1">Brüt Verimlilik (kg/saat) — Fire DAHİL:</span>
+                                <code>Brüt Verimlilik = (Sağlam Üretim (kg) + Fire (kg)) / Çalışma Saati</code>
+                                <p class="text-slate-500 mt-1.5 font-sans normal-case">Makinenin toplam işlem hızını (kapasite kullanımını) ölçer, kaliteden bağımsızdır.</p>
+                            </div>
+                            <div class="p-2.5 bg-amber-950/30 border border-amber-800/40 rounded-xl">
+                                <span class="text-amber-400 font-bold block mb-1">Nasıl Yorumlanır?</span>
+                                <p class="text-slate-400 font-sans normal-case leading-relaxed">
+                                    Net verimlilik düşük ama Brüt verimlilik yüksekse → sorun HIZ değil, <b class="text-amber-300">FIRE'dır</b> (Fire Oranı sütununa bakın).<br>
+                                    İkisi de düşükse → hat gerçekten <b class="text-amber-300">yavaş çalışıyordur</b> (hız/kapasite sorunu).<br>
+                                    İkisi de yüksekse → hat <b class="text-emerald-400">verimli çalışıyordur</b>.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1357,7 +1372,7 @@
                 shiftsEl.innerHTML = '';
                 doorsBody.innerHTML = '';
                 doorsCompletable.textContent = '-';
-                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
                 reasonsBody.innerHTML = '';
                 downtimesBody.innerHTML = '';
                 return;
@@ -1441,7 +1456,7 @@
 
             // Makine / hat bazında kırılım (verimlilik + çalışılan ürünler dahil)
             if (!day.machines || day.machines.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
             } else {
                 tbody.innerHTML = day.machines.map(m => `
                     <tr class="hover:bg-slate-800/40 transition">
@@ -1455,6 +1470,7 @@
                         <td class="p-2.5 text-right font-semibold text-amber-400">${m.fire_kg.toLocaleString('tr-TR')}</td>
                         <td class="p-2.5 text-right font-semibold ${m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${m.fire_ratio}</td>
                         <td class="p-2.5 text-right font-bold ${m.kg_per_hour > 0 ? 'text-emerald-400' : 'text-slate-600'}">${m.kg_per_hour > 0 ? m.kg_per_hour.toLocaleString('tr-TR') : '—'}</td>
+                        <td class="p-2.5 text-right font-bold ${m.kg_per_hour_gross > 0 ? 'text-sky-400' : 'text-slate-600'}">${m.kg_per_hour_gross > 0 ? m.kg_per_hour_gross.toLocaleString('tr-TR') : '—'}</td>
                     </tr>
                 `).join('');
             }

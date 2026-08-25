@@ -365,16 +365,15 @@
                     <p class="text-xs text-slate-500 mt-2">Tamamlanabilir Tam Kapı = <span id="dash-day-doors-completable" class="font-bold text-emerald-400">-</span> adet (en düşük eşdeğere göre)</p>
                 </div>
 
-                <!-- Makine / Hat Bazında Detaylı Kırılım -->
+                <!-- EKSTRÜDER HATLARI - AYRI DETAYLI ÖZET -->
                 <div class="mb-5">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <i data-lucide="factory" class="w-4 h-4 text-sky-500"></i> Makine / Hat Bazında Detaylı Kırılım — Verimlilik ve Çalışılan Ürünler
+                        <i data-lucide="factory" class="w-4 h-4 text-sky-500"></i> Ekstrüder Hatları — Detaylı Özet
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
                                 <tr>
-                                    <th class="p-2.5">Tip</th>
                                     <th class="p-2.5">Hat No</th>
                                     <th class="p-2.5">Çalışılan Ürün(ler) (Adet)</th>
                                     <th class="p-2.5 text-right">Çalışma Süresi</th>
@@ -385,11 +384,47 @@
                                     <th class="p-2.5 text-right" title="(Üretim + Fire) / Çalışma Saati — fire dahil, makinenin toplam işlem hızı">Brüt Verimlilik (kg/sa)</th>
                                 </tr>
                             </thead>
-                            <tbody id="dash-day-machines-tbody" class="divide-y divide-slate-800">
-                                <tr><td colspan="9" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
+                            <tbody id="dash-day-extruder-tbody" class="divide-y divide-slate-800">
+                                <tr><td colspan="8" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
                             </tbody>
+                            <tfoot id="dash-day-extruder-tfoot"></tfoot>
                         </table>
                     </div>
+                </div>
+
+                <!-- LEVHA HATTI - AYRI DETAYLI ÖZET -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4 text-fuchsia-500"></i> Levha Hattı — Detaylı Özet
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Hat No</th>
+                                    <th class="p-2.5">Çalışılan Renk/Model(ler) (Adet)</th>
+                                    <th class="p-2.5 text-right">Çalışma Süresi</th>
+                                    <th class="p-2.5 text-right">Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                    <th class="p-2.5 text-right" title="Sağlam Üretim / Çalışma Saati — fire hariç, satılabilir çıktı hızı">Net Verimlilik (kg/sa)</th>
+                                    <th class="p-2.5 text-right" title="(Üretim + Fire) / Çalışma Saati — fire dahil, makinenin toplam işlem hızı">Brüt Verimlilik (kg/sa)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-day-levha-tbody" class="divide-y divide-slate-800">
+                                <tr><td colspan="8" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
+                            </tbody>
+                            <tfoot id="dash-day-levha-tfoot"></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- GENEL TOPLAM (EKSTRÜDER + LEVHA BİRLEŞİK) -->
+                <div class="mb-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i data-lucide="sigma" class="w-4 h-4 text-ergunbas-500"></i> Genel Toplam (Ekstrüder + Levha Birleşik)
+                    </h3>
+                    <div id="dash-day-combined-total" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
                 </div>
 
                 <!-- Fire / Duruş Sebepleri -->
@@ -1358,7 +1393,11 @@
             const shiftsEl = document.getElementById('dash-day-shifts');
             const doorsBody = document.getElementById('dash-day-doors-tbody');
             const doorsCompletable = document.getElementById('dash-day-doors-completable');
-            const tbody = document.getElementById('dash-day-machines-tbody');
+            const extBody = document.getElementById('dash-day-extruder-tbody');
+            const extFoot = document.getElementById('dash-day-extruder-tfoot');
+            const levBody = document.getElementById('dash-day-levha-tbody');
+            const levFoot = document.getElementById('dash-day-levha-tfoot');
+            const combinedEl = document.getElementById('dash-day-combined-total');
             const reasonsBody = document.getElementById('dash-day-reasons-tbody');
             const downtimesBody = document.getElementById('dash-day-downtimes-tbody');
             if (!sel || !dashboardData || !dashboardData.daily_chart) return;
@@ -1372,7 +1411,11 @@
                 shiftsEl.innerHTML = '';
                 doorsBody.innerHTML = '';
                 doorsCompletable.textContent = '-';
-                tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                extBody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                extFoot.innerHTML = '';
+                levBody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                levFoot.innerHTML = '';
+                combinedEl.innerHTML = '';
                 reasonsBody.innerHTML = '';
                 downtimesBody.innerHTML = '';
                 return;
@@ -1454,15 +1497,15 @@
                 </tr>`;
             }).join('');
 
-            // Makine / hat bazında kırılım (verimlilik + çalışılan ürünler dahil)
-            if (!day.machines || day.machines.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
-            } else {
-                tbody.innerHTML = day.machines.map(m => `
+            // Ekstrüder ve Levha hatlarını AYRI AYRI, kendi alt toplamlarıyla render et
+            const renderTypeTable = (bodyEl, footEl, colorClass, summary, unitLabel) => {
+                if (!summary.machines || summary.machines.length === 0) {
+                    bodyEl.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-500">Bu gün için ${unitLabel} verisi girilmemiş.</td></tr>`;
+                    footEl.innerHTML = '';
+                    return;
+                }
+                bodyEl.innerHTML = summary.machines.map(m => `
                     <tr class="hover:bg-slate-800/40 transition">
-                        <td class="p-2.5">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${m.type === 'Ekstrüder' ? 'bg-sky-600/20 text-sky-400 border border-sky-600/30' : 'bg-fuchsia-600/20 text-fuchsia-400 border border-fuchsia-600/30'}">${m.type}</span>
-                        </td>
                         <td class="p-2.5 font-bold text-white">Hat ${m.hat}</td>
                         <td class="p-2.5 text-slate-300">${m.products}</td>
                         <td class="p-2.5 text-right ${m.hours > 0 ? 'text-slate-300' : 'text-slate-600'}">${m.hours > 0 ? m.hours + ' sa' : '—'}</td>
@@ -1473,7 +1516,47 @@
                         <td class="p-2.5 text-right font-bold ${m.kg_per_hour_gross > 0 ? 'text-sky-400' : 'text-slate-600'}">${m.kg_per_hour_gross > 0 ? m.kg_per_hour_gross.toLocaleString('tr-TR') : '—'}</td>
                     </tr>
                 `).join('');
-            }
+
+                footEl.innerHTML = `
+                    <tr class="bg-slate-950/80 border-t-2 ${colorClass} font-black">
+                        <td class="p-2.5" colspan="2">TOPLAM (${unitLabel})</td>
+                        <td class="p-2.5 text-right text-slate-300">${summary.total_hours} sa</td>
+                        <td class="p-2.5 text-right text-white">${summary.total_prod_kg.toLocaleString('tr-TR')}</td>
+                        <td class="p-2.5 text-right text-amber-400">${summary.total_fire_kg.toLocaleString('tr-TR')}</td>
+                        <td class="p-2.5 text-right text-orange-400">%${summary.fire_ratio}</td>
+                        <td class="p-2.5 text-right text-emerald-400">${summary.kg_per_hour_net > 0 ? summary.kg_per_hour_net.toLocaleString('tr-TR') : '—'}</td>
+                        <td class="p-2.5 text-right text-sky-400">${summary.kg_per_hour_gross > 0 ? summary.kg_per_hour_gross.toLocaleString('tr-TR') : '—'}</td>
+                    </tr>
+                `;
+            };
+
+            renderTypeTable(extBody, extFoot, 'border-sky-600/50', day.extruder_summary, 'Ekstrüder');
+            renderTypeTable(levBody, levFoot, 'border-fuchsia-600/50', day.levha_summary, 'Levha');
+
+            // Genel Toplam (Ekstrüder + Levha birleşik)
+            const cs = day.combined_summary;
+            combinedEl.innerHTML = `
+                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Üretim</span>
+                    <span class="text-lg font-black text-white">${cs.total_prod_kg.toLocaleString('tr-TR')} kg</span>
+                </div>
+                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Fire</span>
+                    <span class="text-lg font-black text-amber-400">${cs.total_fire_kg.toLocaleString('tr-TR')} kg</span>
+                </div>
+                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı</span>
+                    <span class="text-lg font-black text-orange-400">%${cs.fire_ratio}</span>
+                </div>
+                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Net Verimlilik</span>
+                    <span class="text-lg font-black text-emerald-400">${cs.kg_per_hour_net > 0 ? cs.kg_per_hour_net.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span>
+                </div>
+                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Brüt Verimlilik</span>
+                    <span class="text-lg font-black text-sky-400">${cs.kg_per_hour_gross > 0 ? cs.kg_per_hour_gross.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span>
+                </div>
+            `;
 
             // Fire / duruş sebepleri özeti
             if (!day.fire_reasons || day.fire_reasons.length === 0) {

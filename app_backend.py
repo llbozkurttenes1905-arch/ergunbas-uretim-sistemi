@@ -440,6 +440,40 @@ def get_dashboard_summary():
             })
         day_machines_list.sort(key=lambda x: x["prod_kg"], reverse=True)
 
+        # EKSTRÜDER ve LEVHA hatlarını ayrı ayrı grupla, her biri için kendi alt toplamını hesapla
+        def build_type_summary(machines_of_type):
+            t_prod = sum(m["prod_kg"] for m in machines_of_type)
+            t_fire = sum(m["fire_kg"] for m in machines_of_type)
+            t_hours = sum(m["hours"] for m in machines_of_type)
+            t_fire_ratio = round((t_fire / (t_prod + t_fire) * 100), 2) if (t_prod + t_fire) > 0 else 0
+            t_kg_per_hour_net = round((t_prod / t_hours), 2) if t_hours > 0 else 0
+            t_kg_per_hour_gross = round(((t_prod + t_fire) / t_hours), 2) if t_hours > 0 else 0
+            return {
+                "machines": machines_of_type,
+                "total_prod_kg": round(t_prod, 2),
+                "total_fire_kg": round(t_fire, 2),
+                "fire_ratio": t_fire_ratio,
+                "total_hours": round(t_hours, 2),
+                "kg_per_hour_net": t_kg_per_hour_net,
+                "kg_per_hour_gross": t_kg_per_hour_gross
+            }
+
+        day_extruder_summary = build_type_summary([m for m in day_machines_list if m["type"] == "Ekstrüder"])
+        day_levha_summary = build_type_summary([m for m in day_machines_list if m["type"] == "Levha"])
+
+        # Genel toplam (Ekstrüder + Levha) — iki ayrı özetin birleşik sonucu
+        day_combined_summary = {
+            "total_prod_kg": round(day_extruder_summary["total_prod_kg"] + day_levha_summary["total_prod_kg"], 2),
+            "total_fire_kg": round(day_extruder_summary["total_fire_kg"] + day_levha_summary["total_fire_kg"], 2),
+        }
+        _cp = day_combined_summary["total_prod_kg"]
+        _cf = day_combined_summary["total_fire_kg"]
+        day_combined_summary["fire_ratio"] = round((_cf / (_cp + _cf) * 100), 2) if (_cp + _cf) > 0 else 0
+        _ch = round(day_extruder_summary["total_hours"] + day_levha_summary["total_hours"], 2)
+        day_combined_summary["total_hours"] = _ch
+        day_combined_summary["kg_per_hour_net"] = round((_cp / _ch), 2) if _ch > 0 else 0
+        day_combined_summary["kg_per_hour_gross"] = round(((_cp + _cf) / _ch), 2) if _ch > 0 else 0
+
         # Bu güne ait fire/duruş sebepleri kırılımı (fire kg'ye göre çoktan aza)
         day_fire_reasons_list = sorted(
             [{"reason": k, "fire_kg": round(v["fire_kg"], 2), "down_min": round(v["down_min"], 1)} for k, v in day_fire_reasons.items()],
@@ -491,6 +525,9 @@ def get_dashboard_summary():
             "kg_per_employee": day_kg_per_employee,
             "kg_per_hour": day_kg_per_hour,
             "machines": day_machines_list,
+            "extruder_summary": day_extruder_summary,
+            "levha_summary": day_levha_summary,
+            "combined_summary": day_combined_summary,
             "shifts": {
                 "gunduz": {
                     "employees": day_shifts["gunduz"]["employees"],

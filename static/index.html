@@ -419,14 +419,6 @@
                     </div>
                 </div>
 
-                <!-- GENEL TOPLAM (EKSTRÜDER + LEVHA BİRLEŞİK) -->
-                <div class="mb-5">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <i data-lucide="sigma" class="w-4 h-4 text-ergunbas-500"></i> Genel Toplam (Ekstrüder + Levha Birleşik)
-                    </h3>
-                    <div id="dash-day-combined-total" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
-                </div>
-
                 <!-- Fire / Duruş Sebepleri -->
                 <div class="mb-5">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
@@ -1397,7 +1389,6 @@
             const extFoot = document.getElementById('dash-day-extruder-tfoot');
             const levBody = document.getElementById('dash-day-levha-tbody');
             const levFoot = document.getElementById('dash-day-levha-tfoot');
-            const combinedEl = document.getElementById('dash-day-combined-total');
             const reasonsBody = document.getElementById('dash-day-reasons-tbody');
             const downtimesBody = document.getElementById('dash-day-downtimes-tbody');
             if (!sel || !dashboardData || !dashboardData.daily_chart) return;
@@ -1415,7 +1406,6 @@
                 extFoot.innerHTML = '';
                 levBody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
                 levFoot.innerHTML = '';
-                combinedEl.innerHTML = '';
                 reasonsBody.innerHTML = '';
                 downtimesBody.innerHTML = '';
                 return;
@@ -1461,9 +1451,8 @@
                 </div>
             `;
 
-            // Vardiya bazında kırılım (Gündüz / Gece)
+            // Vardiya bazında kırılım (Gündüz / Gece) — detaylı verimlilik dahil
             const shiftCard = (label, icon, color, s) => {
-                const sFireRatio = (s.prod_kg + s.fire_kg) > 0 ? Math.round((s.fire_kg / (s.prod_kg + s.fire_kg)) * 10000) / 100 : 0;
                 return `
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4">
                     <div class="flex items-center gap-2 mb-2.5">
@@ -1471,10 +1460,15 @@
                         <span class="text-sm font-bold text-white">${label}</span>
                         <span class="text-xs text-slate-500 ml-auto">${s.employees} kişi · ${s.hours} sa</span>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="grid grid-cols-3 gap-2 text-center mb-3">
                         <div><span class="text-[10px] text-slate-500 block">Üretim</span><span class="text-sm font-bold text-white">${s.prod_kg.toLocaleString('tr-TR')} kg</span></div>
                         <div><span class="text-[10px] text-slate-500 block">Fire</span><span class="text-sm font-bold text-amber-400">${s.fire_kg.toLocaleString('tr-TR')} kg</span></div>
-                        <div><span class="text-[10px] text-slate-500 block">Fire Oranı</span><span class="text-sm font-bold text-orange-400">%${sFireRatio}</span></div>
+                        <div><span class="text-[10px] text-slate-500 block">Fire Oranı</span><span class="text-sm font-bold text-orange-400">%${s.fire_ratio}</span></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center pt-2.5 border-t border-slate-800">
+                        <div><span class="text-[10px] text-slate-500 block">Kg / Çalışan</span><span class="text-sm font-bold text-purple-400">${s.kg_per_employee > 0 ? s.kg_per_employee.toLocaleString('tr-TR') : '—'}</span></div>
+                        <div><span class="text-[10px] text-slate-500 block">Net Verimlilik</span><span class="text-sm font-bold text-emerald-400">${s.kg_per_hour_net > 0 ? s.kg_per_hour_net.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span></div>
+                        <div><span class="text-[10px] text-slate-500 block">Brüt Verimlilik</span><span class="text-sm font-bold text-sky-400">${s.kg_per_hour_gross > 0 ? s.kg_per_hour_gross.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span></div>
                     </div>
                 </div>`;
             };
@@ -1532,31 +1526,6 @@
 
             renderTypeTable(extBody, extFoot, 'border-sky-600/50', day.extruder_summary, 'Ekstrüder');
             renderTypeTable(levBody, levFoot, 'border-fuchsia-600/50', day.levha_summary, 'Levha');
-
-            // Genel Toplam (Ekstrüder + Levha birleşik)
-            const cs = day.combined_summary;
-            combinedEl.innerHTML = `
-                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Üretim</span>
-                    <span class="text-lg font-black text-white">${cs.total_prod_kg.toLocaleString('tr-TR')} kg</span>
-                </div>
-                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Toplam Fire</span>
-                    <span class="text-lg font-black text-amber-400">${cs.total_fire_kg.toLocaleString('tr-TR')} kg</span>
-                </div>
-                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı</span>
-                    <span class="text-lg font-black text-orange-400">%${cs.fire_ratio}</span>
-                </div>
-                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Net Verimlilik</span>
-                    <span class="text-lg font-black text-emerald-400">${cs.kg_per_hour_net > 0 ? cs.kg_per_hour_net.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span>
-                </div>
-                <div class="bg-ergunbas-950/30 border border-ergunbas-700/40 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Brüt Verimlilik</span>
-                    <span class="text-lg font-black text-sky-400">${cs.kg_per_hour_gross > 0 ? cs.kg_per_hour_gross.toLocaleString('tr-TR') + ' kg/sa' : '—'}</span>
-                </div>
-            `;
 
             // Fire / duruş sebepleri özeti
             if (!day.fire_reasons || day.fire_reasons.length === 0) {

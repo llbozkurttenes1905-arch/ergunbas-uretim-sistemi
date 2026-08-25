@@ -513,6 +513,27 @@ def get_dashboard_summary():
         day_kg_per_employee = round((day_prod_kg / day_emp), 2) if day_emp > 0 else 0
         day_kg_per_hour = round((day_prod_kg / day_hours), 2) if day_hours > 0 else 0
 
+        # Vardiya bazında detaylı verimlilik (Kg/Çalışan, Net + Brüt kg/saat, Fire Oranı)
+        def build_shift_detail(s):
+            s_prod = s["prod_kg"]
+            s_fire = s["fire_kg"]
+            s_emp = s["employees"]
+            s_hours = s["hours"]
+            s_fire_ratio = round((s_fire / (s_prod + s_fire) * 100), 2) if (s_prod + s_fire) > 0 else 0
+            s_kg_per_employee = round((s_prod / s_emp), 2) if s_emp > 0 else 0
+            s_kg_per_hour_net = round((s_prod / s_hours), 2) if s_hours > 0 else 0
+            s_kg_per_hour_gross = round(((s_prod + s_fire) / s_hours), 2) if s_hours > 0 else 0
+            return {
+                "employees": s_emp,
+                "hours": round(s_hours, 2),
+                "prod_kg": round(s_prod, 2),
+                "fire_kg": round(s_fire, 2),
+                "fire_ratio": s_fire_ratio,
+                "kg_per_employee": s_kg_per_employee,
+                "kg_per_hour_net": s_kg_per_hour_net,
+                "kg_per_hour_gross": s_kg_per_hour_gross
+            }
+
         daily_chart.append({
             "key": d_str,
             "date": date_label,
@@ -529,18 +550,8 @@ def get_dashboard_summary():
             "levha_summary": day_levha_summary,
             "combined_summary": day_combined_summary,
             "shifts": {
-                "gunduz": {
-                    "employees": day_shifts["gunduz"]["employees"],
-                    "hours": round(day_shifts["gunduz"]["hours"], 2),
-                    "prod_kg": round(day_shifts["gunduz"]["prod_kg"], 2),
-                    "fire_kg": round(day_shifts["gunduz"]["fire_kg"], 2)
-                },
-                "gece": {
-                    "employees": day_shifts["gece"]["employees"],
-                    "hours": round(day_shifts["gece"]["hours"], 2),
-                    "prod_kg": round(day_shifts["gece"]["prod_kg"], 2),
-                    "fire_kg": round(day_shifts["gece"]["fire_kg"], 2)
-                }
+                "gunduz": build_shift_detail(day_shifts["gunduz"]),
+                "gece": build_shift_detail(day_shifts["gece"])
             },
             "door_stats": day_door_stats,
             "fire_reasons": day_fire_reasons_list,

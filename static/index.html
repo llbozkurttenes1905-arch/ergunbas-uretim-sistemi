@@ -652,6 +652,18 @@
                                 </tr>
                             </thead>
                             <tbody id="tbl-gunduz-lev" class="divide-y divide-slate-800"></tbody>
+                            <tfoot id="tfoot-gunduz-lev">
+                                <tr class="bg-slate-950/80 border-t-2 border-amber-600/40 font-black">
+                                    <td class="p-2.5 text-amber-400" colspan="6">TOPLAM (Tüm Renkler/Modeller Dahil)</td>
+                                    <td class="p-2.5 text-center text-white foot-qty">0</td>
+                                    <td class="p-2.5 text-center text-slate-300 foot-total-m2">0.0</td>
+                                    <td class="p-2.5 text-center text-amber-400 foot-dead-fire">0.0</td>
+                                    <td class="p-2.5 text-center text-ergunbas-500 foot-total-kg">0.0</td>
+                                    <td class="p-2.5 text-center text-amber-400 foot-fire-ratio">%0.0</td>
+                                    <td class="p-2.5 text-center text-emerald-400 foot-sets">0.0</td>
+                                    <td class="p-2.5"></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -737,6 +749,18 @@
                                 </tr>
                             </thead>
                             <tbody id="tbl-gece-lev" class="divide-y divide-slate-800"></tbody>
+                            <tfoot id="tfoot-gece-lev">
+                                <tr class="bg-slate-950/80 border-t-2 border-amber-600/40 font-black">
+                                    <td class="p-2.5 text-amber-400" colspan="6">TOPLAM (Tüm Renkler/Modeller Dahil)</td>
+                                    <td class="p-2.5 text-center text-white foot-qty">0</td>
+                                    <td class="p-2.5 text-center text-slate-300 foot-total-m2">0.0</td>
+                                    <td class="p-2.5 text-center text-amber-400 foot-dead-fire">0.0</td>
+                                    <td class="p-2.5 text-center text-ergunbas-500 foot-total-kg">0.0</td>
+                                    <td class="p-2.5 text-center text-amber-400 foot-fire-ratio">%0.0</td>
+                                    <td class="p-2.5 text-center text-emerald-400 foot-sets">0.0</td>
+                                    <td class="p-2.5"></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -1815,6 +1839,29 @@
             renderDowntimesTable(dayData.downtimes || []);
         }
 
+        function updateLevhaTotals(tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+            const tfoot = document.getElementById(tbodyId.replace('tbl-', 'tfoot-'));
+            if (!tbody || !tfoot) return;
+
+            let sumQty = 0, sumM2 = 0, sumFireKg = 0, sumTotalKg = 0, sumSets = 0;
+            tbody.querySelectorAll('tr').forEach(tr => {
+                sumQty += parseInt(tr.querySelector('.input-qty')?.value) || 0;
+                sumM2 += parseFloat(tr.querySelector('.val-total-m2')?.textContent) || 0;
+                sumFireKg += parseFloat(tr.querySelector('.val-dead-fire-kg')?.textContent) || 0;
+                sumTotalKg += parseFloat(tr.querySelector('.val-total-kg')?.textContent) || 0;
+                sumSets += parseFloat(tr.querySelector('.val-sets')?.textContent) || 0;
+            });
+            const sumRatio = (sumTotalKg + sumFireKg) > 0 ? ((sumFireKg / (sumTotalKg + sumFireKg)) * 100).toFixed(1) : '0.0';
+
+            tfoot.querySelector('.foot-qty').textContent = sumQty.toLocaleString('tr-TR');
+            tfoot.querySelector('.foot-total-m2').textContent = sumM2.toFixed(1);
+            tfoot.querySelector('.foot-dead-fire').textContent = sumFireKg.toFixed(1);
+            tfoot.querySelector('.foot-total-kg').textContent = sumTotalKg.toFixed(1);
+            tfoot.querySelector('.foot-fire-ratio').textContent = `%${sumRatio}`;
+            tfoot.querySelector('.foot-sets').textContent = sumSets.toFixed(1);
+        }
+
         function calcLiveRow(rowEl, type) {
             if (type === 'extruder') {
                 const prodKg = parseFloat(rowEl.querySelector('.input-prod-kg').value) || 0;
@@ -1854,6 +1901,9 @@
                 const ratio = total > 0 ? ((deadFireKg / total) * 100).toFixed(1) : '0.0';
                 rowEl.querySelector('.val-fire-ratio').textContent = `%${ratio}`;
                 rowEl.querySelector('.val-sets').textContent = (qty / 2.0).toFixed(1);
+
+                const tbody = rowEl.closest('tbody');
+                if (tbody) updateLevhaTotals(tbody.id);
             }
         }
 
@@ -2011,7 +2061,7 @@
                     <td class="p-2.5 font-bold text-amber-400 text-xs text-center val-fire-ratio">%${ratio}</td>
                     <td class="p-2.5 font-bold text-emerald-400 text-xs text-center val-sets">${item.sets ? item.sets.toFixed(1) : '-'}</td>
                     <td class="p-2.5 text-center">
-                        <button onclick="this.closest('tr').remove()" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
+                        <button onclick="const _tb=this.closest('tbody').id; this.closest('tr').remove(); updateLevhaTotals(_tb);" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </td>
@@ -2035,12 +2085,14 @@
                 });
             }
             safeCreateIcons();
+            updateLevhaTotals(elementId);
         }
 
         function addLevhaRow(elementId) {
             const tbody = document.getElementById(elementId);
             if (tbody) tbody.insertAdjacentHTML('beforeend', createLevhaRowHtml('Levha 1', {}));
             safeCreateIcons();
+            updateLevhaTotals(elementId);
         }
 
         function renderDowntimesTable(downtimes) {

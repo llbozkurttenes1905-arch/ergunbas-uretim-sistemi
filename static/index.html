@@ -365,10 +365,10 @@
                     <p class="text-xs text-slate-500 mt-2">Tamamlanabilir Tam Kapı = <span id="dash-day-doors-completable" class="font-bold text-emerald-400">-</span> adet (en düşük eşdeğere göre)</p>
                 </div>
 
-                <!-- Makine / Hat Bazında Kırılım -->
+                <!-- Makine / Hat Bazında Detaylı Kırılım -->
                 <div class="mb-5">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <i data-lucide="factory" class="w-4 h-4 text-sky-500"></i> Makine / Hat Bazında Üretim ve Fire
+                        <i data-lucide="factory" class="w-4 h-4 text-sky-500"></i> Makine / Hat Bazında Detaylı Kırılım — Verimlilik ve Çalışılan Ürünler
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-sm">
@@ -376,14 +376,16 @@
                                 <tr>
                                     <th class="p-2.5">Tip</th>
                                     <th class="p-2.5">Hat No</th>
-                                    <th class="p-2.5">Ürün(ler)</th>
+                                    <th class="p-2.5">Çalışılan Ürün(ler) (Adet)</th>
+                                    <th class="p-2.5 text-right">Çalışma Süresi</th>
                                     <th class="p-2.5 text-right">Üretim (kg)</th>
                                     <th class="p-2.5 text-right">Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
+                                    <th class="p-2.5 text-right">Verimlilik (kg/saat)</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-day-machines-tbody" class="divide-y divide-slate-800">
-                                <tr><td colspan="6" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
+                                <tr><td colspan="8" class="p-4 text-center text-slate-500">Yükleniyor...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1355,7 +1357,7 @@
                 shiftsEl.innerHTML = '';
                 doorsBody.innerHTML = '';
                 doorsCompletable.textContent = '-';
-                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>';
                 reasonsBody.innerHTML = '';
                 downtimesBody.innerHTML = '';
                 return;
@@ -1437,9 +1439,9 @@
                 </tr>`;
             }).join('');
 
-            // Makine / hat bazında kırılım
+            // Makine / hat bazında kırılım (verimlilik + çalışılan ürünler dahil)
             if (!day.machines || day.machines.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Bu gün için makine verisi girilmemiş.</td></tr>';
             } else {
                 tbody.innerHTML = day.machines.map(m => `
                     <tr class="hover:bg-slate-800/40 transition">
@@ -1448,9 +1450,11 @@
                         </td>
                         <td class="p-2.5 font-bold text-white">Hat ${m.hat}</td>
                         <td class="p-2.5 text-slate-300">${m.products}</td>
+                        <td class="p-2.5 text-right ${m.hours > 0 ? 'text-slate-300' : 'text-slate-600'}">${m.hours > 0 ? m.hours + ' sa' : '—'}</td>
                         <td class="p-2.5 text-right font-semibold text-white">${m.prod_kg.toLocaleString('tr-TR')}</td>
                         <td class="p-2.5 text-right font-semibold text-amber-400">${m.fire_kg.toLocaleString('tr-TR')}</td>
                         <td class="p-2.5 text-right font-semibold ${m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${m.fire_ratio}</td>
+                        <td class="p-2.5 text-right font-bold ${m.kg_per_hour > 0 ? 'text-emerald-400' : 'text-slate-600'}">${m.kg_per_hour > 0 ? m.kg_per_hour.toLocaleString('tr-TR') : '—'}</td>
                     </tr>
                 `).join('');
             }

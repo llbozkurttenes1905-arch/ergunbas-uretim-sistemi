@@ -308,6 +308,8 @@ def get_dashboard_summary():
                 f_kg = ext.get("fire_kg", 0)
                 h_name = ext.get("hat", "Bilinmeyen Hat")
                 h_product = ext.get("product", "")
+                h_hours = ext.get("hours", 0)
+                h_qty = ext.get("qty", 0)
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
@@ -321,17 +323,23 @@ def get_dashboard_summary():
 
                 dm_key = f"ext_{h_name}"
                 if dm_key not in day_machine_totals:
-                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Ekstrüder", "products": set(), "prod_kg": 0.0, "fire_kg": 0.0}
+                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Ekstrüder", "products": {}, "prod_kg": 0.0, "fire_kg": 0.0, "hours": 0.0}
                 if h_product:
-                    day_machine_totals[dm_key]["products"].add(h_product)
+                    if h_product not in day_machine_totals[dm_key]["products"]:
+                        day_machine_totals[dm_key]["products"][h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    day_machine_totals[dm_key]["products"][h_product]["qty"] += h_qty
+                    day_machine_totals[dm_key]["products"][h_product]["prod_kg"] += p_kg
+                    day_machine_totals[dm_key]["products"][h_product]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["prod_kg"] += p_kg
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
+                day_machine_totals[dm_key]["hours"] += h_hours
 
             for lev in s_data.get("levha", []):
                 p_kg = lev.get("total_kg", 0)
                 f_kg = lev.get("dead_fire_kg", 0)
                 h_name = lev.get("hat", "Levha Hattı")
-                h_product = lev.get("product", "")
+                h_product = lev.get("color", "")  # Levha'da ürün/varyant bilgisi 'color' (Renk/Model) alanında tutulur
+                h_qty = lev.get("qty", 0)
 
                 day_prod_kg += p_kg
                 day_fire_kg += f_kg
@@ -345,11 +353,18 @@ def get_dashboard_summary():
 
                 dm_key = f"lev_{h_name}"
                 if dm_key not in day_machine_totals:
-                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Levha", "products": set(), "prod_kg": 0.0, "fire_kg": 0.0}
+                    # Levha satırlarında ayrı bir çalışma süresi alanı yok; verimlilik hesabında
+                    # o vardiyanın toplam çalışma saati yaklaşık değer olarak kullanılır.
+                    day_machine_totals[dm_key] = {"hat": h_name, "type": "Levha", "products": {}, "prod_kg": 0.0, "fire_kg": 0.0, "hours": 0.0}
                 if h_product:
-                    day_machine_totals[dm_key]["products"].add(h_product)
+                    if h_product not in day_machine_totals[dm_key]["products"]:
+                        day_machine_totals[dm_key]["products"][h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    day_machine_totals[dm_key]["products"][h_product]["qty"] += h_qty
+                    day_machine_totals[dm_key]["products"][h_product]["prod_kg"] += p_kg
+                    day_machine_totals[dm_key]["products"][h_product]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["prod_kg"] += p_kg
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
+                day_machine_totals[dm_key]["hours"] = max(day_machine_totals[dm_key]["hours"], s_hours)
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
@@ -393,13 +408,33 @@ def get_dashboard_summary():
             dm_prod = round(dm["prod_kg"], 2)
             dm_fire = round(dm["fire_kg"], 2)
             dm_fire_ratio = round((dm_fire / (dm_prod + dm_fire) * 100), 2) if (dm_prod + dm_fire) > 0 else 0
+            dm_hours = round(dm.get("hours", 0), 2)
+            dm_kg_per_hour = round((dm_prod / dm_hours), 2) if dm_hours > 0 else 0
+
+            products_list = sorted(
+                [
+                    {
+                        "name": p_name,
+                        "qty": p_info["qty"],
+                        "prod_kg": round(p_info["prod_kg"], 2),
+                        "fire_kg": round(p_info["fire_kg"], 2)
+                    }
+                    for p_name, p_info in dm["products"].items()
+                ],
+                key=lambda x: x["prod_kg"], reverse=True
+            )
+            products_summary = ", ".join(f"{p['name']} ({p['qty']:g} adet)" for p in products_list) if products_list else "-"
+
             day_machines_list.append({
                 "hat": dm["hat"],
                 "type": dm["type"],
-                "products": ", ".join(sorted(dm["products"])) if dm["products"] else "-",
+                "products": products_summary,
+                "products_detail": products_list,
                 "prod_kg": dm_prod,
                 "fire_kg": dm_fire,
-                "fire_ratio": dm_fire_ratio
+                "fire_ratio": dm_fire_ratio,
+                "hours": dm_hours,
+                "kg_per_hour": dm_kg_per_hour
             })
         day_machines_list.sort(key=lambda x: x["prod_kg"], reverse=True)
 

@@ -6826,7 +6826,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 3",
-            "product": "50 x 80 Pervaz(Çiftli)",
+            "product": "50 x 80 Pervaz",
             "length": 2.2,
             "speed": 0.82,
             "heads": 2.0,
@@ -6839,7 +6839,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 4",
-            "product": "Seren 38 mm (Çiftli)",
+            "product": "Seren 38 mm ",
             "length": 2.1,
             "speed": 0.78,
             "heads": 2.0,
@@ -6852,7 +6852,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 5",
-            "product": "Seren 38 mm(Çiftli)",
+            "product": "Seren 38 mm",
             "length": 2.1,
             "speed": 0.65,
             "heads": 2.0,
@@ -6904,13 +6904,13 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 9",
-            "product": "50 x 80 Pervaz(Çiftli)",
+            "product": "50 x 80 Pervaz",
             "length": 2.2,
             "speed": 1.12,
-            "heads": 1.0,
+            "heads": 2.0,
             "hours": 12.0,
             "prod_kg": 831.0,
-            "fire_kg": 0.0,
+            "fire_kg": 135.98,
             "qty": 630,
             "sets": 126.0
           }
@@ -6988,7 +6988,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 3",
-            "product": "50 x 80 Pervaz(Çiftli)",
+            "product": "50 x 80 Pervaz",
             "length": 2.2,
             "speed": 0.8,
             "heads": 2.0,
@@ -7001,7 +7001,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 4",
-            "product": "Seren 38 mm (Çiftli)",
+            "product": "Seren 38 mm ",
             "length": 2.1,
             "speed": 0.78,
             "heads": 2.0,
@@ -7014,7 +7014,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 5",
-            "product": "Seren 38 mm (Çiftli)",
+            "product": "Seren 38 mm ",
             "length": 2.1,
             "speed": 0.65,
             "heads": 2.0,
@@ -7066,7 +7066,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 9",
-            "product": "50 x 80 Pervaz(Çiftli)",
+            "product": "50 x 80 Pervaz",
             "length": 2.2,
             "speed": 1.11,
             "heads": 2.0,

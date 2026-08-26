@@ -412,6 +412,10 @@ def get_dashboard_summary():
     machine_totals = {}
     fire_reasons_summary = {}
 
+    # ÜRÜN/RENK BAZINDA AYLIK (TÜM DÖNEM) TOPLAM — Ekstrüder ürün adına, Levha renk/modeline göre
+    product_totals_ext = {}   # {ürün_adı: {"qty":.., "prod_kg":.., "fire_kg":..}}
+    product_totals_lev = {}   # {renk_adı: {"qty":.., "prod_kg":.., "fire_kg":..}}
+
     daily_chart = []
     sorted_keys = get_sorted_day_keys(data["daily_data"])
 
@@ -473,6 +477,14 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["hours"] += h_hours
 
+                # Aylık/dönemsel ürün bazında toplama (hat farketmeksizin, ürün adına göre)
+                if h_product:
+                    if h_product not in product_totals_ext:
+                        product_totals_ext[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    product_totals_ext[h_product]["qty"] += h_qty
+                    product_totals_ext[h_product]["prod_kg"] += p_kg
+                    product_totals_ext[h_product]["fire_kg"] += f_kg
+
             for lev in s_data.get("levha", []):
                 p_kg = lev.get("total_kg", 0)
                 f_kg = lev.get("dead_fire_kg", 0)
@@ -504,6 +516,14 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["prod_kg"] += p_kg
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["hours"] = max(day_machine_totals[dm_key]["hours"], s_hours)
+
+                # Aylık/dönemsel renk/model bazında toplama (hat farketmeksizin, renk adına göre)
+                if h_product:
+                    if h_product not in product_totals_lev:
+                        product_totals_lev[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    product_totals_lev[h_product]["qty"] += h_qty
+                    product_totals_lev[h_product]["prod_kg"] += p_kg
+                    product_totals_lev[h_product]["fire_kg"] += f_kg
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
@@ -703,6 +723,55 @@ def get_dashboard_summary():
     if days_with_data:
         latest_day_key = days_with_data[-1]
 
+    # ÜRÜN/RENK BAZINDA AYLIK (TÜM DÖNEM) ÖZET — normalize edilmiş ve temizlenmiş
+    def normalize_product_name(raw_name):
+        """Ürün/renk adını gruplama için normalize eder: boşlukları sadeleştirir,
+        rakam+x+rakam kalıplarındaki boşlukları kaldırır (örn '50 x 80' -> '50x80'),
+        büyük/küçük harf farkını yok sayar. Kelime SIRASINI değiştirmez (yanlış
+        birleştirme riskini önlemek için 'Kasa 140 mm' ile '140 mm Kasa' ayrı kalır)."""
+        name = re.sub(r"\s+", " ", raw_name.strip())
+        name = re.sub(r"(\d+)\s*[xX]\s*(\d+)", r"\1x\2", name)
+        return name
+
+    def turkish_fold(s):
+        """Türkçe İ/ı/I harflerini sadeleştirir (standart casefold() bunları farklı
+        karakter sayıp birleştirmiyor, örn 'Kitkat' ile 'KıtKat' aksi halde ayrı kalır)."""
+        s = s.replace("İ", "i").replace("I", "i").replace("ı", "i")
+        return s.casefold()
+
+    def build_product_summary_list(totals_dict):
+        # Önce normalize edilmiş anahtara göre yeniden grupla (aynı ürünün farklı
+        # yazılışlarını birleştir), en sık görülen orijinal yazımı görüntü adı yap
+        grouped = {}
+        for raw_name, v in totals_dict.items():
+            # Gerçek üretimi olmayan (Excel aktarımından kalma boş/placeholder) satırları atla
+            if v["qty"] <= 0 and v["prod_kg"] <= 0 and v["fire_kg"] <= 0:
+                continue
+            norm_key = turkish_fold(normalize_product_name(raw_name))
+            if norm_key not in grouped:
+                grouped[norm_key] = {"display_name": raw_name.strip(), "qty": 0, "prod_kg": 0.0, "fire_kg": 0.0, "_name_votes": {}}
+            g = grouped[norm_key]
+            g["qty"] += v["qty"]
+            g["prod_kg"] += v["prod_kg"]
+            g["fire_kg"] += v["fire_kg"]
+            # En çok üretimi olan yazım varyantını görüntü adı olarak kullan
+            g["_name_votes"][raw_name.strip()] = g["_name_votes"].get(raw_name.strip(), 0.0) + v["prod_kg"]
+
+        result = []
+        for norm_key, g in grouped.items():
+            best_name = max(g["_name_votes"].items(), key=lambda kv: kv[1])[0]
+            p = round(g["prod_kg"], 2)
+            f = round(g["fire_kg"], 2)
+            fr = round((f / (p + f) * 100), 2) if (p + f) > 0 else 0
+            result.append({"name": best_name, "qty": g["qty"], "prod_kg": p, "fire_kg": f, "fire_ratio": fr})
+        result.sort(key=lambda x: x["prod_kg"], reverse=True)
+        return result
+
+    monthly_product_summary = {
+        "extruder": build_product_summary_list(product_totals_ext),
+        "levha": build_product_summary_list(product_totals_lev)
+    }
+
     # Weekly summary — AY/YIL SINIRI YOK: kronolojik sıradaki günler 7'şerli gruplara
     # ayrılır (takvim ayına göre sabit aralıklar yerine). Böylece Ağustos bittiğinde
     # Eylül (ve sonrası) günleri de sorunsuz şekilde haftalara dahil olur.
@@ -777,6 +846,7 @@ def get_dashboard_summary():
         "daily_chart": daily_chart,
         "weekly_summary": weekly_summary,
         "monthly_summary": monthly_summary,
+        "monthly_product_summary": monthly_product_summary,
         "available_dates": [{"key": k, "date": data["daily_data"][k].get("date", k)} for k in sorted_keys],
         "latest_day_key": latest_day_key,
         "machines_count": len(data.get("machines", [])),

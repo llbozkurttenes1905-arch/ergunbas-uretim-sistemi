@@ -555,6 +555,62 @@
                 </div>
             </div>
 
+            <!-- AYLIK ÜRÜN / RENK BAZINDA ÜRETİM (TÜM DÖNEM) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <h2 class="text-base font-bold text-white mb-1 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-500"></i> Aylık Ürün / Renk Bazında Üretim (Tüm Kayıtlı Günler)
+                </h2>
+                <p class="text-xs text-slate-500 mb-4">O ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam.</p>
+
+                <!-- Ekstrüder Ürünleri -->
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-sky-400 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri
+                    </h3>
+                    <div class="h-72 mb-4">
+                        <canvas id="chart-monthly-extruder-products"></canvas>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Ürün</th>
+                                    <th class="p-2.5 text-right">Toplam Adet</th>
+                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-monthly-extruder-products" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Levha Renkleri -->
+                <div>
+                    <h3 class="text-sm font-bold text-fuchsia-400 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri
+                    </h3>
+                    <div class="h-72 mb-4">
+                        <canvas id="chart-monthly-levha-colors"></canvas>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Renk / Model</th>
+                                    <th class="p-2.5 text-right">Toplam Adet</th>
+                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-monthly-levha-colors" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Door Component Equivalents Table -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
                 <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
@@ -1095,6 +1151,8 @@
         let productsList = [];
         let prodChart = null;
         let fireChart = null;
+        let extProductChart = null;
+        let levColorChart = null;
 
         function safeCreateIcons() {
             try {
@@ -1664,6 +1722,7 @@
 
                 if (dashboardData.daily_chart) {
                     renderCharts(dashboardData.daily_chart);
+                    renderMonthlyProductCharts();
                 }
                 safeCreateIcons();
             } catch(e) {
@@ -1902,6 +1961,76 @@
                     }
                 });
             }
+        }
+
+        function renderMonthlyProductCharts() {
+            if (typeof Chart === 'undefined' || !dashboardData || !dashboardData.monthly_product_summary) return;
+            const mp = dashboardData.monthly_product_summary;
+
+            const renderTypeChartAndTable = (chartVarSetter, canvasId, tbodyId, items, barColor) => {
+                const labels = items.map(p => p.name);
+                const values = items.map(p => p.prod_kg);
+
+                const canvas = document.getElementById(canvasId);
+                if (canvas) {
+                    const existing = chartVarSetter.get();
+                    if (existing) existing.destroy();
+                    const ctx = canvas.getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Üretim (kg)',
+                                data: values,
+                                backgroundColor: barColor,
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                                y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+                            }
+                        }
+                    });
+                    chartVarSetter.set(chart);
+                }
+
+                const tbody = document.getElementById(tbodyId);
+                if (tbody) {
+                    if (items.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
+                    } else {
+                        tbody.innerHTML = items.map(p => `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-2.5 font-bold text-white">${p.name}</td>
+                                <td class="p-2.5 text-right text-slate-300">${p.qty.toLocaleString('tr-TR')}</td>
+                                <td class="p-2.5 text-right font-semibold text-white">${p.prod_kg.toLocaleString('tr-TR')}</td>
+                                <td class="p-2.5 text-right font-semibold text-amber-400">${p.fire_kg.toLocaleString('tr-TR')}</td>
+                                <td class="p-2.5 text-right font-semibold ${p.fire_ratio > 15 ? 'text-red-400' : (p.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${p.fire_ratio}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            };
+
+            renderTypeChartAndTable(
+                { get: () => extProductChart, set: (c) => { extProductChart = c; } },
+                'chart-monthly-extruder-products', 'tbl-monthly-extruder-products',
+                mp.extruder, '#38bdf8'
+            );
+            renderTypeChartAndTable(
+                { get: () => levColorChart, set: (c) => { levColorChart = c; } },
+                'chart-monthly-levha-colors', 'tbl-monthly-levha-colors',
+                mp.levha, '#e879f9'
+            );
+
+            safeCreateIcons();
         }
 
         async function loadDayData() {

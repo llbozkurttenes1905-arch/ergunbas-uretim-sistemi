@@ -124,11 +124,12 @@
   ],
   "daily_data": {
     "1": {
-      "day": 1,
+      "day": "1",
       "date": "01.08.2026",
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
+        "operator": "",
         "extruders": [
           {
             "row": 9,
@@ -136,11 +137,12 @@
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.17,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 432.0,
             "fire_kg": 96.0,
             "qty": 180,
-            "sets": 36.0,
-            "heads": 1
+            "sets": 36.0
           },
           {
             "row": 11,
@@ -148,11 +150,12 @@
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 936.0,
             "fire_kg": 115.0,
             "qty": 245,
-            "sets": 98.0,
-            "heads": 1
+            "sets": 98.0
           },
           {
             "row": 13,
@@ -160,11 +163,12 @@
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.81,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 770.0,
             "fire_kg": 62.0,
             "qty": 435,
-            "sets": 87.0,
-            "heads": 2
+            "sets": 87.0
           },
           {
             "row": 15,
@@ -172,11 +176,12 @@
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 501.0,
             "fire_kg": 233.0,
             "qty": 140,
-            "sets": 40.0,
-            "heads": 2
+            "sets": 40.0
           },
           {
             "row": 17,
@@ -184,11 +189,12 @@
             "product": "Seren",
             "length": 2.1,
             "speed": 1.24,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 1368.0,
             "fire_kg": 86.0,
             "qty": 400,
-            "sets": 114.2857,
-            "heads": 2
+            "sets": 114.3
           },
           {
             "row": 19,
@@ -196,11 +202,12 @@
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 848.0,
             "fire_kg": 128.0,
             "qty": 165,
-            "sets": 66.0,
-            "heads": 1
+            "sets": 66.0
           },
           {
             "row": 21,
@@ -208,23 +215,25 @@
             "product": "Kitkat",
             "length": 3.7,
             "speed": 0.66,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 920.0,
             "fire_kg": 236.0,
             "qty": 78,
-            "sets": 0.0,
-            "heads": 1
+            "sets": 0
           },
           {
             "row": 22,
             "hat": "",
             "product": "Kitkat (emboslu)",
-            "length": 5,
+            "length": 5.0,
             "speed": 0.66,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 264.0,
             "fire_kg": 0.0,
             "qty": 15,
-            "sets": 0.0,
-            "heads": 1
+            "sets": 0
           },
           {
             "row": 23,
@@ -232,11 +241,12 @@
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 661.0,
             "fire_kg": 185.0,
             "qty": 125,
-            "sets": 50.0,
-            "heads": 1
+            "sets": 50.0
           },
           {
             "row": 25,
@@ -244,11 +254,12 @@
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.46,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 328.0,
             "fire_kg": 44.0,
             "qty": 225,
-            "sets": 45.0,
-            "heads": 2
+            "sets": 45.0
           }
         ],
         "levha": [
@@ -256,37 +267,44 @@
             "row": 37,
             "hat": "Levha 1",
             "color": "D. Budak",
-            "width": 93,
-            "length": 208,
+            "width": 93.0,
+            "length": 208.0,
             "m2_one": 1.9344,
             "qty": 225,
             "total_m2": 435.24,
             "width_fire_cm": 15.0,
             "dead_fire_m2": 70.2,
-            "dead_fire_kg": 171.99,
-            "total_kg": 1066.338,
-            "sets": 112.5
+            "dead_fire_kg": 245.7,
+            "total_kg": 1523.34,
+            "sets": 112.5,
+            "kg_per_m2": 3.5,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 15.0
           },
           {
             "row": 38,
             "hat": "Levha 1",
             "color": "Teak",
-            "width": 84,
-            "length": 211,
+            "width": 84.0,
+            "length": 211.0,
             "m2_one": 1.7724,
             "qty": 240,
             "total_m2": 425.376,
             "width_fire_cm": 24.0,
             "dead_fire_m2": 121.536,
-            "dead_fire_kg": 297.7632,
-            "total_kg": 1042.1712,
-            "sets": 120.0
+            "dead_fire_kg": 425.38,
+            "total_kg": 1488.82,
+            "sets": 120.0,
+            "kg_per_m2": 3.5,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 24.0
           }
         ]
       },
       "gece": {
         "employees": 9,
         "hours": 12.0,
+        "operator": "",
         "extruders": [
           {
             "row": 67,
@@ -294,11 +312,12 @@
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.17,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 434.0,
             "fire_kg": 104.0,
             "qty": 175,
-            "sets": 35.0,
-            "heads": 1
+            "sets": 35.0
           },
           {
             "row": 69,
@@ -306,11 +325,12 @@
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 831.0,
             "fire_kg": 115.0,
             "qty": 216,
-            "sets": 86.4,
-            "heads": 1
+            "sets": 86.4
           },
           {
             "row": 71,
@@ -318,11 +338,12 @@
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.81,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 621.0,
             "fire_kg": 90.0,
             "qty": 370,
-            "sets": 74.0,
-            "heads": 2
+            "sets": 74.0
           },
           {
             "row": 73,
@@ -330,11 +351,12 @@
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 1253.0,
             "fire_kg": 207.0,
             "qty": 357,
-            "sets": 102.0,
-            "heads": 2
+            "sets": 102.0
           },
           {
             "row": 75,
@@ -342,11 +364,12 @@
             "product": "Seren",
             "length": 2.1,
             "speed": 1.24,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 1206.0,
             "fire_kg": 103.0,
             "qty": 360,
-            "sets": 102.8571,
-            "heads": 2
+            "sets": 102.9
           },
           {
             "row": 77,
@@ -354,35 +377,38 @@
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 724.0,
             "fire_kg": 229.0,
             "qty": 142,
-            "sets": 56.8,
-            "heads": 1
+            "sets": 56.8
           },
           {
             "row": 79,
             "hat": "7",
             "product": "Kitkat",
-            "length": 5,
+            "length": 5.0,
             "speed": 0.66,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 1101.0,
             "fire_kg": 0.0,
             "qty": 62,
-            "sets": 0.0,
-            "heads": 1
+            "sets": 0
           },
           {
             "row": 80,
             "hat": "",
             "product": "Kitkat",
-            "length": 4,
+            "length": 4.0,
             "speed": 0.66,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 454.0,
             "fire_kg": 85.0,
             "qty": 32,
-            "sets": 0.0,
-            "heads": 1
+            "sets": 0
           },
           {
             "row": 81,
@@ -390,11 +416,12 @@
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
+            "heads": 1.0,
+            "hours": 0,
             "prod_kg": 1112.0,
             "fire_kg": 109.0,
             "qty": 214,
-            "sets": 85.6,
-            "heads": 1
+            "sets": 85.6
           },
           {
             "row": 83,
@@ -402,11 +429,12 @@
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.46,
+            "heads": 2.0,
+            "hours": 0,
             "prod_kg": 869.0,
             "fire_kg": 106.0,
             "qty": 635,
-            "sets": 127.0,
-            "heads": 2
+            "sets": 127.0
           }
         ],
         "levha": [
@@ -414,15 +442,19 @@
             "row": 95,
             "hat": "Levha 1",
             "color": "Teak",
-            "width": 85,
-            "length": 210,
+            "width": 85.0,
+            "length": 210.0,
             "m2_one": 1.785,
             "qty": 510,
             "total_m2": 910.35,
             "width_fire_cm": 23.0,
-            "dead_fire_kg": 603.5085,
-            "total_kg": 2230.3575,
-            "sets": 255.0
+            "dead_fire_m2": 246.33,
+            "dead_fire_kg": 862.16,
+            "total_kg": 3186.22,
+            "sets": 255.0,
+            "kg_per_m2": 3.5,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 23.0
           }
         ]
       },

@@ -1412,18 +1412,39 @@
             }
 
             // Genel KPI kartları
+            const extP = day.extruder_summary.total_prod_kg;
+            const levP = day.levha_summary.total_prod_kg;
+            const extF = day.extruder_summary.total_fire_kg;
+            const levF = day.levha_summary.total_fire_kg;
+            const extPPct = day.prod_kg > 0 ? Math.round((extP / day.prod_kg) * 1000) / 10 : 0;
+            const levPPct = day.prod_kg > 0 ? Math.round((levP / day.prod_kg) * 1000) / 10 : 0;
+            const extFPct = day.fire_kg > 0 ? Math.round((extF / day.fire_kg) * 1000) / 10 : 0;
+            const levFPct = day.fire_kg > 0 ? Math.round((levF / day.fire_kg) * 1000) / 10 : 0;
+
             summaryEl.innerHTML = `
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
                     <span class="text-[10px] text-slate-400 uppercase font-bold block">Üretim</span>
                     <span class="text-lg font-black text-white">${day.prod_kg.toLocaleString('tr-TR')} kg</span>
+                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+                        <span class="text-sky-400 font-bold">Ekstrüder: ${extP.toLocaleString('tr-TR')} kg (%${extPPct})</span>
+                        <span class="text-fuchsia-400 font-bold">Levha: ${levP.toLocaleString('tr-TR')} kg (%${levPPct})</span>
+                    </div>
                 </div>
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
                     <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire</span>
                     <span class="text-lg font-black text-amber-400">${day.fire_kg.toLocaleString('tr-TR')} kg</span>
+                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+                        <span class="text-sky-400 font-bold">Ekstrüder: ${extF.toLocaleString('tr-TR')} kg (%${extFPct})</span>
+                        <span class="text-fuchsia-400 font-bold">Levha: ${levF.toLocaleString('tr-TR')} kg (%${levFPct})</span>
+                    </div>
                 </div>
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
                     <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı (Formül: Fire/(Üretim+Fire)*100)</span>
                     <span class="text-lg font-black text-orange-400">%${day.fire_ratio}</span>
+                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+                        <span class="text-sky-400 font-bold">Ekstrüder: %${day.extruder_summary.fire_ratio}</span>
+                        <span class="text-fuchsia-400 font-bold">Levha: %${day.levha_summary.fire_ratio}</span>
+                    </div>
                 </div>
                 <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
                     <span class="text-[10px] text-slate-400 uppercase font-bold block">Çalışan / Duruş</span>

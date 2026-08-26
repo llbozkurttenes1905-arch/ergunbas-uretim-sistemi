@@ -7,6 +7,9 @@ import json
 import os
 import re
 import math
+import base64
+import urllib.request
+import urllib.error
 from datetime import datetime
 import openpyxl
 from io import BytesIO
@@ -15,7 +18,116 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(APP_DIR, "data.json")
 USERS_FILE = os.path.join(APP_DIR, "users.json")
 
+# ============================================================================
+# GITHUB TABANLI KALICI DEPOLAMA
+# ============================================================================
+# Render'ın (ve benzer platformların) ücretsiz planlarında yerel disk KALICI
+# DEĞİLDİR: servis her yeniden başladığında (uyku sonrası uyanma, redeploy vb.)
+# yerel dosyalardaki değişiklikler kaybolur. Bunu önlemek için veriyi ayrıca
+# GitHub reposuna (Contents API üzerinden) commit ediyoruz. Böylece:
+#   - Her kayıt işlemi GitHub'da bir commit oluşturuyor (otomatik yedek/geçmiş)
+#   - Servis yeniden başladığında, yerel dosya yerine GitHub'daki EN GÜNCEL
+#     veriyi çekiyoruz, veri kaybı yaşanmıyor
+#   - Üçüncü parti bir veritabanı şirketine ihtiyaç yok, tamamen kendi
+#     GitHub reponuz kullanılıyor
+#
+# Devreye almak için Render'da şu ortam değişkenlerini tanımlayın:
+#   GITHUB_TOKEN  -> "repo" yetkisine sahip bir GitHub Personal Access Token
+#   GITHUB_REPO   -> "kullanici-adi/repo-adi" formatında (örn: llbozkurttenes1905-arch/ergunbas-uretim-sistemi)
+#   GITHUB_BRANCH -> (opsiyonel, varsayılan "main")
+#
+# Bu değişkenler tanımlı değilse sistem otomatik olarak eski (yerel dosya)
+# yöntemine döner, hiçbir şey bozulmaz.
+# ============================================================================
+
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "")
+GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
+GITHUB_API_BASE = "https://api.github.com"
+
+_data_cache = None
+_users_cache = None
+
+
+def _github_enabled():
+    return bool(GITHUB_TOKEN and GITHUB_REPO)
+
+
+def _github_request(method, url, payload=None):
+    """GitHub API'sine düşük seviyeli istek atar. (sonuç_dict, http_status) döner."""
+    data = json.dumps(payload).encode("utf-8") if payload is not None else None
+    req = urllib.request.Request(url, data=data, method=method)
+    req.add_header("Authorization", f"Bearer {GITHUB_TOKEN}")
+    req.add_header("Accept", "application/vnd.github+json")
+    req.add_header("User-Agent", "ergunbas-uretim-sistemi")
+    if data:
+        req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            body = resp.read().decode("utf-8")
+            return (json.loads(body) if body else {}), resp.status
+    except urllib.error.HTTPError as e:
+        try:
+            err_body = json.loads(e.read().decode("utf-8"))
+        except Exception:
+            err_body = {}
+        return err_body, e.code
+    except Exception as e:
+        return {"error": str(e)}, 0
+
+
+def github_get_file(path):
+    """GitHub reposundaki bir dosyanın içeriğini (JSON) ve sha'sını getirir.
+    Dosya yoksa veya GitHub devre dışıysa (None, None) döner."""
+    if not _github_enabled():
+        return None, None
+    url = f"{GITHUB_API_BASE}/repos/{GITHUB_REPO}/contents/{path}?ref={GITHUB_BRANCH}"
+    result, status = _github_request("GET", url)
+    if status == 200 and "content" in result:
+        try:
+            content_str = base64.b64decode(result["content"]).decode("utf-8")
+            return json.loads(content_str), result.get("sha")
+        except Exception as e:
+            print(f"[github_get_file] '{path}' ayrıştırılamadı: {e}")
+            return None, None
+    return None, None
+
+
+def github_put_file(path, data_dict, message):
+    """Bir JSON içeriği GitHub reposuna commit eder (varsa günceller, yoksa oluşturur).
+    Başarılıysa True, değilse False döner. Asla exception fırlatmaz (best-effort)."""
+    if not _github_enabled():
+        return False
+    try:
+        _, sha = github_get_file(path)
+        content_str = json.dumps(data_dict, ensure_ascii=False, indent=2)
+        content_b64 = base64.b64encode(content_str.encode("utf-8")).decode("utf-8")
+        url = f"{GITHUB_API_BASE}/repos/{GITHUB_REPO}/contents/{path}"
+        payload = {"message": message, "content": content_b64, "branch": GITHUB_BRANCH}
+        if sha:
+            payload["sha"] = sha
+        result, status = _github_request("PUT", url, payload)
+        if status not in (200, 201):
+            print(f"[github_put_file] '{path}' commit edilemedi (HTTP {status}): {result}")
+            return False
+        return True
+    except Exception as e:
+        print(f"[github_put_file] '{path}' commit edilirken hata: {e}")
+        return False
+
+
 def load_users():
+    global _users_cache
+    if _users_cache is not None:
+        return _users_cache
+
+    # Önce GitHub'daki (kalıcı) en güncel veriyi çekmeyi dene
+    gh_data, _ = github_get_file("users.json")
+    if gh_data is not None:
+        _users_cache = gh_data
+        return _users_cache
+
+    # GitHub devre dışı/başarısızsa yerel dosyaya düş
     if not os.path.exists(USERS_FILE):
         default_users = {
             "users": [
@@ -26,13 +138,22 @@ def load_users():
         }
         with open(USERS_FILE, "w", encoding="utf-8") as f:
             json.dump(default_users, f, ensure_ascii=False, indent=2)
-        return default_users
+        _users_cache = default_users
+        return _users_cache
+
     with open(USERS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        _users_cache = json.load(f)
+    return _users_cache
+
 
 def save_users(users_data):
+    global _users_cache
+    _users_cache = users_data
+    # Yerel dosyaya da yaz (aynı process içinde hızlı erişim + GitHub başarısız olursa yedek)
     with open(USERS_FILE, "w", encoding="utf-8") as f:
         json.dump(users_data, f, ensure_ascii=False, indent=2)
+    # Kalıcı depolama: GitHub'a commit et
+    github_put_file("users.json", users_data, "Kullanıcı verisi güncellendi (otomatik)")
 
 def require_editor(x_username: Optional[str]):
     """Sadece 'admin' veya 'operator' rolündeki kullanıcılar veri girişi/düzenleme yapabilir.
@@ -62,14 +183,32 @@ def require_daily_operator(x_username: Optional[str]):
 app = FastAPI(title="ERGUNBAS Group Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
 def load_data():
+    global _data_cache
+    if _data_cache is not None:
+        return _data_cache
+
+    # Önce GitHub'daki (kalıcı) en güncel veriyi çekmeyi dene
+    gh_data, _ = github_get_file("data.json")
+    if gh_data is not None:
+        _data_cache = gh_data
+        return _data_cache
+
+    # GitHub devre dışı/başarısızsa yerel dosyaya düş
     if not os.path.exists(DATA_FILE):
-        return {"machines": [], "products": [], "daily_data": {}}
+        _data_cache = {"machines": [], "products": [], "daily_data": {}}
+        return _data_cache
     with open(DATA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        _data_cache = json.load(f)
+    return _data_cache
 
 def save_data(data):
+    global _data_cache
+    _data_cache = data
+    # Yerel dosyaya da yaz (aynı process içinde hızlı erişim + GitHub başarısız olursa yedek)
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    # Kalıcı depolama: GitHub'a commit et
+    github_put_file("data.json", data, "Üretim verisi güncellendi (otomatik)")
 
 # Models
 class MachineCreate(BaseModel):

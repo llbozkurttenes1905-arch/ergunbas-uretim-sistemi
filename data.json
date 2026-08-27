@@ -138,6 +138,12 @@
       "name": "Antrasit",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_13",
+      "name": "Sonomo",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

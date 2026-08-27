@@ -150,6 +150,12 @@
       "name": "Coco",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_15",
+      "name": "Mauron",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

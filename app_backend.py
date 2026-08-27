@@ -8,6 +8,7 @@ import os
 import re
 import math
 import base64
+import hashlib
 import urllib.request
 import urllib.error
 from datetime import datetime
@@ -44,6 +45,14 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "")
 GITHUB_BRANCH = os.environ.get("GITHUB_BRANCH", "main")
 GITHUB_API_BASE = "https://api.github.com"
+
+def parse_date_label(date_label):
+    """DD.MM.YYYY formatındaki tarih etiketini datetime objesine çevirir. Ayrıştırılamazsa None döner."""
+    try:
+        return datetime.strptime(date_label, "%d.%m.%Y")
+    except (ValueError, TypeError):
+        return None
+
 
 _data_cache = None
 _users_cache = None
@@ -182,18 +191,88 @@ def require_daily_operator(x_username: Optional[str]):
 
 app = FastAPI(title="ERGUNBAS Group Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
+# ============================================================================
+# AY BAZINDA BÖLÜNMÜŞ DEPOLAMA (GitHub Contents API 1MB dosya sınırını aşmamak için)
+# ============================================================================
+# GitHub'ın "Contents API"si tek bir dosyayı 1MB'ı geçtiğinde okuyamıyor (içerik
+# alanı boş dönüyor). Tüm üretim verisini TEK bir data.json dosyasında tutmak,
+# zamanla (günlük ~6-7KB büyüme ile) bu sınıra çarpar. Bunu önlemek için veri şu
+# şekilde ayrı dosyalara bölünmüş durumda:
+#   - data_core.json           -> makineler + ürünler (küçük, nadiren değişir)
+#   - data_days_index.json     -> hangi ay dosyalarının mevcut olduğunun listesi
+#   - data_days_YYYY-MM.json   -> sadece o aya ait günlük veriler (her ay yeni,
+#                                  küçük bir dosya; tek bir ay ASLA 1MB'a yaklaşmaz)
+#
+# load_data() bu parçaları birleştirip her zamanki gibi tek bir {"machines":...,
+# "products":..., "daily_data":...} sözlüğü döndürür; geri kalan tüm kod
+# (endpoint'ler) hiçbir değişiklik gerektirmeden aynı şekilde çalışmaya devam eder.
+# Eski tek-dosyalı "data.json" formatı hâlâ okunabiliyor (geriye dönük uyumluluk /
+# ilk geçiş) — yeni format bulunamazsa ona düşülür.
+# ============================================================================
+
+CORE_FILE_NAME = "data_core.json"
+INDEX_FILE_NAME = "data_days_index.json"
+
+# Bir önceki save_data çağrısında GitHub'a yazılan içeriklerin hash'leri.
+# Değişmeyen ay dosyalarını gereksiz yere tekrar tekrar GitHub'a yazmamak
+# (ve her kayıt işlemini yavaşlatmamak) için kullanılır.
+_last_synced_hashes = {}
+
+
+def _month_key_for_day(day_obj):
+    """Bir günün 'date' alanından (DD.MM.YYYY) 'YYYY-MM' ay anahtarını üretir.
+    Ayrıştırılamazsa 'bilinmeyen' döner (veri kaybolmaz, ayrı bir dosyaya düşer)."""
+    dt = parse_date_label(day_obj.get("date", ""))
+    if dt:
+        return f"{dt.year:04d}-{dt.month:02d}"
+    return "bilinmeyen"
+
+
+def _days_filename(month_key):
+    return f"data_days_{month_key}.json"
+
+
+def _content_hash(obj):
+    return hashlib.md5(json.dumps(obj, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+
+
 def load_data():
-    global _data_cache
+    global _data_cache, _last_synced_hashes
     if _data_cache is not None:
         return _data_cache
 
-    # Önce GitHub'daki (kalıcı) en güncel veriyi çekmeyi dene
-    gh_data, _ = github_get_file("data.json")
-    if gh_data is not None:
-        _data_cache = gh_data
-        return _data_cache
+    if _github_enabled():
+        core, _ = github_get_file(CORE_FILE_NAME)
+        index, _ = github_get_file(INDEX_FILE_NAME)
 
-    # GitHub devre dışı/başarısızsa yerel dosyaya düş
+        if core is not None:
+            # YENİ (bölünmüş) format bulundu
+            daily_data = {}
+            hashes = {"__core__": _content_hash(core)}
+            month_keys = (index or {}).get("months", [])
+            for mk in month_keys:
+                month_payload, _ = github_get_file(_days_filename(mk))
+                if month_payload:
+                    days = month_payload.get("days", {})
+                    daily_data.update(days)
+                    hashes[mk] = _content_hash(days)
+            hashes["__index__"] = sorted(month_keys)
+            _last_synced_hashes = hashes
+
+            _data_cache = {
+                "machines": core.get("machines", []),
+                "products": core.get("products", []),
+                "daily_data": daily_data
+            }
+            return _data_cache
+
+        # YENİ format henüz yok: ESKİ (tek dosyalı) formatı dene (ilk geçiş / geriye dönük uyumluluk)
+        legacy, _ = github_get_file("data.json")
+        if legacy is not None:
+            _data_cache = legacy
+            return _data_cache
+
+    # GitHub devre dışı/tamamen başarısızsa yerel dosyaya düş
     if not os.path.exists(DATA_FILE):
         _data_cache = {"machines": [], "products": [], "daily_data": {}}
         return _data_cache
@@ -201,14 +280,42 @@ def load_data():
         _data_cache = json.load(f)
     return _data_cache
 
+
 def save_data(data):
-    global _data_cache
+    global _data_cache, _last_synced_hashes
     _data_cache = data
     # Yerel dosyaya da yaz (aynı process içinde hızlı erişim + GitHub başarısız olursa yedek)
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    # Kalıcı depolama: GitHub'a commit et
-    github_put_file("data.json", data, "Üretim verisi güncellendi (otomatik)")
+
+    if not _github_enabled():
+        return
+
+    # 1) Çekirdek veri (makineler + ürünler) — sadece gerçekten değiştiyse yaz
+    core_payload = {"machines": data.get("machines", []), "products": data.get("products", [])}
+    core_hash = _content_hash(core_payload)
+    if _last_synced_hashes.get("__core__") != core_hash:
+        if github_put_file(CORE_FILE_NAME, core_payload, "Çekirdek veri (makine/ürün) güncellendi (otomatik)"):
+            _last_synced_hashes["__core__"] = core_hash
+
+    # 2) Günlük veriyi takvim ayına göre grupla
+    by_month = {}
+    for k, day_obj in data.get("daily_data", {}).items():
+        mk = _month_key_for_day(day_obj)
+        by_month.setdefault(mk, {})[k] = day_obj
+
+    # 3) Sadece İÇERİĞİ DEĞİŞEN ay dosyalarını GitHub'a yaz (gereksiz yazımları önle)
+    for mk, days in by_month.items():
+        days_hash = _content_hash(days)
+        if _last_synced_hashes.get(mk) != days_hash:
+            if github_put_file(_days_filename(mk), {"days": days}, f"{mk} ayı üretim verisi güncellendi (otomatik)"):
+                _last_synced_hashes[mk] = days_hash
+
+    # 4) Ay indeksini güncelle (sadece değiştiyse)
+    month_key_list = sorted(by_month.keys())
+    if _last_synced_hashes.get("__index__") != month_key_list:
+        if github_put_file(INDEX_FILE_NAME, {"months": month_key_list}, "Ay indeksi güncellendi (otomatik)"):
+            _last_synced_hashes["__index__"] = month_key_list
 
 # Models
 class MachineCreate(BaseModel):
@@ -359,14 +466,6 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
             }
         }
     }
-
-
-def parse_date_label(date_label):
-    """DD.MM.YYYY formatındaki tarih etiketini datetime objesine çevirir. Ayrıştırılamazsa None döner."""
-    try:
-        return datetime.strptime(date_label, "%d.%m.%Y")
-    except (ValueError, TypeError):
-        return None
 
 
 def get_sorted_day_keys(daily_data):

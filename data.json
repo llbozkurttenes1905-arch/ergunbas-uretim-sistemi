@@ -205,6 +205,12 @@
       "name": "Kitkat (emboslu) Antrasit",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_25",
+      "name": "35X100 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
     }
   ],
   "daily_data": {

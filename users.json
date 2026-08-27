@@ -27,6 +27,13 @@
       "password": "123456",
       "role": "operator",
       "name": "MEHMET ABUCAK"
+    },
+    {
+      "id": "u6_ÜRE",
+      "username": "ÜRETİM MÜHENDİSİ",
+      "password": "123456",
+      "role": "operator",
+      "name": "üretim mühendisi"
     }
   ]
 }

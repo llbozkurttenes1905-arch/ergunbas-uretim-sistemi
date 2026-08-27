@@ -198,6 +198,12 @@
       "name": "M. B. Teak",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_23",
+      "name": "Kitkat (emboslu) Kahverengi",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ],
   "daily_data": {

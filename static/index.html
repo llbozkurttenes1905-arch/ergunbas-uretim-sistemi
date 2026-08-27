@@ -201,7 +201,9 @@
     </div>
 
     <!-- ERGUNBAS Corporate Header -->
-    <header class="bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4 sticky top-0 z-50 shadow-xl">
+    <header class="overflow-hidden bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4 sticky top-0 z-50 shadow-xl">
+        <!-- Türk Bayrağı Arka Plan (dekoratif, düşük opaklık) -->
+        <div class="absolute inset-0 -z-10 pointer-events-none" style="opacity:0.16; background-size: cover; background-position: center; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 900 600\'><rect width=\'900\' height=\'600\' fill=\'%23E30A17\'/><circle cx=\'337.5\' cy=\'300\' r=\'150\' fill=\'%23ffffff\'/><circle cx=\'387.5\' cy=\'300\' r=\'120\' fill=\'%23E30A17\'/><polygon points=\'0,-42 9.4,-12.94 39.95,-12.98 15.22,4.94 24.69,33.98 0,16 -24.69,33.98 -15.22,4.94 -39.95,-12.98 -9.4,-12.94\' fill=\'%23ffffff\' transform=\'translate(510,300)\'/></svg>');"></div>
         <div class="flex items-center space-x-3 sm:space-x-4 shrink-0">
             <!-- Corporate Logo Embedded as Base64 -->
             <div class="bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex items-center justify-center border border-slate-200 shrink-0">
@@ -686,7 +688,7 @@
                     </h3>
                     <div class="flex items-center space-x-4 text-sm">
                         <div class="flex items-center space-x-2">
-                            <span class="text-slate-400 font-semibold">Sorumlu Operatör:</span>
+                            <span class="text-slate-400 font-semibold">Vardiya Amiri:</span>
                             <select id="gunduz-operator" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-amber-500"></select>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -783,7 +785,7 @@
                     </h3>
                     <div class="flex items-center space-x-4 text-sm">
                         <div class="flex items-center space-x-2">
-                            <span class="text-slate-400 font-semibold">Sorumlu Operatör:</span>
+                            <span class="text-slate-400 font-semibold">Vardiya Amiri:</span>
                             <select id="gece-operator" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-indigo-500"></select>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -1762,11 +1764,30 @@
         }
 
         function jumpToMonth(monthKey) {
+            // 1) Haftalık kartlar + günlük trend grafiği bu aya geçsin
             const sel = document.getElementById('dash-month-select');
-            if (!sel) return;
-            sel.value = monthKey;
-            onDashMonthChange();
-            sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (sel) {
+                sel.value = monthKey;
+                onDashMonthChange();
+            }
+
+            // 2) Aylık ürün bazlı (Ekstrüder / Levha) renk grafikleri de AYNI aya senkronlansın
+            const prodSel = document.getElementById('monthly-product-month-select');
+            if (prodSel) {
+                const hasOption = Array.from(prodSel.options).some(o => o.value === monthKey);
+                if (hasOption) {
+                    prodSel.value = monthKey;
+                    renderMonthlyProductCharts();
+                }
+            }
+
+            // Kullanıcıyı ürün bazlı grafiklerin olduğu bölüme kaydır (en alt/en genel referans noktası)
+            const prodSection = document.getElementById('monthly-product-month-select');
+            if (prodSection) {
+                prodSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (sel) {
+                sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function populateDashMonthSelect() {

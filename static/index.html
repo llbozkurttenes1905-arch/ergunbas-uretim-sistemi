@@ -1222,6 +1222,7 @@
                 }
                 
                 // Load data
+                fetchMachinesAndProducts();
                 fetchDashboardAndDates();
                 loadDashboard();
                 loadUsers(); // Operatör dropdown'larını doldur
@@ -2173,6 +2174,24 @@
             if (setsEl) setsEl.textContent = sets || '-';
         }
 
+        function buildProductOptionsHtml(selectedValue, categoryFilterFn) {
+            // Katalogdan (Ayarlar > Makineler & Ürünler) seçenekleri oluşturur.
+            // Eğer mevcut değer katalogda TAM OLARAK yoksa (eski/tutarsız yazım),
+            // veriyi sessizce kaybetmemek için o değeri de işaretli şekilde ekler.
+            const filtered = productsList.filter(categoryFilterFn);
+            let html = '<option value="">— Seçiniz —</option>';
+            let found = false;
+            filtered.forEach(p => {
+                const isSelected = (p.name === selectedValue);
+                if (isSelected) found = true;
+                html += `<option value="${p.name}" ${isSelected ? 'selected' : ''}>${p.name}</option>`;
+            });
+            if (selectedValue && !found) {
+                html += `<option value="${selectedValue}" selected>⚠️ ${selectedValue} (katalogda yok — Ayarlar'dan ekleyin)</option>`;
+            }
+            return html;
+        }
+
         function createExtruderRowHtml(hatName = '', item = {}) {
             const prodKg  = item.prod_kg || 0;
             const fireKg  = item.fire_kg || 0;
@@ -2180,12 +2199,12 @@
             const ratio   = (prodKg + fireKg) > 0 ? ((fireKg / (prodKg + fireKg)) * 100).toFixed(1) : '0.0';
 
             return `
-                <tr class="hover:bg-slate-900/50" oninput="calcExtruderRow(this)">
+                <tr class="hover:bg-slate-900/50" oninput="calcExtruderRow(this)" onchange="calcExtruderRow(this)">
                     <td class="p-2.5 font-semibold text-white">
                         <input type="text" value="${hatName || item.hat || 'Hat 1'}" class="input-hat-ext bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-28">
                     </td>
                     <td class="p-2.5">
-                        <input type="text" value="${item.product || ''}" class="input-prod-name bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full font-medium" placeholder="Örn: 80X80 Pervaz">
+                        <select class="input-prod-name bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full font-medium">${buildProductOptionsHtml(item.product || '', p => p.category !== 'levha')}</select>
                     </td>
                     <td class="p-2.5">
                         <input type="number" step="0.01" value="${item.length || ''}" class="input-ext-length bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-20 text-center">
@@ -2255,12 +2274,12 @@
             const ratio = (totalKg + deadFireKg) > 0 ? ((deadFireKg / (totalKg + deadFireKg)) * 100).toFixed(1) : '0.0';
 
             return `
-                <tr class="hover:bg-slate-900/50" oninput="calcLiveRow(this, 'levha')">
+                <tr class="hover:bg-slate-900/50" oninput="calcLiveRow(this, 'levha')" onchange="calcLiveRow(this, 'levha')">
                     <td class="p-2.5 font-semibold text-white">
                         <input type="text" value="${hatName || item.hat || 'Levha 1'}" class="input-hat bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-24">
                     </td>
                     <td class="p-2.5">
-                        <input type="text" value="${item.color || ''}" class="input-color bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full" placeholder="Model/Renk">
+                        <select class="input-color bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full">${buildProductOptionsHtml(item.color || '', p => p.category === 'levha')}</select>
                     </td>
                     <td class="p-2.5">
                         <input type="number" value="${item.width || 93}" class="input-width bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-16 text-center">
@@ -2638,6 +2657,7 @@
                         }
                     }
                     
+                    await fetchMachinesAndProducts();
                     await fetchDashboardAndDates();
                     loadDashboard();
                     

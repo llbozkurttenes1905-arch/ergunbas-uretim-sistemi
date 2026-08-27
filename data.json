@@ -46,11 +46,6 @@
       "type": "extruder"
     },
     {
-      "id": "ext_g1",
-      "name": "Ekstrüder Genel 1",
-      "type": "extruder"
-    },
-    {
       "id": "ext_g2",
       "name": "Ekstrüder Genel 2",
       "type": "extruder"

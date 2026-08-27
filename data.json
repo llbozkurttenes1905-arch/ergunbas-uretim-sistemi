@@ -7519,7 +7519,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 1",
-            "product": "80 x 80 Pervaz",
+            "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
             "heads": 1.0,
@@ -7532,7 +7532,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 2",
-            "product": "Kasa 100 mm",
+            "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.82,
             "heads": 1.0,
@@ -7545,7 +7545,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 3",
-            "product": "50 x 80 Pervaz",
+            "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.82,
             "heads": 2.0,
@@ -7558,7 +7558,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 4",
-            "product": "Seren 38 mm ",
+            "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
             "heads": 2.0,
@@ -7571,7 +7571,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 5",
-            "product": "Seren 38 mm",
+            "product": "Seren",
             "length": 2.1,
             "speed": 0.65,
             "heads": 2.0,
@@ -7584,7 +7584,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 6",
-            "product": "Kasa 140 mm",
+            "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
             "heads": 1.0,
@@ -7597,7 +7597,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 7",
-            "product": "Kasa 200 mm",
+            "product": "200 mm Kasa",
             "length": 2.45,
             "speed": 0.67,
             "heads": 1.0,
@@ -7610,7 +7610,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 8",
-            "product": "Kasa 140 mm",
+            "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.6,
             "heads": 1.0,
@@ -7623,7 +7623,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 9",
-            "product": "50 x 80 Pervaz",
+            "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.12,
             "heads": 2.0,
@@ -7681,7 +7681,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 1",
-            "product": "80 x 80 Pervaz",
+            "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
             "heads": 1.0,
@@ -7694,7 +7694,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 2",
-            "product": "Kasa 100 mm",
+            "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.8,
             "heads": 1.0,
@@ -7707,7 +7707,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 3",
-            "product": "50 x 80 Pervaz",
+            "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.8,
             "heads": 2.0,
@@ -7720,7 +7720,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 4",
-            "product": "Seren 38 mm ",
+            "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
             "heads": 2.0,
@@ -7733,7 +7733,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 5",
-            "product": "Seren 38 mm ",
+            "product": "Seren",
             "length": 2.1,
             "speed": 0.65,
             "heads": 2.0,
@@ -7746,7 +7746,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 6",
-            "product": "Kasa 140 mm",
+            "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
             "heads": 1.0,
@@ -7759,7 +7759,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 7",
-            "product": "Kasa 200 mm",
+            "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
             "heads": 1.0,
@@ -7772,7 +7772,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 8",
-            "product": "Kasa 140 mm",
+            "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.6,
             "heads": 1.0,
@@ -7785,7 +7785,7 @@
           {
             "row": 0,
             "hat": "Ekstrüder Hat 9",
-            "product": "50 x 80 Pervaz",
+            "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.11,
             "heads": 2.0,
@@ -7818,7 +7818,7 @@
           {
             "row": 0,
             "hat": "Levha Hattı 1",
-            "color": "Somono",
+            "color": "Sonomo",
             "width": 85.0,
             "length": 210.0,
             "m2_one": 1.785,
@@ -7836,7 +7836,7 @@
           {
             "row": 0,
             "hat": "Levha Hattı 1",
-            "color": "Mix Teak",
+            "color": "M. Teak",
             "width": 85.0,
             "length": 210.0,
             "m2_one": 1.785,

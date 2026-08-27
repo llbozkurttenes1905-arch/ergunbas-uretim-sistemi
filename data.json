@@ -774,9 +774,9 @@
             "row": 0,
             "hat": "Levha Hattı",
             "color": "",
-            "width": 0.0,
-            "length": 0.0,
-            "m2_one": 0.0,
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
             "qty": 0,
             "total_m2": 0.0,
             "width_fire_cm": 0,
@@ -786,7 +786,7 @@
             "sets": 0.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 108.0
+            "en_firesi_cm": 15.0
           },
           {
             "row": 0,
@@ -985,9 +985,9 @@
             "row": 0,
             "hat": "Levha Hattı",
             "color": "",
-            "width": 0.0,
-            "length": 0.0,
-            "m2_one": 0.0,
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
             "qty": 0,
             "total_m2": 0.0,
             "width_fire_cm": 0,
@@ -997,7 +997,7 @@
             "sets": 0.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 108.0
+            "en_firesi_cm": 15.0
           },
           {
             "row": 0,

@@ -204,6 +204,12 @@
       "name": "Kitkat (emboslu) Kahverengi",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_24",
+      "name": "Kitkat (kahverengi)",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ],
   "daily_data": {

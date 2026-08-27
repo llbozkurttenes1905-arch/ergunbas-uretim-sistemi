@@ -376,10 +376,10 @@
             "total_m2": 435.24,
             "width_fire_cm": 0,
             "dead_fire_m2": 70.2,
-            "dead_fire_kg": 245.7,
-            "total_kg": 1523.34,
+            "dead_fire_kg": 171.99,
+            "total_kg": 1066.34,
             "sets": 112.5,
-            "kg_per_m2": 3.5,
+            "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
             "en_firesi_cm": 15.0
           },
@@ -394,10 +394,10 @@
             "total_m2": 425.376,
             "width_fire_cm": 0,
             "dead_fire_m2": 121.536,
-            "dead_fire_kg": 425.38,
-            "total_kg": 1488.82,
+            "dead_fire_kg": 297.76,
+            "total_kg": 1042.17,
             "sets": 120.0,
-            "kg_per_m2": 3.5,
+            "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
             "en_firesi_cm": 24.0
           }

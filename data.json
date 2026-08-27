@@ -144,6 +144,12 @@
       "name": "Sonomo",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_14",
+      "name": "Coco",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

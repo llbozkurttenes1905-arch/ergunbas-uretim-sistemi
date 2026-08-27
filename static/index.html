@@ -230,9 +230,6 @@
                 <button onclick="switchTab('doors')" id="tab-doors" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
                     <i data-lucide="door-open" class="w-4 h-4"></i> Kapı & Stok Takibi
                 </button>
-                <button onclick="switchTab('formulas')" id="tab-formulas" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
-                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-400"></i> Formüller & Mantık
-                </button>
                 <button onclick="switchTab('settings')" id="tab-settings" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
                     <i data-lucide="settings" class="w-4 h-4"></i> Makineler & Ürünler
                 </button>
@@ -932,117 +929,6 @@
         </div>
 
 
-        <!-- TAB 4: FORMÜLLER -->
-        <div id="view-formulas" class="space-y-6 hidden">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                    <div>
-                        <h2 class="text-xl font-black text-white flex items-center gap-2">
-                            <i data-lucide="calculator" class="w-6 h-6 text-emerald-400"></i> Formüller ve Otomatik Hesaplama Mantığı
-                        </h2>
-                        <p class="text-xs text-slate-400 mt-1">Sistemde makineler ve ürünler eklendiğinde çalışan tüm resmi matematiksel formüller</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-                        <h3 class="text-sm font-extrabold text-sky-400 flex items-center gap-2">
-                            <i data-lucide="cpu" class="w-4 h-4"></i> Ekstrüder Hatları Formülleri
-                        </h3>
-                        <div class="space-y-2 text-xs font-mono text-slate-300">
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-amber-400 font-bold block mb-1">Fire Oranı (%):</span>
-                                <code>Fire Oranı (%) = [ Fire (kg) / (Üretim (kg) + Fire (kg)) ] * 100</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Pervaz Takım Sayısı:</span>
-                                <code>Takım Sayısı = Üretim Adedi / 5.0</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Kasa Takım Sayısı:</span>
-                                <code>Takım Sayısı = Üretim Adedi / 2.5</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Seren Takım Sayısı:</span>
-                                <code>Takım Sayısı = Üretim Adedi / 3.5</code>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-                        <h3 class="text-sm font-extrabold text-amber-400 flex items-center gap-2">
-                            <i data-lucide="layers" class="w-4 h-4"></i> Levha Hatları Formülleri
-                        </h3>
-                        <div class="space-y-2 text-xs font-mono text-slate-300">
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-sky-400 font-bold block mb-1">1 Levha m² Hesabı:</span>
-                                <code>1 Levha m² = (En_cm / 100) * (Boy_cm / 100)</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-sky-400 font-bold block mb-1">En Firesi (cm):</span>
-                                <code>En Firesi (cm) = MAX(0, Kalıp Çıkış Eni - En_cm)</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-amber-400 font-bold block mb-1">Ölü Fire (kg):</span>
-                                <code>Ölü Fire (kg) = (En Firesi/100) * (Boy/100) * Aded * (kg/m²)</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Levha Takım Sayısı:</span>
-                                <code>Levha Takım Sayısı = Üretim Adedi / 2.0</code>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-                        <h3 class="text-sm font-extrabold text-emerald-400 flex items-center gap-2">
-                            <i data-lucide="door-open" class="w-4 h-4"></i> Kapı Eşdeğeri ve Stok Devir Formülü
-                        </h3>
-                        <div class="space-y-2 text-xs font-mono text-slate-300">
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Tamamlanabilir Tam Kapı:</span>
-                                <code>Tam Kapı = FLOOR( MIN(Pervaz_Eq, Kasa_Eq, Seren_Eq, Levha_Eq) )</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-amber-400 font-bold block mb-1">Ertesi Güne Kalan Devir Stok:</span>
-                                <code>Ertesi Güne Devir = Toplam Mevcut Adet - (Tam Kapı * Reçete Oranı)</code>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-                        <h3 class="text-sm font-extrabold text-purple-400 flex items-center gap-2">
-                            <i data-lucide="trending-up" class="w-4 h-4"></i> Vardiya ve Hat Bazında Verimlilik Formülleri
-                        </h3>
-                        <div class="space-y-2 text-xs font-mono text-slate-300">
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-purple-400 font-bold block mb-1">Kg / Çalışan Verimliliği:</span>
-                                <code>Kg / Çalışan = Toplam Üretim (kg) / Vardiya Çalışan Sayısı</code>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-emerald-400 font-bold block mb-1">Net Verimlilik (kg/saat) — Fire HARİÇ:</span>
-                                <code>Net Verimlilik = Sağlam Üretim (kg) / Çalışma Saati</code>
-                                <p class="text-slate-500 mt-1.5 font-sans normal-case">Satılabilir/kullanılabilir çıktıyı ölçer. Fire'ı hesaba katmaz çünkü fire zaten kayıptır.</p>
-                            </div>
-                            <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                                <span class="text-sky-400 font-bold block mb-1">Brüt Verimlilik (kg/saat) — Fire DAHİL:</span>
-                                <code>Brüt Verimlilik = (Sağlam Üretim (kg) + Fire (kg)) / Çalışma Saati</code>
-                                <p class="text-slate-500 mt-1.5 font-sans normal-case">Makinenin toplam işlem hızını (kapasite kullanımını) ölçer, kaliteden bağımsızdır.</p>
-                            </div>
-                            <div class="p-2.5 bg-amber-950/30 border border-amber-800/40 rounded-xl">
-                                <span class="text-amber-400 font-bold block mb-1">Nasıl Yorumlanır?</span>
-                                <p class="text-slate-400 font-sans normal-case leading-relaxed">
-                                    Net verimlilik düşük ama Brüt verimlilik yüksekse → sorun HIZ değil, <b class="text-amber-300">FIRE'dır</b> (Fire Oranı sütununa bakın).<br>
-                                    İkisi de düşükse → hat gerçekten <b class="text-amber-300">yavaş çalışıyordur</b> (hız/kapasite sorunu).<br>
-                                    İkisi de yüksekse → hat <b class="text-emerald-400">verimli çalışıyordur</b>.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <!-- TAB 5: DİNAMİK MAKINELER & ÜRÜNLER -->
         <div id="view-settings" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1415,7 +1301,7 @@
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'daily', 'doors', 'formulas', 'settings', 'users'].forEach(t => {
+            ['dashboard', 'daily', 'doors', 'settings', 'users'].forEach(t => {
                 const viewEl = document.getElementById(`view-${t}`);
                 if (viewEl) viewEl.classList.add('hidden');
                 const btn = document.getElementById(`tab-${t}`);

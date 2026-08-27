@@ -551,10 +551,10 @@
             "total_m2": 910.35,
             "width_fire_cm": 0,
             "dead_fire_m2": 246.33,
-            "dead_fire_kg": 862.16,
-            "total_kg": 3186.22,
+            "dead_fire_kg": 615.83,
+            "total_kg": 2275.88,
             "sets": 255.0,
-            "kg_per_m2": 3.5,
+            "kg_per_m2": 2.5,
             "kalip_cikis_eni": 108.0,
             "en_firesi_cm": 23.0
           }

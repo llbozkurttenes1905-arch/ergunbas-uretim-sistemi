@@ -27,6 +27,13 @@
       "password": "123456",
       "role": "operator",
       "name": "ÜRETİM MÜDÜRÜ"
+    },
+    {
+      "id": "u8_üre",
+      "username": "üretim mühendisi",
+      "password": "123456",
+      "role": "operator",
+      "name": "ÜRETİM MÜHENDİSİ"
     }
   ]
 }

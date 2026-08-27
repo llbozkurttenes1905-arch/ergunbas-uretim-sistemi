@@ -168,6 +168,12 @@
       "name": "Vizon",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_18",
+      "name": "Akçaağaç",
+      "category": "pervaz",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

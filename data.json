@@ -186,6 +186,12 @@
       "name": "Kitkat (Antrasit)",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_21",
+      "name": "Beyaz",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

@@ -202,15 +202,8 @@
 
     <!-- ERGUNBAS Corporate Header -->
     <header class="relative overflow-hidden bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3 sm:gap-4 sticky top-0 z-50 shadow-xl">
-        <!-- Türk Bayrağı Arka Plan (dekoratif, tek adet, doğru oranda, gerilmeden sığdırılmış) -->
-        <div class="absolute inset-0 -z-10 pointer-events-none flex items-center justify-end pr-4 sm:pr-10" style="opacity:0.16;">
-            <svg viewBox="0 0 90 60" class="h-10 sm:h-14 w-auto" xmlns="http://www.w3.org/2000/svg">
-                <rect width="90" height="60" fill="#E30A17"/>
-                <circle cx="34" cy="30" r="15" fill="#ffffff"/>
-                <circle cx="38.5" cy="30" r="12" fill="#E30A17"/>
-                <polygon points="0,-8.5 1.9,-2.6 8,-2.6 3.05,1 4.95,6.8 0,3.2 -4.95,6.8 -3.05,1 -8,-2.6 -1.9,-2.6" fill="#ffffff" transform="translate(52,30)"/>
-            </svg>
-        </div>
+        <!-- Türk Bayrağı Arka Plan (dekoratif, tek adet, header'ın tamamını dolduruyor) -->
+        <div class="absolute inset-0 -z-10 pointer-events-none" style="opacity:0.15; background-repeat: no-repeat; background-size: 100% 100%; background-position: center; background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 90 60\'><rect width=\'90\' height=\'60\' fill=\'%23E30A17\'/><circle cx=\'34\' cy=\'30\' r=\'15\' fill=\'%23ffffff\'/><circle cx=\'38.5\' cy=\'30\' r=\'12\' fill=\'%23E30A17\'/><polygon points=\'0,-8.5 1.9,-2.6 8,-2.6 3.05,1 4.95,6.8 0,3.2 -4.95,6.8 -3.05,1 -8,-2.6 -1.9,-2.6\' fill=\'%23ffffff\' transform=\'translate(52,30)\'/></svg>');"></div>
         <div class="flex items-center space-x-3 sm:space-x-4 shrink-0">
             <!-- Corporate Logo Embedded as Base64 -->
             <div class="bg-white p-1.5 sm:p-2 rounded-xl shadow-md flex items-center justify-center border border-slate-200 shrink-0">
@@ -250,7 +243,13 @@
 
             <!-- User info + Logout -->
             <div class="flex items-center gap-2 shrink-0">
-                <div class="text-xs text-slate-400 font-medium hidden sm:block">
+                <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium hidden sm:flex">
+                    <svg viewBox="0 0 30 20" class="h-3.5 w-auto rounded-sm shrink-0" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="30" height="20" fill="#E30A17"/>
+                        <circle cx="11.5" cy="10" r="5" fill="#ffffff"/>
+                        <circle cx="13" cy="10" r="4" fill="#E30A17"/>
+                        <polygon points="0,-2.8 0.63,-0.86 2.66,-0.86 1.02,0.33 1.65,2.27 0,1.07 -1.65,2.27 -1.02,0.33 -2.66,-0.86 -0.63,-0.86" fill="#ffffff" transform="translate(17.3,10)"/>
+                    </svg>
                     <span id="header-username" class="text-white font-bold"></span>
                     <span id="header-role" class="ml-1 text-slate-500"></span>
                 </div>

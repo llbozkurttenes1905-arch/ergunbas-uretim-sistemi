@@ -126,6 +126,12 @@
       "name": "K. Ceviz",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_11",
+      "name": "B. Teak",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

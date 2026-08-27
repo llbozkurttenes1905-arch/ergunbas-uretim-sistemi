@@ -22,13 +22,6 @@
       "name": "Gece Operatörü"
     },
     {
-      "id": "u5_Üre",
-      "username": "Üretim Müdürü",
-      "password": "123456",
-      "role": "operator",
-      "name": "MEHMET ABUCAK"
-    },
-    {
       "id": "u6_ÜRE",
       "username": "ÜRETİM MÜHENDİSİ",
       "password": "123456",

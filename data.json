@@ -69,6 +69,11 @@
       "id": "ext_14",
       "name": "103",
       "type": "extruder"
+    },
+    {
+      "id": "ext_15",
+      "name": "104",
+      "type": "extruder"
     }
   ],
   "products": [

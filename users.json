@@ -22,13 +22,6 @@
       "name": "Gece Operatörü"
     },
     {
-      "id": "u6_ÜRE",
-      "username": "ÜRETİM MÜHENDİSİ",
-      "password": "123456",
-      "role": "operator",
-      "name": "üretim mühendisi"
-    },
-    {
       "id": "u7_üre",
       "username": "üretim müdürü",
       "password": "123456",

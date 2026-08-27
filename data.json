@@ -162,6 +162,12 @@
       "name": "M. Teak",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_17",
+      "name": "Vizon",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

@@ -200,18 +200,6 @@
       "name": "Kitkat (emboslu) Antrasit",
       "category": "diger",
       "door_ratio": 0.0
-    },
-    {
-      "id": "p_26",
-      "name": "200 mm Kasa",
-      "category": "kasa",
-      "door_ratio": 2.5
-    },
-    {
-      "id": "p_26",
-      "name": "K. Ceviz",
-      "category": "levha",
-      "door_ratio": 2.0
     }
   ],
   "daily_data": {

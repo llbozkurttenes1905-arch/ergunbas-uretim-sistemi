@@ -8786,6 +8786,23 @@
         ]
       },
       "downtimes": []
+    },
+    "34": {
+      "day": "34",
+      "date": "03.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
     }
   }
 }

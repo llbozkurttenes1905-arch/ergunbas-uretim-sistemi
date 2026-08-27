@@ -292,13 +292,13 @@
             <div onclick="showMonthlyDetail()" class="bg-gradient-to-r from-ergunbas-900/60 via-slate-900 to-slate-900 border border-ergunbas-600/30 hover:border-ergunbas-500 rounded-2xl p-6 shadow-lg cursor-pointer transition flex flex-wrap items-center justify-between gap-6 group">
                 <div class="space-y-1">
                     <span class="text-xs font-black uppercase tracking-wider text-ergunbas-500 flex items-center gap-1.5">
-                        <i data-lucide="calendar" class="w-4 h-4"></i> Genel Dönemsel Özet (Tüm Kayıtlı Günler)
+                        <i data-lucide="calendar" class="w-4 h-4"></i> Genel Toplam (Kuruluştan Bu Yana, Tüm Aylar)
                     </span>
                     <h2 class="text-2xl font-black text-white group-hover:text-ergunbas-400 transition flex items-center gap-2">
                         Aylık Üretim & Fire Raporu Detayı
                         <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform"></i>
                     </h2>
-                    <p class="text-xs text-slate-400">Tüm ekstrüder ve levha hatlarının 31 günlük toplam verilerini ve en çok üreten makineleri incelemek için tıklayın.</p>
+                    <p class="text-xs text-slate-400">Tüm ekstrüder ve levha hatlarının kayıtlı tüm günlerinin toplamı. Aylık kırılım için aşağıya bakın.</p>
                 </div>
                 <div class="flex items-center gap-4 bg-slate-950/60 px-5 py-3 rounded-xl border border-slate-800">
                     <div class="text-center px-3 border-r border-slate-800">
@@ -314,6 +314,17 @@
                         <span class="text-lg font-black text-emerald-400" id="monthly-banner-doors">Yükleniyor...</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- AYLIK KIRILIM (ARŞİV): hangi ay ne kadar üretim/fire vermiş -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="archive" class="w-5 h-5 text-ergunbas-500"></i> Aylık Kırılım (Ay Ay Arşiv)
+                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Her ay kendi içinde ayrı raporlanır</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="monthly-totals-container"></div>
             </div>
 
             <!-- GÜNLÜK DETAY - YÖNETİCİ ÖZETİ (TÜM FORMÜLLER DAHİL) -->
@@ -519,11 +530,14 @@
 
             <!-- HAFTALIK ÖZET TABLOSU -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4 border-b border-slate-800 pb-3">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="calendar-range" class="w-5 h-5 text-ergunbas-500"></i> Haftalık Üretim ve Fire Özeti (Detay İçin Tıklayın)
                     </h2>
-                    <span class="text-xs font-semibold text-slate-400">Haftalık Kırılımlar (7'şerli Kronolojik Gruplar)</span>
+                    <div class="flex items-center gap-2">
+                        <label for="dash-month-select" class="text-xs font-semibold text-slate-400">Ay:</label>
+                        <select id="dash-month-select" onchange="onDashMonthChange()" class="bg-slate-950 border border-slate-800 text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-ergunbas-500"></select>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="weekly-cards-container"></div>
@@ -536,7 +550,7 @@
                         <h2 class="text-base font-bold text-white flex items-center gap-2">
                             <i data-lucide="line-chart" class="w-5 h-5 text-ergunbas-500"></i> Günlük Üretim Trendi (kg)
                         </h2>
-                        <span class="text-xs text-slate-400">Barın Üzerine Tıklayıp Günlük Detayı Görün</span>
+                        <span class="text-xs text-slate-400">Barın Üzerine Tıklayıp Günlük Detayı Görün — Seçili Ay: Yukarıdaki "Ay" Kutusu</span>
                     </div>
                     <div class="h-72">
                         <canvas id="chart-daily-prod"></canvas>
@@ -1152,6 +1166,7 @@
         let currentDateKey = '1';
         let dayData = null;
         let dashboardData = null;
+        let currentWeeklyList = []; // o an ekranda gösterilen (seçili aya ait) haftalık kartlar
         let machinesList = [];
         let productsList = [];
         let prodChart = null;
@@ -1661,31 +1676,8 @@
                 document.getElementById('monthly-banner-fire').textContent = `${dashboardData.total_fire_ton} Ton`;
                 document.getElementById('monthly-banner-doors').textContent = `${dashboardData.door_stats.completable_doors} Adet`;
 
-                const wContainer = document.getElementById('weekly-cards-container');
-                if (wContainer && dashboardData.weekly_summary) {
-                    wContainer.innerHTML = dashboardData.weekly_summary.map((w, idx) => `
-                        <div onclick="showWeeklyDetail(${idx})" class="bg-slate-950 border border-slate-800 hover:border-ergunbas-500 rounded-xl p-4 space-y-2 cursor-pointer transition group">
-                            <div class="flex justify-between items-center">
-                                <h4 class="text-xs font-black text-ergunbas-500 uppercase tracking-wider group-hover:text-ergunbas-400 transition">${w.name}</h4>
-                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 group-hover:text-ergunbas-400"></i>
-                            </div>
-                            <div class="space-y-1 text-xs">
-                                <div class="flex justify-between text-slate-400">
-                                    <span>Üretim:</span>
-                                    <span class="font-bold text-white">${w.prod_ton} Ton</span>
-                                </div>
-                                <div class="flex justify-between text-slate-400">
-                                    <span>Fire:</span>
-                                    <span class="font-bold text-amber-400">${w.fire_ton} Ton (%${w.fire_ratio})</span>
-                                </div>
-                                <div class="flex justify-between border-t border-slate-800 pt-1 text-slate-300 font-bold">
-                                    <span>Tam Kapı:</span>
-                                    <span class="text-emerald-400">${w.doors} Adet</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+                renderMonthlyTotalsArchive();
+                populateDashMonthSelect();
 
                 const doorDetails = dashboardData.door_stats.details;
                 const tblSummary = document.getElementById('tbl-door-summary');
@@ -1727,13 +1719,123 @@
                 }
 
                 if (dashboardData.daily_chart) {
-                    renderCharts(dashboardData.daily_chart);
                     renderMonthlyProductCharts();
                 }
                 safeCreateIcons();
             } catch(e) {
                 console.error('loadDashboard failed:', e);
             }
+        }
+
+        function renderMonthlyTotalsArchive() {
+            const container = document.getElementById('monthly-totals-container');
+            if (!container || !dashboardData || !dashboardData.monthly_totals) return;
+            const months = dashboardData.monthly_totals; // en yeni ay en üstte
+            if (months.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 col-span-full text-center py-4">Henüz veri girilmemiş.</p>';
+                return;
+            }
+            container.innerHTML = months.map(m => `
+                <div onclick="jumpToMonth('${m.key}')" class="bg-slate-950 border border-slate-800 hover:border-ergunbas-500 rounded-xl p-4 space-y-2 cursor-pointer transition group">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-sm font-black text-white group-hover:text-ergunbas-400 transition">${m.label}</h4>
+                        <span class="text-[10px] font-bold text-slate-500">${m.days} gün</span>
+                    </div>
+                    <div class="space-y-1 text-xs">
+                        <div class="flex justify-between text-slate-400">
+                            <span>Üretim:</span>
+                            <span class="font-bold text-white">${m.prod_ton} Ton</span>
+                        </div>
+                        <div class="flex justify-between text-slate-400">
+                            <span>Fire:</span>
+                            <span class="font-bold text-amber-400">${m.fire_ton} Ton (%${m.fire_ratio})</span>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-800 pt-1 text-slate-300 font-bold">
+                            <span>Tam Kapı:</span>
+                            <span class="text-emerald-400">${m.doors} Adet</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            safeCreateIcons();
+        }
+
+        function jumpToMonth(monthKey) {
+            const sel = document.getElementById('dash-month-select');
+            if (!sel) return;
+            sel.value = monthKey;
+            onDashMonthChange();
+            sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function populateDashMonthSelect() {
+            const sel = document.getElementById('dash-month-select');
+            if (!sel || !dashboardData || !dashboardData.months_chart_available) return;
+
+            const prevValue = sel.value;
+            sel.innerHTML = '';
+            dashboardData.months_chart_available.slice().reverse().forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.key;
+                opt.textContent = m.label;
+                sel.appendChild(opt);
+            });
+
+            const targetKey = (prevValue && dashboardData.months_chart_available.some(m => m.key === prevValue))
+                ? prevValue
+                : (dashboardData.current_month_key || (dashboardData.months_chart_available.length ? dashboardData.months_chart_available[dashboardData.months_chart_available.length - 1].key : ''));
+            if (targetKey) sel.value = targetKey;
+
+            renderDashMonthView();
+        }
+
+        function onDashMonthChange() {
+            renderDashMonthView();
+        }
+
+        function renderDashMonthView() {
+            const sel = document.getElementById('dash-month-select');
+            if (!sel || !dashboardData) return;
+            const monthKey = sel.value;
+
+            // Seçili aya ait haftalık kartlar (ay bittiğinde otomatik yeni/temiz sayfa)
+            const weeks = (dashboardData.weekly_summary_by_month && dashboardData.weekly_summary_by_month[monthKey]) || [];
+            currentWeeklyList = weeks;
+            const wContainer = document.getElementById('weekly-cards-container');
+            if (wContainer) {
+                if (weeks.length === 0) {
+                    wContainer.innerHTML = '<p class="text-sm text-slate-500 col-span-full text-center py-4">Bu ay için henüz veri girilmemiş.</p>';
+                } else {
+                    wContainer.innerHTML = weeks.map((w, idx) => `
+                        <div onclick="showWeeklyDetail(${idx})" class="bg-slate-950 border border-slate-800 hover:border-ergunbas-500 rounded-xl p-4 space-y-2 cursor-pointer transition group">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-xs font-black text-ergunbas-500 uppercase tracking-wider group-hover:text-ergunbas-400 transition">${w.name}</h4>
+                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 group-hover:text-ergunbas-400"></i>
+                            </div>
+                            <div class="space-y-1 text-xs">
+                                <div class="flex justify-between text-slate-400">
+                                    <span>Üretim:</span>
+                                    <span class="font-bold text-white">${w.prod_ton} Ton</span>
+                                </div>
+                                <div class="flex justify-between text-slate-400">
+                                    <span>Fire:</span>
+                                    <span class="font-bold text-amber-400">${w.fire_ton} Ton (%${w.fire_ratio})</span>
+                                </div>
+                                <div class="flex justify-between border-t border-slate-800 pt-1 text-slate-300 font-bold">
+                                    <span>Tam Kapı:</span>
+                                    <span class="text-emerald-400">${w.doors} Adet</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Seçili aya ait günlük üretim trendi grafiği (yeni ay = temiz/sıfırdan grafik)
+            const monthDays = (dashboardData.daily_chart_by_month && dashboardData.daily_chart_by_month[monthKey]) || [];
+            renderCharts(monthDays);
+
+            safeCreateIcons();
         }
 
         function showMonthlyDetail() {
@@ -1797,8 +1899,9 @@
         }
 
         function showWeeklyDetail(wIndex) {
-            if (!dashboardData || !dashboardData.weekly_summary) return;
-            const w = dashboardData.weekly_summary[wIndex];
+            if (!currentWeeklyList || !currentWeeklyList.length) return;
+            const w = currentWeeklyList[wIndex];
+            if (!w) return;
 
             document.getElementById('modal-title').innerHTML = `<i data-lucide="calendar-range" class="w-6 h-6 text-ergunbas-500"></i> ${w.name} Detayı`;
             document.getElementById('modal-subtitle').textContent = `Seçilen haftaya ait günlük üretimler ve tamamlanan kapı miktarları`;

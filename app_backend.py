@@ -852,6 +852,79 @@ def get_dashboard_summary():
             "doors": w_door_stats["completable_doors"]
         })
 
+    # ========================================================================
+    # AY BAZINDA "TEMİZ SAYFA" GRUPLAMASI
+    # ========================================================================
+    # Haftalık kartlar ve günlük üretim trendi artık takvim ayına göre gruplanır:
+    # yeni ay başladığında (tarih otomatik olarak yeni ay/yıla geçtiğinde) o ay
+    # sıfırdan (1. hafta, 1. gün) başlar. Geçmiş aylar bir ay seçiciyle (arşiv
+    # olarak) hâlâ görüntülenebilir. Genel toplam KPI kartları ise HER ZAMAN
+    # tüm zamanların (tüm ayların) toplamını gösterir (total_prod_ton vb, yukarıda
+    # zaten tüm daily_data üzerinden hesaplanıyor).
+    daily_chart_by_month = {}
+    for d in daily_chart:
+        mk, mlabel = get_month_key(d["date"])
+        if not mk:
+            mk, mlabel = "bilinmeyen", "Bilinmeyen"
+        bucket = daily_chart_by_month.setdefault(mk, {"label": mlabel, "days": []})
+        bucket["days"].append(d)
+
+    weekly_summary_by_month = {}
+    monthly_totals = []
+    for mk, bucket in daily_chart_by_month.items():
+        m_days = bucket["days"]  # daily_chart zaten kronolojik sırada dolduruldu
+
+        # Bu ay içindeki günler 7'şerli haftalara ayrılır (ay sınırını asla geçmez)
+        m_weeks = []
+        for i in range(0, len(m_days), 7):
+            chunk = m_days[i:i + 7]
+            week_num = (i // 7) + 1
+            first_label = chunk[0]["date"]
+            last_label = chunk[-1]["date"]
+            w_name = f"{week_num}. Hafta ({first_label} - {last_label})" if first_label != last_label else f"{week_num}. Hafta ({first_label})"
+            w_prod = sum(x["prod_kg"] for x in chunk)
+            w_fire = sum(x["fire_kg"] for x in chunk)
+            w_fire_ratio = (w_fire / (w_prod + w_fire) * 100) if (w_prod + w_fire) > 0 else 0
+            w_emp = sum(x["employees"] for x in chunk)
+            w_keys = [x["key"] for x in chunk]
+            w_door_stats = compute_door_capacity(data, filter_date_keys=w_keys)
+            m_weeks.append({
+                "name": w_name,
+                "keys": w_keys,
+                "prod_ton": round(w_prod / 1000.0, 2),
+                "fire_ton": round(w_fire / 1000.0, 2),
+                "fire_ratio": round(w_fire_ratio, 2),
+                "employees": w_emp,
+                "doors": w_door_stats["completable_doors"]
+            })
+        weekly_summary_by_month[mk] = m_weeks
+
+        # Bu ayın toplamı ("hangi aydan ne kadar geldi" özeti)
+        mt_prod = sum(x["prod_kg"] for x in m_days)
+        mt_fire = sum(x["fire_kg"] for x in m_days)
+        mt_fire_ratio = (mt_fire / (mt_prod + mt_fire) * 100) if (mt_prod + mt_fire) > 0 else 0
+        mt_emp = sum(x["employees"] for x in m_days)
+        mt_keys = [x["key"] for x in m_days]
+        mt_door_stats = compute_door_capacity(data, filter_date_keys=mt_keys)
+        monthly_totals.append({
+            "key": mk,
+            "label": bucket["label"],
+            "prod_ton": round(mt_prod / 1000.0, 2),
+            "fire_ton": round(mt_fire / 1000.0, 2),
+            "fire_ratio": round(mt_fire_ratio, 2),
+            "employees": mt_emp,
+            "doors": mt_door_stats["completable_doors"],
+            "days": len(m_days)
+        })
+
+    # Ay seçici için kronolojik (eskiden yeniye) liste — dropdown'da ters çevrilip
+    # en yeni ay en üstte / varsayılan seçili gösterilecek
+    months_chart_available = [{"key": mk, "label": daily_chart_by_month[mk]["label"]} for mk in sorted(daily_chart_by_month.keys())]
+    current_month_key = months_chart_available[-1]["key"] if months_chart_available else None
+
+    # Arşiv listesinde ("Aylık Kırılım") en yeni ay en üstte görünsün
+    monthly_totals.sort(key=lambda x: x["key"], reverse=True)
+
     # Monthly Summary Details
     monthly_summary = {
         "title": "Ağustos 2026 Genel Aylık Özet",
@@ -884,6 +957,12 @@ def get_dashboard_summary():
         "weekly_summary": weekly_summary,
         "monthly_summary": monthly_summary,
         "monthly_product_summary": monthly_product_summary,
+        # AY BAZINDA TEMİZ SAYFA + ARŞİV
+        "daily_chart_by_month": {mk: v["days"] for mk, v in daily_chart_by_month.items()},
+        "weekly_summary_by_month": weekly_summary_by_month,
+        "monthly_totals": monthly_totals,
+        "months_chart_available": months_chart_available,
+        "current_month_key": current_month_key,
         "available_dates": [{"key": k, "date": data["daily_data"][k].get("date", k)} for k in sorted_keys],
         "latest_day_key": latest_day_key,
         "machines_count": len(data.get("machines", [])),

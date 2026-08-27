@@ -21,11 +21,6 @@
       "type": "extruder"
     },
     {
-      "id": "ext_5",
-      "name": "Ekstrüder Hat 5",
-      "type": "extruder"
-    },
-    {
       "id": "lev_1",
       "name": "Levha Hattı 1",
       "type": "levha"

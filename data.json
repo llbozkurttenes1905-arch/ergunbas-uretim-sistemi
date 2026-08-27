@@ -180,6 +180,12 @@
       "name": "Akçaağaç",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_20",
+      "name": "Kitkat (Antrasit)",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ],
   "daily_data": {

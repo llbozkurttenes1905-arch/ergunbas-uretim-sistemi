@@ -54,6 +54,11 @@
       "id": "ext_20",
       "name": "109",
       "type": "extruder"
+    },
+    {
+      "id": "lev_12",
+      "name": "201",
+      "type": "levha"
     }
   ],
   "products": [

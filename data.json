@@ -120,6 +120,12 @@
       "name": "Teak",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_10",
+      "name": "K. Ceviz",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

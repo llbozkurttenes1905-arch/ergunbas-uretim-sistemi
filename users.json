@@ -22,13 +22,6 @@
       "name": "Gece Operatörü"
     },
     {
-      "id": "u4",
-      "username": "sorumlu.muhendis",
-      "password": "123456",
-      "role": "operator",
-      "name": "MÜHENDİS"
-    },
-    {
       "id": "u5_Üre",
       "username": "Üretim Müdürü",
       "password": "123456",

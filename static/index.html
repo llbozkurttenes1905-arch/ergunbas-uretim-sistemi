@@ -555,12 +555,17 @@
                 </div>
             </div>
 
-            <!-- AYLIK ÜRÜN / RENK BAZINDA ÜRETİM (TÜM DÖNEM) -->
+            <!-- AYLIK ÜRÜN / RENK BAZINDA ÜRETİM (AY SEÇİLEBİLİR) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                <h2 class="text-base font-bold text-white mb-1 flex items-center gap-2">
-                    <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-500"></i> Aylık Ürün / Renk Bazında Üretim (Tüm Kayıtlı Günler)
-                </h2>
-                <p class="text-xs text-slate-500 mb-4">O ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam.</p>
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-1">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-500"></i> Aylık Ürün / Renk Bazında Üretim
+                    </h2>
+                    <select id="monthly-product-month-select" onchange="renderMonthlyProductCharts()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
+                        <option value="">Yükleniyor...</option>
+                    </select>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Seçili ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam. Yeni ay başladığında bu liste otomatik olarak sıfırdan başlar; geçmiş ayları buradan seçerek görebilirsiniz.</p>
 
                 <!-- Ekstrüder Ürünleri -->
                 <div class="mb-8">
@@ -1968,6 +1973,22 @@
             if (typeof Chart === 'undefined' || !dashboardData || !dashboardData.monthly_product_summary) return;
             const mp = dashboardData.monthly_product_summary;
 
+            // Ay seçiciyi doldur (henüz doldurulmadıysa)
+            const monthSelect = document.getElementById('monthly-product-month-select');
+            if (monthSelect && monthSelect.options.length <= 1) {
+                monthSelect.innerHTML = '';
+                mp.available_months.slice().reverse().forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.key;
+                    opt.textContent = m.label;
+                    monthSelect.appendChild(opt);
+                });
+                monthSelect.value = mp.latest_month_key || '';
+            }
+
+            const selectedMonthKey = monthSelect ? monthSelect.value : mp.latest_month_key;
+            const monthData = mp.months[selectedMonthKey] || { extruder: [], levha: [] };
+
             const renderTypeChartAndTable = (chartVarSetter, canvasId, tbodyId, items, barColor) => {
                 const labels = items.map(p => p.name);
                 const values = items.map(p => p.prod_kg);
@@ -2023,12 +2044,12 @@
             renderTypeChartAndTable(
                 { get: () => extProductChart, set: (c) => { extProductChart = c; } },
                 'chart-monthly-extruder-products', 'tbl-monthly-extruder-products',
-                mp.extruder, '#38bdf8'
+                monthData.extruder, '#38bdf8'
             );
             renderTypeChartAndTable(
                 { get: () => levColorChart, set: (c) => { levColorChart = c; } },
                 'chart-monthly-levha-colors', 'tbl-monthly-levha-colors',
-                mp.levha, '#e879f9'
+                monthData.levha, '#e879f9'
             );
 
             safeCreateIcons();

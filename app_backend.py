@@ -412,9 +412,26 @@ def get_dashboard_summary():
     machine_totals = {}
     fire_reasons_summary = {}
 
-    # ÜRÜN/RENK BAZINDA AYLIK (TÜM DÖNEM) TOPLAM — Ekstrüder ürün adına, Levha renk/modeline göre
-    product_totals_ext = {}   # {ürün_adı: {"qty":.., "prod_kg":.., "fire_kg":..}}
-    product_totals_lev = {}   # {renk_adı: {"qty":.., "prod_kg":.., "fire_kg":..}}
+    # ÜRÜN/RENK BAZINDA AYLIK ÖZET — artık AY BAZINDA gruplanıyor (yeni ay başlayınca
+    # sıfırdan başlar, ama geçmiş aylar seçilerek görülebilir)
+    # Yapı: {"2026-08": {ürün_adı: {"qty":.., "prod_kg":.., "fire_kg":..}}, "2026-09": {...}}
+    product_totals_ext = {}
+    product_totals_lev = {}
+
+    TURKISH_MONTHS = {
+        1: "Ocak", 2: "Şubat", 3: "Mart", 4: "Nisan", 5: "Mayıs", 6: "Haziran",
+        7: "Temmuz", 8: "Ağustos", 9: "Eylül", 10: "Ekim", 11: "Kasım", 12: "Aralık"
+    }
+
+    def get_month_key(date_label):
+        """Bir günün tarih etiketinden (DD.MM.YYYY) 'YYYY-MM' anahtarı ve
+        'Ağustos 2026' formatında görüntü adı üretir. Ayrıştırılamazsa None döner."""
+        dt = parse_date_label(date_label)
+        if not dt:
+            return None, None
+        month_key = f"{dt.year:04d}-{dt.month:02d}"
+        month_label = f"{TURKISH_MONTHS.get(dt.month, dt.month)} {dt.year}"
+        return month_key, month_label
 
     daily_chart = []
     sorted_keys = get_sorted_day_keys(data["daily_data"])
@@ -426,6 +443,8 @@ def get_dashboard_summary():
 
     for d_str in sorted_keys:
         day_obj = data["daily_data"][d_str]
+        _raw_date_label = day_obj.get("date") or (f"{int(d_str):02d}.08.2026" if d_str.isdigit() else d_str)
+        cur_month_key, cur_month_label = get_month_key(_raw_date_label)
 
         day_prod_kg = 0.0
         day_fire_kg = 0.0
@@ -477,13 +496,14 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["hours"] += h_hours
 
-                # Aylık/dönemsel ürün bazında toplama (hat farketmeksizin, ürün adına göre)
-                if h_product:
-                    if h_product not in product_totals_ext:
-                        product_totals_ext[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
-                    product_totals_ext[h_product]["qty"] += h_qty
-                    product_totals_ext[h_product]["prod_kg"] += p_kg
-                    product_totals_ext[h_product]["fire_kg"] += f_kg
+                # Aylık/dönemsel ürün bazında toplama (hat farketmeksizin, ürün adına göre) — AY BAZINDA
+                if h_product and cur_month_key:
+                    month_bucket = product_totals_ext.setdefault(cur_month_key, {"_label": cur_month_label})
+                    if h_product not in month_bucket:
+                        month_bucket[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    month_bucket[h_product]["qty"] += h_qty
+                    month_bucket[h_product]["prod_kg"] += p_kg
+                    month_bucket[h_product]["fire_kg"] += f_kg
 
             for lev in s_data.get("levha", []):
                 p_kg = lev.get("total_kg", 0)
@@ -517,13 +537,14 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["hours"] = max(day_machine_totals[dm_key]["hours"], s_hours)
 
-                # Aylık/dönemsel renk/model bazında toplama (hat farketmeksizin, renk adına göre)
-                if h_product:
-                    if h_product not in product_totals_lev:
-                        product_totals_lev[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
-                    product_totals_lev[h_product]["qty"] += h_qty
-                    product_totals_lev[h_product]["prod_kg"] += p_kg
-                    product_totals_lev[h_product]["fire_kg"] += f_kg
+                # Aylık/dönemsel renk/model bazında toplama (hat farketmeksizin, renk adına göre) — AY BAZINDA
+                if h_product and cur_month_key:
+                    month_bucket = product_totals_lev.setdefault(cur_month_key, {"_label": cur_month_label})
+                    if h_product not in month_bucket:
+                        month_bucket[h_product] = {"qty": 0, "prod_kg": 0.0, "fire_kg": 0.0}
+                    month_bucket[h_product]["qty"] += h_qty
+                    month_bucket[h_product]["prod_kg"] += p_kg
+                    month_bucket[h_product]["fire_kg"] += f_kg
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
@@ -559,7 +580,7 @@ def get_dashboard_summary():
         total_hours += day_hours
 
         fire_ratio = (day_fire_kg / (day_prod_kg + day_fire_kg) * 100) if (day_prod_kg + day_fire_kg) > 0 else 0
-        date_label = day_obj.get("date") or (f"{int(d_str):02d}.08.2026" if d_str.isdigit() else d_str)
+        date_label = _raw_date_label
 
         # Bu güne ait makine/hat bazında kırılım listesi (üretim çoktan aza sıralı)
         day_machines_list = []
@@ -744,6 +765,8 @@ def get_dashboard_summary():
         # yazılışlarını birleştir), en sık görülen orijinal yazımı görüntü adı yap
         grouped = {}
         for raw_name, v in totals_dict.items():
+            if raw_name == "_label":
+                continue  # ay görüntü adı meta bilgisi, ürün değil
             # Gerçek üretimi olmayan (Excel aktarımından kalma boş/placeholder) satırları atla
             if v["qty"] <= 0 and v["prod_kg"] <= 0 and v["fire_kg"] <= 0:
                 continue
@@ -767,9 +790,23 @@ def get_dashboard_summary():
         result.sort(key=lambda x: x["prod_kg"], reverse=True)
         return result
 
+    # Her ay için ayrı ayrı ürün/renk özeti oluştur (AY BAZINDA — yeni ay sıfırdan başlar)
+    all_month_keys = sorted(set(list(product_totals_ext.keys()) + list(product_totals_lev.keys())))
+    monthly_product_by_month = {}
+    for mk in all_month_keys:
+        mk_label = product_totals_ext.get(mk, {}).get("_label") or product_totals_lev.get(mk, {}).get("_label") or mk
+        monthly_product_by_month[mk] = {
+            "label": mk_label,
+            "extruder": build_product_summary_list(product_totals_ext.get(mk, {})),
+            "levha": build_product_summary_list(product_totals_lev.get(mk, {}))
+        }
+
+    latest_month_key = all_month_keys[-1] if all_month_keys else None
+
     monthly_product_summary = {
-        "extruder": build_product_summary_list(product_totals_ext),
-        "levha": build_product_summary_list(product_totals_lev)
+        "months": monthly_product_by_month,
+        "available_months": [{"key": mk, "label": monthly_product_by_month[mk]["label"]} for mk in all_month_keys],
+        "latest_month_key": latest_month_key
     }
 
     # Weekly summary — AY/YIL SINIRI YOK: kronolojik sıradaki günler 7'şerli gruplara

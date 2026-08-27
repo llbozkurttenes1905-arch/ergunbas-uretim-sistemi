@@ -46,11 +46,6 @@
       "type": "extruder"
     },
     {
-      "id": "ext_g2",
-      "name": "Ekstrüder Genel 2",
-      "type": "extruder"
-    },
-    {
       "id": "lev_1",
       "name": "Levha Hattı 1",
       "type": "levha"

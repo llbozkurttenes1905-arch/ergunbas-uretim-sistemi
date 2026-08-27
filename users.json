@@ -27,6 +27,13 @@
       "password": "123456",
       "role": "operator",
       "name": "Sorumlu Mühendis"
+    },
+    {
+      "id": "u5_Üre",
+      "username": "Üretim Müdürü",
+      "password": "123456",
+      "role": "operator",
+      "name": "MEHMET ABUCAK"
     }
   ]
 }

@@ -1048,6 +1048,14 @@ def add_product(product: ProductCreate, x_username: Optional[str] = Header(None)
     save_data(data)
     return new_prod
 
+@app.delete("/api/products/{product_id}")
+def delete_product(product_id: str, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    data = load_data()
+    data["products"] = [p for p in data["products"] if p["id"] != product_id]
+    save_data(data)
+    return {"status": "success"}
+
 # =====================================================================
 # USER MANAGEMENT ENDPOINTS
 # =====================================================================

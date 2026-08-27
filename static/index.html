@@ -1103,6 +1103,7 @@
                                     <th class="p-3">Ürün İsmi</th>
                                     <th class="p-3">Kategori</th>
                                     <th class="p-3">1 Kapı Katsayısı</th>
+                                    <th class="p-3 text-right">İşlem</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-products" class="divide-y divide-slate-800"></tbody>
@@ -2687,6 +2688,11 @@
                         <td class="p-3 font-semibold text-white">${p.name}</td>
                         <td class="p-3 uppercase text-xs font-bold text-slate-400">${p.category}</td>
                         <td class="p-3 font-bold text-emerald-400">${p.door_ratio} Adet/Kapı</td>
+                        <td class="p-3 text-right edit-action">
+                            <button onclick="deleteProduct('${p.id}')" class="p-1 text-red-400 hover:text-red-300">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
                     </tr>
                 `).join('');
             }
@@ -2743,6 +2749,23 @@
             document.getElementById('new-prod-ratio').value = '';
             showToast(`Yeni ürün (${name}) reçeteye kaydedildi!`);
             loadSettings();
+        }
+
+        async function deleteProduct(id) {
+            openConfirmModal(
+                'Ürünü Sil',
+                'Bu ürünü ve reçete oranını silmek istediğinizden emin misiniz?',
+                async () => {
+                    try {
+                        await fetch(`/api/products/${id}`, { method: 'DELETE', headers: { 'X-Username': currentUser?.username || '' } });
+                        showToast("Ürün silindi!");
+                        loadSettings();
+                    } catch (networkErr) {
+                        console.error(networkErr);
+                        alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+                    }
+                }
+            );
         }
 
         let currentUser = null;

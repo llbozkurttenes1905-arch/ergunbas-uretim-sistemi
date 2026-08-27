@@ -54,6 +54,11 @@
       "id": "lev_2",
       "name": "Levha Hattı 2",
       "type": "levha"
+    },
+    {
+      "id": "ext_12",
+      "name": "101",
+      "type": "extruder"
     }
   ],
   "products": [

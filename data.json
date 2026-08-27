@@ -1,11 +1,6 @@
 {
   "machines": [
     {
-      "id": "lev_1",
-      "name": "Levha Hattı 1",
-      "type": "levha"
-    },
-    {
       "id": "lev_2",
       "name": "Levha Hattı 2",
       "type": "levha"

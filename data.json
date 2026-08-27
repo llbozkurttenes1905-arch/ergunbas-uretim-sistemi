@@ -192,6 +192,12 @@
       "name": "Beyaz",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_22",
+      "name": "M. B. Teak",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

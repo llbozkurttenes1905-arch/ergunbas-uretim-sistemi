@@ -1,11 +1,6 @@
 {
   "machines": [
     {
-      "id": "ext_1",
-      "name": "Ekstrüder Hat 1",
-      "type": "extruder"
-    },
-    {
       "id": "lev_1",
       "name": "Levha Hattı 1",
       "type": "levha"

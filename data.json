@@ -132,6 +132,12 @@
       "name": "B. Teak",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_12",
+      "name": "Antrasit",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ],
   "daily_data": {

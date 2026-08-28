@@ -53,12 +53,6 @@
   ],
   "products": [
     {
-      "id": "p_80_80",
-      "name": "80X80 Pervaz",
-      "category": "pervaz",
-      "door_ratio": 5.0
-    },
-    {
       "id": "p_50_80",
       "name": "50x80 Pervaz",
       "category": "pervaz",

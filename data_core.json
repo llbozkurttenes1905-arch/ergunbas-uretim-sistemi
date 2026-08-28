@@ -249,6 +249,12 @@
       "name": "KT100-220x24-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_34",
+      "name": "KT101-219x26-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

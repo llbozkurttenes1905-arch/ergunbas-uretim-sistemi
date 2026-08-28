@@ -519,6 +519,12 @@
       "name": "SP100-12x80-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_79",
+      "name": "SP100-12x80-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

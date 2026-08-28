@@ -402,7 +402,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 1.18,
@@ -415,7 +415,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.94,
@@ -428,7 +428,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.85,
@@ -441,7 +441,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.76,
@@ -454,7 +454,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 1.29,
@@ -467,7 +467,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.67,
@@ -480,7 +480,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 4.0,
             "speed": 0.71,
@@ -493,7 +493,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat  7",
+            "hat": "107",
             "product": "KT102-219x26-ANT",
             "length": 3.7,
             "speed": 0.72,
@@ -506,7 +506,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.75,
@@ -519,7 +519,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.69,
@@ -532,7 +532,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.55,
@@ -626,7 +626,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -639,7 +639,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "1011",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.6,
@@ -652,7 +652,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 1.03,
@@ -665,7 +665,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.45,
@@ -678,7 +678,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.95,
@@ -691,7 +691,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 1.02,
@@ -704,7 +704,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 1.47,
@@ -717,7 +717,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "KT102-219x26-ANT",
             "length": 3.0,
             "speed": 2.06,
@@ -730,7 +730,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 1.39,
@@ -743,7 +743,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.6,
@@ -756,24 +756,6 @@
           }
         ],
         "levha": [
-          {
-            "row": 0,
-            "hat": "Levha Hattı",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
-          },
           {
             "row": 0,
             "hat": "Levha 1",
@@ -797,16 +779,7 @@
       "downtimes": [
         {
           "shift": "Gündüz",
-          "hat": "Hat No",
-          "fire_reason": "Fire Sebebi",
-          "fire_kg": 0.0,
-          "down_reason": "Duruş Sebebi",
-          "down_min": 0.0,
-          "desc": "Açıklama"
-        },
-        {
-          "shift": "Gündüz",
-          "hat": "8",
+          "hat": "108",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp, Kalibre bakımı yapıldı.",
@@ -815,16 +788,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "Hat No",
-          "fire_reason": "Fire Sebebi",
-          "fire_kg": 0.0,
-          "down_reason": "Duruş Sebebi",
-          "down_min": 0.0,
-          "desc": "Açıklama"
-        },
-        {
-          "shift": "Gece",
-          "hat": "1",
+          "hat": "101",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği yapıldı.",
@@ -833,7 +797,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "4",
+          "hat": "104",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Vinç arızası",
@@ -842,7 +806,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "7",
+          "hat": "107",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Helezon, Silindir, Testere arızası.",

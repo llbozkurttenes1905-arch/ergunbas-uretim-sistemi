@@ -153,6 +153,12 @@
       "name": "D201-140x26-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_18",
+      "name": "D201-140x26-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

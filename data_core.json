@@ -573,6 +573,12 @@
       "name": "PD165-100x100-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_88",
+      "name": "PM180-150x60-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

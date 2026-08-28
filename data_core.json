@@ -801,6 +801,12 @@
       "name": "COCO",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_126",
+      "name": "MAURON",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

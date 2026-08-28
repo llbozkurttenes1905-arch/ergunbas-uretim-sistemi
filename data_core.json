@@ -351,6 +351,12 @@
       "name": "KT104-169x26-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_51",
+      "name": "Korner-44,5x50-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

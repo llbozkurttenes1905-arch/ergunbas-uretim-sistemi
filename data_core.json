@@ -333,6 +333,12 @@
       "name": "KT103-169x26-MAU",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_48",
+      "name": "KT104-169x26-ALM",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

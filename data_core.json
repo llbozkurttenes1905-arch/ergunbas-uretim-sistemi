@@ -687,6 +687,12 @@
       "name": "ÇT101-160x18-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_107",
+      "name": "PD165-100x100-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

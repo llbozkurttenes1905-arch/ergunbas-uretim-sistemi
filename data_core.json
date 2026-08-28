@@ -1,0 +1,218 @@
+{
+  "machines": [
+    {
+      "id": "ext_12",
+      "name": "101",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_13",
+      "name": "102",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_14",
+      "name": "103",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_15",
+      "name": "104",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_16",
+      "name": "105",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_17",
+      "name": "106",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_18",
+      "name": "107",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_19",
+      "name": "108",
+      "type": "extruder"
+    },
+    {
+      "id": "ext_20",
+      "name": "109",
+      "type": "extruder"
+    },
+    {
+      "id": "lev_12",
+      "name": "201",
+      "type": "levha"
+    }
+  ],
+  "products": [
+    {
+      "id": "p_80_80",
+      "name": "80X80 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
+    },
+    {
+      "id": "p_50_80",
+      "name": "50x80 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
+    },
+    {
+      "id": "k_100",
+      "name": "100 mm Kasa",
+      "category": "kasa",
+      "door_ratio": 2.5
+    },
+    {
+      "id": "k_140",
+      "name": "140 mm Kasa",
+      "category": "kasa",
+      "door_ratio": 2.5
+    },
+    {
+      "id": "seren",
+      "name": "Seren",
+      "category": "seren",
+      "door_ratio": 3.5
+    },
+    {
+      "id": "kitkat",
+      "name": "Kitkat",
+      "category": "diger",
+      "door_ratio": 0
+    },
+    {
+      "id": "kitkat_emb",
+      "name": "Kitkat (emboslu)",
+      "category": "diger",
+      "door_ratio": 0
+    },
+    {
+      "id": "levha_dbudak",
+      "name": "D. Budak",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "levha_teak",
+      "name": "Teak",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_10",
+      "name": "K. Ceviz",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_11",
+      "name": "B. Teak",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_12",
+      "name": "Antrasit",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_13",
+      "name": "Sonomo",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_14",
+      "name": "Coco",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_15",
+      "name": "Mauron",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_16",
+      "name": "M. Teak",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_17",
+      "name": "Vizon",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_19",
+      "name": "Akçaağaç",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_20",
+      "name": "Kitkat (Antrasit)",
+      "category": "diger",
+      "door_ratio": 0.0
+    },
+    {
+      "id": "p_21",
+      "name": "Beyaz",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_22",
+      "name": "M. B. Teak",
+      "category": "levha",
+      "door_ratio": 2.0
+    },
+    {
+      "id": "p_23",
+      "name": "Kitkat (emboslu) Kahverengi",
+      "category": "diger",
+      "door_ratio": 0.0
+    },
+    {
+      "id": "p_24",
+      "name": "Kitkat (kahverengi)",
+      "category": "diger",
+      "door_ratio": 0.0
+    },
+    {
+      "id": "p_25",
+      "name": "Kitkat (emboslu) Antrasit",
+      "category": "diger",
+      "door_ratio": 0.0
+    },
+    {
+      "id": "p_25",
+      "name": "35X100 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
+    },
+    {
+      "id": "p_26",
+      "name": "35X150 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
+    },
+    {
+      "id": "p_27",
+      "name": "35X80 Pervaz",
+      "category": "pervaz",
+      "door_ratio": 5.0
+    }
+  ]
+}

@@ -705,6 +705,12 @@
       "name": "PD165-100x100-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_110",
+      "name": "DP130-99x42-KCV",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

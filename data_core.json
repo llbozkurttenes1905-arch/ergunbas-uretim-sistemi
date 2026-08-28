@@ -105,6 +105,12 @@
       "name": "SEREN",
       "category": "seren",
       "door_ratio": 3.5
+    },
+    {
+      "id": "p_10",
+      "name": "D100-145x22-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

@@ -465,6 +465,12 @@
       "name": "PL191-244x32-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_70",
+      "name": "DP130-99x42-KCV",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

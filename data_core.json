@@ -129,6 +129,12 @@
       "name": "D200-140x26-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_14",
+      "name": "D200-140x26-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

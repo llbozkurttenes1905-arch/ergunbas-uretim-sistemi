@@ -417,6 +417,12 @@
       "name": "PDB140-250x58-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_62",
+      "name": "PDB140-250x58-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

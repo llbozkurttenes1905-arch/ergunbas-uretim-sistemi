@@ -783,6 +783,12 @@
       "name": "TEAK",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_123",
+      "name": "BEYAZ TEAK",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

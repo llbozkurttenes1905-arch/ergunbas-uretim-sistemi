@@ -765,6 +765,12 @@
       "name": "KOYU CEVİZ",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_120",
+      "name": "AKÇAAĞAÇ",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

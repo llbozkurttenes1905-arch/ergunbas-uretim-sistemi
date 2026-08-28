@@ -141,6 +141,12 @@
       "name": "D200-140x26-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_16",
+      "name": "D201-140x26-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

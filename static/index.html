@@ -206,8 +206,11 @@
         <div class="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-r from-red-700/40 via-red-900/10 to-transparent"></div>
         <div class="absolute top-0 bottom-0 left-[32%] -z-10 pointer-events-none flex items-center" style="opacity:0.4;">
             <svg viewBox="0 0 60 60" class="h-10 sm:h-14 w-auto" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="30" r="15" fill="#ffffff"/>
-                <circle cx="28.5" cy="30" r="12" fill="#E30A17"/>
+                <mask id="crescent-hole-mask">
+                    <rect x="0" y="0" width="60" height="60" fill="#ffffff"/>
+                    <circle cx="28.5" cy="30" r="12" fill="#000000"/>
+                </mask>
+                <circle cx="24" cy="30" r="15" fill="#ffffff" mask="url(#crescent-hole-mask)"/>
                 <polygon points="0,-8.5 1.9,-2.6 8,-2.6 3.05,1 4.95,6.8 0,3.2 -4.95,6.8 -3.05,1 -8,-2.6 -1.9,-2.6" fill="#ffffff" transform="translate(42,30)"/>
             </svg>
         </div>

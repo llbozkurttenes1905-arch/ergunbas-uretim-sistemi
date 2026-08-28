@@ -537,6 +537,12 @@
       "name": "GEN-MET",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_82",
+      "name": "PD160-150x150-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

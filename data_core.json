@@ -597,6 +597,12 @@
       "name": "PK170-220x60-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_92",
+      "name": "PK170-220x60-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

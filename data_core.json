@@ -87,6 +87,12 @@
       "name": "100 mm KASA",
       "category": "kasa",
       "door_ratio": 2.5
+    },
+    {
+      "id": "p_7",
+      "name": "140 mm KASA",
+      "category": "kasa",
+      "door_ratio": 2.5
     }
   ]
 }

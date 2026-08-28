@@ -327,6 +327,12 @@
       "name": "KT103-169x26-COC",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_47",
+      "name": "KT103-169x26-MAU",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

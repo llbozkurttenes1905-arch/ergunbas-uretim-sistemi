@@ -225,6 +225,12 @@
       "name": "DK210-MET",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_30",
+      "name": "DK210-MET",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

@@ -405,6 +405,12 @@
       "name": "D400-40x60-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_60",
+      "name": "DP110-45x30-GEN",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

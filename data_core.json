@@ -771,6 +771,12 @@
       "name": "AKÇAAĞAÇ",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_121",
+      "name": "DİŞBUDAK BEYAZ",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

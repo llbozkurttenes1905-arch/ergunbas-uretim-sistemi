@@ -605,6 +605,7 @@
                                     <th class="p-2.5">Ürün</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Pay (%)</th>
                                     <th class="p-2.5 text-right">Toplam Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
                                 </tr>
@@ -629,6 +630,7 @@
                                     <th class="p-2.5">Renk / Model</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Pay (%)</th>
                                     <th class="p-2.5 text-right">Toplam Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
                                 </tr>
@@ -2011,7 +2013,7 @@
             const monthData = mp.months[selectedMonthKey] || { extruder: [], levha: [] };
 
             const renderTypeChartAndTable = (chartVarSetter, canvasId, tbodyId, items, barColor) => {
-                const labels = items.map(p => p.name);
+                const labels = items.map(p => `${p.name} (%${p.pct_of_type})`);
                 const values = items.map(p => p.prod_kg);
 
                 const canvas = document.getElementById(canvasId);
@@ -2034,7 +2036,17 @@
                             indexAxis: 'y',
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (ctx) => {
+                                            const p = items[ctx.dataIndex];
+                                            return `${p.prod_kg.toLocaleString('tr-TR')} kg (%${p.pct_of_type})`;
+                                        }
+                                    }
+                                }
+                            },
                             scales: {
                                 x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
                                 y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } }
@@ -2047,13 +2059,14 @@
                 const tbody = document.getElementById(tbodyId);
                 if (tbody) {
                     if (items.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
                     } else {
                         tbody.innerHTML = items.map(p => `
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-2.5 font-bold text-white">${p.name}</td>
                                 <td class="p-2.5 text-right text-slate-300">${p.qty.toLocaleString('tr-TR')}</td>
                                 <td class="p-2.5 text-right font-semibold text-white">${p.prod_kg.toLocaleString('tr-TR')}</td>
+                                <td class="p-2.5 text-right font-bold text-sky-400">%${p.pct_of_type}</td>
                                 <td class="p-2.5 text-right font-semibold text-amber-400">${p.fire_kg.toLocaleString('tr-TR')}</td>
                                 <td class="p-2.5 text-right font-semibold ${p.fire_ratio > 15 ? 'text-red-400' : (p.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${p.fire_ratio}</td>
                             </tr>

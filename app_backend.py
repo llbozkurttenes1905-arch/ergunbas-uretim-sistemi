@@ -887,6 +887,13 @@ def get_dashboard_summary():
             fr = round((f / (p + f) * 100), 2) if (p + f) > 0 else 0
             result.append({"name": best_name, "qty": g["qty"], "prod_kg": p, "fire_kg": f, "fire_ratio": fr})
         result.sort(key=lambda x: x["prod_kg"], reverse=True)
+
+        # Bu tipin (Ekstrüder ya da Levha) o ay içindeki TOPLAM üretimine göre
+        # her ürünün yüzdesel payını hesapla
+        type_total_prod = sum(r["prod_kg"] for r in result)
+        for r in result:
+            r["pct_of_type"] = round((r["prod_kg"] / type_total_prod * 100), 2) if type_total_prod > 0 else 0
+
         return result
 
     # Her ay için ayrı ayrı ürün/renk özeti oluştur (AY BAZINDA — yeni ay sıfırdan başlar)

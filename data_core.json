@@ -53,12 +53,6 @@
   ],
   "products": [
     {
-      "id": "p_24",
-      "name": "Kitkat (kahverengi)",
-      "category": "diger",
-      "door_ratio": 0.0
-    },
-    {
       "id": "p_25",
       "name": "Kitkat (emboslu) Antrasit",
       "category": "diger",

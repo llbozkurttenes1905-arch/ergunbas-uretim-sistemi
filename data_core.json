@@ -111,6 +111,12 @@
       "name": "D100-145x22-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_11",
+      "name": "D100-145x22-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

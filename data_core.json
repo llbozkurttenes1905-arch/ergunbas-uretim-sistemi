@@ -117,6 +117,12 @@
       "name": "D100-145x22-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_12",
+      "name": "D100-145x22-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

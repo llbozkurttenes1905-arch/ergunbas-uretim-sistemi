@@ -189,6 +189,12 @@
       "name": "D401-140x60-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_24",
+      "name": "D401-140x60-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

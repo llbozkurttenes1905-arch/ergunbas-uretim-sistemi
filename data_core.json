@@ -693,6 +693,12 @@
       "name": "PD165-100x100-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_108",
+      "name": "PD165-100x100-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

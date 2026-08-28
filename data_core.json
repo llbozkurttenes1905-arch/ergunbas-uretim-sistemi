@@ -53,12 +53,6 @@
   ],
   "products": [
     {
-      "id": "kitkat_emb",
-      "name": "Kitkat (emboslu)",
-      "category": "diger",
-      "door_ratio": 0
-    },
-    {
       "id": "levha_dbudak",
       "name": "D. Budak",
       "category": "levha",

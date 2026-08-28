@@ -69,6 +69,12 @@
       "name": "35X100 PERVAZ",
       "category": "pervaz",
       "door_ratio": 5.0
+    },
+    {
+      "id": "p_4",
+      "name": "35X150 PERVAZ",
+      "category": "pervaz",
+      "door_ratio": 5.0
     }
   ]
 }

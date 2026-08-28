@@ -219,6 +219,12 @@
       "name": "DP110-45x30-GEN",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_29",
+      "name": "DK210-MET",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

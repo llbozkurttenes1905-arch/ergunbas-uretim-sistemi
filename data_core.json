@@ -525,6 +525,12 @@
       "name": "SP100-12x80-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_80",
+      "name": "SP100-12x80-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

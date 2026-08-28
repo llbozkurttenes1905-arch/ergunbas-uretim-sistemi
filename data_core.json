@@ -549,6 +549,12 @@
       "name": "PD160-150x150-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_84",
+      "name": "PD160-150x150-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

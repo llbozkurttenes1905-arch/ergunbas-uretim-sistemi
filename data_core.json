@@ -609,6 +609,12 @@
       "name": "PK170-220x60-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_94",
+      "name": "PK180-200x1,5-GRI",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

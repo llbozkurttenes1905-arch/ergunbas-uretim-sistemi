@@ -273,6 +273,12 @@
       "name": "KT102-219x26-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_38",
+      "name": "KT102-219x26-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

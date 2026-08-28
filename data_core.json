@@ -513,6 +513,12 @@
       "name": "DP130-99x42-MAU",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_78",
+      "name": "SP100-12x80-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

@@ -393,6 +393,12 @@
       "name": "D400-40x60-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_58",
+      "name": "D400-40x60-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

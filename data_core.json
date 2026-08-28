@@ -753,6 +753,12 @@
       "name": "DP130-99x42-MAU",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_118",
+      "name": "İTALYAN CEVİZ",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

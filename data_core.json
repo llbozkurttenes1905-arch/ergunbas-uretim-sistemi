@@ -243,6 +243,12 @@
       "name": "KT100-220x24-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_33",
+      "name": "KT100-220x24-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

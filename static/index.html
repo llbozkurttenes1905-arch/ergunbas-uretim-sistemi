@@ -605,6 +605,7 @@
                                     <th class="p-2.5">Ürün</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Ekstrüder İçindeki Payı</th>
                                     <th class="p-2.5 text-right">Toplam Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
                                 </tr>
@@ -629,6 +630,7 @@
                                     <th class="p-2.5">Renk / Model</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Levha İçindeki Payı</th>
                                     <th class="p-2.5 text-right">Toplam Fire (kg)</th>
                                     <th class="p-2.5 text-right">Fire Oranı</th>
                                 </tr>
@@ -2047,13 +2049,21 @@
                 const tbody = document.getElementById(tbodyId);
                 if (tbody) {
                     if (items.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
                     } else {
                         tbody.innerHTML = items.map(p => `
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-2.5 font-bold text-white">${p.name}</td>
                                 <td class="p-2.5 text-right text-slate-300">${p.qty.toLocaleString('tr-TR')}</td>
                                 <td class="p-2.5 text-right font-semibold text-white">${p.prod_kg.toLocaleString('tr-TR')}</td>
+                                <td class="p-2.5 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <div class="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+                                            <div class="h-full rounded-full" style="width:${Math.min(p.share_pct,100)}%; background:${barColor};"></div>
+                                        </div>
+                                        <span class="font-bold text-white">%${p.share_pct}</span>
+                                    </div>
+                                </td>
                                 <td class="p-2.5 text-right font-semibold text-amber-400">${p.fire_kg.toLocaleString('tr-TR')}</td>
                                 <td class="p-2.5 text-right font-semibold ${p.fire_ratio > 15 ? 'text-red-400' : (p.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${p.fire_ratio}</td>
                             </tr>

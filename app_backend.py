@@ -880,12 +880,16 @@ def get_dashboard_summary():
             g["_name_votes"][raw_name.strip()] = g["_name_votes"].get(raw_name.strip(), 0.0) + v["prod_kg"]
 
         result = []
+        total_prod_kg_all = sum(g["prod_kg"] for g in grouped.values())
         for norm_key, g in grouped.items():
             best_name = max(g["_name_votes"].items(), key=lambda kv: kv[1])[0]
             p = round(g["prod_kg"], 2)
             f = round(g["fire_kg"], 2)
             fr = round((f / (p + f) * 100), 2) if (p + f) > 0 else 0
-            result.append({"name": best_name, "qty": g["qty"], "prod_kg": p, "fire_kg": f, "fire_ratio": fr})
+            # Bu ürünün, seçili kategori (Ekstrüder veya Levha) içindeki o ayki
+            # TOPLAM üretime göre yüzdesel payı ("hangi üründen ne kadar" sorusunun cevabı)
+            share = round((g["prod_kg"] / total_prod_kg_all * 100), 2) if total_prod_kg_all > 0 else 0
+            result.append({"name": best_name, "qty": g["qty"], "prod_kg": p, "fire_kg": f, "fire_ratio": fr, "share_pct": share})
         result.sort(key=lambda x: x["prod_kg"], reverse=True)
         return result
 

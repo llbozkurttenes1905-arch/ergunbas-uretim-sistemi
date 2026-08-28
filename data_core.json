@@ -51,12 +51,5 @@
       "type": "levha"
     }
   ],
-  "products": [
-    {
-      "id": "p_27",
-      "name": "35X80 Pervaz",
-      "category": "pervaz",
-      "door_ratio": 5.0
-    }
-  ]
+  "products": []
 }

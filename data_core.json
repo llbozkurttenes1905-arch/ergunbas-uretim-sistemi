@@ -363,6 +363,12 @@
       "name": "Korner-44,5x50-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_53",
+      "name": "Korner-44,5x50-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

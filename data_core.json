@@ -177,6 +177,12 @@
       "name": "D400-140x60-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_22",
+      "name": "D401-140x60-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

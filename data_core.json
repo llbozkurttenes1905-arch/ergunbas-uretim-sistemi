@@ -123,6 +123,12 @@
       "name": "D100-145x22-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_13",
+      "name": "D200-140x26-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

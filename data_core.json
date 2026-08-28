@@ -789,6 +789,12 @@
       "name": "BEYAZ TEAK",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_124",
+      "name": "ANTRASİT",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

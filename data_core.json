@@ -369,6 +369,12 @@
       "name": "Korner-44,5x50-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_54",
+      "name": "SHP100-150x21-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

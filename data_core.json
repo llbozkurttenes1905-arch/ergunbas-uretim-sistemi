@@ -531,6 +531,12 @@
       "name": "SP100-12x80-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_81",
+      "name": "GEN-MET",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

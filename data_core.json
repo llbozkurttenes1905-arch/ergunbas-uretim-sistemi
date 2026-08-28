@@ -345,6 +345,12 @@
       "name": "KT104-169x26-KMG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_50",
+      "name": "KT104-169x26-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

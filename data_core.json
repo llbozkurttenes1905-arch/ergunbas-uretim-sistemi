@@ -507,6 +507,12 @@
       "name": "DP130-99x42-COC",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_77",
+      "name": "DP130-99x42-MAU",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

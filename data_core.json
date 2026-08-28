@@ -429,6 +429,12 @@
       "name": "PDB140-250x58-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_64",
+      "name": "PL190-244x32-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

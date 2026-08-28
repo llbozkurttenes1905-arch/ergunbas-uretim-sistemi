@@ -825,6 +825,12 @@
       "name": "MIX BEYAZ TEAK",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_130",
+      "name": "VIZON",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

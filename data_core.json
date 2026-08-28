@@ -459,6 +459,12 @@
       "name": "PL191-244x32-KMG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_69",
+      "name": "PL191-244x32-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

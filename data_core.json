@@ -53,12 +53,6 @@
   ],
   "products": [
     {
-      "id": "p_14",
-      "name": "Coco",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
       "id": "p_15",
       "name": "Mauron",
       "category": "levha",

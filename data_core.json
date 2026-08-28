@@ -81,6 +81,12 @@
       "name": "35X80 PERVAZ",
       "category": "pervaz",
       "door_ratio": 5.0
+    },
+    {
+      "id": "p_6",
+      "name": "100 mm KASA",
+      "category": "kasa",
+      "door_ratio": 2.5
     }
   ]
 }

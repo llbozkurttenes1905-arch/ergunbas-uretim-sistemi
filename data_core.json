@@ -375,6 +375,12 @@
       "name": "SHP100-150x21-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_55",
+      "name": "SHP100-150x21-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

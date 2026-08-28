@@ -435,6 +435,12 @@
       "name": "PL190-244x32-KAH",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_65",
+      "name": "PL190-244x32-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

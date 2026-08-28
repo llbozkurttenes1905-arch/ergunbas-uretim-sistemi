@@ -57,6 +57,12 @@
       "name": "50X80 PERVAZ",
       "category": "pervaz",
       "door_ratio": 5.0
+    },
+    {
+      "id": "p_2",
+      "name": "80X80 PERVAZ",
+      "category": "pervaz",
+      "door_ratio": 5.0
     }
   ]
 }

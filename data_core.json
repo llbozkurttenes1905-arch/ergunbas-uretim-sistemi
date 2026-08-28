@@ -711,6 +711,12 @@
       "name": "DP130-99x42-KCV",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_111",
+      "name": "DP130-99x42-AKC",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

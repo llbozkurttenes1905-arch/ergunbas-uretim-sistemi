@@ -99,6 +99,12 @@
       "name": "200 mm KASA",
       "category": "kasa",
       "door_ratio": 2.5
+    },
+    {
+      "id": "p_9",
+      "name": "SEREN",
+      "category": "seren",
+      "door_ratio": 3.5
     }
   ]
 }

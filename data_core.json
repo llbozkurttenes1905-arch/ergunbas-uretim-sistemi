@@ -53,12 +53,6 @@
   ],
   "products": [
     {
-      "id": "seren",
-      "name": "Seren",
-      "category": "seren",
-      "door_ratio": 3.5
-    },
-    {
       "id": "kitkat",
       "name": "Kitkat",
       "category": "diger",

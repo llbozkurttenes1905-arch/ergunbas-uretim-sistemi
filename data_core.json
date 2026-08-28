@@ -681,6 +681,12 @@
       "name": "ÇT101-160x18-KMG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_106",
+      "name": "ÇT101-160x18-ANT",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

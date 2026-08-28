@@ -423,6 +423,12 @@
       "name": "PDB140-250x58-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_63",
+      "name": "PDB140-250x58-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

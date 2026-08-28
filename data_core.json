@@ -663,6 +663,12 @@
       "name": "ÇT100-160x18-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_103",
+      "name": "ÇT100-160x18-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

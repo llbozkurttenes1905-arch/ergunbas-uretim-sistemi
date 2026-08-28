@@ -759,6 +759,12 @@
       "name": "İTALYAN CEVİZ",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_119",
+      "name": "KOYU CEVİZ",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

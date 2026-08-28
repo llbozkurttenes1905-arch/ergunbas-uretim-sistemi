@@ -403,7 +403,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 1",
-            "product": "80X80 Pervaz",
+            "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 1.18,
             "heads": 1.0,
@@ -416,7 +416,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 2",
-            "product": "100 mm Kasa",
+            "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.94,
             "heads": 1.0,
@@ -429,7 +429,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 3",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.85,
             "heads": 2.0,
@@ -442,7 +442,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 4",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.76,
             "heads": 2.0,
@@ -455,7 +455,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 5",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 1.29,
             "heads": 2.0,
@@ -468,7 +468,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 6",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.67,
             "heads": 1.0,
@@ -481,7 +481,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 7",
-            "product": "Kitkat",
+            "product": "KT100-220x24-ANT",
             "length": 4.0,
             "speed": 0.71,
             "heads": 1.0,
@@ -494,7 +494,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat  7",
-            "product": "Kitkat (emboslu)",
+            "product": "KT102-219x26-ANT",
             "length": 3.7,
             "speed": 0.72,
             "heads": 1.0,
@@ -507,7 +507,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 7",
-            "product": "Kitkat",
+            "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.75,
             "heads": 1.0,
@@ -520,7 +520,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 8",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.69,
             "heads": 1.0,
@@ -533,7 +533,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 9",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.55,
             "heads": 2.0,
@@ -566,7 +566,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "Teak",
+            "color": "TEAK",
             "width": 85.0,
             "length": 211.0,
             "m2_one": 1.7935,
@@ -584,7 +584,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "B. Teak",
+            "color": "BEYAZ TEAK",
             "width": 93.0,
             "length": 208.0,
             "m2_one": 1.9344,
@@ -602,7 +602,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "B. Teak",
+            "color": "BEYAZ TEAK",
             "width": 90.0,
             "length": 208.0,
             "m2_one": 1.872,
@@ -627,7 +627,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 1",
-            "product": "80X80 Pervaz",
+            "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -640,7 +640,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 1",
-            "product": "80X80 Pervaz",
+            "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.6,
             "heads": 1.0,
@@ -653,7 +653,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 2",
-            "product": "100 mm Kasa",
+            "product": "100 mm KASA",
             "length": 2.15,
             "speed": 1.03,
             "heads": 1.0,
@@ -666,7 +666,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 3",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.45,
             "heads": 2.0,
@@ -679,7 +679,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 4",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.95,
             "heads": 2.0,
@@ -692,7 +692,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 5",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 1.02,
             "heads": 2.0,
@@ -705,7 +705,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 6",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 1.47,
             "heads": 1.0,
@@ -718,7 +718,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 7",
-            "product": "Kitkat (emboslu)",
+            "product": "KT102-219x26-ANT",
             "length": 3.0,
             "speed": 2.06,
             "heads": 1.0,
@@ -731,7 +731,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 8",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 1.39,
             "heads": 1.0,
@@ -744,7 +744,7 @@
           {
             "row": 0,
             "hat": "Hat Ekstrüder Hat 9",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.6,
             "heads": 2.0,
@@ -777,7 +777,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "B. Teak",
+            "color": "BEYAZ TEAK",
             "width": 90.0,
             "length": 208.0,
             "m2_one": 1.872,

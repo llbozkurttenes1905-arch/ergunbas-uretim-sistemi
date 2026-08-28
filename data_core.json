@@ -723,6 +723,12 @@
       "name": "DP130-99x42-DBB",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_113",
+      "name": "DP130-99x42-TIK",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

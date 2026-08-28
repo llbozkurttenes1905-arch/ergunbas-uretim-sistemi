@@ -267,6 +267,12 @@
       "name": "KT101-219x26-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_37",
+      "name": "KT102-219x26-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

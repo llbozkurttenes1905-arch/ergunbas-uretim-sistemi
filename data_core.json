@@ -651,6 +651,12 @@
       "name": "PL190-244x32-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_101",
+      "name": "ÇT100-160x18-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

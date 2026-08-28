@@ -387,6 +387,12 @@
       "name": "SHP100-150x21-BUG",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_57",
+      "name": "D400-40x60-KAH",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

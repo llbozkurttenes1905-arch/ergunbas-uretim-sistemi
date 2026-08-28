@@ -813,6 +813,12 @@
       "name": "VİZON",
       "category": "levha",
       "door_ratio": 2.0
+    },
+    {
+      "id": "p_128",
+      "name": "SONOMO",
+      "category": "levha",
+      "door_ratio": 2.0
     }
   ]
 }

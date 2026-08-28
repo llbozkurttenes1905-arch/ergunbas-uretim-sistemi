@@ -603,6 +603,12 @@
       "name": "PK170-220x60-ANT",
       "category": "diger",
       "door_ratio": 0.0
+    },
+    {
+      "id": "p_93",
+      "name": "PK170-220x60-BUG",
+      "category": "diger",
+      "door_ratio": 0.0
     }
   ]
 }

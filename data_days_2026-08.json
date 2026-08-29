@@ -2076,44 +2076,7 @@
             "sets": 110.0
           }
         ],
-        "levha": [
-          {
-            "row": 0,
-            "hat": "Levha Hattı 1",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
-          },
-          {
-            "row": 0,
-            "hat": "Levha Hattı 2",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
-          }
-        ]
+        "levha": []
       },
       "gece": {
         "employees": 9,
@@ -2241,7 +2204,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "VIZON",
             "width": 94.0,
             "length": 208.0,

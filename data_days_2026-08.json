@@ -7152,7 +7152,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.0,
@@ -7165,7 +7165,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.82,
@@ -7178,7 +7178,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.82,
@@ -7191,7 +7191,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.78,
@@ -7204,7 +7204,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.65,
@@ -7217,7 +7217,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.67,
@@ -7230,7 +7230,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm KASA",
             "length": 2.45,
             "speed": 0.67,
@@ -7243,7 +7243,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.6,
@@ -7256,7 +7256,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.12,
@@ -7271,7 +7271,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 208.0,
@@ -7296,7 +7296,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.0,
@@ -7309,7 +7309,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.8,
@@ -7322,7 +7322,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.8,
@@ -7335,7 +7335,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.78,
@@ -7348,7 +7348,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.65,
@@ -7361,7 +7361,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.67,
@@ -7374,7 +7374,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.67,
@@ -7387,7 +7387,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.6,
@@ -7400,7 +7400,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.11,
@@ -7415,7 +7415,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 75.0,
             "length": 200.0,
@@ -7433,7 +7433,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "SONOMO",
             "width": 85.0,
             "length": 210.0,
@@ -7451,7 +7451,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "MIX TEAK",
             "width": 85.0,
             "length": 210.0,

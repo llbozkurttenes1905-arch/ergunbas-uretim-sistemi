@@ -1921,7 +1921,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -1934,7 +1934,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.71,
@@ -1947,7 +1947,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.45,
             "speed": 0.72,
@@ -1960,7 +1960,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -1973,7 +1973,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.64,
@@ -1986,7 +1986,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 1.59,
@@ -1999,7 +1999,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.5,
             "speed": 1.47,
@@ -2012,7 +2012,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 0.0,
             "speed": 0.0,
@@ -2025,7 +2025,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "KT102-219x26-ANT",
             "length": 3.4,
             "speed": 0.63,
@@ -2038,7 +2038,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.64,
@@ -2051,7 +2051,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.68,
@@ -2064,7 +2064,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 1.48,
@@ -2122,7 +2122,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -2135,7 +2135,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 1.11,
@@ -2148,7 +2148,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -2161,7 +2161,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.92,
@@ -2174,7 +2174,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.91,
@@ -2187,7 +2187,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 1.38,
@@ -2200,7 +2200,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 2.02,
@@ -2213,7 +2213,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 1.32,
@@ -2226,7 +2226,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 0.4,

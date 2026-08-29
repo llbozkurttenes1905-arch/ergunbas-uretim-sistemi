@@ -4333,7 +4333,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 1.13,
@@ -4346,7 +4346,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.9,
@@ -4359,7 +4359,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.0,
@@ -4372,7 +4372,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.61,
@@ -4385,7 +4385,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.76,
@@ -4398,7 +4398,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.68,
@@ -4411,7 +4411,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.6,
@@ -4424,7 +4424,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.7,
@@ -4437,7 +4437,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.29,
@@ -4452,7 +4452,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 94.0,
             "length": 207.0,
@@ -4470,7 +4470,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 207.0,
@@ -4485,24 +4485,6 @@
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
             "en_firesi_cm": 14.0
-          },
-          {
-            "row": 0,
-            "hat": "Levha 1",
-            "color": "TEAK",
-            "width": 94.0,
-            "length": 207.0,
-            "m2_one": 1.9458,
-            "qty": 70,
-            "total_m2": 136.206,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 20.286,
-            "dead_fire_kg": 49.7,
-            "total_kg": 333.7,
-            "sets": 35.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 14.0
           }
         ]
       },
@@ -4513,7 +4495,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 1.13,
@@ -4526,7 +4508,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.9,
@@ -4539,7 +4521,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.0,
@@ -4552,7 +4534,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "200 mm KASA",
             "length": 2.1,
             "speed": 0.61,
@@ -4565,7 +4547,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.76,
@@ -4578,7 +4560,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.68,
@@ -4591,7 +4573,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.6,
@@ -4604,7 +4586,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.7,
@@ -4617,7 +4599,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 1.29,
@@ -4630,7 +4612,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.32,
@@ -4645,7 +4627,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 207.0,
@@ -4666,7 +4648,7 @@
       "downtimes": [
         {
           "shift": "Gündüz",
-          "hat": "1",
+          "hat": "101",
           "fire_reason": "2 defa ürün koptu.",
           "fire_kg": 145.0,
           "down_reason": "",
@@ -4675,7 +4657,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "2",
+          "hat": "102",
           "fire_reason": "1 defa ayar yapıldı.",
           "fire_kg": 454.0,
           "down_reason": "",
@@ -4684,7 +4666,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "3",
+          "hat": "103",
           "fire_reason": "1 defa ayar yapıldı.",
           "fire_kg": 90.0,
           "down_reason": "",
@@ -4693,7 +4675,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "4",
+          "hat": "104",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği yapıldı.",
@@ -4702,7 +4684,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "5",
+          "hat": "10",
           "fire_reason": "3 defa ayar yapıldı.",
           "fire_kg": 940.0,
           "down_reason": "",
@@ -4711,7 +4693,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "6",
+          "hat": "106",
           "fire_reason": "Kalibre temizliği ve ayar yapıldı.",
           "fire_kg": 352.0,
           "down_reason": "",
@@ -4720,7 +4702,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "7",
+          "hat": "107",
           "fire_reason": "2 defa ürün koptu.",
           "fire_kg": 813.0,
           "down_reason": "",
@@ -4729,7 +4711,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "8",
+          "hat": "108",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği yapıldı.",
@@ -4738,7 +4720,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "9",
+          "hat": "109",
           "fire_reason": "",
           "fire_kg": 67.0,
           "down_reason": "",
@@ -4756,7 +4738,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "3",
+          "hat": "103",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Elektrik arızası.",
@@ -4765,7 +4747,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "5",
+          "hat": "105",
           "fire_reason": "Fan motoru arızalı",
           "fire_kg": 1071.0,
           "down_reason": "",
@@ -4774,7 +4756,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "8",
+          "hat": "108",
           "fire_reason": "Kalıp problemi",
           "fire_kg": 270.0,
           "down_reason": "",

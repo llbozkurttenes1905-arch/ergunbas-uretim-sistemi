@@ -2243,7 +2243,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "4",
+          "hat": "104",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği",
@@ -2252,7 +2252,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "6",
+          "hat": "106",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Elektrik arızası",
@@ -2261,7 +2261,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "9",
+          "hat": "109",
           "fire_reason": "Hammadde değişimi",
           "fire_kg": 201.0,
           "down_reason": "",

@@ -2664,7 +2664,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 1.08,
@@ -2677,7 +2677,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.94,
@@ -2690,7 +2690,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 1.48,
@@ -2702,26 +2702,7 @@
             "sets": 102.0
           }
         ],
-        "levha": [
-          {
-            "row": 0,
-            "hat": "201",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
-          }
-        ]
+        "levha": []
       },
       "gece": {
         "employees": 2,
@@ -2730,7 +2711,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 1.08,
@@ -2743,7 +2724,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.94,
@@ -2756,7 +2737,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 1.48,
@@ -2768,26 +2749,7 @@
             "sets": 88.0
           }
         ],
-        "levha": [
-          {
-            "row": 0,
-            "hat": "201",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
-            "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
-            "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
-          }
-        ]
+        "levha": []
       },
       "downtimes": []
     },

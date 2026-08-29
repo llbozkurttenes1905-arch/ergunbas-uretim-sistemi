@@ -6408,7 +6408,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.93,
@@ -6421,7 +6421,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.45,
             "speed": 0.8,
@@ -6434,7 +6434,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.0,
@@ -6447,7 +6447,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.68,
@@ -6460,7 +6460,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.91,
@@ -6473,7 +6473,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.75,
@@ -6486,7 +6486,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.64,
@@ -6499,7 +6499,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.7,
@@ -6512,7 +6512,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.22,
@@ -6527,7 +6527,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "COCO",
             "width": 94.0,
             "length": 208.0,
@@ -6552,7 +6552,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.93,
@@ -6565,7 +6565,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.81,
@@ -6578,7 +6578,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.0,
@@ -6591,7 +6591,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.68,
@@ -6604,7 +6604,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.8,
@@ -6617,7 +6617,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.73,
@@ -6630,7 +6630,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.58,
@@ -6643,7 +6643,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.64,
@@ -6656,7 +6656,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.1,
@@ -6671,7 +6671,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "MIX TEAK",
             "width": 85.0,
             "length": 210.0,
@@ -6689,7 +6689,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "ANTRASİT",
             "width": 94.0,
             "length": 207.0,
@@ -6710,7 +6710,7 @@
       "downtimes": [
         {
           "shift": "Gündüz",
-          "hat": "1",
+          "hat": "101",
           "fire_reason": "3 defa ayar  yapıldı.",
           "fire_kg": 177.0,
           "down_reason": "",
@@ -6719,7 +6719,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "2",
+          "hat": "102",
           "fire_reason": "2 defa ayar yapıldı.",
           "fire_kg": 336.0,
           "down_reason": "",
@@ -6728,7 +6728,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "3",
+          "hat": "103",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalibre temizliği yapıldı.",
@@ -6737,7 +6737,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "4",
+          "hat": "104",
           "fire_reason": "2 defa ayar yapıldı.",
           "fire_kg": 298.0,
           "down_reason": "",
@@ -6746,7 +6746,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "5",
+          "hat": "105",
           "fire_reason": "3 defa ayar  yapıldı. 1 defa ürün koptu.",
           "fire_kg": 1156.0,
           "down_reason": "",
@@ -6755,7 +6755,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "6",
+          "hat": "106",
           "fire_reason": "3 defa ayar yapıldı.",
           "fire_kg": 525.0,
           "down_reason": "",
@@ -6764,7 +6764,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "7",
+          "hat": "107",
           "fire_reason": "3 defa ayar yapıldı.",
           "fire_kg": 533.0,
           "down_reason": "",
@@ -6773,7 +6773,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "8",
+          "hat": "108",
           "fire_reason": "2 defa ayar yapıldı.",
           "fire_kg": 57.0,
           "down_reason": "",
@@ -6782,7 +6782,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "9",
+          "hat": "109",
           "fire_reason": "2 defa ayar yapıldı.",
           "fire_kg": 352.0,
           "down_reason": "",

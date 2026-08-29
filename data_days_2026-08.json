@@ -5329,7 +5329,7 @@
           {
             "row": 0,
             "hat": "1",
-            "product": "80X80 Pervaz",
+            "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 1.11,
             "heads": 1.0,
@@ -5342,7 +5342,7 @@
           {
             "row": 0,
             "hat": "2",
-            "product": "100 mm Kasa",
+            "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.86,
             "heads": 1.0,
@@ -5355,7 +5355,7 @@
           {
             "row": 0,
             "hat": "3",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.69,
             "heads": 2.0,
@@ -5368,7 +5368,7 @@
           {
             "row": 0,
             "hat": "4",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.57,
             "heads": 2.0,
@@ -5381,7 +5381,7 @@
           {
             "row": 0,
             "hat": "5",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.77,
             "heads": 2.0,
@@ -5394,7 +5394,7 @@
           {
             "row": 0,
             "hat": "6",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.71,
             "heads": 1.0,
@@ -5407,7 +5407,7 @@
           {
             "row": 0,
             "hat": "7",
-            "product": "Kitkat",
+            "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.59,
             "heads": 1.0,
@@ -5420,7 +5420,7 @@
           {
             "row": 0,
             "hat": "8",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.7,
             "heads": 1.0,
@@ -5433,7 +5433,7 @@
           {
             "row": 0,
             "hat": "9",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.38,
             "heads": 2.0,
@@ -5448,7 +5448,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "D. Budak",
+            "color": "DIŞBUDAK",
             "width": 93.0,
             "length": 208.0,
             "m2_one": 1.9344,
@@ -5473,7 +5473,7 @@
           {
             "row": 0,
             "hat": "1",
-            "product": "80X80 Pervaz",
+            "product": "80X80 PERVAZ",
             "length": 2.24,
             "speed": 0.91,
             "heads": 1.0,
@@ -5486,7 +5486,7 @@
           {
             "row": 0,
             "hat": "2",
-            "product": "100 mm Kasa",
+            "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.86,
             "heads": 1.0,
@@ -5499,7 +5499,7 @@
           {
             "row": 0,
             "hat": "3",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.77,
             "heads": 2.0,
@@ -5512,7 +5512,7 @@
           {
             "row": 0,
             "hat": "4",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.57,
             "heads": 2.0,
@@ -5525,7 +5525,7 @@
           {
             "row": 0,
             "hat": "5",
-            "product": "Seren",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.77,
             "heads": 2.0,
@@ -5538,7 +5538,7 @@
           {
             "row": 0,
             "hat": "6",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.7,
             "heads": 1.0,
@@ -5551,20 +5551,20 @@
           {
             "row": 0,
             "hat": "7",
-            "product": "200 mm Kasa",
+            "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.75,
             "heads": 1.0,
             "hours": 0.0,
             "prod_kg": 309.0,
-            "fire_kg": 364.0,
+            "fire_kg": 0.0,
             "qty": 48,
             "sets": 19.2
           },
           {
             "row": 0,
             "hat": "8",
-            "product": "140 mm Kasa",
+            "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.74,
             "heads": 1.0,
@@ -5577,7 +5577,7 @@
           {
             "row": 0,
             "hat": "9",
-            "product": "50x80 Pervaz",
+            "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 1.38,
             "heads": 2.0,
@@ -5592,7 +5592,7 @@
           {
             "row": 0,
             "hat": "Levha 1",
-            "color": "D. Budak",
+            "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 207.0,
             "m2_one": 1.9458,

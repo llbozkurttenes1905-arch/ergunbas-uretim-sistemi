@@ -9873,7 +9873,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -9886,7 +9886,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "DP130-99x42-ANT",
             "length": 2.15,
             "speed": 0.0,
@@ -9899,7 +9899,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.88,
@@ -9912,7 +9912,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.61,
@@ -9925,7 +9925,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.52,
@@ -9938,7 +9938,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.83,
@@ -9951,7 +9951,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.58,
@@ -9964,8 +9964,8 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
-            "product": "",
+            "hat": "108",
+            "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.7,
             "heads": 1.0,
@@ -9973,11 +9973,11 @@
             "prod_kg": 205.0,
             "fire_kg": 536.6,
             "qty": 54,
-            "sets": 0
+            "sets": 21.6
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 1.32,

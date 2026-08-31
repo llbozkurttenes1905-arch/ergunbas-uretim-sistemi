@@ -142,7 +142,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 93.0,
             "length": 208.0,
@@ -160,7 +160,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 84.0,
             "length": 211.0,
@@ -317,7 +317,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 85.0,
             "length": 210.0,
@@ -338,7 +338,7 @@
       "downtimes": [
         {
           "shift": "Gündüz",
-          "hat": "4",
+          "hat": "104",
           "fire_reason": "Hammadde kaynaklı sorunlar yaşandı.",
           "fire_kg": 0.0,
           "down_reason": "",
@@ -347,7 +347,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "9",
+          "hat": "109",
           "fire_reason": "Kalıp, Kalibre temizliği",
           "fire_kg": 0.0,
           "down_reason": "",
@@ -365,7 +365,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "1",
+          "hat": "101",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Elektrik arızası",
@@ -374,7 +374,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "3",
+          "hat": "103",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği",
@@ -383,7 +383,7 @@
         },
         {
           "shift": "Gece",
-          "hat": "9",
+          "hat": "109",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Elektrik arızası",

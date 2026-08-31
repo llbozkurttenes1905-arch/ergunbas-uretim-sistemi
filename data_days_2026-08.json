@@ -10479,6 +10479,24 @@
           "down_reason": "Su pompası arızası.",
           "down_min": 240.0,
           "desc": "05:36 hat kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "Genel",
+          "fire_reason": "2 defa elektrik gitti geldi.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "Genel",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik kesintisi.",
+          "down_min": 45.0,
+          "desc": "00:43-01:27 elektrik kesildi."
         }
       ]
     },

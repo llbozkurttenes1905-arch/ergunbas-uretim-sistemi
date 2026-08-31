@@ -926,7 +926,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 93.0,
             "length": 211.0,
@@ -944,7 +944,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "VIZON",
             "width": 93.0,
             "length": 208.0,
@@ -1088,7 +1088,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 208.0,
@@ -1109,7 +1109,7 @@
       "downtimes": [
         {
           "shift": "Gece",
-          "hat": "1",
+          "hat": "101",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Testere piston arızası",

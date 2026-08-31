@@ -326,6 +326,7 @@ class ProductCreate(BaseModel):
     name: str
     category: str
     door_ratio: float
+    description: Optional[str] = ""
 
 class ExtruderEntry(BaseModel):
     row: Optional[int] = 0
@@ -1143,12 +1144,20 @@ def get_products():
 def add_product(product: ProductCreate, x_username: Optional[str] = Header(None)):
     require_editor(x_username)
     data = load_data()
-    new_id = f"p_{len(data['products']) + 1}"
+    # ID çakışmasını önlemek için mevcut en yüksek numaradan devam et
+    existing_nums = []
+    for p in data["products"]:
+        m = re.match(r"^p_(\d+)", p.get("id", ""))
+        if m:
+            existing_nums.append(int(m.group(1)))
+    next_num = (max(existing_nums) + 1) if existing_nums else 1
+    new_id = f"p_{next_num}"
     new_prod = {
         "id": new_id,
         "name": product.name,
         "category": product.category,
-        "door_ratio": product.door_ratio
+        "door_ratio": product.door_ratio,
+        "description": product.description or ""
     }
     data["products"].append(new_prod)
     save_data(data)
@@ -1161,6 +1170,30 @@ def delete_product(product_id: str, x_username: Optional[str] = Header(None)):
     data["products"] = [p for p in data["products"] if p["id"] != product_id]
     save_data(data)
     return {"status": "success"}
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    door_ratio: Optional[float] = None
+    description: Optional[str] = None
+
+@app.put("/api/products/{product_id}")
+def update_product(product_id: str, update: ProductUpdate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    data = load_data()
+    for p in data["products"]:
+        if p["id"] == product_id:
+            if update.name is not None:
+                p["name"] = update.name
+            if update.category is not None:
+                p["category"] = update.category
+            if update.door_ratio is not None:
+                p["door_ratio"] = update.door_ratio
+            if update.description is not None:
+                p["description"] = update.description
+            save_data(data)
+            return {"status": "success", "product": p}
+    raise HTTPException(status_code=404, detail="Ürün bulunamadı")
 
 # =====================================================================
 # USER MANAGEMENT ENDPOINTS

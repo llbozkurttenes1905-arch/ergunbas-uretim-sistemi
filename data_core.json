@@ -56,769 +56,897 @@
       "id": "p_1",
       "name": "50X80 PERVAZ",
       "category": "pervaz",
-      "door_ratio": 5.0
+      "door_ratio": 5.0,
+      "description": ""
     },
     {
       "id": "p_2",
       "name": "80X80 PERVAZ",
       "category": "pervaz",
-      "door_ratio": 5.0
+      "door_ratio": 5.0,
+      "description": ""
     },
     {
       "id": "p_3",
       "name": "35X100 PERVAZ",
       "category": "pervaz",
-      "door_ratio": 5.0
+      "door_ratio": 5.0,
+      "description": ""
     },
     {
       "id": "p_4",
       "name": "35X150 PERVAZ",
       "category": "pervaz",
-      "door_ratio": 5.0
+      "door_ratio": 5.0,
+      "description": ""
     },
     {
       "id": "p_5",
       "name": "35X80 PERVAZ",
       "category": "pervaz",
-      "door_ratio": 5.0
+      "door_ratio": 5.0,
+      "description": ""
     },
     {
       "id": "p_6",
       "name": "100 mm KASA",
       "category": "kasa",
-      "door_ratio": 2.5
+      "door_ratio": 2.5,
+      "description": ""
     },
     {
       "id": "p_7",
       "name": "140 mm KASA",
       "category": "kasa",
-      "door_ratio": 2.5
+      "door_ratio": 2.5,
+      "description": ""
     },
     {
       "id": "p_8",
       "name": "200 mm KASA",
       "category": "kasa",
-      "door_ratio": 2.5
+      "door_ratio": 2.5,
+      "description": ""
     },
     {
       "id": "p_9",
       "name": "SEREN",
       "category": "seren",
-      "door_ratio": 3.5
+      "door_ratio": 3.5,
+      "description": ""
     },
     {
       "id": "p_10",
       "name": "D100-145x22-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 145x22x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_11",
       "name": "D100-145x22-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 145x22x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_12",
       "name": "D100-145x22-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 145x22x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_13",
       "name": "D200-140x26-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_14",
       "name": "D200-140x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_15",
       "name": "D200-140x26-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_16",
       "name": "D201-140x26-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck Emboslu | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_17",
       "name": "D201-140x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck Emboslu | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_18",
       "name": "D201-140x26-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Deck Emboslu | Ölçü: 140x26x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_19",
       "name": "D400-140x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_20",
       "name": "D400-140x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_21",
       "name": "D400-140x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_22",
       "name": "D401-140x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck Emboslu | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_23",
       "name": "D401-140x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck Emboslu | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_24",
       "name": "D401-140x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Deck Emboslu | Ölçü: 140x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_25",
       "name": "D400-40x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_26",
       "name": "D400-40x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_27",
       "name": "D400-40x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_28",
       "name": "DP110-45x30-GEN",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Destek Profili (Karkas) | Ölçü: 45x30x3000mm | Dış Mekan | Renk: -"
     },
     {
       "id": "p_31",
       "name": "KT100-220x24-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat | Ölçü: 220x24x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_32",
       "name": "KT100-220x24-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat | Ölçü: 220x24x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_33",
       "name": "KT100-220x24-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat | Ölçü: 220x24x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_34",
       "name": "KT101-219x26-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat Zımparalı | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_35",
       "name": "KT101-219x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat Zımparalı | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_36",
       "name": "KT101-219x26-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat Zımparalı | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_37",
       "name": "KT102-219x26-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat 3D Emboslu | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_38",
       "name": "KT102-219x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat 3D Emboslu | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_39",
       "name": "KT102-219x26-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | WPC Kitkat 3D Emboslu | Ölçü: 219x26x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_40",
       "name": "KT103-169x26-KCV",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Koyu Ceviz"
     },
     {
       "id": "p_41",
       "name": "KT103-169x26-AKC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Akçaağaç"
     },
     {
       "id": "p_42",
       "name": "KT103-169x26-DBB",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Dışbudak Beyaz"
     },
     {
       "id": "p_43",
       "name": "KT103-169x26-TIK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Tik"
     },
     {
       "id": "p_44",
       "name": "KT103-169x26-BTK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Beyaz Tik"
     },
     {
       "id": "p_45",
       "name": "KT103-169x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Antrasit"
     },
     {
       "id": "p_46",
       "name": "KT103-169x26-COC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Coco"
     },
     {
       "id": "p_47",
       "name": "KT103-169x26-MAU",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | İç Mekan | Renk: Mauron"
     },
     {
       "id": "p_48",
       "name": "KT104-169x26-ALM",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | Dış Mekan | Renk: Altın Meşe"
     },
     {
       "id": "p_49",
       "name": "KT104-169x26-KMG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | Dış Mekan | Renk: Kum Gri"
     },
     {
       "id": "p_50",
       "name": "KT104-169x26-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | PVC Folyolu Kitkat Duvar Paneli | Ölçü: 169x26x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_51",
       "name": "Korner-44,5x50-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Kitkat Korner | Ölçü: 44,5x50x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_52",
       "name": "Korner-44,5x50-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Kitkat Korner | Ölçü: 44,5x50x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_53",
       "name": "Korner-44,5x50-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Kitkat Korner | Ölçü: 44,5x50x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_54",
       "name": "SHP100-150x21-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Shiplap | Ölçü: 150x21x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_55",
       "name": "SHP100-150x21-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Shiplap | Ölçü: 150x21x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_56",
       "name": "SHP100-150x21-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Shiplap | Ölçü: 150x21x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_57",
       "name": "D400-40x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_58",
       "name": "D400-40x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_59",
       "name": "D400-40x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | L Profil | Ölçü: 40x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_60",
       "name": "DP110-45x30-GEN",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DECK GRUBU | Destek Profili (Karkas) | Ölçü: 45x30x3000mm | Dış Mekan | Renk: -"
     },
     {
       "id": "p_61",
       "name": "PDB140-250x58-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Duvar Profili | Ölçü: 250x58x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_62",
       "name": "PDB140-250x58-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Duvar Profili | Ölçü: 250x58x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_63",
       "name": "PDB140-250x58-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Duvar Profili | Ölçü: 250x58x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_64",
       "name": "PL190-244x32-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_65",
       "name": "PL190-244x32-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_66",
       "name": "PL190-244x32-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_67",
       "name": "PL191-244x32-ALM",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Altın Meşe"
     },
     {
       "id": "p_68",
       "name": "PL191-244x32-KMG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Kum Gri"
     },
     {
       "id": "p_69",
       "name": "PL191-244x32-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_70",
       "name": "DP130-99x42-KCV",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Koyu Ceviz"
     },
     {
       "id": "p_71",
       "name": "DP130-99x42-AKC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Akçaağaç"
     },
     {
       "id": "p_72",
       "name": "DP130-99x42-DBB",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Dışbudak Beyaz"
     },
     {
       "id": "p_73",
       "name": "DP130-99x42-TIK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Tik"
     },
     {
       "id": "p_74",
       "name": "DP130-99x42-BTK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Beyaz Tik"
     },
     {
       "id": "p_75",
       "name": "DP130-99x42-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_76",
       "name": "DP130-99x42-COC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Coco"
     },
     {
       "id": "p_77",
       "name": "DP130-99x42-MAU",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Mauron"
     },
     {
       "id": "p_78",
       "name": "SP100-12x80-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Süpürgelik | Ölçü: 12x80x2800mm | İç Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_79",
       "name": "SP100-12x80-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Süpürgelik | Ölçü: 12x80x2800mm | İç Mekan | Renk: Antrasit"
     },
     {
       "id": "p_80",
       "name": "SP100-12x80-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Süpürgelik | Ölçü: 12x80x2800mm | İç Mekan | Renk: Buğday"
     },
     {
       "id": "p_81",
       "name": "GEN-MET",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Süpürgelik Bağlantı Aparatı | Ölçü: - | - | Renk: Metalik"
     },
     {
       "id": "p_82",
       "name": "PD160-150x150-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 150x150x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_83",
       "name": "PD160-150x150-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 150x150x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_84",
       "name": "PD160-150x150-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 150x150x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_85",
       "name": "PD165-100x100-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_86",
       "name": "PD165-100x100-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_87",
       "name": "PD165-100x100-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_88",
       "name": "PM180-150x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Mertek | Ölçü: 150x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_89",
       "name": "PM180-150x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Mertek | Ölçü: 150x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_90",
       "name": "PM180-150x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Mertek | Ölçü: 150x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_91",
       "name": "PK170-220x60-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Kiriş | Ölçü: 220x60x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_92",
       "name": "PK170-220x60-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Kiriş | Ölçü: 220x60x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_93",
       "name": "PK170-220x60-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Kiriş | Ölçü: 220x60x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_94",
       "name": "PK180-200x1,5-GRI",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Esnek Gölgelik Levha | Ölçü: 200x1,5x2000mm | Dış Mekan | Renk: Gri"
     },
     {
       "id": "p_95",
       "name": "PL191-244x32-ALM",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Altın Meşe"
     },
     {
       "id": "p_96",
       "name": "PL191-244x32-KMG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Kum Gri"
     },
     {
       "id": "p_97",
       "name": "PL191-244x32-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Folyolu Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_98",
       "name": "PL190-244x32-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_99",
       "name": "PL190-244x32-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_100",
       "name": "PL190-244x32-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Lambri | Ölçü: 244x32x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_101",
       "name": "ÇT100-160x18-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | WPC Ham Çit Profil (Tek Tarafı Fırçalı) | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_102",
       "name": "ÇT100-160x18-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | WPC Ham Çit Profil (Tek Tarafı Fırçalı) | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_103",
       "name": "ÇT100-160x18-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | WPC Ham Çit Profil (Tek Tarafı Fırçalı) | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_104",
       "name": "ÇT101-160x18-ALM",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | PVC Folyolu Çit Profil | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Altın Meşe"
     },
     {
       "id": "p_105",
       "name": "ÇT101-160x18-KMG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | PVC Folyolu Çit Profil | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Kum Gri"
     },
     {
       "id": "p_106",
       "name": "ÇT101-160x18-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "ÇİT GRUBU | PVC Folyolu Çit Profil | Ölçü: 160x18x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_107",
       "name": "PD165-100x100-KAH",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Kahverengi"
     },
     {
       "id": "p_108",
       "name": "PD165-100x100-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_109",
       "name": "PD165-100x100-BUG",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "PERGOLA GRUBU | Direk | Ölçü: 100x100x3000mm | Dış Mekan | Renk: Buğday"
     },
     {
       "id": "p_110",
       "name": "DP130-99x42-KCV",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Koyu Ceviz"
     },
     {
       "id": "p_111",
       "name": "DP130-99x42-AKC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Akçaağaç"
     },
     {
       "id": "p_112",
       "name": "DP130-99x42-DBB",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Dışbudak Beyaz"
     },
     {
       "id": "p_113",
       "name": "DP130-99x42-TIK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Tik"
     },
     {
       "id": "p_114",
       "name": "DP130-99x42-BTK",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Beyaz Tik"
     },
     {
       "id": "p_115",
       "name": "DP130-99x42-ANT",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Antrasit"
     },
     {
       "id": "p_116",
       "name": "DP130-99x42-COC",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Coco"
     },
     {
       "id": "p_117",
       "name": "DP130-99x42-MAU",
       "category": "diger",
-      "door_ratio": 0.0
+      "door_ratio": 0.0,
+      "description": "DUVAR PANELİ GRUBU | Baffle Tavan Profili (U Profil) | Ölçü: 99x42x3000mm | İç/Dış Mekan | Renk: Mauron"
     },
     {
       "id": "p_119",
       "name": "KOYU CEVİZ",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_120",
       "name": "AKÇAAĞAÇ",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_122",
       "name": "TEAK",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_123",
       "name": "BEYAZ TEAK",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_124",
       "name": "ANTRASİT",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_125",
       "name": "COCO",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_126",
       "name": "MAURON",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_128",
       "name": "SONOMO",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_130",
       "name": "MIX BEYAZ TEAK",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_130",
       "name": "VIZON",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_130",
       "name": "MIX TEAK",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_130",
       "name": "MIX COCO",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     },
     {
       "id": "p_130",
       "name": "DIŞBUDAK",
       "category": "levha",
-      "door_ratio": 2.0
+      "door_ratio": 2.0,
+      "description": ""
     }
   ]
 }

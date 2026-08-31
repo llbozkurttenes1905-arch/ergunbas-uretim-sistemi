@@ -200,6 +200,43 @@
         </div>
     </div>
 
+    <!-- MODAL: Ürünü Düzenle -->
+    <div id="modal-edit-product" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="package-search" class="w-5 h-5 text-emerald-400"></i> Ürünü Düzenle
+            </h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Ürün İsmi</label>
+                    <input type="text" id="modal-edit-product-name" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Kategori</label>
+                    <select id="modal-edit-product-cat" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <option value="pervaz">Pervaz (5 Adet/Kapı)</option>
+                        <option value="kasa">Kasa (2.5 Adet/Kapı)</option>
+                        <option value="seren">Seren (3.5 Adet/Kapı)</option>
+                        <option value="levha">Levha (2 Adet/Kapı)</option>
+                        <option value="diger">Diğer / Ekstra</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">1 Kapı Katsayısı (Reçete Oranı)</label>
+                    <input type="number" step="0.1" id="modal-edit-product-ratio" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 font-medium mb-1.5 block">Açıklama <span class="text-slate-600">(mouse üzerine gelince görünür)</span></label>
+                    <input type="text" id="modal-edit-product-desc" placeholder="Örn: DECK GRUBU | 145x22mm | Dış Mekan | Kahverengi" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeEditProductModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">İptal</button>
+                <button onclick="confirmEditProductModal()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-600/30">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ERGUNBAS Corporate Header -->
     <header class="relative overflow-hidden bg-slate-900 border-b border-slate-800 px-3 sm:px-6 py-3 sm:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4 sticky top-0 z-50 shadow-xl">
         <!-- Türk Bayrağı: header'ın sol tarafında yumuşak geçişli (gradient) kırmızı zemin + ay-yıldız (boşlukta, hafif büyütülmüş) -->
@@ -992,6 +1029,7 @@
                             </select>
                             <input type="number" step="0.1" id="new-prod-ratio" placeholder="Reçete (Örn: 5.0)" required class="bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         </div>
+                        <input type="text" id="new-prod-desc" placeholder="Açıklama (opsiyonel — ürünün üzerine gelindiğinde gösterilir)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                         <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-lg transition flex items-center justify-center gap-1">
                             <i data-lucide="plus" class="w-4 h-4"></i> Yeni Ürün & Reçete Kaydet
                         </button>
@@ -1003,6 +1041,7 @@
                                     <th class="p-3">Ürün İsmi</th>
                                     <th class="p-3">Kategori</th>
                                     <th class="p-3">1 Kapı Katsayısı</th>
+                                    <th class="p-3">Açıklama</th>
                                     <th class="p-3 text-right">İşlem</th>
                                 </tr>
                             </thead>
@@ -2239,12 +2278,26 @@
             filtered.forEach(p => {
                 const isSelected = (p.name === selectedValue);
                 if (isSelected) found = true;
-                html += `<option value="${p.name}" ${isSelected ? 'selected' : ''}>${p.name}</option>`;
+                const desc = (p.description || '').replace(/"/g, '&quot;');
+                html += `<option value="${p.name}" title="${desc}" ${isSelected ? 'selected' : ''}>${p.name}</option>`;
             });
             if (selectedValue && !found) {
                 html += `<option value="${selectedValue}" selected>⚠️ ${selectedValue} (katalogda yok — Ayarlar'dan ekleyin)</option>`;
             }
             return html;
+        }
+
+        function getProductDescription(name) {
+            const p = productsList.find(x => x.name === name);
+            return p ? (p.description || '') : '';
+        }
+
+        function updateProductSelectTitle(selectEl) {
+            // Seçili üründen açıklamayı bulup <select>'in kendisine title olarak yazar,
+            // böylece dropdown kapalıyken üzerine gelince açıklama görünür.
+            if (!selectEl) return;
+            const desc = getProductDescription(selectEl.value);
+            selectEl.title = desc || '';
         }
 
         function createExtruderRowHtml(hatName = '', item = {}) {
@@ -2259,7 +2312,7 @@
                         <input type="text" value="${hatName || item.hat || 'Hat 1'}" class="input-hat-ext bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-28">
                     </td>
                     <td class="p-2.5">
-                        <select class="input-prod-name bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full font-medium">${buildProductOptionsHtml(item.product || '', p => p.category !== 'levha')}</select>
+                        <select class="input-prod-name bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full font-medium" title="${(getProductDescription(item.product || '') || '').replace(/"/g, '&quot;')}" onchange="updateProductSelectTitle(this)">${buildProductOptionsHtml(item.product || '', p => p.category !== 'levha')}</select>
                     </td>
                     <td class="p-2.5">
                         <input type="number" step="0.01" value="${item.length || ''}" class="input-ext-length bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-20 text-center">
@@ -2334,7 +2387,7 @@
                         <input type="text" value="${hatName || item.hat || 'Levha 1'}" class="input-hat bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-24">
                     </td>
                     <td class="p-2.5">
-                        <select class="input-color bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full">${buildProductOptionsHtml(item.color || '', p => p.category === 'levha')}</select>
+                        <select class="input-color bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full" title="${(getProductDescription(item.color || '') || '').replace(/"/g, '&quot;')}" onchange="updateProductSelectTitle(this)">${buildProductOptionsHtml(item.color || '', p => p.category === 'levha')}</select>
                     </td>
                     <td class="p-2.5">
                         <input type="number" value="${item.width || 93}" class="input-width bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-16 text-center">
@@ -2614,11 +2667,15 @@
             const tblP = document.getElementById('tbl-products');
             if (tblP) {
                 tblP.innerHTML = productsList.map(p => `
-                    <tr class="hover:bg-slate-900/50">
+                    <tr class="hover:bg-slate-900/50" title="${(p.description || '').replace(/"/g, '&quot;')}">
                         <td class="p-3 font-semibold text-white">${p.name}</td>
                         <td class="p-3 uppercase text-xs font-bold text-slate-400">${p.category}</td>
                         <td class="p-3 font-bold text-emerald-400">${p.door_ratio} Adet/Kapı</td>
+                        <td class="p-3 text-xs text-slate-400 max-w-xs truncate">${p.description || '—'}</td>
                         <td class="p-3 text-right edit-action">
+                            <button onclick="openEditProductModal('${p.id}')" class="p-1 text-sky-400 hover:text-sky-300 mr-1">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
                             <button onclick="deleteProduct('${p.id}')" class="p-1 text-red-400 hover:text-red-300">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -2668,15 +2725,17 @@
             const name = document.getElementById('new-prod-name').value;
             const category = document.getElementById('new-prod-cat').value;
             const door_ratio = parseFloat(document.getElementById('new-prod-ratio').value) || 0;
+            const description = document.getElementById('new-prod-desc').value;
 
             await fetch('/api/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
-                body: JSON.stringify({ name, category, door_ratio })
+                body: JSON.stringify({ name, category, door_ratio, description })
             });
 
             document.getElementById('new-prod-name').value = '';
             document.getElementById('new-prod-ratio').value = '';
+            document.getElementById('new-prod-desc').value = '';
             showToast(`Yeni ürün (${name}) reçeteye kaydedildi!`);
             loadSettings();
         }
@@ -2696,6 +2755,58 @@
                     }
                 }
             );
+        }
+
+        let _editProductId = null;
+
+        function openEditProductModal(id) {
+            const p = productsList.find(x => x.id === id);
+            if (!p) return;
+            _editProductId = id;
+            document.getElementById('modal-edit-product-name').value = p.name || '';
+            document.getElementById('modal-edit-product-cat').value = p.category || 'diger';
+            document.getElementById('modal-edit-product-ratio').value = p.door_ratio || 0;
+            document.getElementById('modal-edit-product-desc').value = p.description || '';
+            document.getElementById('modal-edit-product').classList.remove('hidden');
+        }
+
+        function closeEditProductModal() {
+            document.getElementById('modal-edit-product').classList.add('hidden');
+            _editProductId = null;
+        }
+
+        async function confirmEditProductModal() {
+            if (!_editProductId) return;
+            const name = document.getElementById('modal-edit-product-name').value.trim();
+            const category = document.getElementById('modal-edit-product-cat').value;
+            const door_ratio = parseFloat(document.getElementById('modal-edit-product-ratio').value) || 0;
+            const description = document.getElementById('modal-edit-product-desc').value;
+
+            if (!name) {
+                alert('Ürün ismi boş olamaz.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/products/${_editProductId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify({ name, category, door_ratio, description })
+                });
+                if (res.ok) {
+                    closeEditProductModal();
+                    showToast('Ürün güncellendi!');
+                    await fetchMachinesAndProducts();
+                    loadSettings();
+                } else {
+                    let msg = 'Ürün güncellenemedi!';
+                    try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                    alert(msg);
+                }
+            } catch (networkErr) {
+                console.error(networkErr);
+                alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
+            }
         }
 
         let currentUser = null;

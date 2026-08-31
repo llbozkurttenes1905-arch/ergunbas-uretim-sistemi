@@ -8872,10 +8872,10 @@
             "speed": 0.78,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 746.0,
+            "fire_kg": 279.59,
+            "qty": 190,
+            "sets": 76.0
           },
           {
             "row": 0,
@@ -8885,10 +8885,10 @@
             "speed": 0.88,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 820.0,
+            "fire_kg": 8.63,
+            "qty": 570,
+            "sets": 114.0
           },
           {
             "row": 0,
@@ -8898,10 +8898,10 @@
             "speed": 0.7,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1750.0,
+            "fire_kg": 25.9,
+            "qty": 473,
+            "sets": 135.1
           },
           {
             "row": 0,
@@ -8911,10 +8911,10 @@
             "speed": 0.71,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1474.0,
+            "fire_kg": 156.97,
+            "qty": 440,
+            "sets": 125.7
           },
           {
             "row": 0,
@@ -8924,10 +8924,10 @@
             "speed": 0.78,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1111.0,
+            "fire_kg": 93.16,
+            "qty": 241,
+            "sets": 96.4
           },
           {
             "row": 0,
@@ -8937,10 +8937,10 @@
             "speed": 0.57,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 744.0,
+            "fire_kg": 294.56,
+            "qty": 120,
+            "sets": 48.0
           },
           {
             "row": 0,
@@ -8950,10 +8950,10 @@
             "speed": 0.66,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 954.0,
+            "fire_kg": 161.64,
+            "qty": 189,
+            "sets": 75.6
           },
           {
             "row": 0,
@@ -8963,10 +8963,10 @@
             "speed": 1.43,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1090.0,
+            "fire_kg": 201.44,
+            "qty": 790,
+            "sets": 158.0
           }
         ],
         "levha": [

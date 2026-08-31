@@ -10331,9 +10331,9 @@
             "length": 2.15,
             "speed": 0.77,
             "heads": 1.0,
-            "hours": 7.0,
+            "hours": 8.0,
             "prod_kg": 684.0,
-            "fire_kg": 119.8,
+            "fire_kg": 234.63,
             "qty": 128,
             "sets": 51.2
           },
@@ -10416,7 +10416,71 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "102",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Geç çalıştı.",
+          "down_min": 420.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 180.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 240.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "102",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 360.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 240.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Testere elektrik arızası.",
+          "down_min": 300.0,
+          "desc": "04:35 hat kapatıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Su pompası arızası.",
+          "down_min": 240.0,
+          "desc": "05:36 hat kapatıldı."
+        }
+      ]
     },
     "31": {
       "day": 31,

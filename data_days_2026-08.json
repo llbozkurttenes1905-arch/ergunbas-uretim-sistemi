@@ -4523,6 +4523,24 @@
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
             "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "TEAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 70,
+            "total_m2": 136.206,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 20.286,
+            "dead_fire_kg": 49.7,
+            "total_kg": 333.7,
+            "sets": 35.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 14.0
           }
         ]
       },

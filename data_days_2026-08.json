@@ -9693,7 +9693,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
@@ -9706,7 +9706,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm KASA",
             "length": 2.15,
             "speed": 0.8,
@@ -9719,7 +9719,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50X80 PERVAZ",
             "length": 2.2,
             "speed": 0.84,
@@ -9732,7 +9732,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.69,
@@ -9745,7 +9745,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.58,
@@ -9758,7 +9758,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.82,
@@ -9771,7 +9771,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm KASA",
             "length": 2.15,
             "speed": 0.59,
@@ -9784,7 +9784,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.69,
@@ -9797,7 +9797,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.25,
             "speed": 1.46,
@@ -9992,7 +9992,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 93.0,
             "length": 208.0,

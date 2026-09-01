@@ -1840,15 +1840,10 @@
                 onDashMonthChange();
             }
 
-            // 2) Aylık ürün bazlı (Ekstrüder / Levha) renk grafikleri de AYNI aya senkronlansın
-            const prodSel = document.getElementById('monthly-product-month-select');
-            if (prodSel) {
-                const hasOption = Array.from(prodSel.options).some(o => o.value === monthKey);
-                if (hasOption) {
-                    prodSel.value = monthKey;
-                    renderMonthlyProductCharts();
-                }
-            }
+            // 2) Aylık ürün bazlı (Ekstrüder / Levha) renk grafikleri de AYNI aya senkronlansın.
+            // O ayda ürün verisi yoksa (yeni ay, henüz veri girilmemiş) grafik/tablo BOŞ
+            // (sıfırlanmış) gösterilir — eski ayın verisi ekranda takılı kalmaz.
+            renderMonthlyProductCharts(monthKey);
 
             // 3) Bu aya ait Hat Bazında Performans tablosu (üretim, çalışma süresi,
             // verimlilik) doldurulsun — sayfa otomatik kaydırılmıyor, kullanıcı
@@ -2195,7 +2190,7 @@
             }
         }
 
-        function renderMonthlyProductCharts() {
+        function renderMonthlyProductCharts(forceMonthKey) {
             if (typeof Chart === 'undefined' || !dashboardData || !dashboardData.monthly_product_summary) return;
             const mp = dashboardData.monthly_product_summary;
 
@@ -2212,7 +2207,23 @@
                 monthSelect.value = mp.latest_month_key || '';
             }
 
-            const selectedMonthKey = monthSelect ? monthSelect.value : mp.latest_month_key;
+            // Dışarıdan (örn. Aylık Kırılım kartına tıklanarak) belirli bir ay zorlanıyorsa:
+            // O ayın ürün verisi olmasa bile (yeni ay, henüz veri girilmemiş) dropdown'a
+            // geçici bir seçenek olarak eklenip seçilir, grafik/tablo BOŞ (sıfırlanmış)
+            // olarak gösterilir — eski ayın verisi ekranda takılı kalmaz.
+            if (forceMonthKey && monthSelect) {
+                let opt = Array.from(monthSelect.options).find(o => o.value === forceMonthKey);
+                if (!opt) {
+                    const monthMeta = (dashboardData.monthly_totals || []).find(m => m.key === forceMonthKey);
+                    opt = document.createElement('option');
+                    opt.value = forceMonthKey;
+                    opt.textContent = monthMeta ? monthMeta.label : forceMonthKey;
+                    monthSelect.insertBefore(opt, monthSelect.firstChild);
+                }
+                monthSelect.value = forceMonthKey;
+            }
+
+            const selectedMonthKey = monthSelect ? monthSelect.value : (forceMonthKey || mp.latest_month_key);
             const monthData = mp.months[selectedMonthKey] || { extruder: [], levha: [] };
 
             const renderTypeChartAndTable = (chartVarSetter, canvasId, tbodyId, items, barColor) => {

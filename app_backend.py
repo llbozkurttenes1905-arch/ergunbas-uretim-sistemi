@@ -505,6 +505,10 @@ def get_dashboard_summary():
     data = load_data()
     total_prod_kg = 0.0
     total_fire_kg = 0.0
+    total_ext_prod_kg = 0.0
+    total_ext_fire_kg = 0.0
+    total_lev_prod_kg = 0.0
+    total_lev_fire_kg = 0.0
     total_employees = 0
     total_hours = 0.0
     total_downtime_min = 0.0
@@ -761,6 +765,12 @@ def get_dashboard_summary():
 
         day_extruder_summary = build_type_summary([m for m in day_machines_list if m["type"] == "Ekstrüder"])
         day_levha_summary = build_type_summary([m for m in day_machines_list if m["type"] == "Levha"])
+
+        # Tüm zamanlar (kuruluştan bu yana) toplamına da Ekstrüder/Levha kırılımı olarak ekle
+        total_ext_prod_kg += day_extruder_summary["total_prod_kg"]
+        total_ext_fire_kg += day_extruder_summary["total_fire_kg"]
+        total_lev_prod_kg += day_levha_summary["total_prod_kg"]
+        total_lev_fire_kg += day_levha_summary["total_fire_kg"]
 
         # Genel toplam (Ekstrüder + Levha) — iki ayrı özetin birleşik sonucu
         day_combined_summary = {
@@ -1123,6 +1133,14 @@ def get_dashboard_summary():
         "company": "ERGUNBAS Group",
         "total_prod_ton": round(total_prod_kg / 1000.0, 2),
         "total_fire_ton": round(total_fire_kg / 1000.0, 2),
+        "total_ext_prod_kg": round(total_ext_prod_kg, 2),
+        "total_ext_fire_kg": round(total_ext_fire_kg, 2),
+        "total_ext_prod_pct": round((total_ext_prod_kg / total_prod_kg * 100), 2) if total_prod_kg > 0 else 0,
+        "total_ext_fire_pct": round((total_ext_fire_kg / total_fire_kg * 100), 2) if total_fire_kg > 0 else 0,
+        "total_lev_prod_kg": round(total_lev_prod_kg, 2),
+        "total_lev_fire_kg": round(total_lev_fire_kg, 2),
+        "total_lev_prod_pct": round((total_lev_prod_kg / total_prod_kg * 100), 2) if total_prod_kg > 0 else 0,
+        "total_lev_fire_pct": round((total_lev_fire_kg / total_fire_kg * 100), 2) if total_fire_kg > 0 else 0,
         "overall_fire_ratio": round(overall_fire_ratio, 2),
         # Genel Toplam kartında "Ekstrüder / Levha ayrı ayrı + ikisinin genel toplamı"
         # gösterebilmek için: kuruluştan bu yana (tüm aylar) Ekstrüder ve Levha ayrı kırılımı

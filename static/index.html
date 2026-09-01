@@ -362,7 +362,7 @@
             </div>
 
             <!-- GENEL TOPLAM: ÜRETİM / FİRE / FİRE ORANI — Ekstrüder + Levha kutu kartları (Günlük Özet ile aynı stil) -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="genel-toplam-summary"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="genel-toplam-summary"></div>
 
             <!-- GENEL TOPLAM: HAT BAZINDA KIRILIM (kuruluştan bu yana, her makine/hat ayrı ayrı) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
@@ -411,62 +411,7 @@
                 </div>
             </div>
 
-            <!-- Key Metric Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-ergunbas-600/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Üretim Tonajı</p>
-                            <h3 class="text-3xl font-black text-white mt-2" id="kpi-prod-ton">Yükleniyor...</h3>
-                            <p class="text-xs text-ergunbas-500 mt-1 font-semibold flex items-center gap-1">
-                                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Ekstrüder + Levha Üretimi
-                            </p>
-                        </div>
-                        <div class="p-3 bg-ergunbas-600/10 text-ergunbas-500 rounded-xl border border-ergunbas-600/20">
-                            <i data-lucide="factory" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-amber-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Fire Tonajı</p>
-                            <h3 class="text-3xl font-black text-amber-400 mt-2" id="kpi-fire-ton">Yükleniyor...</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-semibold" id="kpi-fire-ratio">Fire Oranı: -</p>
-                        </div>
-                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
-                            <i data-lucide="flame" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="switchTab('doors')" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-emerald-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tamamlanan Tam Kapı</p>
-                            <h3 class="text-3xl font-black text-emerald-400 mt-2" id="kpi-doors">Yükleniyor...</h3>
-                            <p class="text-xs text-emerald-400 mt-1 font-semibold">Stok & Reçete Eşdeğeri</p>
-                        </div>
-                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
-                            <i data-lucide="door-open" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-purple-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Çalışan Verimliliği</p>
-                            <h3 class="text-3xl font-black text-purple-400 mt-2" id="kpi-efficiency">Yükleniyor...</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-medium" id="kpi-employees">Toplam Çalışan: -</p>
-                        </div>
-                        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Key Metric Cards kaldırıldı — genel-toplam-summary ile birleştirildi (duplicate önlendi) -->
 
 
             <div class="flex items-center gap-3 pt-2 pb-1">
@@ -1694,28 +1639,58 @@
             const levFPct = dashboardData.total_fire_ton > 0 ? Math.round((tb.levha.fire_ton / dashboardData.total_fire_ton) * 1000) / 10 : 0;
 
             el.innerHTML = `
-                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Üretim</span>
-                    <span class="text-lg font-black text-white">${dashboardData.total_prod_ton} Ton</span>
-                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-ergunbas-600/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Üretim Tonajı</p>
+                        <div class="p-2 bg-ergunbas-600/10 text-ergunbas-500 rounded-xl border border-ergunbas-600/20 shrink-0">
+                            <i data-lucide="factory" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-white">${dashboardData.total_prod_ton} Ton</h3>
+                    <div class="mt-2 pt-2 border-t border-slate-800 flex justify-between gap-2 text-[10px]">
                         <span class="text-sky-400 font-bold">Ekstrüder: ${tb.extruder.prod_ton} t (%${extPPct})</span>
                         <span class="text-fuchsia-400 font-bold">Levha: ${tb.levha.prod_ton} t (%${levPPct})</span>
                     </div>
                 </div>
-                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire</span>
-                    <span class="text-lg font-black text-amber-400">${dashboardData.total_fire_ton} Ton</span>
-                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-amber-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Fire Tonajı</p>
+                        <div class="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20 shrink-0">
+                            <i data-lucide="flame" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-amber-400">${dashboardData.total_fire_ton} Ton</h3>
+                    <div class="mt-2 pt-2 border-t border-slate-800 flex justify-between gap-2 text-[10px]">
                         <span class="text-sky-400 font-bold">Ekstrüder: ${tb.extruder.fire_ton} t (%${extFPct})</span>
                         <span class="text-fuchsia-400 font-bold">Levha: ${tb.levha.fire_ton} t (%${levFPct})</span>
                     </div>
                 </div>
-                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-center">
-                    <span class="text-[10px] text-slate-400 uppercase font-bold block">Fire Oranı (Formül: Fire/(Üretim+Fire)*100)</span>
-                    <span class="text-lg font-black text-orange-400">%${dashboardData.overall_fire_ratio}</span>
-                    <div class="mt-1.5 pt-1.5 border-t border-slate-800 flex justify-center gap-3 text-[10px]">
+
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-orange-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fire Oranı</p>
+                        <div class="p-2 bg-orange-500/10 text-orange-400 rounded-xl border border-orange-500/20 shrink-0">
+                            <i data-lucide="percent" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-orange-400">%${dashboardData.overall_fire_ratio}</h3>
+                    <div class="mt-2 pt-2 border-t border-slate-800 flex justify-between gap-2 text-[10px]">
                         <span class="text-sky-400 font-bold">Ekstrüder: %${tb.extruder.fire_ratio}</span>
                         <span class="text-fuchsia-400 font-bold">Levha: %${tb.levha.fire_ratio}</span>
+                    </div>
+                </div>
+
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-purple-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Çalışan Verimliliği</p>
+                        <div class="p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20 shrink-0">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-purple-400">${dashboardData.kg_per_employee} kg/kişi</h3>
+                    <div class="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-400 font-medium">
+                        Toplam Vardiya Çalışanı: ${dashboardData.total_employees}
                     </div>
                 </div>
             `;
@@ -1760,13 +1735,6 @@
             try {
                 const res = await fetch('/api/dashboard');
                 dashboardData = await res.json();
-
-                document.getElementById('kpi-prod-ton').textContent = `${dashboardData.total_prod_ton} Ton`;
-                document.getElementById('kpi-fire-ton').textContent = `${dashboardData.total_fire_ton} Ton`;
-                document.getElementById('kpi-fire-ratio').textContent = `Fire Oranı: %${dashboardData.overall_fire_ratio}`;
-                document.getElementById('kpi-doors').textContent = `${dashboardData.door_stats.completable_doors} Adet`;
-                document.getElementById('kpi-efficiency').textContent = `${dashboardData.kg_per_employee} kg/kişi`;
-                document.getElementById('kpi-employees').textContent = `Toplam Vardiya Çalışanı: ${dashboardData.total_employees}`;
 
                 populateDashDaySelect();
 

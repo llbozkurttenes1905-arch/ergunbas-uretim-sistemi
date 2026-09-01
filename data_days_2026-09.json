@@ -1,0 +1,59 @@
+{
+  "days": {
+    "32": {
+      "day": "32",
+      "date": "01.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
+    },
+    "33": {
+      "day": "33",
+      "date": "02.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
+    },
+    "34": {
+      "day": "34",
+      "date": "03.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
+    }
+  }
+}

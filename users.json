@@ -34,6 +34,13 @@
       "password": "123456",
       "role": "operator",
       "name": "ÜRETİM MÜHENDİSİ"
+    },
+    {
+      "id": "u9_Ved",
+      "username": "Vedat ERGÜNBAŞ",
+      "password": "34ER9000",
+      "role": "admin",
+      "name": "Vedat ERGÜNBAŞ"
     }
   ]
 }

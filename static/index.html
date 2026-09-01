@@ -717,6 +717,35 @@
                     </table>
                 </div>
             </div>
+
+            <!-- AY BAZINDA HAT PERFORMANSI: Aylık Kırılım'dan bir aya tıklayınca burası dolar -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm" id="ay-hat-performans-section">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="gauge" class="w-5 h-5 text-ergunbas-500"></i> Ay Bazında Hat Performansı
+                        <span class="text-ergunbas-400" id="ay-hat-performans-ay-label"></span>
+                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Yukarıdaki "Aylık Kırılım" kartlarından bir aya tıklayın</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="p-2.5">Hat</th>
+                                <th class="p-2.5">Tür</th>
+                                <th class="p-2.5 text-right">Üretim</th>
+                                <th class="p-2.5 text-right">Fire</th>
+                                <th class="p-2.5 text-right">Fire Oranı</th>
+                                <th class="p-2.5 text-right">Çalışma Süresi</th>
+                                <th class="p-2.5 text-right">Verimlilik (Net kg/sa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-ay-hat-performans" class="divide-y divide-slate-800">
+                            <tr><td colspan="7" class="p-4 text-center text-slate-500">Bir ay seçildiğinde burada görünecek.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
 
@@ -1817,14 +1846,43 @@
                 }
             }
 
-            // Kullanıcıyı ürün bazlı grafiklerin olduğu bölüme kaydır (en alt/en genel referans noktası)
-            const prodSection = document.getElementById('monthly-product-month-select');
-            if (prodSection) {
-                prodSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else if (sel) {
-                sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // 3) En altta: bu aya ait Hat Bazında Performans tablosu (üretim, çalışma
+            // süresi, verimlilik) doldurulsun ve kullanıcı oraya kaydırılsın
+            renderAyHatPerformans(monthKey);
+
+            const perfSection = document.getElementById('ay-hat-performans-section');
+            if (perfSection) {
+                perfSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
+
+        function renderAyHatPerformans(monthKey) {
+            const tbody = document.getElementById('tbl-ay-hat-performans');
+            const label = document.getElementById('ay-hat-performans-ay-label');
+            if (!tbody || !dashboardData || !dashboardData.monthly_totals) return;
+
+            const monthData = dashboardData.monthly_totals.find(m => m.key === monthKey);
+            if (label) label.textContent = monthData ? `— ${monthData.label}` : '';
+
+            const hats = (monthData && monthData.hat_breakdown) || [];
+            if (hats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Bu ay için veri bulunamadı.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = hats.map(h => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-2.5 font-bold text-white">${h.hat}</td>
+                    <td class="p-2.5 text-slate-400">${h.type}</td>
+                    <td class="p-2.5 text-right font-semibold text-white">${h.prod_kg.toLocaleString('tr-TR')} kg</td>
+                    <td class="p-2.5 text-right font-semibold text-amber-400">${h.fire_kg.toLocaleString('tr-TR')} kg</td>
+                    <td class="p-2.5 text-right font-semibold ${h.fire_ratio > 30 ? 'text-red-400' : (h.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${h.fire_ratio}</td>
+                    <td class="p-2.5 text-right text-slate-300">${h.hours.toLocaleString('tr-TR')} sa</td>
+                    <td class="p-2.5 text-right font-bold text-sky-400">${h.kg_per_hour_net.toLocaleString('tr-TR')} kg/sa</td>
+                </tr>
+            `).join('');
+        }
+
 
         function populateDashMonthSelect() {
             const sel = document.getElementById('dash-month-select');

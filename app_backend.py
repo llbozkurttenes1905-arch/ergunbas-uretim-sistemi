@@ -1091,6 +1091,40 @@ def get_dashboard_summary():
             }
         }
 
+        # Hat/Makine bazında bu AYA ÖZEL kırılım: ne kadar üretti, kaç saat çalıştı,
+        # verimliliği (kg/saat) ne oldu — "Ağustos ayında bu hatlar ne kadar çalıştı,
+        # ne kadar verimlilikle çalıştı" sorusunun cevabı
+        mt_hat_totals = {}
+        for d in m_days:
+            for hm in d.get("machines", []):
+                hat_name = hm.get("hat")
+                if not hat_name:
+                    continue
+                bucket_hat = mt_hat_totals.setdefault(hat_name, {"type": hm.get("type", ""), "prod_kg": 0.0, "fire_kg": 0.0, "hours": 0.0})
+                bucket_hat["prod_kg"] += hm.get("prod_kg", 0)
+                bucket_hat["fire_kg"] += hm.get("fire_kg", 0)
+                bucket_hat["hours"] += hm.get("hours", 0)
+
+        mt_hat_breakdown = []
+        for hat_name, hv in mt_hat_totals.items():
+            h_prod = round(hv["prod_kg"], 2)
+            h_fire = round(hv["fire_kg"], 2)
+            h_hours = round(hv["hours"], 2)
+            h_fire_ratio = round((h_fire / (h_prod + h_fire) * 100), 2) if (h_prod + h_fire) > 0 else 0
+            h_kg_per_hour_net = round((h_prod / h_hours), 2) if h_hours > 0 else 0
+            h_kg_per_hour_gross = round(((h_prod + h_fire) / h_hours), 2) if h_hours > 0 else 0
+            mt_hat_breakdown.append({
+                "hat": hat_name,
+                "type": hv["type"],
+                "prod_kg": h_prod,
+                "fire_kg": h_fire,
+                "fire_ratio": h_fire_ratio,
+                "hours": h_hours,
+                "kg_per_hour_net": h_kg_per_hour_net,
+                "kg_per_hour_gross": h_kg_per_hour_gross
+            })
+        mt_hat_breakdown.sort(key=lambda x: x["prod_kg"], reverse=True)
+
         monthly_totals.append({
             "key": mk,
             "label": bucket["label"],
@@ -1100,6 +1134,7 @@ def get_dashboard_summary():
             "employees": mt_emp,
             "doors": mt_door_stats["completable_doors"],
             "days": len(m_days),
+            "hat_breakdown": mt_hat_breakdown,
             "breakdown": mt_breakdown
         })
 

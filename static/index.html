@@ -334,6 +334,15 @@
         <!-- TAB 1: DASHBOARD -->
         <div id="view-dashboard" class="space-y-6">
 
+
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-ergunbas-700/50 to-ergunbas-700/50"></div>
+                <h2 class="text-sm font-black text-ergunbas-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="globe" class="w-4 h-4"></i> GENEL TOPLAM
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">Kuruluştan bu yana, tüm zamanlar</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-ergunbas-700/50 to-ergunbas-700/50"></div>
+            </div>
             <!-- AYLIK ÖZET BANNER CARD -->
             <div onclick="showMonthlyDetail()" class="bg-gradient-to-r from-ergunbas-900/60 via-slate-900 to-slate-900 border border-ergunbas-600/30 hover:border-ergunbas-500 rounded-2xl p-6 shadow-lg cursor-pointer transition flex flex-wrap items-center justify-between gap-6 group">
                 <div class="space-y-1">
@@ -380,6 +389,94 @@
 
             </div>
 
+            <!-- Door Component Equivalents Table -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-emerald-400"></i> Kapı Üretim Kapasitesi ve Parça Devir Özeti
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-xs">
+                            <tr>
+                                <th class="p-3">Ürün Grubu</th>
+                                <th class="p-3">1 Kapı İhtiyacı (Reçete)</th>
+                                <th class="p-3">Toplam Üretim (Adet)</th>
+                                <th class="p-3">Kapı Eşdeğeri</th>
+                                <th class="p-3">Kullanılan Miktar</th>
+                                <th class="p-3">Ertesi Güne Devir</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-door-summary" class="divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Key Metric Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-ergunbas-600/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Üretim Tonajı</p>
+                            <h3 class="text-3xl font-black text-white mt-2" id="kpi-prod-ton">Yükleniyor...</h3>
+                            <p class="text-xs text-ergunbas-500 mt-1 font-semibold flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Ekstrüder + Levha Üretimi
+                            </p>
+                        </div>
+                        <div class="p-3 bg-ergunbas-600/10 text-ergunbas-500 rounded-xl border border-ergunbas-600/20">
+                            <i data-lucide="factory" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-amber-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Fire Tonajı</p>
+                            <h3 class="text-3xl font-black text-amber-400 mt-2" id="kpi-fire-ton">Yükleniyor...</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-semibold" id="kpi-fire-ratio">Fire Oranı: -</p>
+                        </div>
+                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                            <i data-lucide="flame" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="switchTab('doors')" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-emerald-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tamamlanan Tam Kapı</p>
+                            <h3 class="text-3xl font-black text-emerald-400 mt-2" id="kpi-doors">Yükleniyor...</h3>
+                            <p class="text-xs text-emerald-400 mt-1 font-semibold">Stok & Reçete Eşdeğeri</p>
+                        </div>
+                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                            <i data-lucide="door-open" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-purple-500/40 cursor-pointer transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Çalışan Verimliliği</p>
+                            <h3 class="text-3xl font-black text-purple-400 mt-2" id="kpi-efficiency">Yükleniyor...</h3>
+                            <p class="text-xs text-slate-400 mt-1 font-medium" id="kpi-employees">Toplam Çalışan: -</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-sky-700/50 to-sky-700/50"></div>
+                <h2 class="text-sm font-black text-sky-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="calendar-days" class="w-4 h-4"></i> AYLIK ÖZET
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">Ay ay kırılım ve seçilebilir detaylar</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-sky-700/50 to-sky-700/50"></div>
+            </div>
             <!-- AYLIK KIRILIM (ARŞİV): hangi ay ne kadar üretim/fire vermiş -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
@@ -391,6 +488,159 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="monthly-totals-container"></div>
             </div>
 
+            <!-- AYLIK ÜRÜN / RENK BAZINDA ÜRETİM (AY SEÇİLEBİLİR) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-1">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-500"></i> Aylık Ürün / Renk Bazında Üretim
+                    </h2>
+                    <select id="monthly-product-month-select" onchange="renderMonthlyProductCharts()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
+                        <option value="">Yükleniyor...</option>
+                    </select>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Seçili ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam. Yeni ay başladığında bu liste otomatik olarak sıfırdan başlar; geçmiş ayları buradan seçerek görebilirsiniz.</p>
+
+                <!-- Ekstrüder Ürünleri -->
+                <div class="mb-8">
+                    <h3 class="text-sm font-bold text-sky-400 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri
+                    </h3>
+                    <div class="h-72 mb-4">
+                        <canvas id="chart-monthly-extruder-products"></canvas>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Ürün</th>
+                                    <th class="p-2.5 text-right">Toplam Adet</th>
+                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Pay (%)</th>
+                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-monthly-extruder-products" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Levha Renkleri -->
+                <div>
+                    <h3 class="text-sm font-bold text-fuchsia-400 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri
+                    </h3>
+                    <div class="h-72 mb-4">
+                        <canvas id="chart-monthly-levha-colors"></canvas>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-2.5">Renk / Model</th>
+                                    <th class="p-2.5 text-right">Toplam Adet</th>
+                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-right">Pay (%)</th>
+                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
+                                    <th class="p-2.5 text-right">Fire Oranı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-monthly-levha-colors" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AY BAZINDA HAT PERFORMANSI: Aylık Kırılım'dan bir aya tıklayınca burası dolar -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm" id="ay-hat-performans-section">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="gauge" class="w-5 h-5 text-ergunbas-500"></i> Ay Bazında Hat Performansı
+                        <span class="text-ergunbas-400" id="ay-hat-performans-ay-label"></span>
+                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Yukarıdaki "Aylık Kırılım" kartlarından bir aya tıklayın</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="p-2.5">Hat</th>
+                                <th class="p-2.5">Tür</th>
+                                <th class="p-2.5 text-right">Üretim</th>
+                                <th class="p-2.5 text-right">Fire</th>
+                                <th class="p-2.5 text-right">Fire Oranı</th>
+                                <th class="p-2.5 text-right">Çalışma Süresi</th>
+                                <th class="p-2.5 text-right">Verimlilik (Net kg/sa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-ay-hat-performans" class="divide-y divide-slate-800">
+                            <tr><td colspan="7" class="p-4 text-center text-slate-500">Bir ay seçildiğinde burada görünecek.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-amber-700/50 to-amber-700/50"></div>
+                <h2 class="text-sm font-black text-amber-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="calendar-range" class="w-4 h-4"></i> HAFTALIK ÖZET
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">7'şerli kronolojik gruplar</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-amber-700/50 to-amber-700/50"></div>
+            </div>
+            <!-- HAFTALIK ÖZET TABLOSU -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="calendar-range" class="w-5 h-5 text-ergunbas-500"></i> Haftalık Üretim ve Fire Özeti (Detay İçin Tıklayın)
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <label for="dash-month-select" class="text-xs font-semibold text-slate-400">Ay:</label>
+                        <select id="dash-month-select" onchange="onDashMonthChange()" class="bg-slate-950 border border-slate-800 text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-ergunbas-500"></select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="weekly-cards-container"></div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="line-chart" class="w-5 h-5 text-ergunbas-500"></i> Günlük Üretim Trendi (kg)
+                        </h2>
+                        <span class="text-xs text-slate-400">Barın Üzerine Tıklayıp Günlük Detayı Görün — Seçili Ay: Yukarıdaki "Ay" Kutusu</span>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chart-daily-prod"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-5 h-5 text-amber-400"></i> Fire Oranı Dağılımı (%)
+                        </h2>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chart-fire-ratio"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-fuchsia-700/50 to-fuchsia-700/50"></div>
+                <h2 class="text-sm font-black text-fuchsia-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="list-checks" class="w-4 h-4"></i> GÜNLÜK DETAY
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">En detaylı seviye — tek bir günün her yönü</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-fuchsia-700/50 to-fuchsia-700/50"></div>
+            </div>
             <!-- GÜNLÜK DETAY - YÖNETİCİ ÖZETİ (TÜM FORMÜLLER DAHİL) -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4 border-b border-slate-800 pb-3">
@@ -534,220 +784,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Key Metric Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-ergunbas-600/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Üretim Tonajı</p>
-                            <h3 class="text-3xl font-black text-white mt-2" id="kpi-prod-ton">Yükleniyor...</h3>
-                            <p class="text-xs text-ergunbas-500 mt-1 font-semibold flex items-center gap-1">
-                                <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Ekstrüder + Levha Üretimi
-                            </p>
-                        </div>
-                        <div class="p-3 bg-ergunbas-600/10 text-ergunbas-500 rounded-xl border border-ergunbas-600/20">
-                            <i data-lucide="factory" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-amber-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Toplam Fire Tonajı</p>
-                            <h3 class="text-3xl font-black text-amber-400 mt-2" id="kpi-fire-ton">Yükleniyor...</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-semibold" id="kpi-fire-ratio">Fire Oranı: -</p>
-                        </div>
-                        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
-                            <i data-lucide="flame" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="switchTab('doors')" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-emerald-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tamamlanan Tam Kapı</p>
-                            <h3 class="text-3xl font-black text-emerald-400 mt-2" id="kpi-doors">Yükleniyor...</h3>
-                            <p class="text-xs text-emerald-400 mt-1 font-semibold">Stok & Reçete Eşdeğeri</p>
-                        </div>
-                        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
-                            <i data-lucide="door-open" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div onclick="showMonthlyDetail()" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm hover:border-purple-500/40 cursor-pointer transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Çalışan Verimliliği</p>
-                            <h3 class="text-3xl font-black text-purple-400 mt-2" id="kpi-efficiency">Yükleniyor...</h3>
-                            <p class="text-xs text-slate-400 mt-1 font-medium" id="kpi-employees">Toplam Çalışan: -</p>
-                        </div>
-                        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-                            <i data-lucide="users" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HAFTALIK ÖZET TABLOSU -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-4 border-b border-slate-800 pb-3">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="calendar-range" class="w-5 h-5 text-ergunbas-500"></i> Haftalık Üretim ve Fire Özeti (Detay İçin Tıklayın)
-                    </h2>
-                    <div class="flex items-center gap-2">
-                        <label for="dash-month-select" class="text-xs font-semibold text-slate-400">Ay:</label>
-                        <select id="dash-month-select" onchange="onDashMonthChange()" class="bg-slate-950 border border-slate-800 text-white text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-ergunbas-500"></select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="weekly-cards-container"></div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <i data-lucide="line-chart" class="w-5 h-5 text-ergunbas-500"></i> Günlük Üretim Trendi (kg)
-                        </h2>
-                        <span class="text-xs text-slate-400">Barın Üzerine Tıklayıp Günlük Detayı Görün — Seçili Ay: Yukarıdaki "Ay" Kutusu</span>
-                    </div>
-                    <div class="h-72">
-                        <canvas id="chart-daily-prod"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-5 h-5 text-amber-400"></i> Fire Oranı Dağılımı (%)
-                        </h2>
-                    </div>
-                    <div class="h-72">
-                        <canvas id="chart-fire-ratio"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AYLIK ÜRÜN / RENK BAZINDA ÜRETİM (AY SEÇİLEBİLİR) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-1">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-500"></i> Aylık Ürün / Renk Bazında Üretim
-                    </h2>
-                    <select id="monthly-product-month-select" onchange="renderMonthlyProductCharts()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
-                        <option value="">Yükleniyor...</option>
-                    </select>
-                </div>
-                <p class="text-xs text-slate-500 mb-4">Seçili ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam. Yeni ay başladığında bu liste otomatik olarak sıfırdan başlar; geçmiş ayları buradan seçerek görebilirsiniz.</p>
-
-                <!-- Ekstrüder Ürünleri -->
-                <div class="mb-8">
-                    <h3 class="text-sm font-bold text-sky-400 mb-3 flex items-center gap-1.5">
-                        <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri
-                    </h3>
-                    <div class="h-72 mb-4">
-                        <canvas id="chart-monthly-extruder-products"></canvas>
-                    </div>
-                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
-                                <tr>
-                                    <th class="p-2.5">Ürün</th>
-                                    <th class="p-2.5 text-right">Toplam Adet</th>
-                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
-                                    <th class="p-2.5 text-right">Pay (%)</th>
-                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
-                                    <th class="p-2.5 text-right">Fire Oranı</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbl-monthly-extruder-products" class="divide-y divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Levha Renkleri -->
-                <div>
-                    <h3 class="text-sm font-bold text-fuchsia-400 mb-3 flex items-center gap-1.5">
-                        <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri
-                    </h3>
-                    <div class="h-72 mb-4">
-                        <canvas id="chart-monthly-levha-colors"></canvas>
-                    </div>
-                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
-                                <tr>
-                                    <th class="p-2.5">Renk / Model</th>
-                                    <th class="p-2.5 text-right">Toplam Adet</th>
-                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
-                                    <th class="p-2.5 text-right">Pay (%)</th>
-                                    <th class="p-2.5 text-right">Toplam Fire (kg)</th>
-                                    <th class="p-2.5 text-right">Fire Oranı</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbl-monthly-levha-colors" class="divide-y divide-slate-800"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Door Component Equivalents Table -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="layers" class="w-5 h-5 text-emerald-400"></i> Kapı Üretim Kapasitesi ve Parça Devir Özeti
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">Ürün Grubu</th>
-                                <th class="p-3">1 Kapı İhtiyacı (Reçete)</th>
-                                <th class="p-3">Toplam Üretim (Adet)</th>
-                                <th class="p-3">Kapı Eşdeğeri</th>
-                                <th class="p-3">Kullanılan Miktar</th>
-                                <th class="p-3">Ertesi Güne Devir</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbl-door-summary" class="divide-y divide-slate-800"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- AY BAZINDA HAT PERFORMANSI: Aylık Kırılım'dan bir aya tıklayınca burası dolar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm" id="ay-hat-performans-section">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                    <h2 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gauge" class="w-5 h-5 text-ergunbas-500"></i> Ay Bazında Hat Performansı
-                        <span class="text-ergunbas-400" id="ay-hat-performans-ay-label"></span>
-                    </h2>
-                    <span class="text-xs font-semibold text-slate-400">Yukarıdaki "Aylık Kırılım" kartlarından bir aya tıklayın</span>
-                </div>
-                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
-                            <tr>
-                                <th class="p-2.5">Hat</th>
-                                <th class="p-2.5">Tür</th>
-                                <th class="p-2.5 text-right">Üretim</th>
-                                <th class="p-2.5 text-right">Fire</th>
-                                <th class="p-2.5 text-right">Fire Oranı</th>
-                                <th class="p-2.5 text-right">Çalışma Süresi</th>
-                                <th class="p-2.5 text-right">Verimlilik (Net kg/sa)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbl-ay-hat-performans" class="divide-y divide-slate-800">
-                            <tr><td colspan="7" class="p-4 text-center text-slate-500">Bir ay seçildiğinde burada görünecek.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
 
         <!-- TAB 2: GÜNLÜK VERİ GİRİŞİ -->
         <div id="view-daily" class="space-y-6 hidden">

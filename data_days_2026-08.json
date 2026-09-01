@@ -2623,7 +2623,7 @@
       "date": "08.08.2026",
       "gunduz": {
         "employees": 2,
-        "hours": 4.0,
+        "hours": 12.0,
         "operator": "",
         "extruders": [
           {
@@ -2689,7 +2689,7 @@
       },
       "gece": {
         "employees": 2,
-        "hours": 4.0,
+        "hours": 12.0,
         "operator": "",
         "extruders": [
           {

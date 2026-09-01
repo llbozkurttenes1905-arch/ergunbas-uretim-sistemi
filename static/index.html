@@ -1783,6 +1783,11 @@
                             <span>Fire:</span>
                             <span class="font-bold text-amber-400">${m.fire_ton} Ton (%${m.fire_ratio})</span>
                         </div>
+                        ${m.breakdown ? `
+                        <div class="flex justify-between border-t border-slate-800/60 pt-1 text-[10px]">
+                            <span class="text-sky-400 font-bold">Eks: ${(m.breakdown.extruder.prod_kg/1000).toFixed(2)}t (%${m.breakdown.extruder.prod_share_pct})</span>
+                            <span class="text-fuchsia-400 font-bold">Lev: ${(m.breakdown.levha.prod_kg/1000).toFixed(2)}t (%${m.breakdown.levha.prod_share_pct})</span>
+                        </div>` : ''}
                         <div class="flex justify-between border-t border-slate-800 pt-1 text-slate-300 font-bold">
                             <span>Tam Kapı:</span>
                             <span class="text-emerald-400">${m.doors} Adet</span>
@@ -1873,6 +1878,11 @@
                                     <span>Fire:</span>
                                     <span class="font-bold text-amber-400">${w.fire_ton} Ton (%${w.fire_ratio})</span>
                                 </div>
+                                ${w.breakdown ? `
+                                <div class="flex justify-between border-t border-slate-800/60 pt-1 text-[10px]">
+                                    <span class="text-sky-400 font-bold">Eks: ${(w.breakdown.extruder.prod_kg/1000).toFixed(2)}t (%${w.breakdown.extruder.prod_share_pct})</span>
+                                    <span class="text-fuchsia-400 font-bold">Lev: ${(w.breakdown.levha.prod_kg/1000).toFixed(2)}t (%${w.breakdown.levha.prod_share_pct})</span>
+                                </div>` : ''}
                                 <div class="flex justify-between border-t border-slate-800 pt-1 text-slate-300 font-bold">
                                     <span>Tam Kapı:</span>
                                     <span class="text-emerald-400">${w.doors} Adet</span>

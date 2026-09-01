@@ -555,6 +555,10 @@ def get_dashboard_summary():
 
         day_prod_kg = 0.0
         day_fire_kg = 0.0
+        day_prod_kg_ext = 0.0
+        day_fire_kg_ext = 0.0
+        day_prod_kg_lev = 0.0
+        day_fire_kg_lev = 0.0
         day_emp = 0
         day_hours = 0.0
         day_machine_totals = {}  # Bu güne özel makine/hat bazında kırılım
@@ -585,6 +589,8 @@ def get_dashboard_summary():
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
 
+                day_prod_kg_ext += p_kg
+                day_fire_kg_ext += f_kg
                 total_prod_kg_ext += p_kg
                 total_fire_kg_ext += f_kg
 
@@ -627,6 +633,8 @@ def get_dashboard_summary():
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
 
+                day_prod_kg_lev += p_kg
+                day_fire_kg_lev += f_kg
                 total_prod_kg_lev += p_kg
                 total_fire_kg_lev += f_kg
 
@@ -832,6 +840,10 @@ def get_dashboard_summary():
             "date": date_label,
             "prod_kg": round(day_prod_kg, 2),
             "fire_kg": round(day_fire_kg, 2),
+            "prod_kg_ext": round(day_prod_kg_ext, 2),
+            "fire_kg_ext": round(day_fire_kg_ext, 2),
+            "prod_kg_lev": round(day_prod_kg_lev, 2),
+            "fire_kg_lev": round(day_fire_kg_lev, 2),
             "fire_ratio": round(fire_ratio, 2),
             "employees": day_emp,
             "hours": round(day_hours, 2),
@@ -1012,6 +1024,25 @@ def get_dashboard_summary():
             w_emp = sum(x["employees"] for x in chunk)
             w_keys = [x["key"] for x in chunk]
             w_door_stats = compute_door_capacity(data, filter_date_keys=w_keys)
+
+            # Ekstrüder / Levha ayrı kırılım (haftalık)
+            w_prod_ext = sum(x.get("prod_kg_ext", 0) for x in chunk)
+            w_fire_ext = sum(x.get("fire_kg_ext", 0) for x in chunk)
+            w_prod_lev = sum(x.get("prod_kg_lev", 0) for x in chunk)
+            w_fire_lev = sum(x.get("fire_kg_lev", 0) for x in chunk)
+            w_breakdown = {
+                "extruder": {
+                    "prod_kg": round(w_prod_ext, 2),
+                    "fire_kg": round(w_fire_ext, 2),
+                    "prod_share_pct": round((w_prod_ext / w_prod * 100) if w_prod > 0 else 0, 1)
+                },
+                "levha": {
+                    "prod_kg": round(w_prod_lev, 2),
+                    "fire_kg": round(w_fire_lev, 2),
+                    "prod_share_pct": round((w_prod_lev / w_prod * 100) if w_prod > 0 else 0, 1)
+                }
+            }
+
             m_weeks.append({
                 "name": w_name,
                 "keys": w_keys,
@@ -1019,7 +1050,8 @@ def get_dashboard_summary():
                 "fire_ton": round(w_fire / 1000.0, 2),
                 "fire_ratio": round(w_fire_ratio, 2),
                 "employees": w_emp,
-                "doors": w_door_stats["completable_doors"]
+                "doors": w_door_stats["completable_doors"],
+                "breakdown": w_breakdown
             })
         weekly_summary_by_month[mk] = m_weeks
 
@@ -1030,6 +1062,25 @@ def get_dashboard_summary():
         mt_emp = sum(x["employees"] for x in m_days)
         mt_keys = [x["key"] for x in m_days]
         mt_door_stats = compute_door_capacity(data, filter_date_keys=mt_keys)
+
+        # Ekstrüder / Levha ayrı kırılım (aylık)
+        mt_prod_ext = sum(x.get("prod_kg_ext", 0) for x in m_days)
+        mt_fire_ext = sum(x.get("fire_kg_ext", 0) for x in m_days)
+        mt_prod_lev = sum(x.get("prod_kg_lev", 0) for x in m_days)
+        mt_fire_lev = sum(x.get("fire_kg_lev", 0) for x in m_days)
+        mt_breakdown = {
+            "extruder": {
+                "prod_kg": round(mt_prod_ext, 2),
+                "fire_kg": round(mt_fire_ext, 2),
+                "prod_share_pct": round((mt_prod_ext / mt_prod * 100) if mt_prod > 0 else 0, 1)
+            },
+            "levha": {
+                "prod_kg": round(mt_prod_lev, 2),
+                "fire_kg": round(mt_fire_lev, 2),
+                "prod_share_pct": round((mt_prod_lev / mt_prod * 100) if mt_prod > 0 else 0, 1)
+            }
+        }
+
         monthly_totals.append({
             "key": mk,
             "label": bucket["label"],
@@ -1038,7 +1089,8 @@ def get_dashboard_summary():
             "fire_ratio": round(mt_fire_ratio, 2),
             "employees": mt_emp,
             "doors": mt_door_stats["completable_doors"],
-            "days": len(m_days)
+            "days": len(m_days),
+            "breakdown": mt_breakdown
         })
 
     # Ay seçici için kronolojik (eskiden yeniye) liste — dropdown'da ters çevrilip

@@ -350,10 +350,18 @@
                     <div class="text-center px-3 border-r border-slate-800">
                         <span class="text-xs text-slate-400 block font-semibold">Toplam Üretim</span>
                         <span class="text-lg font-black text-white" id="monthly-banner-prod">Yükleniyor...</span>
+                        <div class="mt-1 pt-1 border-t border-slate-800 flex justify-center gap-2 text-[9px] whitespace-nowrap">
+                            <span class="text-sky-400 font-bold" id="monthly-banner-prod-ext"></span>
+                            <span class="text-fuchsia-400 font-bold" id="monthly-banner-prod-lev"></span>
+                        </div>
                     </div>
                     <div class="text-center px-3 border-r border-slate-800">
                         <span class="text-xs text-slate-400 block font-semibold">Toplam Fire</span>
                         <span class="text-lg font-black text-amber-400" id="monthly-banner-fire">Yükleniyor...</span>
+                        <div class="mt-1 pt-1 border-t border-slate-800 flex justify-center gap-2 text-[9px] whitespace-nowrap">
+                            <span class="text-sky-400 font-bold" id="monthly-banner-fire-ext"></span>
+                            <span class="text-fuchsia-400 font-bold" id="monthly-banner-fire-lev"></span>
+                        </div>
                     </div>
                     <div class="text-center px-3">
                         <span class="text-xs text-slate-400 block font-semibold">Tam Kapı</span>
@@ -1615,6 +1623,11 @@
                 document.getElementById('monthly-banner-prod').textContent = `${dashboardData.total_prod_ton} Ton`;
                 document.getElementById('monthly-banner-fire').textContent = `${dashboardData.total_fire_ton} Ton`;
                 document.getElementById('monthly-banner-doors').textContent = `${dashboardData.door_stats.completable_doors} Adet`;
+
+                document.getElementById('monthly-banner-prod-ext').textContent = `Ekstrüder: ${(dashboardData.total_ext_prod_kg / 1000).toLocaleString('tr-TR', {maximumFractionDigits: 2})} Ton (%${dashboardData.total_ext_prod_pct})`;
+                document.getElementById('monthly-banner-prod-lev').textContent = `Levha: ${(dashboardData.total_lev_prod_kg / 1000).toLocaleString('tr-TR', {maximumFractionDigits: 2})} Ton (%${dashboardData.total_lev_prod_pct})`;
+                document.getElementById('monthly-banner-fire-ext').textContent = `Ekstrüder: ${(dashboardData.total_ext_fire_kg / 1000).toLocaleString('tr-TR', {maximumFractionDigits: 2})} Ton (%${dashboardData.total_ext_fire_pct})`;
+                document.getElementById('monthly-banner-fire-lev').textContent = `Levha: ${(dashboardData.total_lev_fire_kg / 1000).toLocaleString('tr-TR', {maximumFractionDigits: 2})} Ton (%${dashboardData.total_lev_fire_pct})`;
 
                 renderMonthlyTotalsArchive();
                 populateDashMonthSelect();

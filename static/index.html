@@ -1850,14 +1850,12 @@
                 }
             }
 
-            // 3) En altta: bu aya ait Hat Bazında Performans tablosu (üretim, çalışma
-            // süresi, verimlilik) doldurulsun ve kullanıcı oraya kaydırılsın
+            // 3) Bu aya ait Hat Bazında Performans tablosu (üretim, çalışma süresi,
+            // verimlilik) doldurulsun — sayfa otomatik kaydırılmıyor, kullanıcı
+            // bulunduğu yerde kalıyor, sadece veriler güncelleniyor.
             renderAyHatPerformans(monthKey);
 
-            const perfSection = document.getElementById('ay-hat-performans-section');
-            if (perfSection) {
-                perfSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            showToast(`${monthKey} için veriler güncellendi.`);
         }
 
         function renderAyHatPerformans(monthKey) {

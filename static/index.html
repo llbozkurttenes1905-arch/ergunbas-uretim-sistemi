@@ -345,15 +345,27 @@
                         <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform"></i>
                     </h2>
                     <p class="text-xs text-slate-400">Tüm ekstrüder ve levha hatlarının kayıtlı tüm günlerinin toplamı. Aylık kırılım için aşağıya bakın.</p>
+                    <div class="flex flex-wrap gap-x-5 gap-y-1 pt-1 text-xs">
+                        <span class="text-sky-400 font-semibold">Ekstrüder: <span id="banner-ext-prod" class="font-black">-</span> kg (<span id="banner-ext-share">-</span>%)</span>
+                        <span class="text-fuchsia-400 font-semibold">Levha: <span id="banner-lev-prod" class="font-black">-</span> kg (<span id="banner-lev-share">-</span>%)</span>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4 bg-slate-950/60 px-5 py-3 rounded-xl border border-slate-800">
                     <div class="text-center px-3 border-r border-slate-800">
                         <span class="text-xs text-slate-400 block font-semibold">Toplam Üretim</span>
                         <span class="text-lg font-black text-white" id="monthly-banner-prod">Yükleniyor...</span>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">
+                            <span class="text-sky-400">Eks: <span id="banner-ext-prod-ton">-</span>t</span> ·
+                            <span class="text-fuchsia-400">Lev: <span id="banner-lev-prod-ton">-</span>t</span>
+                        </span>
                     </div>
                     <div class="text-center px-3 border-r border-slate-800">
                         <span class="text-xs text-slate-400 block font-semibold">Toplam Fire</span>
                         <span class="text-lg font-black text-amber-400" id="monthly-banner-fire">Yükleniyor...</span>
+                        <span class="text-[10px] text-slate-500 block mt-0.5">
+                            <span class="text-sky-400">Eks: <span id="banner-ext-fire-ton">-</span>t</span> ·
+                            <span class="text-fuchsia-400">Lev: <span id="banner-lev-fire-ton">-</span>t</span>
+                        </span>
                     </div>
                     <div class="text-center px-3">
                         <span class="text-xs text-slate-400 block font-semibold">Tam Kapı</span>
@@ -1615,6 +1627,19 @@
                 document.getElementById('monthly-banner-prod').textContent = `${dashboardData.total_prod_ton} Ton`;
                 document.getElementById('monthly-banner-fire').textContent = `${dashboardData.total_fire_ton} Ton`;
                 document.getElementById('monthly-banner-doors').textContent = `${dashboardData.door_stats.completable_doors} Adet`;
+
+                if (dashboardData.total_breakdown) {
+                    const tb = dashboardData.total_breakdown;
+                    document.getElementById('banner-ext-prod').textContent = (tb.extruder.prod_ton * 1000).toLocaleString('tr-TR');
+                    document.getElementById('banner-ext-share').textContent = tb.extruder.prod_share_pct;
+                    document.getElementById('banner-lev-prod').textContent = (tb.levha.prod_ton * 1000).toLocaleString('tr-TR');
+                    document.getElementById('banner-lev-share').textContent = tb.levha.prod_share_pct;
+
+                    document.getElementById('banner-ext-prod-ton').textContent = tb.extruder.prod_ton;
+                    document.getElementById('banner-lev-prod-ton').textContent = tb.levha.prod_ton;
+                    document.getElementById('banner-ext-fire-ton').textContent = tb.extruder.fire_ton;
+                    document.getElementById('banner-lev-fire-ton').textContent = tb.levha.fire_ton;
+                }
 
                 renderMonthlyTotalsArchive();
                 populateDashMonthSelect();

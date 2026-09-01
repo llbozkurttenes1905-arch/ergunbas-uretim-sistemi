@@ -509,6 +509,13 @@ def get_dashboard_summary():
     total_hours = 0.0
     total_downtime_min = 0.0
 
+    # Genel toplamın Ekstrüder / Levha ayrımı ("Genel Toplam" kartında ikisini ayrı
+    # ayrı, aynı zamanda ikisinin toplamını göstermek için)
+    total_prod_kg_ext = 0.0
+    total_fire_kg_ext = 0.0
+    total_prod_kg_lev = 0.0
+    total_fire_kg_lev = 0.0
+
     machine_totals = {}
     fire_reasons_summary = {}
 
@@ -578,6 +585,9 @@ def get_dashboard_summary():
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
 
+                total_prod_kg_ext += p_kg
+                total_fire_kg_ext += f_kg
+
                 if h_name not in machine_totals:
                     machine_totals[h_name] = {"prod": 0.0, "fire": 0.0}
                 machine_totals[h_name]["prod"] += p_kg
@@ -616,6 +626,9 @@ def get_dashboard_summary():
                 day_fire_kg += f_kg
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
+
+                total_prod_kg_lev += p_kg
+                total_fire_kg_lev += f_kg
 
                 if h_name not in machine_totals:
                     machine_totals[h_name] = {"prod": 0.0, "fire": 0.0}
@@ -1059,6 +1072,22 @@ def get_dashboard_summary():
         "total_prod_ton": round(total_prod_kg / 1000.0, 2),
         "total_fire_ton": round(total_fire_kg / 1000.0, 2),
         "overall_fire_ratio": round(overall_fire_ratio, 2),
+        # Genel Toplam kartında "Ekstrüder / Levha ayrı ayrı + ikisinin genel toplamı"
+        # gösterebilmek için: kuruluştan bu yana (tüm aylar) Ekstrüder ve Levha ayrı kırılımı
+        "total_breakdown": {
+            "extruder": {
+                "prod_ton": round(total_prod_kg_ext / 1000.0, 2),
+                "fire_ton": round(total_fire_kg_ext / 1000.0, 2),
+                "fire_ratio": round((total_fire_kg_ext / (total_prod_kg_ext + total_fire_kg_ext) * 100) if (total_prod_kg_ext + total_fire_kg_ext) > 0 else 0, 2),
+                "prod_share_pct": round((total_prod_kg_ext / total_prod_kg * 100) if total_prod_kg > 0 else 0, 2)
+            },
+            "levha": {
+                "prod_ton": round(total_prod_kg_lev / 1000.0, 2),
+                "fire_ton": round(total_fire_kg_lev / 1000.0, 2),
+                "fire_ratio": round((total_fire_kg_lev / (total_prod_kg_lev + total_fire_kg_lev) * 100) if (total_prod_kg_lev + total_fire_kg_lev) > 0 else 0, 2),
+                "prod_share_pct": round((total_prod_kg_lev / total_prod_kg * 100) if total_prod_kg > 0 else 0, 2)
+            }
+        },
         "total_employees": total_employees,
         "kg_per_employee": round(kg_per_employee, 2),
         "kg_per_hour": round(kg_per_hour, 2),

@@ -1051,7 +1051,7 @@ def get_dashboard_summary():
 
     # Monthly Summary Details
     monthly_summary = {
-        "title": "Ağustos 2026 Genel Aylık Özet",
+        "title": "Genel Toplam (Kuruluştan Bu Yana) — Detaylı Özet",
         "total_days": len(sorted_keys),
         "total_prod_ton": round(total_prod_kg / 1000.0, 2),
         "total_fire_ton": round(total_fire_kg / 1000.0, 2),

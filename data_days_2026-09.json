@@ -24,7 +24,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "CAM Çıtası",
+            "product": "CAM ÇITASI",
             "length": 2.2,
             "speed": 1.51,
             "heads": 1.0,
@@ -126,7 +126,26 @@
             "sets": 93.0
           }
         ],
-        "levha": []
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "",
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
+            "qty": 0,
+            "total_m2": 0.0,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 0.0,
+            "dead_fire_kg": 0.0,
+            "total_kg": 0.0,
+            "sets": 0.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 15.0
+          }
+        ]
       },
       "gece": {
         "employees": 9,
@@ -149,7 +168,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "CAM Çıtası",
+            "product": "CAM ÇITASI",
             "length": 2.2,
             "speed": 1.51,
             "heads": 1.0,
@@ -251,7 +270,26 @@
             "sets": 126.0
           }
         ],
-        "levha": []
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "",
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
+            "qty": 0,
+            "total_m2": 0.0,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 0.0,
+            "dead_fire_kg": 0.0,
+            "total_kg": 0.0,
+            "sets": 0.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 15.0
+          }
+        ]
       },
       "downtimes": []
     },

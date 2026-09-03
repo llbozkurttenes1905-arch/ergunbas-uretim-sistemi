@@ -947,6 +947,13 @@
       "category": "levha",
       "door_ratio": 2.0,
       "description": ""
+    },
+    {
+      "id": "p_131",
+      "name": "CAM Çıtası",
+      "category": "diger",
+      "door_ratio": 1.0,
+      "description": ""
     }
   ]
 }

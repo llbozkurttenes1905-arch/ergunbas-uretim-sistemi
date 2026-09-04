@@ -832,7 +832,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 9,
         "hours": 12.0,
         "operator": "",
         "extruders": [
@@ -844,9 +844,9 @@
             "speed": 1.46,
             "heads": 1.0,
             "hours": 7.0,
-            "prod_kg": 468.0,
+            "prod_kg": 702.0,
             "fire_kg": 0.0,
-            "qty": 702,
+            "qty": 468,
             "sets": 0
           },
           {
@@ -857,10 +857,10 @@
             "speed": 0.89,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 450.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 778.0,
+            "fire_kg": 108.3,
+            "qty": 450,
+            "sets": 90.0
           },
           {
             "row": 0,
@@ -870,10 +870,10 @@
             "speed": 0.7,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1200.0,
+            "fire_kg": 240.0,
+            "qty": 400,
+            "sets": 114.3
           },
           {
             "row": 0,
@@ -883,10 +883,10 @@
             "speed": 0.55,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 758.0,
+            "fire_kg": 671.37,
+            "qty": 200,
+            "sets": 57.1
           },
           {
             "row": 0,
@@ -896,10 +896,10 @@
             "speed": 0.73,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 1015.0,
+            "fire_kg": 207.33,
+            "qty": 203,
+            "sets": 81.2
           },
           {
             "row": 0,
@@ -909,10 +909,10 @@
             "speed": 0.53,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 409.0,
+            "fire_kg": 749.25,
+            "qty": 55,
+            "sets": 22.0
           },
           {
             "row": 0,
@@ -922,10 +922,10 @@
             "speed": 1.03,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 967.0,
+            "fire_kg": 356.6,
+            "qty": 252,
+            "sets": 100.8
           },
           {
             "row": 0,
@@ -935,30 +935,30 @@
             "speed": 1.34,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 837.0,
+            "fire_kg": 407.28,
+            "qty": 590,
+            "sets": 118.0
           }
         ],
         "levha": [
           {
             "row": 0,
             "hat": "201",
-            "color": "",
-            "width": 93.0,
+            "color": "DIŞBUDAK",
+            "width": 94.0,
             "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
+            "m2_one": 1.9552,
+            "qty": 440,
+            "total_m2": 860.288,
             "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
+            "dead_fire_m2": 128.128,
+            "dead_fire_kg": 313.91,
+            "total_kg": 2107.71,
+            "sets": 220.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
+            "en_firesi_cm": 14.0
           }
         ]
       },

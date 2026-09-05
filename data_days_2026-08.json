@@ -1580,9 +1580,9 @@
             "length": 3.0,
             "speed": 0.59,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 8.0,
             "prod_kg": 1000.0,
-            "fire_kg": 388.24,
+            "fire_kg": 0.0,
             "qty": 102,
             "sets": 0
           },
@@ -1593,9 +1593,9 @@
             "length": 3.4,
             "speed": 0.59,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 4.0,
             "prod_kg": 395.0,
-            "fire_kg": 1015.05,
+            "fire_kg": 75.02,
             "qty": 35,
             "sets": 0
           },
@@ -1788,7 +1788,26 @@
             "sets": 117.0
           }
         ],
-        "levha": []
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "",
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
+            "qty": 0,
+            "total_m2": 0.0,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 0.0,
+            "dead_fire_kg": 0.0,
+            "total_kg": 0.0,
+            "sets": 0.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 15.0
+          }
+        ]
       },
       "downtimes": [
         {

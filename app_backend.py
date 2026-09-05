@@ -469,6 +469,45 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
     }
 
 
+def sum_chain_door_stats(days_subset):
+    """Belirli bir gün aralığının (hafta/ay/genel toplam) kapı istatistiğini,
+    HER GÜNÜN ZATEN DEVİR ZİNCİRİYLE hesaplanmış kendi completable_doors değerlerini
+    TOPLAYARAK üretir. Böylece günlük ekranda görünen sayılar toplandığında haftalık,
+    haftalıklar toplandığında aylık, aylıklar toplandığında genel toplamla TAM
+    tutarlı (toplanabilir) olur — compute_door_capacity() gibi sıfırdan/havuzlanmış
+    bir hesap YAPMAZ, sadece zaten hesaplanmış günlük sonuçları toplar."""
+    cats = ["pervaz", "kasa", "seren", "levha"]
+    total_completable = 0
+    produced_sum = {c: 0.0 for c in cats}
+    used_sum = {c: 0.0 for c in cats}
+    last_carryover = {c: 0.0 for c in cats}
+    req_per_door = {}
+
+    for d in days_subset:
+        ds = d.get("door_stats") or {}
+        total_completable += ds.get("completable_doors", 0)
+        details = ds.get("details", {})
+        for c in cats:
+            det = details.get(c, {})
+            produced_sum[c] += det.get("produced", 0)
+            used_sum[c] += det.get("used", 0)
+            req_per_door[c] = det.get("req_per_door", req_per_door.get(c, 0))
+            last_carryover[c] = det.get("carryover", last_carryover[c])
+
+    return {
+        "completable_doors": total_completable,
+        "details": {
+            c: {
+                "produced": round(produced_sum[c], 2),
+                "req_per_door": req_per_door.get(c, 0),
+                "door_eq": round((produced_sum[c] / req_per_door[c]), 2) if req_per_door.get(c) else 0,
+                "used": round(used_sum[c], 2),
+                "carryover": round(last_carryover[c], 2)
+            } for c in cats
+        }
+    }
+
+
 def get_sorted_day_keys(daily_data):
     """Günleri, kayıt anahtarına değil GERÇEK TAKVİM TARİHİNE göre kronolojik sıraya dizer.
     Bu sayede günler ay/yıl sınırı olmadan (Ağustos->Eylül->...) ve hangi sırayla
@@ -958,6 +997,7 @@ def get_dashboard_summary():
     # Weekly summary — AY/YIL SINIRI YOK: kronolojik sıradaki günler 7'şerli gruplara
     # ayrılır (takvim ayına göre sabit aralıklar yerine). Böylece Ağustos bittiğinde
     # Eylül (ve sonrası) günleri de sorunsuz şekilde haftalara dahil olur.
+    daily_chart_by_key = {d["key"]: d for d in daily_chart}
     weekly_summary = []
     chunk_size = 7
     for i in range(0, len(sorted_keys), chunk_size):
@@ -986,7 +1026,8 @@ def get_dashboard_summary():
                     w_fire += lev.get("dead_fire_kg", 0)
 
         w_fire_ratio = (w_fire / (w_prod + w_fire) * 100) if (w_prod + w_fire) > 0 else 0
-        w_door_stats = compute_door_capacity(data, filter_date_keys=w_keys)
+        # DEVİR ZİNCİRİYLE TUTARLI: her günün zaten hesaplanmış completable_doors'u toplanır
+        w_door_stats = sum_chain_door_stats([daily_chart_by_key[k] for k in w_keys if k in daily_chart_by_key])
 
         weekly_summary.append({
             "name": w_name,
@@ -1033,7 +1074,8 @@ def get_dashboard_summary():
             w_fire_ratio = (w_fire / (w_prod + w_fire) * 100) if (w_prod + w_fire) > 0 else 0
             w_emp = sum(x["employees"] for x in chunk)
             w_keys = [x["key"] for x in chunk]
-            w_door_stats = compute_door_capacity(data, filter_date_keys=w_keys)
+            # DEVİR ZİNCİRİYLE TUTARLI: günlerin kendi completable_doors'u toplanır
+            w_door_stats = sum_chain_door_stats(chunk)
 
             # Ekstrüder / Levha ayrı kırılım (haftalık)
             w_prod_ext = sum(x.get("prod_kg_ext", 0) for x in chunk)
@@ -1071,7 +1113,8 @@ def get_dashboard_summary():
         mt_fire_ratio = (mt_fire / (mt_prod + mt_fire) * 100) if (mt_prod + mt_fire) > 0 else 0
         mt_emp = sum(x["employees"] for x in m_days)
         mt_keys = [x["key"] for x in m_days]
-        mt_door_stats = compute_door_capacity(data, filter_date_keys=mt_keys)
+        # DEVİR ZİNCİRİYLE TUTARLI: bu aydaki günlerin completable_doors'u toplanır
+        mt_door_stats = sum_chain_door_stats(m_days)
 
         # Ekstrüder / Levha ayrı kırılım (aylık)
         mt_prod_ext = sum(x.get("prod_kg_ext", 0) for x in m_days)
@@ -1154,12 +1197,16 @@ def get_dashboard_summary():
         "total_fire_ton": round(total_fire_kg / 1000.0, 2),
         "fire_ratio": round((total_fire_kg / (total_prod_kg + total_fire_kg) * 100) if (total_prod_kg + total_fire_kg) > 0 else 0, 2),
         "total_employees": total_employees,
-        "completable_doors": compute_door_capacity(data)["completable_doors"],
+        "completable_doors": sum_chain_door_stats(daily_chart)["completable_doors"],
         "top_producing_machines": sorted([{"name": k, "prod_ton": round(v["prod"]/1000.0, 2), "fire_kg": round(v["fire"], 1)} for k, v in machine_totals.items()], key=lambda x: x["prod_ton"], reverse=True),
         "top_scrap_reasons": sorted([{"reason": k, "fire_kg": round(v, 1)} for k, v in fire_reasons_summary.items() if v > 0], key=lambda x: x["fire_kg"], reverse=True)
     }
 
-    door_stats = compute_door_capacity(data)
+    # DEVİR ZİNCİRİYLE TUTARLI Genel Toplam: tüm günlerin kendi completable_doors'u
+    # toplanır (compute_door_capacity(data) gibi ham üretimi sıfırdan havuzlamaz).
+    # Böylece Genel Toplam = Aylıkların toplamı = Haftalıkların toplamı = Günlüklerin
+    # toplamı olur; hepsi birbiriyle tutarlı ve toplanabilir hale gelir.
+    door_stats = sum_chain_door_stats(daily_chart)
     overall_fire_ratio = (total_fire_kg / (total_prod_kg + total_fire_kg) * 100) if (total_prod_kg + total_fire_kg) > 0 else 0
     kg_per_employee = (total_prod_kg / total_employees) if total_employees > 0 else 0
     kg_per_hour = (total_prod_kg / total_hours) if total_hours > 0 else 0

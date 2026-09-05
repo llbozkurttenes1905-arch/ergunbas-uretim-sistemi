@@ -4884,7 +4884,7 @@
           },
           {
             "row": 0,
-            "hat": "104",
+            "hat": "105",
             "product": "SEREN",
             "length": 2.1,
             "speed": 0.81,
@@ -4897,7 +4897,7 @@
           },
           {
             "row": 0,
-            "hat": "105",
+            "hat": "106",
             "product": "140 mm KASA",
             "length": 2.15,
             "speed": 0.71,
@@ -4910,7 +4910,7 @@
           },
           {
             "row": 0,
-            "hat": "106",
+            "hat": "107",
             "product": "KT100-220x24-ANT",
             "length": 3.0,
             "speed": 0.67,
@@ -4923,7 +4923,7 @@
           },
           {
             "row": 0,
-            "hat": "107",
+            "hat": "108",
             "product": "140 mm KASA",
             "length": 2.45,
             "speed": 0.62,
@@ -4936,7 +4936,7 @@
           },
           {
             "row": 0,
-            "hat": "108",
+            "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 1.25,
@@ -5059,9 +5059,9 @@
             "length": 3.0,
             "speed": 0.66,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 6.0,
             "prod_kg": 685.0,
-            "fire_kg": 761.72,
+            "fire_kg": 38.36,
             "qty": 75,
             "sets": 0
           },
@@ -5072,9 +5072,9 @@
             "length": 3.0,
             "speed": 0.67,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 6.0,
             "prod_kg": 478.0,
-            "fire_kg": 870.46,
+            "fire_kg": 196.23,
             "qty": 57,
             "sets": 0
           },

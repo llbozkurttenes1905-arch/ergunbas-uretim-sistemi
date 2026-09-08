@@ -605,6 +605,10 @@ def get_dashboard_summary():
         day_emp = 0
         day_hours = 0.0
         day_machine_totals = {}  # Bu güne özel makine/hat bazında kırılım
+        day_lev_shift_hours = {}  # {dm_key: {shift: saat}} - Levha icin: ayni vardiyada
+        # birden fazla renk/model girilse bile o vardiyanin saati BIR KEZ sayilir (max),
+        # ama GÜNDÜZ + GECE vardiyaları AYRI AYRI olarak TOPLANIR (sum) - böylece
+        # Levha 24 saat (12+12) çalıştıysa doğru şekilde 24 olarak hesaplanır.
         day_shifts = {
             "gunduz": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0},
             "gece": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0}
@@ -688,8 +692,6 @@ def get_dashboard_summary():
 
                 dm_key = f"lev_{h_name}"
                 if dm_key not in day_machine_totals:
-                    # Levha satırlarında ayrı bir çalışma süresi alanı yok; verimlilik hesabında
-                    # o vardiyanın toplam çalışma saati yaklaşık değer olarak kullanılır.
                     day_machine_totals[dm_key] = {"hat": h_name, "type": "Levha", "products": {}, "prod_kg": 0.0, "fire_kg": 0.0, "hours": 0.0}
                 if h_product:
                     if h_product not in day_machine_totals[dm_key]["products"]:
@@ -699,7 +701,14 @@ def get_dashboard_summary():
                     day_machine_totals[dm_key]["products"][h_product]["fire_kg"] += f_kg
                 day_machine_totals[dm_key]["prod_kg"] += p_kg
                 day_machine_totals[dm_key]["fire_kg"] += f_kg
-                day_machine_totals[dm_key]["hours"] = max(day_machine_totals[dm_key]["hours"], s_hours)
+                # Levha'ya özel saat: eğer satırda kendi 'hours' alanı girildiyse onu kullan,
+                # girilmediyse (eski kayıtlar / geriye dönük uyumluluk) vardiyanın genel
+                # saatini (s_hours) kullan. Aynı vardiyada birden fazla renk/model varsa
+                # o vardiyanın saati BİR KEZ sayılır (max); GÜNDÜZ+GECE ayrı ayrı SAYILIP
+                # SONRA TOPLANIR (bu döngüden sonra yapılıyor).
+                lev_hours_this_line = lev.get("hours") or s_hours
+                shift_hours_bucket = day_lev_shift_hours.setdefault(dm_key, {})
+                shift_hours_bucket[shift] = max(shift_hours_bucket.get(shift, 0), lev_hours_this_line)
 
                 # Aylık/dönemsel renk/model bazında toplama (hat farketmeksizin, renk adına göre) — AY BAZINDA
                 if h_product and cur_month_key:
@@ -709,6 +718,13 @@ def get_dashboard_summary():
                     month_bucket[h_product]["qty"] += h_qty
                     month_bucket[h_product]["prod_kg"] += p_kg
                     month_bucket[h_product]["fire_kg"] += f_kg
+
+        # Levha hatlarının GÜNDÜZ + GECE saatlerini TOPLA (vardiya içi max, vardiyalar
+        # arası sum) — böylece bir hat hem gündüz hem gece çalıştıysa toplam saat
+        # doğru şekilde (örn. 12+12=24) hesaplanır, tek vardiyaya sabitlenmez.
+        for dm_key, shift_hours_map in day_lev_shift_hours.items():
+            if dm_key in day_machine_totals:
+                day_machine_totals[dm_key]["hours"] = round(sum(shift_hours_map.values()), 2)
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı

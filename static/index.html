@@ -828,6 +828,7 @@
                                     <th class="p-2.5">Ölü Fire (kg)</th>
                                     <th class="p-2.5">Toplam (kg)</th>
                                     <th class="p-2.5">Fire Oranı (%)</th>
+                                    <th class="p-2.5" title="Bu hat bu vardiyada kaç saat çalıştı? Birden fazla renk girsen de bu saati bir kez yaz.">Saat</th>
                                     <th class="p-2.5">Takım Sayısı</th>
                                     <th class="p-2.5 text-center">Sil</th>
                                 </tr>
@@ -925,6 +926,7 @@
                                     <th class="p-2.5">Ölü Fire (kg)</th>
                                     <th class="p-2.5">Toplam (kg)</th>
                                     <th class="p-2.5">Fire Oranı (%)</th>
+                                    <th class="p-2.5" title="Bu hat bu vardiyada kaç saat çalıştı? Birden fazla renk girsen de bu saati bir kez yaz.">Saat</th>
                                     <th class="p-2.5">Takım Sayısı</th>
                                     <th class="p-2.5 text-center">Sil</th>
                                 </tr>
@@ -2583,6 +2585,9 @@
                     <td class="p-2.5 font-bold text-amber-400 text-xs text-center val-dead-fire-kg">${deadFireKg ? deadFireKg.toFixed(1) : '-'}</td>
                     <td class="p-2.5 font-bold text-ergunbas-500 text-xs text-center val-total-kg">${totalKg ? totalKg.toFixed(1) : '-'}</td>
                     <td class="p-2.5 font-bold text-amber-400 text-xs text-center val-fire-ratio">%${ratio}</td>
+                    <td class="p-2.5">
+                        <input type="number" step="0.5" value="${item.hours ?? ''}" placeholder="Vrd." title="Bu hat bu vardiyada kaç saat çalıştı? Boş bırakılırsa vardiyanın genel saati kullanılır." class="input-hours bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-14 text-center">
+                    </td>
                     <td class="p-2.5 font-bold text-emerald-400 text-xs text-center val-sets">${item.sets ? item.sets.toFixed(1) : '-'}</td>
                     <td class="p-2.5 text-center">
                         <button onclick="const _tb=this.closest('tbody').id; this.closest('tr').remove(); updateLevhaTotals(_tb);" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
@@ -2764,7 +2769,8 @@
                         length: parseFloat(r.querySelector('.input-length')?.value) || 0,
                         kalip_cikis_eni: parseFloat(r.querySelector('.input-kalip-eni')?.value) || 0,
                         kg_per_m2: parseFloat(r.querySelector('.input-kg-m2')?.value) || 0,
-                        qty: parseInt(r.querySelector('.input-qty')?.value) || 0
+                        qty: parseInt(r.querySelector('.input-qty')?.value) || 0,
+                        hours: r.querySelector('.input-hours')?.value ? parseFloat(r.querySelector('.input-hours').value) : null
                     });
                 }
             });

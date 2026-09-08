@@ -610,8 +610,8 @@ def get_dashboard_summary():
         # ama GÜNDÜZ + GECE vardiyaları AYRI AYRI olarak TOPLANIR (sum) - böylece
         # Levha 24 saat (12+12) çalıştıysa doğru şekilde 24 olarak hesaplanır.
         day_shifts = {
-            "gunduz": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0},
-            "gece": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0}
+            "gunduz": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0, "prod_kg_ext": 0.0, "fire_kg_ext": 0.0, "prod_kg_lev": 0.0, "fire_kg_lev": 0.0},
+            "gece": {"employees": 0, "hours": 0.0, "prod_kg": 0.0, "fire_kg": 0.0, "prod_kg_ext": 0.0, "fire_kg_ext": 0.0, "prod_kg_lev": 0.0, "fire_kg_lev": 0.0}
         }
 
         for shift in ["gunduz", "gece"]:
@@ -635,6 +635,8 @@ def get_dashboard_summary():
                 day_fire_kg += f_kg
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
+                day_shifts[shift]["prod_kg_ext"] += p_kg
+                day_shifts[shift]["fire_kg_ext"] += f_kg
 
                 day_prod_kg_ext += p_kg
                 day_fire_kg_ext += f_kg
@@ -679,6 +681,8 @@ def get_dashboard_summary():
                 day_fire_kg += f_kg
                 day_shifts[shift]["prod_kg"] += p_kg
                 day_shifts[shift]["fire_kg"] += f_kg
+                day_shifts[shift]["prod_kg_lev"] += p_kg
+                day_shifts[shift]["fire_kg_lev"] += f_kg
 
                 day_prod_kg_lev += p_kg
                 day_fire_kg_lev += f_kg
@@ -889,6 +893,29 @@ def get_dashboard_summary():
             s_kg_per_employee = round((s_prod / s_emp), 2) if s_emp > 0 else 0
             s_kg_per_hour_net = round((s_prod / s_hours), 2) if s_hours > 0 else 0
             s_kg_per_hour_gross = round(((s_prod + s_fire) / s_hours), 2) if s_hours > 0 else 0
+
+            # Ekstrüder / Levha ayrı kırılım (bu vardiyaya özel)
+            s_prod_ext = s.get("prod_kg_ext", 0)
+            s_fire_ext = s.get("fire_kg_ext", 0)
+            s_prod_lev = s.get("prod_kg_lev", 0)
+            s_fire_lev = s.get("fire_kg_lev", 0)
+            breakdown = {
+                "extruder": {
+                    "prod_kg": round(s_prod_ext, 2),
+                    "fire_kg": round(s_fire_ext, 2),
+                    "fire_ratio": round((s_fire_ext / (s_prod_ext + s_fire_ext) * 100), 2) if (s_prod_ext + s_fire_ext) > 0 else 0,
+                    "prod_share_pct": round((s_prod_ext / s_prod * 100), 1) if s_prod > 0 else 0,
+                    "fire_share_pct": round((s_fire_ext / s_fire * 100), 1) if s_fire > 0 else 0
+                },
+                "levha": {
+                    "prod_kg": round(s_prod_lev, 2),
+                    "fire_kg": round(s_fire_lev, 2),
+                    "fire_ratio": round((s_fire_lev / (s_prod_lev + s_fire_lev) * 100), 2) if (s_prod_lev + s_fire_lev) > 0 else 0,
+                    "prod_share_pct": round((s_prod_lev / s_prod * 100), 1) if s_prod > 0 else 0,
+                    "fire_share_pct": round((s_fire_lev / s_fire * 100), 1) if s_fire > 0 else 0
+                }
+            }
+
             return {
                 "employees": s_emp,
                 "hours": round(s_hours, 2),
@@ -897,7 +924,8 @@ def get_dashboard_summary():
                 "fire_ratio": s_fire_ratio,
                 "kg_per_employee": s_kg_per_employee,
                 "kg_per_hour_net": s_kg_per_hour_net,
-                "kg_per_hour_gross": s_kg_per_hour_gross
+                "kg_per_hour_gross": s_kg_per_hour_gross,
+                "breakdown": breakdown
             }
 
         daily_chart.append({

@@ -1531,8 +1531,16 @@
                         <span class="text-xs text-slate-500 ml-auto">${s.employees} kişi · ${s.hours} sa</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center mb-3">
-                        <div><span class="text-[10px] text-slate-500 block">Üretim</span><span class="text-sm font-bold text-white">${s.prod_kg.toLocaleString('tr-TR')} kg</span></div>
-                        <div><span class="text-[10px] text-slate-500 block">Fire</span><span class="text-sm font-bold text-amber-400">${s.fire_kg.toLocaleString('tr-TR')} kg</span></div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block">Üretim</span>
+                            <span class="text-sm font-bold text-white">${s.prod_kg.toLocaleString('tr-TR')} kg</span>
+                            ${s.breakdown ? `<span class="text-[9px] block mt-0.5"><span class="text-sky-400 font-bold">Eks: ${s.breakdown.extruder.prod_kg.toLocaleString('tr-TR')} (%${s.breakdown.extruder.prod_share_pct})</span> · <span class="text-fuchsia-400 font-bold">Lev: ${s.breakdown.levha.prod_kg.toLocaleString('tr-TR')} (%${s.breakdown.levha.prod_share_pct})</span></span>` : ''}
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block">Fire</span>
+                            <span class="text-sm font-bold text-amber-400">${s.fire_kg.toLocaleString('tr-TR')} kg</span>
+                            ${s.breakdown ? `<span class="text-[9px] block mt-0.5"><span class="text-sky-400 font-bold">Eks: ${s.breakdown.extruder.fire_kg.toLocaleString('tr-TR')} (%${s.breakdown.extruder.fire_share_pct})</span> · <span class="text-fuchsia-400 font-bold">Lev: ${s.breakdown.levha.fire_kg.toLocaleString('tr-TR')} (%${s.breakdown.levha.fire_share_pct})</span></span>` : ''}
+                        </div>
                         <div><span class="text-[10px] text-slate-500 block">Fire Oranı</span><span class="text-sm font-bold text-orange-400">%${s.fire_ratio}</span></div>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center pt-2.5 border-t border-slate-800">

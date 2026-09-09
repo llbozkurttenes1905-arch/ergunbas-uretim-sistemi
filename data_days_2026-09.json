@@ -2019,7 +2019,35 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temiziliği yapıldı.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği yapıldı.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Su arızası.",
+          "down_min": 180.0,
+          "desc": ""
+        }
+      ]
     }
   }
 }

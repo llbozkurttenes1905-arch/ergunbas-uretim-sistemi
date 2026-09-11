@@ -2513,7 +2513,7 @@
       "gunduz": {
         "employees": 13,
         "hours": 12.0,
-        "operator": "",
+        "operator": "vardiya1",
         "extruders": [
           {
             "row": 0,

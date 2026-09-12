@@ -2854,6 +2854,23 @@
           "desc": "01:30'da kapatıldı."
         }
       ]
+    },
+    "43": {
+      "day": "43",
+      "date": "11.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
     }
   }
 }

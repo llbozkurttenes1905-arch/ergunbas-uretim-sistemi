@@ -4156,13 +4156,13 @@
             "qty": 405,
             "total_m2": 788.049,
             "width_fire_cm": 0,
-            "dead_fire_m2": 955.719,
-            "dead_fire_kg": 2341.51,
+            "dead_fire_m2": 117.369,
+            "dead_fire_kg": 287.55,
             "total_kg": 1930.72,
             "sets": 202.5,
             "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 208.0,
-            "en_firesi_cm": 114.0
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 14.0
           },
           {
             "row": 0,
@@ -4174,13 +4174,13 @@
             "qty": 95,
             "total_m2": 187.53,
             "width_fire_cm": 0,
-            "dead_fire_m2": 227.43,
-            "dead_fire_kg": 557.2,
+            "dead_fire_m2": 27.93,
+            "dead_fire_kg": 68.43,
             "total_kg": 459.45,
             "sets": 47.5,
             "kg_per_m2": 2.45,
-            "kalip_cikis_eni": 208.0,
-            "en_firesi_cm": 114.0
+            "kalip_cikis_eni": 108.0,
+            "en_firesi_cm": 14.0
           }
         ]
       },

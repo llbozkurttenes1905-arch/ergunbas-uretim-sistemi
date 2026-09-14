@@ -4211,7 +4211,7 @@
       "gunduz": {
         "employees": 9,
         "hours": 12.0,
-        "operator": "",
+        "operator": "vardiya1",
         "extruders": [
           {
             "row": 0,
@@ -4519,7 +4519,7 @@
           "shift": "Gündüz",
           "hat": "101",
           "fire_reason": "3 defa ürün koptu.",
-          "fire_kg": 115.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4528,7 +4528,7 @@
           "shift": "Gündüz",
           "hat": "102",
           "fire_reason": "Ayar yapıldı.",
-          "fire_kg": 115.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4546,7 +4546,7 @@
           "shift": "Gündüz",
           "hat": "104",
           "fire_reason": "4 defa ürün koptu.",
-          "fire_kg": 235.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4555,7 +4555,7 @@
           "shift": "Gündüz",
           "hat": "105",
           "fire_reason": "2 defa ürün koptu.",
-          "fire_kg": 194.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4564,7 +4564,7 @@
           "shift": "Gündüz",
           "hat": "106",
           "fire_reason": "Ayar yapıldı.",
-          "fire_kg": 177.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4573,7 +4573,7 @@
           "shift": "Gündüz",
           "hat": "107",
           "fire_reason": "3 defa ürün koptu.",
-          "fire_kg": 260.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4582,7 +4582,7 @@
           "shift": "Gündüz",
           "hat": "108",
           "fire_reason": "3 defa ayar yapıldı.",
-          "fire_kg": 373.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
@@ -4591,7 +4591,7 @@
           "shift": "Gündüz",
           "hat": "109",
           "fire_reason": "2 defa ürün koptu.",
-          "fire_kg": 112.0,
+          "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""

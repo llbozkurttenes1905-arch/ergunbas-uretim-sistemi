@@ -3688,16 +3688,52 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği yapıldı.",
-          "down_min": 0.0,
+          "down_min": 60.0,
           "desc": ""
         },
         {
           "shift": "Gündüz",
-          "hat": "1",
+          "hat": "105",
           "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği yapıldı. Hammadde değişimi oldu.",
+          "down_min": 300.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği yapıldı.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "102",
+          "fire_reason": "Hammadde problemi.",
           "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Su motoru değişti.",
+          "down_min": 240.0,
           "desc": ""
         }
       ]

@@ -3763,7 +3763,7 @@
       "gunduz": {
         "employees": 12,
         "hours": 12.0,
-        "operator": "",
+        "operator": "vardiya1",
         "extruders": [
           {
             "row": 0,
@@ -4092,7 +4092,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "ANTRASİT",
             "width": 100.0,
             "length": 217.0,
@@ -4110,7 +4110,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 94.0,
             "length": 207.0,
@@ -4167,7 +4167,7 @@
         },
         {
           "shift": "Gündüz",
-          "hat": "Levha 1",
+          "hat": "201",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp temizliği.",

@@ -401,7 +401,7 @@
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "ahmet ali",
+        "operator": "",
         "extruders": [
           {
             "row": 0,

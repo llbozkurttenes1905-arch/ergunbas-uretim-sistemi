@@ -6,7 +6,7 @@
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "ahmey aşlfekfn",
+        "operator": "",
         "extruders": [
           {
             "row": 0,

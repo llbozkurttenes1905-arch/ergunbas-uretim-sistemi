@@ -3900,25 +3900,27 @@
             "sets": 50.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 18.0
           },
           {
             "row": 0,
             "hat": "201",
             "color": "VIZON",
-            "width": 93.0,
+            "width": 94.0,
             "length": 208.0,
-            "m2_one": 1.9344,
+            "m2_one": 1.9552,
             "qty": 200,
-            "total_m2": 386.88,
+            "total_m2": 391.04,
             "width_fire_cm": 0,
-            "dead_fire_m2": 62.4,
-            "dead_fire_kg": 152.88,
-            "total_kg": 947.86,
+            "dead_fire_m2": 58.24,
+            "dead_fire_kg": 142.69,
+            "total_kg": 958.05,
             "sets": 100.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
+            "hours": null,
+            "en_firesi_cm": 14.0
           }
         ]
       },
@@ -4088,6 +4090,7 @@
             "sets": 25.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
@@ -4106,6 +4109,7 @@
             "sets": 37.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 8.0
           },
           {
@@ -4124,6 +4128,7 @@
             "sets": 125.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           }
         ]

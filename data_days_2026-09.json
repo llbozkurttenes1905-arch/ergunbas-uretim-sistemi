@@ -2230,6 +2230,7 @@
             "sets": 42.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 6.0
           },
           {
@@ -2248,25 +2249,27 @@
             "sets": 100.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 33.0
           },
           {
             "row": 0,
             "hat": "201",
             "color": "DIŞBUDAK",
-            "width": 93.0,
+            "width": 94.0,
             "length": 208.0,
-            "m2_one": 1.9344,
+            "m2_one": 1.9552,
             "qty": 110,
-            "total_m2": 212.784,
+            "total_m2": 215.072,
             "width_fire_cm": 0,
-            "dead_fire_m2": 34.32,
-            "dead_fire_kg": 84.08,
-            "total_kg": 521.32,
+            "dead_fire_m2": 32.032,
+            "dead_fire_kg": 78.48,
+            "total_kg": 526.93,
             "sets": 55.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "en_firesi_cm": 15.0
+            "hours": null,
+            "en_firesi_cm": 14.0
           }
         ]
       },
@@ -2410,6 +2413,7 @@
             "sets": 66.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
@@ -2428,6 +2432,7 @@
             "sets": 157.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 23.0
           }
         ]

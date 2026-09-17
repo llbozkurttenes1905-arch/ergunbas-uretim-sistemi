@@ -4511,7 +4511,7 @@
       "gunduz": {
         "employees": 12,
         "hours": 12.0,
-        "operator": "",
+        "operator": "mehmet",
         "extruders": [
           {
             "row": 0,
@@ -4648,11 +4648,12 @@
             "sets": 80.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "DIŞBUDAK",
             "width": 93.0,
             "length": 208.0,
@@ -4666,6 +4667,7 @@
             "sets": 130.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           }
         ]
@@ -4823,11 +4825,12 @@
             "sets": 20.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "TEAK",
             "width": 75.0,
             "length": 215.0,
@@ -4841,6 +4844,7 @@
             "sets": 187.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 33.0
           }
         ]
@@ -4856,7 +4860,7 @@
           "desc": ""
         },
         {
-          "shift": "Gündüz",
+          "shift": "Gece",
           "hat": "103",
           "fire_reason": "",
           "fire_kg": 0.0,

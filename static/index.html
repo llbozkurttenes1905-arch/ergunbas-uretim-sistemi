@@ -2494,7 +2494,7 @@
             return `
                 <tr class="hover:bg-slate-900/50" oninput="calcExtruderRow(this)" onchange="calcExtruderRow(this)">
                     <td class="p-2.5 font-semibold text-white">
-                        <input type="text" value="${hatName || item.hat || 'Hat 1'}" class="input-hat-ext bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-28">
+                        <select class="input-hat-ext bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-28">${buildHatOptionsHtml(hatName || item.hat || '', 'extruder')}</select>
                     </td>
                     <td class="p-2.5">
                         <select class="input-prod-name bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full font-medium" title="${(getProductDescription(item.product || '') || '').replace(/"/g, '&quot;')}" onchange="updateProductSelectTitle(this)">${buildProductOptionsHtml(item.product || '', p => p.category !== 'levha')}</select>

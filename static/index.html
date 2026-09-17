@@ -2557,6 +2557,23 @@
             safeCreateIcons();
         }
 
+        function buildHatOptionsHtml(selectedValue, machineTypeFilter) {
+            // Katalogdan (Ayarlar > Makineler & Ürünler) hat/makine seçeneklerini oluşturur.
+            // Elle yazım hatası veya aynı hattın yanlışlıkla iki kez seçilmesini önler.
+            const filtered = machinesList.filter(m => m.type === machineTypeFilter);
+            let html = '<option value="">— Seçiniz —</option>';
+            let found = false;
+            filtered.forEach(m => {
+                const isSelected = (m.name === selectedValue);
+                if (isSelected) found = true;
+                html += `<option value="${m.name}" ${isSelected ? 'selected' : ''}>${m.name}</option>`;
+            });
+            if (selectedValue && !found) {
+                html += `<option value="${selectedValue}" selected>⚠️ ${selectedValue} (katalogda yok — Ayarlar'dan ekleyin)</option>`;
+            }
+            return html;
+        }
+
         function createLevhaRowHtml(hatName = '', item = {}) {
             const kalipEni = item.kalip_cikis_eni || (item.width_fire_cm && item.width ? (item.width + item.width_fire_cm) : 108);
             const kgM2Raw = item.kg_per_m2 || (item.total_kg && item.total_m2 ? (item.total_kg / item.total_m2) : 2.45);
@@ -2569,7 +2586,7 @@
             return `
                 <tr class="hover:bg-slate-900/50" oninput="calcLiveRow(this, 'levha')" onchange="calcLiveRow(this, 'levha')">
                     <td class="p-2.5 font-semibold text-white">
-                        <input type="text" value="${hatName || item.hat || 'Levha 1'}" class="input-hat bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-24">
+                        <select class="input-hat bg-slate-950 border border-slate-800 text-white text-xs font-bold rounded px-2 py-1 w-24">${buildHatOptionsHtml(hatName || item.hat || '', 'levha')}</select>
                     </td>
                     <td class="p-2.5">
                         <select class="input-color bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full" title="${(getProductDescription(item.color || '') || '').replace(/"/g, '&quot;')}" onchange="updateProductSelectTitle(this)">${buildProductOptionsHtml(item.color || '', p => p.category === 'levha')}</select>

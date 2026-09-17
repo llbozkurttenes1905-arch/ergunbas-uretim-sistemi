@@ -628,7 +628,12 @@ def get_dashboard_summary():
                 p_kg = ext.get("prod_kg", 0)
                 f_kg = ext.get("fire_kg", 0)
                 h_name = ext.get("hat", "Bilinmeyen Hat")
-                h_product = ext.get("product", "")
+                h_length = ext.get("length", 0)
+                h_product_raw = ext.get("product", "")
+                # Ekstrüder'de grup anahtarı ÜRÜN ADI + BOY birlikte tutulur: aynı ürün
+                # farklı boylarda üretilmişse ayrı satır olarak raporlanır
+                # (örn: "80X80 PERVAZ (2.24m)" ile "80X80 PERVAZ (3.00m)" ayrı ayrı görünür).
+                h_product = f"{h_product_raw} ({h_length:g}m)" if h_product_raw else ""
                 h_hours = ext.get("hours", 0)
                 h_qty = ext.get("qty", 0)
 

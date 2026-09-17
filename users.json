@@ -41,6 +41,13 @@
       "password": "34ER9000",
       "role": "admin",
       "name": "Vedat ERGÜNBAŞ"
+    },
+    {
+      "id": "u10_gen",
+      "username": "genel operatör",
+      "password": "123456",
+      "role": "viewer",
+      "name": "MUHAMMED  VAZZE"
     }
   ]
 }

@@ -763,7 +763,7 @@
                     <div class="flex items-center space-x-4 text-sm">
                         <div class="flex items-center space-x-2">
                             <span class="text-slate-400 font-semibold">Vardiya Amiri:</span>
-                            <select id="gunduz-operator" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-amber-500"></select>
+                            <input type="text" id="gunduz-operator" placeholder="İsim yazın..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-amber-500 w-40">
                         </div>
                         <div class="flex items-center space-x-2">
                             <span class="text-slate-400 font-semibold">Çalışan Sayısı:</span>
@@ -861,7 +861,7 @@
                     <div class="flex items-center space-x-4 text-sm">
                         <div class="flex items-center space-x-2">
                             <span class="text-slate-400 font-semibold">Vardiya Amiri:</span>
-                            <select id="gece-operator" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-indigo-500"></select>
+                            <input type="text" id="gece-operator" placeholder="İsim yazın..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1 text-white font-bold text-xs focus:ring-2 focus:ring-indigo-500 w-40">
                         </div>
                         <div class="flex items-center space-x-2">
                             <span class="text-slate-400 font-semibold">Çalışan Sayısı:</span>
@@ -3102,15 +3102,8 @@
                     }).join('');
                 }
 
-                // Vardiya operatör dropdown'larını doldur
-                ['gunduz-operator', 'gece-operator'].forEach(selId => {
-                    const sel = document.getElementById(selId);
-                    if (!sel) return;
-                    const currentVal = sel.value;
-                    sel.innerHTML = '<option value="">— Seçiniz —</option>' +
-                        users.map(u => `<option value="${u.username}">${u.name}</option>`).join('');
-                    if (currentVal) sel.value = currentVal;
-                });
+                // NOT: Vardiya Amiri artık serbest metin kutusu (elle yazılıyor),
+                // kullanıcı listesinden otomatik doldurulmuyor.
 
                 safeCreateIcons();
             } catch(e) {

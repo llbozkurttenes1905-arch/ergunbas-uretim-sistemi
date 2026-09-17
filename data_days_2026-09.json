@@ -4869,6 +4869,23 @@
           "desc": ""
         }
       ]
+    },
+    "49": {
+      "day": "49",
+      "date": "17.09.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
     }
   }
 }

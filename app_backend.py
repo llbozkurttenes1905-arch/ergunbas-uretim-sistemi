@@ -675,7 +675,12 @@ def get_dashboard_summary():
                 p_kg = lev.get("total_kg", 0)
                 f_kg = lev.get("dead_fire_kg", 0)
                 h_name = lev.get("hat", "Levha Hattı")
-                h_product = lev.get("color", "")  # Levha'da ürün/varyant bilgisi 'color' (Renk/Model) alanında tutulur
+                h_color = lev.get("color", "")
+                h_width = lev.get("width", 0)
+                # Levha'da grup anahtarı RENK + EN ÖLÇÜSÜ birlikte tutulur: aynı renk
+                # farklı en'lerde üretilmişse ayrı satır/kalem olarak raporlanır
+                # (örn: "TEAK (93cm)" ile "TEAK (84cm)" ayrı ayrı görünür).
+                h_product = f"{h_color} ({h_width:g}cm)" if h_color else ""
                 h_qty = lev.get("qty", 0)
 
                 day_prod_kg += p_kg

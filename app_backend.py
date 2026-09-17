@@ -357,6 +357,7 @@ class LevhaEntry(BaseModel):
     sets: Optional[float] = 0
     kg_per_m2: Optional[float] = 3.5
     kalip_cikis_eni: Optional[float] = 108.0
+    hours: Optional[float] = None
 
 class DowntimeEntry(BaseModel):
     shift: str

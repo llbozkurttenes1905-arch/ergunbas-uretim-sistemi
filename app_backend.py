@@ -719,11 +719,15 @@ def get_dashboard_summary():
                 # Levha'ya özel saat: eğer satırda kendi 'hours' alanı girildiyse onu kullan,
                 # girilmediyse (eski kayıtlar / geriye dönük uyumluluk) vardiyanın genel
                 # saatini (s_hours) kullan. Aynı vardiyada birden fazla renk/model varsa
-                # o vardiyanın saati BİR KEZ sayılır (max); GÜNDÜZ+GECE ayrı ayrı SAYILIP
-                # SONRA TOPLANIR (bu döngüden sonra yapılıyor).
+                # (örn. gece vardiyasında önce 3 saat X rengi, sonra 9 saat Y rengi çalışıldıysa)
+                # bu saatler TOPLANIR (3+9=12) — ama vardiyanın nominal süresini (s_hours)
+                # aşmayacak şekilde bir tavanla sınırlanır (eski/varsayılan saatli kayıtlarda
+                # aynı değerin birden fazla kez tekrar edip anlamsız şişmesini önlemek için).
+                # GÜNDÜZ+GECE toplamları ise ayrı ayrı hesaplanıp SONRA TOPLANIR (bu döngüden sonra).
                 lev_hours_this_line = lev.get("hours") or s_hours
                 shift_hours_bucket = day_lev_shift_hours.setdefault(dm_key, {})
-                shift_hours_bucket[shift] = max(shift_hours_bucket.get(shift, 0), lev_hours_this_line)
+                new_shift_total = shift_hours_bucket.get(shift, 0) + lev_hours_this_line
+                shift_hours_bucket[shift] = min(new_shift_total, s_hours)
 
                 # Aylık/dönemsel renk/model bazında toplama (hat farketmeksizin, renk adına göre) — AY BAZINDA
                 if h_product and cur_month_key:

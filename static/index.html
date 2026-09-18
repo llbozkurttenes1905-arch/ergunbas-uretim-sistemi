@@ -2242,6 +2242,10 @@
 
                 const canvas = document.getElementById(canvasId);
                 if (canvas) {
+                    // Ürün sayısına göre canvas yüksekliğini dinamik ayarla (en az 200px, her satır ~32px)
+                    const rowHeight = 32;
+                    const minHeight = 200;
+                    canvas.style.height = Math.max(minHeight, items.length * rowHeight) + 'px';
                     const existing = chartVarSetter.get();
                     if (existing) existing.destroy();
                     const ctx = canvas.getContext('2d');
@@ -2273,7 +2277,25 @@
                             },
                             scales: {
                                 x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
-                                y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+                                y: {
+                                    grid: { display: false },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        font: { size: 11 },
+                                        // Uzun etiketlerin kesilmemesi için maksimum karakter sınırı yok;
+                                        // sol taraf için yeterli padding ile göster.
+                                        callback: function(val, index) {
+                                            return this.getLabelForValue(val);
+                                        }
+                                    },
+                                    afterFit: function(scaleInstance) {
+                                        // Etiketlerin tam görünmesi için minimum sol genişlik
+                                        scaleInstance.width = Math.max(scaleInstance.width, 220);
+                                    }
+                                }
+                            },
+                            layout: {
+                                padding: { left: 0 }
                             }
                         }
                     });

@@ -450,7 +450,7 @@
                     <h3 class="text-sm font-bold text-sky-400 mb-3 flex items-center gap-1.5">
                         <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri
                     </h3>
-                    <div class="h-72 mb-4">
+                    <div class="mb-4" id="chart-monthly-extruder-products-wrap" style="height: 288px;">
                         <canvas id="chart-monthly-extruder-products"></canvas>
                     </div>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
@@ -475,7 +475,7 @@
                     <h3 class="text-sm font-bold text-fuchsia-400 mb-3 flex items-center gap-1.5">
                         <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri
                     </h3>
-                    <div class="h-72 mb-4">
+                    <div class="mb-4" id="chart-monthly-levha-colors-wrap" style="height: 288px;">
                         <canvas id="chart-monthly-levha-colors"></canvas>
                     </div>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
@@ -2242,10 +2242,15 @@
 
                 const canvas = document.getElementById(canvasId);
                 if (canvas) {
-                    // Ürün sayısına göre canvas yüksekliğini dinamik ayarla (en az 200px, her satır ~32px)
-                    const rowHeight = 32;
-                    const minHeight = 200;
-                    canvas.style.height = Math.max(minHeight, items.length * rowHeight) + 'px';
+                    // Ürün sayısına göre GRAFİĞİN KABININ (wrapper div) yüksekliğini dinamik
+                    // ayarla — canvas'ın kendisine değil, Chart.js responsive:true olduğu için
+                    // kabına göre kendini ayarlıyor; sadece canvas'a yükseklik vermek yeterli
+                    // olmuyordu çünkü kap sabit yükseklikteydi ve taşan barlar kesiliyordu.
+                    const rowHeight = 34;
+                    const axisAndPadding = 50; // x ekseni + üst/alt boşluk için pay
+                    const minHeight = 288;
+                    const wrap = canvas.closest('[id$="-wrap"]') || canvas.parentElement;
+                    wrap.style.height = Math.max(minHeight, items.length * rowHeight + axisAndPadding) + 'px';
                     const existing = chartVarSetter.get();
                     if (existing) existing.destroy();
                     const ctx = canvas.getContext('2d');

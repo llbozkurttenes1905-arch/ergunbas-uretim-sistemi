@@ -591,9 +591,7 @@
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="list-checks" class="w-5 h-5 text-ergunbas-500"></i> Günlük Yönetici Özeti — Detaylı
                     </h2>
-                    <select id="dash-day-select" onchange="renderDashDailyDetail()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
-                        <option value="">Yükleniyor...</option>
-                    </select>
+                    <input type="date" id="dash-day-select" onchange="onDashDaySelectChange()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
                 </div>
 
                 <!-- Genel Gün Özeti KPI'ları -->
@@ -740,7 +738,7 @@
                     <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
                         <i data-lucide="calendar" class="w-4 h-4 text-ergunbas-500"></i> Giriş Yapılacak Tarih:
                     </label>
-                    <input type="date" id="select-day" onchange="onSelectDayDateChange()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
+                    <select id="select-day" onchange="loadDayData()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none"></select>
                     <button onclick="promptAddNewDate()" class="edit-action daily-edit-action px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-ergunbas-500"></i> Yeni Tarih / Gün Ekle
                     </button>
@@ -1233,21 +1231,6 @@
             document.getElementById('modal-detail').classList.add('hidden');
         }
 
-        // Gün-anahtarı <-> gerçek tarih (YYYY-MM-DD) eşlemesi. "select-day" artık gerçek
-        // bir <input type="date">, tarayıcının kendi kompakt takvim seçicisini açar
-        // (uzun dikey liste yerine) — bu haritalar seçilen tarihi doğru gün-anahtarına çevirir.
-        let dayKeyByDate = {};
-        let dayDateByKey = {};
-
-        function ddmmyyyyToIso(ddmmyyyy) {
-            const [d, m, y] = ddmmyyyy.split('.');
-            return `${y}-${m}-${d}`;
-        }
-        function isoToDdmmyyyy(iso) {
-            const [y, m, d] = iso.split('-');
-            return `${d}.${m}.${y}`;
-        }
-
         async function fetchDashboardAndDates() {
             await fetchMachinesAndProducts();
             const res = await fetch('/api/dashboard');
@@ -1255,31 +1238,14 @@
 
             const select = document.getElementById('select-day');
             if (select) {
-                dayKeyByDate = {};
-                dayDateByKey = {};
+                select.innerHTML = '';
                 dashboardData.available_dates.forEach(d => {
-                    const iso = ddmmyyyyToIso(d.date);
-                    dayKeyByDate[iso] = d.key;
-                    dayDateByKey[d.key] = iso;
+                    const opt = document.createElement('option');
+                    opt.value = d.key;
+                    opt.textContent = d.date;
+                    select.appendChild(opt);
                 });
-                // Seçili bir tarih yoksa, en son eklenen günü göster
-                if (!select.value && dashboardData.available_dates.length > 0) {
-                    const lastDate = dashboardData.available_dates[dashboardData.available_dates.length - 1];
-                    select.value = ddmmyyyyToIso(lastDate.date);
-                }
             }
-        }
-
-        function onSelectDayDateChange() {
-            const select = document.getElementById('select-day');
-            const iso = select.value;
-            const key = dayKeyByDate[iso];
-            if (!key) {
-                alert(`${isoToDdmmyyyy(iso)} tarihi için sistemde henüz kayıt yok. Önce "Yeni Tarih Ekle" ile bu günü ekleyin.`);
-                // Değeri, kayıtlı en yakın bir tarihe geri almak yerine, kullanıcı kendi ekleyebilsin diye olduğu gibi bırakıyoruz.
-                return;
-            }
-            loadDayData();
         }
 
         // ============ ÖZEL MODAL YÖNETİMİ (native prompt/confirm yerine) ============
@@ -1317,7 +1283,7 @@
                     closeAddDateModal();
                     showToast(`${dateStr} günü sisteme eklendi!`);
                     await fetchDashboardAndDates();
-                    document.getElementById('select-day').value = ddmmyyyyToIso(dateStr);
+                    document.getElementById('select-day').value = result.key;
                     loadDayData();
                 } else {
                     let msg = 'Tarih eklenemedi!';
@@ -1440,22 +1406,40 @@
             }
         }
 
+        function ddmmyyyyToIso(ddmmyyyy) {
+            const [d, m, y] = ddmmyyyy.split('.');
+            return `${y}-${m}-${d}`;
+        }
+
         function populateDashDaySelect() {
             const sel = document.getElementById('dash-day-select');
             if (!sel || !dashboardData || !dashboardData.daily_chart) return;
 
+            // input type="date" -> takvimden seçilebilecek aralığı, mevcut günlerin
+            // en eskisi ile en yenisi arasıyla sınırla (kayıt olmayan tarihlere gitmeyi önler)
+            const sortedByDate = dashboardData.daily_chart;
+            if (sortedByDate.length > 0) {
+                sel.min = ddmmyyyyToIso(sortedByDate[0].date);
+                sel.max = ddmmyyyyToIso(sortedByDate[sortedByDate.length - 1].date);
+            }
+
             const prevValue = sel.value;
-            sel.innerHTML = '';
-            dashboardData.daily_chart.slice().reverse().forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.key;
-                opt.textContent = d.date;
-                sel.appendChild(opt);
-            });
+            const targetKey = prevValue ? null : (dashboardData.latest_day_key || (dashboardData.daily_chart.length ? dashboardData.daily_chart[dashboardData.daily_chart.length - 1].key : ''));
+            if (!prevValue && targetKey) {
+                const targetDay = dashboardData.daily_chart.find(d => d.key === targetKey);
+                if (targetDay) sel.value = ddmmyyyyToIso(targetDay.date);
+            }
 
-            const targetKey = prevValue || dashboardData.latest_day_key || (dashboardData.daily_chart.length ? dashboardData.daily_chart[dashboardData.daily_chart.length - 1].key : '');
-            if (targetKey) sel.value = targetKey;
+            renderDashDailyDetail();
+        }
 
+        function onDashDaySelectChange() {
+            const sel = document.getElementById('dash-day-select');
+            const iso = sel.value;
+            const day = dashboardData?.daily_chart?.find(d => ddmmyyyyToIso(d.date) === iso);
+            if (!day) {
+                showToast(`${iso ? iso.split('-').reverse().join('.') : 'Seçilen'} tarihi için kayıt bulunamadı.`);
+            }
             renderDashDailyDetail();
         }
 
@@ -1474,8 +1458,8 @@
             const downtimesBody = document.getElementById('dash-day-downtimes-tbody');
             if (!sel || !dashboardData || !dashboardData.daily_chart) return;
 
-            const dayKey = sel.value;
-            const day = dashboardData.daily_chart.find(d => d.key === dayKey);
+            const iso = sel.value;
+            const day = dashboardData.daily_chart.find(d => ddmmyyyyToIso(d.date) === iso);
 
             if (!day) {
                 summaryEl.innerHTML = '';
@@ -2119,10 +2103,7 @@
         function openDayFromModal(key) {
             closeModal();
             const selectEl = document.getElementById('select-day');
-            if (selectEl) {
-                const iso = dayDateByKey[key];
-                if (iso) selectEl.value = iso;
-            }
+            if (selectEl) selectEl.value = key;
             switchTab('daily');
         }
 
@@ -2378,11 +2359,9 @@
         async function loadDayData() {
             const daySelect = document.getElementById('select-day');
             if (!daySelect) return;
-            const iso = daySelect.value;
-            const key = dayKeyByDate[iso];
-            if (!key) return; // Bu tarih için kayıt yok (onSelectDayDateChange zaten uyarı verdi)
-            currentDateKey = key;
-            document.getElementById('current-day-label').textContent = isoToDdmmyyyy(iso);
+            currentDateKey = daySelect.value;
+            const selectedText = daySelect.options[daySelect.selectedIndex] ? daySelect.options[daySelect.selectedIndex].text : currentDateKey;
+            document.getElementById('current-day-label').textContent = selectedText;
 
             const res = await fetch(`/api/daily/${currentDateKey}`);
             const data = await res.json();

@@ -740,7 +740,7 @@
                     <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
                         <i data-lucide="calendar" class="w-4 h-4 text-ergunbas-500"></i> Giriş Yapılacak Tarih:
                     </label>
-                    <select id="select-day" onchange="loadDayData()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none"></select>
+                    <input type="date" id="select-day" onchange="onSelectDayDateChange()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
                     <button onclick="promptAddNewDate()" class="edit-action daily-edit-action px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-ergunbas-500"></i> Yeni Tarih / Gün Ekle
                     </button>
@@ -1233,6 +1233,21 @@
             document.getElementById('modal-detail').classList.add('hidden');
         }
 
+        // Gün-anahtarı <-> gerçek tarih (YYYY-MM-DD) eşlemesi. "select-day" artık gerçek
+        // bir <input type="date">, tarayıcının kendi kompakt takvim seçicisini açar
+        // (uzun dikey liste yerine) — bu haritalar seçilen tarihi doğru gün-anahtarına çevirir.
+        let dayKeyByDate = {};
+        let dayDateByKey = {};
+
+        function ddmmyyyyToIso(ddmmyyyy) {
+            const [d, m, y] = ddmmyyyy.split('.');
+            return `${y}-${m}-${d}`;
+        }
+        function isoToDdmmyyyy(iso) {
+            const [y, m, d] = iso.split('-');
+            return `${d}.${m}.${y}`;
+        }
+
         async function fetchDashboardAndDates() {
             await fetchMachinesAndProducts();
             const res = await fetch('/api/dashboard');
@@ -1240,14 +1255,31 @@
 
             const select = document.getElementById('select-day');
             if (select) {
-                select.innerHTML = '';
+                dayKeyByDate = {};
+                dayDateByKey = {};
                 dashboardData.available_dates.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.key;
-                    opt.textContent = d.date;
-                    select.appendChild(opt);
+                    const iso = ddmmyyyyToIso(d.date);
+                    dayKeyByDate[iso] = d.key;
+                    dayDateByKey[d.key] = iso;
                 });
+                // Seçili bir tarih yoksa, en son eklenen günü göster
+                if (!select.value && dashboardData.available_dates.length > 0) {
+                    const lastDate = dashboardData.available_dates[dashboardData.available_dates.length - 1];
+                    select.value = ddmmyyyyToIso(lastDate.date);
+                }
             }
+        }
+
+        function onSelectDayDateChange() {
+            const select = document.getElementById('select-day');
+            const iso = select.value;
+            const key = dayKeyByDate[iso];
+            if (!key) {
+                alert(`${isoToDdmmyyyy(iso)} tarihi için sistemde henüz kayıt yok. Önce "Yeni Tarih Ekle" ile bu günü ekleyin.`);
+                // Değeri, kayıtlı en yakın bir tarihe geri almak yerine, kullanıcı kendi ekleyebilsin diye olduğu gibi bırakıyoruz.
+                return;
+            }
+            loadDayData();
         }
 
         // ============ ÖZEL MODAL YÖNETİMİ (native prompt/confirm yerine) ============
@@ -1285,7 +1317,7 @@
                     closeAddDateModal();
                     showToast(`${dateStr} günü sisteme eklendi!`);
                     await fetchDashboardAndDates();
-                    document.getElementById('select-day').value = result.key;
+                    document.getElementById('select-day').value = ddmmyyyyToIso(dateStr);
                     loadDayData();
                 } else {
                     let msg = 'Tarih eklenemedi!';
@@ -2087,7 +2119,10 @@
         function openDayFromModal(key) {
             closeModal();
             const selectEl = document.getElementById('select-day');
-            if (selectEl) selectEl.value = key;
+            if (selectEl) {
+                const iso = dayDateByKey[key];
+                if (iso) selectEl.value = iso;
+            }
             switchTab('daily');
         }
 
@@ -2343,9 +2378,11 @@
         async function loadDayData() {
             const daySelect = document.getElementById('select-day');
             if (!daySelect) return;
-            currentDateKey = daySelect.value;
-            const selectedText = daySelect.options[daySelect.selectedIndex] ? daySelect.options[daySelect.selectedIndex].text : currentDateKey;
-            document.getElementById('current-day-label').textContent = selectedText;
+            const iso = daySelect.value;
+            const key = dayKeyByDate[iso];
+            if (!key) return; // Bu tarih için kayıt yok (onSelectDayDateChange zaten uyarı verdi)
+            currentDateKey = key;
+            document.getElementById('current-day-label').textContent = isoToDdmmyyyy(iso);
 
             const res = await fetch(`/api/daily/${currentDateKey}`);
             const data = await res.json();

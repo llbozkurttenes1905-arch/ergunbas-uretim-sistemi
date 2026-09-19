@@ -4221,7 +4221,7 @@
       "gunduz": {
         "employees": 9,
         "hours": 12.0,
-        "operator": "vardiya1",
+        "operator": "",
         "extruders": [
           {
             "row": 0,
@@ -4358,6 +4358,7 @@
             "sets": 75.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           },
           {
@@ -4376,6 +4377,7 @@
             "sets": 220.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 33.0
           }
         ]
@@ -4520,6 +4522,7 @@
             "sets": 290.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 33.0
           }
         ]

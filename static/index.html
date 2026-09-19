@@ -389,6 +389,34 @@
 
             </div>
 
+            <!-- GENEL TOPLAM: VARDİYA AMİRİ BAZINDA PERFORMANS -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-5 h-5 text-ergunbas-500"></i> Vardiya Amiri Bazında Performans (Kuruluştan Bu Yana)
+                    </h2>
+                    <span class="text-xs font-semibold text-slate-400">Her amirin girdiği tüm vardiyaların toplamı, üretim çoktan aza sıralı</span>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="p-2.5">Vardiya Amiri</th>
+                                <th class="p-2.5 text-right">Vardiya Sayısı</th>
+                                <th class="p-2.5 text-right">Toplam Üretim</th>
+                                <th class="p-2.5 text-right">Toplam Fire</th>
+                                <th class="p-2.5 text-right">Fire Oranı</th>
+                                <th class="p-2.5 text-right">Verimlilik (kg/sa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-genel-vardiya-amiri" class="divide-y divide-slate-800">
+                            <tr><td colspan="6" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-2">Not: "Vardiya Amiri" serbest metin olarak girildiği için aynı kişinin farklı yazılmış isimleri (örn. "mehmet" / "Mehmet SAĞLAM") ayrı satır olarak görünebilir.</p>
+            </div>
+
             <!-- Door Component Equivalents Table -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
                 <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
@@ -1757,6 +1785,28 @@
             }).join('');
         }
 
+        function renderGenelVardiyaAmiri() {
+            const tbody = document.getElementById('tbl-genel-vardiya-amiri');
+            if (!tbody || !dashboardData || !dashboardData.monthly_summary) return;
+            const operators = dashboardData.monthly_summary.operator_performance || [];
+
+            if (operators.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Henüz vardiya amiri girilmemiş.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = operators.map(o => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-2.5 font-bold text-white">${o.name}</td>
+                    <td class="p-2.5 text-right text-slate-300">${o.shift_count} <span class="text-[10px] text-slate-500">(${o.gunduz_count} gündüz, ${o.gece_count} gece)</span></td>
+                    <td class="p-2.5 text-right font-semibold text-white">${o.prod_kg.toLocaleString('tr-TR')} kg</td>
+                    <td class="p-2.5 text-right font-semibold text-amber-400">${o.fire_kg.toLocaleString('tr-TR')} kg</td>
+                    <td class="p-2.5 text-right font-semibold ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${o.fire_ratio}</td>
+                    <td class="p-2.5 text-right font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</td>
+                </tr>
+            `).join('');
+        }
+
         async function loadDashboard() {
             try {
                 const res = await fetch('/api/dashboard');
@@ -1768,6 +1818,7 @@
 
                 renderGenelToplamSummary();
                 renderGenelHatBazinda();
+                renderGenelVardiyaAmiri();
 
                 renderMonthlyTotalsArchive();
                 populateDashMonthSelect();

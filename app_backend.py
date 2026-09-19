@@ -553,6 +553,11 @@ def get_dashboard_summary():
     total_hours = 0.0
     total_downtime_min = 0.0
 
+    # Vardiya Amiri Bazında Performans: hangi amirin nöbetinde ne kadar üretim/fire
+    # olmuş, kaç vardiya girmiş, verimliliği ne olmuş — "Vardiya Amiri" artık serbest
+    # metin olarak giriliyor, operatörün yazdığı isme göre toplulaştırılır.
+    operator_totals = {}
+
     # Genel toplamın Ekstrüder / Levha ayrımı ("Genel Toplam" kartında ikisini ayrı
     # ayrı, aynı zamanda ikisinin toplamını göstermek için)
     total_prod_kg_ext = 0.0
@@ -619,10 +624,12 @@ def get_dashboard_summary():
             s_data = day_obj.get(shift, {})
             s_emp = s_data.get("employees", 10)
             s_hours = s_data.get("hours", 12)
+            s_operator = (s_data.get("operator") or "").strip()
             day_emp += s_emp
             day_hours += s_hours
             day_shifts[shift]["employees"] = s_emp
             day_shifts[shift]["hours"] = s_hours
+            day_shifts[shift]["operator"] = s_operator
 
             for ext in s_data.get("extruders", []):
                 p_kg = ext.get("prod_kg", 0)
@@ -744,6 +751,22 @@ def get_dashboard_summary():
         for dm_key, shift_hours_map in day_lev_shift_hours.items():
             if dm_key in day_machine_totals:
                 day_machine_totals[dm_key]["hours"] = round(sum(shift_hours_map.values()), 2)
+
+        # Vardiya Amiri toplamlarına bu günün her iki vardiyasını da ekle
+        for shift in ["gunduz", "gece"]:
+            s_op = day_shifts[shift].get("operator", "")
+            if not s_op:
+                continue
+            bucket = operator_totals.setdefault(s_op, {
+                "shift_count": 0, "prod_kg": 0.0, "fire_kg": 0.0,
+                "employees_sum": 0, "hours_sum": 0.0, "gunduz_count": 0, "gece_count": 0
+            })
+            bucket["shift_count"] += 1
+            bucket["prod_kg"] += day_shifts[shift]["prod_kg"]
+            bucket["fire_kg"] += day_shifts[shift]["fire_kg"]
+            bucket["employees_sum"] += day_shifts[shift]["employees"]
+            bucket["hours_sum"] += day_shifts[shift]["hours"]
+            bucket[f"{shift}_count"] += 1
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
@@ -1258,7 +1281,21 @@ def get_dashboard_summary():
         "total_employees": total_employees,
         "completable_doors": sum_chain_door_stats(daily_chart)["completable_doors"],
         "top_producing_machines": sorted([{"name": k, "prod_ton": round(v["prod"]/1000.0, 2), "fire_kg": round(v["fire"], 1)} for k, v in machine_totals.items()], key=lambda x: x["prod_ton"], reverse=True),
-        "top_scrap_reasons": sorted([{"reason": k, "fire_kg": round(v, 1)} for k, v in fire_reasons_summary.items() if v > 0], key=lambda x: x["fire_kg"], reverse=True)
+        "top_scrap_reasons": sorted([{"reason": k, "fire_kg": round(v, 1)} for k, v in fire_reasons_summary.items() if v > 0], key=lambda x: x["fire_kg"], reverse=True),
+        "operator_performance": sorted([
+            {
+                "name": name,
+                "shift_count": v["shift_count"],
+                "gunduz_count": v["gunduz_count"],
+                "gece_count": v["gece_count"],
+                "prod_kg": round(v["prod_kg"], 2),
+                "fire_kg": round(v["fire_kg"], 2),
+                "fire_ratio": round((v["fire_kg"] / (v["prod_kg"] + v["fire_kg"]) * 100), 2) if (v["prod_kg"] + v["fire_kg"]) > 0 else 0,
+                "kg_per_hour": round((v["prod_kg"] / v["hours_sum"]), 2) if v["hours_sum"] > 0 else 0,
+                "kg_per_employee": round((v["prod_kg"] / v["employees_sum"]), 2) if v["employees_sum"] > 0 else 0
+            }
+            for name, v in operator_totals.items()
+        ], key=lambda x: x["prod_kg"], reverse=True)
     }
 
     # DEVİR ZİNCİRİYLE TUTARLI Genel Toplam: tüm günlerin kendi completable_doors'u

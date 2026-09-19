@@ -4541,7 +4541,7 @@
       "gunduz": {
         "employees": 12,
         "hours": 12.0,
-        "operator": "mehmet",
+        "operator": "",
         "extruders": [
           {
             "row": 0,

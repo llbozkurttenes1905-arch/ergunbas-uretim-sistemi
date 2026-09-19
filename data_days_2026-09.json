@@ -5382,7 +5382,7 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -5393,9 +5393,9 @@
             "heads": 1.0,
             "hours": 10.0,
             "prod_kg": 476.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "fire_kg": 43.27,
+            "qty": 155,
+            "sets": 31.0
           },
           {
             "row": 0,
@@ -5406,9 +5406,9 @@
             "heads": 1.0,
             "hours": 12.0,
             "prod_kg": 596.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "fire_kg": 156.3,
+            "qty": 130,
+            "sets": 52.0
           },
           {
             "row": 0,
@@ -5419,9 +5419,9 @@
             "heads": 2.0,
             "hours": 12.0,
             "prod_kg": 737.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "fire_kg": 15.76,
+            "qty": 455,
+            "sets": 91.0
           },
           {
             "row": 0,
@@ -5432,9 +5432,9 @@
             "heads": 2.0,
             "hours": 12.0,
             "prod_kg": 1348.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "fire_kg": 0.45,
+            "qty": 425,
+            "sets": 121.4
           },
           {
             "row": 0,
@@ -5446,8 +5446,8 @@
             "hours": 12.0,
             "prod_kg": 1611.0,
             "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "qty": 445,
+            "sets": 127.1
           },
           {
             "row": 0,
@@ -5458,9 +5458,9 @@
             "heads": 1.0,
             "hours": 12.0,
             "prod_kg": 927.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "fire_kg": 210.59,
+            "qty": 185,
+            "sets": 74.0
           },
           {
             "row": 0,
@@ -5472,8 +5472,8 @@
             "hours": 12.0,
             "prod_kg": 1488.0,
             "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "qty": 215,
+            "sets": 86.0
           },
           {
             "row": 0,
@@ -5483,10 +5483,10 @@
             "speed": 0.82,
             "heads": 1.0,
             "hours": 9.0,
-            "prod_kg": 3.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 467.0,
+            "fire_kg": 334.5,
+            "qty": 120,
+            "sets": 48.0
           },
           {
             "row": 0,
@@ -5496,31 +5496,50 @@
             "speed": 1.37,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 988.0,
+            "fire_kg": 375.03,
+            "qty": 650,
+            "sets": 130.0
           }
         ],
         "levha": [
           {
             "row": 0,
             "hat": "201",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
+            "color": "TEAK",
+            "width": 85.0,
+            "length": 210.0,
+            "m2_one": 1.785,
+            "qty": 330,
+            "total_m2": 589.05,
             "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
+            "dead_fire_m2": 159.39,
+            "dead_fire_kg": 390.51,
+            "total_kg": 1443.17,
+            "sets": 165.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": null,
-            "en_firesi_cm": 15.0
+            "hours": 10.0,
+            "en_firesi_cm": 23.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 80,
+            "total_m2": 155.664,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 23.184,
+            "dead_fire_kg": 56.8,
+            "total_kg": 381.38,
+            "sets": 40.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 2.0,
+            "en_firesi_cm": 14.0
           }
         ]
       },

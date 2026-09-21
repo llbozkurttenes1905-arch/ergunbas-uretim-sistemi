@@ -773,13 +773,17 @@ def get_dashboard_summary():
                 day_machine_totals[dm_key]["hours"] = round(sum(shift_hours_map.values()), 2)
 
         # Vardiya Amiri toplamlarına bu günün her iki vardiyasını da ekle
+        # (Genel Toplam için) — GÜNDÜZ ve GECE performansı AYRI AYRI da tutulur.
+        day_operator_shifts = []  # Bu güne ait (amir, vardiya) kayıtları - haftalık hesap için
         for shift in ["gunduz", "gece"]:
             s_op = day_shifts[shift].get("operator", "")
             if not s_op:
                 continue
             bucket = operator_totals.setdefault(s_op, {
                 "shift_count": 0, "prod_kg": 0.0, "fire_kg": 0.0,
-                "employees_sum": 0, "hours_sum": 0.0, "gunduz_count": 0, "gece_count": 0
+                "employees_sum": 0, "hours_sum": 0.0, "gunduz_count": 0, "gece_count": 0,
+                "gunduz_prod_kg": 0.0, "gunduz_fire_kg": 0.0, "gunduz_hours": 0.0,
+                "gece_prod_kg": 0.0, "gece_fire_kg": 0.0, "gece_hours": 0.0
             })
             bucket["shift_count"] += 1
             bucket["prod_kg"] += day_shifts[shift]["prod_kg"]
@@ -787,6 +791,18 @@ def get_dashboard_summary():
             bucket["employees_sum"] += day_shifts[shift]["employees"]
             bucket["hours_sum"] += day_shifts[shift]["hours"]
             bucket[f"{shift}_count"] += 1
+            bucket[f"{shift}_prod_kg"] += day_shifts[shift]["prod_kg"]
+            bucket[f"{shift}_fire_kg"] += day_shifts[shift]["fire_kg"]
+            bucket[f"{shift}_hours"] += day_shifts[shift]["hours"]
+
+            day_operator_shifts.append({
+                "operator": s_op,
+                "shift": shift,
+                "prod_kg": day_shifts[shift]["prod_kg"],
+                "fire_kg": day_shifts[shift]["fire_kg"],
+                "hours": day_shifts[shift]["hours"],
+                "employees": day_shifts[shift]["employees"]
+            })
 
         day_downtime_min = 0.0
         day_fire_reasons = {}   # Bu güne özel fire/duruş sebepleri kırılımı
@@ -815,6 +831,29 @@ def get_dashboard_summary():
                 "fire_kg": r_fire,
                 "note": dt.get("note", "")
             })
+
+            # Bu duruş/fire kaydını, o vardiyanın amirine de bağla ("Gündüz"/"Gece" ->
+            # "gunduz"/"gece" eşlemesiyle). Böylece "hangi amirin vardiyasında hangi
+            # sebeplerden fire/duruş oldu" da Vardiya Amiri raporuna dahil olur.
+            dt_shift_raw = (dt.get("shift") or "").strip().lower()
+            dt_shift_key = "gece" if dt_shift_raw.startswith("gece") else ("gunduz" if dt_shift_raw.startswith("g") else None)
+            if dt_shift_key:
+                dt_operator = day_shifts.get(dt_shift_key, {}).get("operator", "")
+                if dt_operator:
+                    op_bucket = operator_totals.setdefault(dt_operator, {
+                        "shift_count": 0, "prod_kg": 0.0, "fire_kg": 0.0,
+                        "employees_sum": 0, "hours_sum": 0.0, "gunduz_count": 0, "gece_count": 0,
+                        "gunduz_prod_kg": 0.0, "gunduz_fire_kg": 0.0, "gunduz_hours": 0.0,
+                        "gece_prod_kg": 0.0, "gece_fire_kg": 0.0, "gece_hours": 0.0,
+                        "downtime_min": 0.0, "reasons": {}
+                    })
+                    op_bucket.setdefault("downtime_min", 0.0)
+                    op_bucket.setdefault("reasons", {})
+                    op_bucket["downtime_min"] += dt_min
+                    if r_reason not in op_bucket["reasons"]:
+                        op_bucket["reasons"][r_reason] = {"fire_kg": 0.0, "down_min": 0.0}
+                    op_bucket["reasons"][r_reason]["fire_kg"] += r_fire
+                    op_bucket["reasons"][r_reason]["down_min"] += dt_min
 
         total_prod_kg += day_prod_kg
         total_fire_kg += day_fire_kg
@@ -1002,6 +1041,7 @@ def get_dashboard_summary():
             "kg_per_employee": day_kg_per_employee,
             "kg_per_hour": day_kg_per_hour,
             "machines": day_machines_list,
+            "operator_shifts": day_operator_shifts,
             "extruder_summary": day_extruder_summary,
             "levha_summary": day_levha_summary,
             "combined_summary": day_combined_summary,
@@ -1197,6 +1237,54 @@ def get_dashboard_summary():
                 }
             }
 
+            # Vardiya Amiri bazında haftalık kırılım (gündüz/gece ayrı ayrı, kullanıcı
+            # isteği: "vardiya amirleri gece gündüz değişiyor, haftalık görelim")
+            w_operator_totals = {}
+            for d in chunk:
+                for os_entry in d.get("operator_shifts", []):
+                    op_name = os_entry["operator"]
+                    op_shift = os_entry["shift"]
+                    ob = w_operator_totals.setdefault(op_name, {
+                        "shift_count": 0, "gunduz_count": 0, "gece_count": 0,
+                        "prod_kg": 0.0, "fire_kg": 0.0, "hours_sum": 0.0,
+                        "gunduz_prod_kg": 0.0, "gunduz_fire_kg": 0.0, "gunduz_hours": 0.0,
+                        "gece_prod_kg": 0.0, "gece_fire_kg": 0.0, "gece_hours": 0.0
+                    })
+                    ob["shift_count"] += 1
+                    ob[f"{op_shift}_count"] += 1
+                    ob["prod_kg"] += os_entry["prod_kg"]
+                    ob["fire_kg"] += os_entry["fire_kg"]
+                    ob["hours_sum"] += os_entry["hours"]
+                    ob[f"{op_shift}_prod_kg"] += os_entry["prod_kg"]
+                    ob[f"{op_shift}_fire_kg"] += os_entry["fire_kg"]
+                    ob[f"{op_shift}_hours"] += os_entry["hours"]
+
+            w_operator_performance = sorted([
+                {
+                    "name": name,
+                    "shift_count": v["shift_count"],
+                    "gunduz_count": v["gunduz_count"],
+                    "gece_count": v["gece_count"],
+                    "prod_kg": round(v["prod_kg"], 2),
+                    "fire_kg": round(v["fire_kg"], 2),
+                    "fire_ratio": round((v["fire_kg"] / (v["prod_kg"] + v["fire_kg"]) * 100), 2) if (v["prod_kg"] + v["fire_kg"]) > 0 else 0,
+                    "kg_per_hour": round((v["prod_kg"] / v["hours_sum"]), 2) if v["hours_sum"] > 0 else 0,
+                    "gunduz": {
+                        "prod_kg": round(v["gunduz_prod_kg"], 2),
+                        "fire_kg": round(v["gunduz_fire_kg"], 2),
+                        "fire_ratio": round((v["gunduz_fire_kg"] / (v["gunduz_prod_kg"] + v["gunduz_fire_kg"]) * 100), 2) if (v["gunduz_prod_kg"] + v["gunduz_fire_kg"]) > 0 else 0,
+                        "kg_per_hour": round((v["gunduz_prod_kg"] / v["gunduz_hours"]), 2) if v["gunduz_hours"] > 0 else 0
+                    },
+                    "gece": {
+                        "prod_kg": round(v["gece_prod_kg"], 2),
+                        "fire_kg": round(v["gece_fire_kg"], 2),
+                        "fire_ratio": round((v["gece_fire_kg"] / (v["gece_prod_kg"] + v["gece_fire_kg"]) * 100), 2) if (v["gece_prod_kg"] + v["gece_fire_kg"]) > 0 else 0,
+                        "kg_per_hour": round((v["gece_prod_kg"] / v["gece_hours"]), 2) if v["gece_hours"] > 0 else 0
+                    }
+                }
+                for name, v in w_operator_totals.items()
+            ], key=lambda x: x["prod_kg"], reverse=True)
+
             m_weeks.append({
                 "name": w_name,
                 "keys": w_keys,
@@ -1205,7 +1293,8 @@ def get_dashboard_summary():
                 "fire_ratio": round(w_fire_ratio, 2),
                 "employees": w_emp,
                 "doors": w_door_stats["completable_doors"],
-                "breakdown": w_breakdown
+                "breakdown": w_breakdown,
+                "operator_performance": w_operator_performance
             })
         weekly_summary_by_month[mk] = m_weeks
 
@@ -1312,7 +1401,27 @@ def get_dashboard_summary():
                 "fire_kg": round(v["fire_kg"], 2),
                 "fire_ratio": round((v["fire_kg"] / (v["prod_kg"] + v["fire_kg"]) * 100), 2) if (v["prod_kg"] + v["fire_kg"]) > 0 else 0,
                 "kg_per_hour": round((v["prod_kg"] / v["hours_sum"]), 2) if v["hours_sum"] > 0 else 0,
-                "kg_per_employee": round((v["prod_kg"] / v["employees_sum"]), 2) if v["employees_sum"] > 0 else 0
+                "kg_per_employee": round((v["prod_kg"] / v["employees_sum"]), 2) if v["employees_sum"] > 0 else 0,
+                "downtime_min": round(v.get("downtime_min", 0.0), 1),
+                # Gündüz / Gece AYRI performans (kullanıcı isteği: "gece gündüz değişiyor,
+                # performansı ayrı ayrı görelim")
+                "gunduz": {
+                    "prod_kg": round(v.get("gunduz_prod_kg", 0), 2),
+                    "fire_kg": round(v.get("gunduz_fire_kg", 0), 2),
+                    "fire_ratio": round((v.get("gunduz_fire_kg", 0) / (v.get("gunduz_prod_kg", 0) + v.get("gunduz_fire_kg", 0)) * 100), 2) if (v.get("gunduz_prod_kg", 0) + v.get("gunduz_fire_kg", 0)) > 0 else 0,
+                    "kg_per_hour": round((v.get("gunduz_prod_kg", 0) / v.get("gunduz_hours", 0)), 2) if v.get("gunduz_hours", 0) > 0 else 0
+                },
+                "gece": {
+                    "prod_kg": round(v.get("gece_prod_kg", 0), 2),
+                    "fire_kg": round(v.get("gece_fire_kg", 0), 2),
+                    "fire_ratio": round((v.get("gece_fire_kg", 0) / (v.get("gece_prod_kg", 0) + v.get("gece_fire_kg", 0)) * 100), 2) if (v.get("gece_prod_kg", 0) + v.get("gece_fire_kg", 0)) > 0 else 0,
+                    "kg_per_hour": round((v.get("gece_prod_kg", 0) / v.get("gece_hours", 0)), 2) if v.get("gece_hours", 0) > 0 else 0
+                },
+                # Bu amirin vardiyalarında en çok tekrar eden fire/duruş sebepleri (ilk 5)
+                "top_reasons": sorted([
+                    {"reason": r, "fire_kg": round(rv["fire_kg"], 1), "down_min": round(rv["down_min"], 1)}
+                    for r, rv in v.get("reasons", {}).items()
+                ], key=lambda x: x["down_min"], reverse=True)[:5]
             }
             for name, v in operator_totals.items()
         ], key=lambda x: x["prod_kg"], reverse=True)

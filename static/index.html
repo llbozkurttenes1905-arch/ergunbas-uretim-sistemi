@@ -1798,16 +1798,40 @@
                 return;
             }
 
-            tbody.innerHTML = operators.map(o => `
+            tbody.innerHTML = operators.map(o => {
+                const reasonsText = (o.top_reasons && o.top_reasons.length)
+                    ? o.top_reasons.map(r => `${r.reason} (${r.down_min} dk)`).join(', ')
+                    : '';
+                return `
                 <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-2.5 font-bold text-white">${o.name}</td>
-                    <td class="p-2.5 text-right text-slate-300">${o.shift_count} <span class="text-[10px] text-slate-500">(${o.gunduz_count} gündüz, ${o.gece_count} gece)</span></td>
-                    <td class="p-2.5 text-right font-semibold text-white">${o.prod_kg.toLocaleString('tr-TR')} kg</td>
-                    <td class="p-2.5 text-right font-semibold text-amber-400">${o.fire_kg.toLocaleString('tr-TR')} kg</td>
-                    <td class="p-2.5 text-right font-semibold ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${o.fire_ratio}</td>
-                    <td class="p-2.5 text-right font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</td>
+                    <td class="p-2.5 font-bold text-white align-top">${o.name}</td>
+                    <td class="p-2.5 text-right text-slate-300 align-top">${o.shift_count} <span class="text-[10px] text-slate-500">(${o.gunduz_count} gündüz, ${o.gece_count} gece)</span></td>
+                    <td class="p-2.5 text-right font-semibold text-white align-top">
+                        ${o.prod_kg.toLocaleString('tr-TR')} kg
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ Gündüz: ${o.gunduz.prod_kg.toLocaleString('tr-TR')} kg</div>
+                            <div class="text-indigo-400 font-bold">🌙 Gece: ${o.gece.prod_kg.toLocaleString('tr-TR')} kg</div>
+                        </div>
+                    </td>
+                    <td class="p-2.5 text-right font-semibold text-amber-400 align-top">
+                        ${o.fire_kg.toLocaleString('tr-TR')} kg
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ %${o.gunduz.fire_ratio}</div>
+                            <div class="text-indigo-400 font-bold">🌙 %${o.gece.fire_ratio}</div>
+                        </div>
+                    </td>
+                    <td class="p-2.5 text-right font-semibold align-top ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${o.fire_ratio}</td>
+                    <td class="p-2.5 text-right align-top">
+                        <span class="font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</span>
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ ${o.gunduz.kg_per_hour.toLocaleString('tr-TR')}</div>
+                            <div class="text-indigo-400 font-bold">🌙 ${o.gece.kg_per_hour.toLocaleString('tr-TR')}</div>
+                        </div>
+                        ${reasonsText ? `<div class="text-[9px] text-slate-500 mt-1 max-w-[180px] text-right">Duruş: ${reasonsText}</div>` : ''}
+                    </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         async function loadDashboard() {
@@ -2148,6 +2172,36 @@
                         </tbody>
                     </table>
                 </div>
+
+                ${(w.operator_performance && w.operator_performance.length) ? `
+                <h4 class="text-sm font-bold text-white mt-5 mb-2 flex items-center gap-1.5">
+                    <i data-lucide="user-check" class="w-4 h-4 text-ergunbas-500"></i> Bu Hafta Vardiya Amiri Performansı
+                </h4>
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="p-2.5">Vardiya Amiri</th>
+                                <th class="p-2.5 text-right">☀ Gündüz Üretim</th>
+                                <th class="p-2.5 text-right">🌙 Gece Üretim</th>
+                                <th class="p-2.5 text-right">Toplam Fire Oranı</th>
+                                <th class="p-2.5 text-right">Verimlilik (kg/sa)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            ${w.operator_performance.map(o => `
+                                <tr class="hover:bg-slate-800/40 transition">
+                                    <td class="p-2.5 font-bold text-white">${o.name}</td>
+                                    <td class="p-2.5 text-right font-semibold text-yellow-400">${o.gunduz.prod_kg.toLocaleString('tr-TR')} kg</td>
+                                    <td class="p-2.5 text-right font-semibold text-indigo-400">${o.gece.prod_kg.toLocaleString('tr-TR')} kg</td>
+                                    <td class="p-2.5 text-right font-semibold text-orange-400">%${o.fire_ratio}</td>
+                                    <td class="p-2.5 text-right font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ` : ''}
             `;
 
             document.getElementById('modal-detail').classList.remove('hidden');

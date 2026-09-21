@@ -5881,6 +5881,15 @@
           "down_reason": "Elektrik Kesintisi.",
           "down_min": 60.0,
           "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Burgu kırıldı.",
+          "down_min": 0.0,
+          "desc": ""
         }
       ]
     }

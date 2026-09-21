@@ -399,9 +399,9 @@
             "length": 2.15,
             "speed": 0.86,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 8.0,
             "prod_kg": 327.0,
-            "fire_kg": 719.4,
+            "fire_kg": 370.6,
             "qty": 90,
             "sets": 36.0
           },
@@ -412,9 +412,9 @@
             "length": 2.5,
             "speed": 0.88,
             "heads": 1.0,
-            "hours": 12.0,
+            "hours": 4.0,
             "prod_kg": 252.0,
-            "fire_kg": 812.45,
+            "fire_kg": 102.82,
             "qty": 60,
             "sets": 24.0
           },

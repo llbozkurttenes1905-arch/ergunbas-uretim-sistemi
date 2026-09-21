@@ -14,10 +14,30 @@ import urllib.error
 from datetime import datetime
 import openpyxl
 from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(APP_DIR, "data.json")
 USERS_FILE = os.path.join(APP_DIR, "users.json")
+
+# PDF raporlarında Türkçe karakterlerin (ş, ğ, ı, İ, ö, ü, ç) doğru görünmesi için
+# DejaVu Sans fontu kaydediliyor (ReportLab'in varsayılan çekirdek fontları bu
+# karakterlerin bir kısmını desteklemiyor).
+try:
+    pdfmetrics.registerFont(TTFont("DejaVuSans", os.path.join(APP_DIR, "static", "fonts", "DejaVuSans.ttf")))
+    pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", os.path.join(APP_DIR, "static", "fonts", "DejaVuSans-Bold.ttf")))
+    PDF_FONT = "DejaVuSans"
+    PDF_FONT_BOLD = "DejaVuSans-Bold"
+except Exception:
+    PDF_FONT = "Helvetica"
+    PDF_FONT_BOLD = "Helvetica-Bold"
 
 # ============================================================================
 # GITHUB TABANLI KALICI DEPOLAMA
@@ -1861,6 +1881,148 @@ def export_excel():
 
     headers = {'Content-Disposition': 'attachment; filename="ERGUNBAS_Uretim_Raporu.xlsx"'}
     return Response(content=output.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers=headers)
+
+@app.get("/api/export_pdf")
+def export_pdf():
+    """Yönetime sunulacak, Genel Toplam / Aylık Kırılım / Hat Bazında Performans /
+    Vardiya Amiri Performansı / Fire Sebepleri bölümlerini içeren düzenli bir PDF
+    özet raporu üretir. Excel raporu ham veriyi verirken, bu rapor zaten hesaplanmış
+    (dashboard ile birebir aynı) özet tabloları PDF olarak sunar."""
+    summary = get_dashboard_summary()
+
+    buf = BytesIO()
+    doc = SimpleDocTemplate(
+        buf, pagesize=A4,
+        topMargin=1.5 * cm, bottomMargin=1.5 * cm,
+        leftMargin=1.5 * cm, rightMargin=1.5 * cm
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=18, textColor=colors.HexColor("#E11D48"))
+    subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=10, textColor=colors.HexColor("#64748B"))
+    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=13, textColor=colors.HexColor("#0F172A"), spaceBefore=14, spaceAfter=6)
+    normal_style = ParagraphStyle("NormalTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=9)
+    kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
+    kpi_value_style = ParagraphStyle("KpiValue", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=14, alignment=TA_CENTER)
+
+    def make_table(head_row, data_rows, col_widths=None, align_right_from=1):
+        rows = [head_row] + data_rows
+        t = Table(rows, colWidths=col_widths, repeatRows=1)
+        style_cmds = [
+            ("FONTNAME", (0, 0), (-1, 0), PDF_FONT_BOLD),
+            ("FONTNAME", (0, 1), (-1, -1), PDF_FONT),
+            ("FONTSIZE", (0, 0), (-1, -1), 8),
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0F172A")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("TOPPADDING", (0, 0), (-1, -1), 4),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ]
+        for col in range(align_right_from, len(head_row)):
+            style_cmds.append(("ALIGN", (col, 0), (col, -1), "RIGHT"))
+        t.setStyle(TableStyle(style_cmds))
+        return t
+
+    story = []
+
+    # ---- BAŞLIK ----
+    story.append(Paragraph("ERGUNBAS GROUP", title_style))
+    story.append(Paragraph("Üretim &amp; Fire Yönetimi — Genel Toplam Raporu", subtitle_style))
+    story.append(Paragraph(f"Oluşturulma tarihi: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
+    story.append(Spacer(1, 12))
+
+    # ---- GENEL TOPLAM KPI KARTLARI ----
+    tb = summary.get("total_breakdown", {})
+    ext = tb.get("extruder", {})
+    lev = tb.get("levha", {})
+    kpi_data = [
+        [
+            Paragraph("TOPLAM ÜRETİM", kpi_label_style),
+            Paragraph("TOPLAM FİRE", kpi_label_style),
+            Paragraph("FİRE ORANI", kpi_label_style),
+            Paragraph("TAM KAPI", kpi_label_style),
+        ],
+        [
+            Paragraph(f"{summary['total_prod_ton']} Ton", kpi_value_style),
+            Paragraph(f"{summary['total_fire_ton']} Ton", ParagraphStyle("v2", parent=kpi_value_style, textColor=colors.HexColor("#D97706"))),
+            Paragraph(f"%{summary['overall_fire_ratio']}", ParagraphStyle("v3", parent=kpi_value_style, textColor=colors.HexColor("#EA580C"))),
+            Paragraph(f"{summary['door_stats']['completable_doors']} Adet", ParagraphStyle("v4", parent=kpi_value_style, textColor=colors.HexColor("#059669"))),
+        ],
+        [
+            Paragraph(f"Eks: {ext.get('prod_ton', 0)}t (%{ext.get('prod_share_pct', 0)}) · Lev: {lev.get('prod_ton', 0)}t (%{lev.get('prod_share_pct', 0)})", ParagraphStyle("s1", parent=normal_style, fontSize=7, alignment=TA_CENTER)),
+            Paragraph(f"Eks: {ext.get('fire_ton', 0)}t · Lev: {lev.get('fire_ton', 0)}t", ParagraphStyle("s2", parent=normal_style, fontSize=7, alignment=TA_CENTER)),
+            Paragraph(f"Eks: %{ext.get('fire_ratio', 0)} · Lev: %{lev.get('fire_ratio', 0)}", ParagraphStyle("s3", parent=normal_style, fontSize=7, alignment=TA_CENTER)),
+            "",
+        ],
+    ]
+    kpi_table = Table(kpi_data, colWidths=[4.3 * cm] * 4)
+    kpi_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F1F5F9")),
+        ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
+        ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    story.append(kpi_table)
+    story.append(Spacer(1, 10))
+
+    # ---- AYLIK KIRILIM ----
+    story.append(Paragraph("Aylık Kırılım", h2_style))
+    monthly_head = ["Ay", "Gün", "Üretim (Ton)", "Fire (Ton)", "Fire Oranı", "Tam Kapı"]
+    monthly_rows = [
+        [m["label"], str(m["days"]), f"{m['prod_ton']}", f"{m['fire_ton']}", f"%{m['fire_ratio']}", f"{m['doors']}"]
+        for m in summary.get("monthly_totals", [])
+    ]
+    if monthly_rows:
+        story.append(make_table(monthly_head, monthly_rows, col_widths=[4*cm, 2*cm, 3*cm, 3*cm, 2.7*cm, 2.7*cm]))
+    else:
+        story.append(Paragraph("Veri bulunamadı.", normal_style))
+    story.append(Spacer(1, 10))
+
+    # ---- HAT BAZINDA GENEL TOPLAM ----
+    story.append(Paragraph("Hat Bazında Genel Toplam", h2_style))
+    machines = summary.get("monthly_summary", {}).get("top_producing_machines", [])
+    total_prod_ton = summary.get("total_prod_ton", 0)
+    hat_head = ["Hat", "Toplam Üretim (Ton)", "Genel İçindeki Payı", "Toplam Fire (kg)"]
+    hat_rows = []
+    for m in machines:
+        share = round((m["prod_ton"] / total_prod_ton * 100), 1) if total_prod_ton > 0 else 0
+        hat_rows.append([m["name"], f"{m['prod_ton']}", f"%{share}", f"{m['fire_kg']}"])
+    if hat_rows:
+        story.append(make_table(hat_head, hat_rows, col_widths=[4*cm, 4.5*cm, 4.5*cm, 4.4*cm]))
+    else:
+        story.append(Paragraph("Veri bulunamadı.", normal_style))
+    story.append(Spacer(1, 10))
+
+    # ---- VARDİYA AMİRİ BAZINDA PERFORMANS ----
+    story.append(Paragraph("Vardiya Amiri Bazında Performans", h2_style))
+    operators = summary.get("monthly_summary", {}).get("operator_performance", [])
+    op_head = ["Vardiya Amiri", "Vardiya Sayısı", "Üretim (kg)", "Fire (kg)", "Fire Oranı", "Verimlilik (kg/sa)"]
+    op_rows = [
+        [o["name"], str(o["shift_count"]), f"{o['prod_kg']}", f"{o['fire_kg']}", f"%{o['fire_ratio']}", f"{o['kg_per_hour']}"]
+        for o in operators
+    ]
+    if op_rows:
+        story.append(make_table(op_head, op_rows, col_widths=[3.5*cm, 2.5*cm, 3*cm, 2.7*cm, 2.5*cm, 3.1*cm]))
+    else:
+        story.append(Paragraph("Henüz vardiya amiri girilmemiş.", normal_style))
+    story.append(Spacer(1, 10))
+
+    # ---- BAŞLICA FİRE SEBEPLERİ ----
+    reasons = summary.get("monthly_summary", {}).get("top_scrap_reasons", [])[:10]
+    if reasons:
+        story.append(Paragraph("Başlıca Fire Sebepleri (İlk 10)", h2_style))
+        reasons_head = ["Sebep", "Toplam Fire (kg)"]
+        reasons_rows = [[r["reason"], f"{r['fire_kg']}"] for r in reasons]
+        story.append(make_table(reasons_head, reasons_rows, col_widths=[11*cm, 5.9*cm]))
+
+    doc.build(story)
+    buf.seek(0)
+
+    headers = {'Content-Disposition': 'attachment; filename="ERGUNBAS_Genel_Toplam_Raporu.pdf"'}
+    return Response(content=buf.getvalue(), media_type="application/pdf", headers=headers)
 
 # Serve Web Interface
 @app.get("/", response_class=HTMLResponse)

@@ -291,7 +291,105 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 3083.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 3509.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 3823.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2230.0,
+          "gece": 3082.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1354.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 2355.0,
+          "gece": 1211.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1175.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 648.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 697.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 21,
+          "gece_sarj": 0,
+          "gunduz_kg": 5788.65,
+          "gece_kg": 0.0,
+          "toplam_kg": 5788.65
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 12,
+          "gece_sarj": 0,
+          "gunduz_kg": 3493.7999999999997,
+          "gece_kg": 0.0,
+          "toplam_kg": 3493.7999999999997
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli (TAKOZ)",
+          "batch_kg": 0.0,
+          "gunduz_sarj": 7,
+          "gece_sarj": 0,
+          "gunduz_kg": 0.0,
+          "gece_kg": 0.0,
+          "toplam_kg": 0.0
+        }
+      ],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     },
     "33": {
       "day": "33",
@@ -656,7 +754,95 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 3931.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 4058.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2596.0,
+          "gece": 2540.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2198.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1790.0,
+          "gece": 1160.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1601.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1389.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 6162.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 15,
+          "gece_sarj": 0,
+          "gunduz_kg": 4134.75,
+          "gece_kg": 0.0,
+          "toplam_kg": 4134.75
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 11,
+          "gece_sarj": 0,
+          "gunduz_kg": 3202.6499999999996,
+          "gece_kg": 0.0,
+          "toplam_kg": 3202.6499999999996
+        }
+      ],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     },
     "34": {
       "day": "34",
@@ -970,7 +1156,74 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 2128.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 5066.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2275.0,
+          "gece": 2500.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1773.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1753.0,
+          "gece": 1190.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1135.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1415.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 575.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     },
     "37": {
       "day": "37",
@@ -1294,7 +1547,105 @@
           "down_min": 120.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 5845.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2765.0,
+          "gece": 4002.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2102.0,
+          "gece": 2290.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1350.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1125.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1087.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 300.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 8,
+          "gece_sarj": 0,
+          "gunduz_kg": 2205.2,
+          "gece_kg": 0.0,
+          "toplam_kg": 2205.2
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 24,
+          "gece_sarj": 0,
+          "gunduz_kg": 6987.599999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 6987.599999999999
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli(TAKOZ)",
+          "batch_kg": 0.0,
+          "gunduz_sarj": 10,
+          "gece_sarj": 0,
+          "gunduz_kg": 0.0,
+          "gece_kg": 0.0,
+          "toplam_kg": 0.0
+        }
+      ],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     },
     "38": {
       "day": "38",
@@ -1446,7 +1797,85 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 2941.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 9679.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2230.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1962.0,
+          "gece": 2600.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 2206.0,
+          "gece": 1402.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1756.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1192.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 579.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 24,
+          "gece_sarj": 0,
+          "gunduz_kg": 6615.599999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 6615.599999999999
+        }
+      ],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     },
     "39": {
       "day": "39",
@@ -1761,7 +2190,85 @@
           "down_min": 240.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 8235.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 680.0,
+          "gece": 650.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1978.0,
+          "gece": 1645.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1812.0,
+          "gece": 1090.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1126.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 549.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1222.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 53,
+          "gece_sarj": 0,
+          "gunduz_kg": 14609.449999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 14609.449999999999
+        }
+      ],
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     },
     "40": {
       "day": "40",
@@ -2103,7 +2610,95 @@
           "down_min": 180.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 3832.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 6712.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 2016.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2210.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1124.0,
+          "gece": 1550.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1778.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1041.0,
+          "gece": 2715.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1211.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 754.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 30,
+          "gece_sarj": 0,
+          "gunduz_kg": 8269.5,
+          "gece_kg": 0.0,
+          "toplam_kg": 8269.5
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 21,
+          "gece_sarj": 0,
+          "gunduz_kg": 6114.15,
+          "gece_kg": 0.0,
+          "toplam_kg": 6114.15
+        }
+      ],
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     },
     "41": {
       "day": "41",
@@ -2528,7 +3123,95 @@
           "down_min": 180.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 4199.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 7044.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2499.0,
+          "gece": 3415.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2083.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 2295.0,
+          "gece": 2345.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 2087.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1289.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1235.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 33,
+          "gece_sarj": 0,
+          "gunduz_kg": 9096.449999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 9096.449999999999
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 16,
+          "gece_sarj": 0,
+          "gunduz_kg": 4658.4,
+          "gece_kg": 0.0,
+          "toplam_kg": 4658.4
+        }
+      ],
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     },
     "42": {
       "day": "42",
@@ -2880,7 +3563,85 @@
           "down_min": 420.0,
           "desc": "01:30'da kapatıldı."
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 4404.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 7687.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2254.0,
+          "gece": 1230.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2091.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1956.0,
+          "gece": 1120.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 2165.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 575.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1224.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 64,
+          "gece_sarj": 0,
+          "gunduz_kg": 17641.6,
+          "gece_kg": 0.0,
+          "toplam_kg": 17641.6
+        }
+      ],
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     },
     "43": {
       "day": "43",
@@ -3124,7 +3885,95 @@
           "down_min": 0.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 4761.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 8253.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2207.0,
+          "gece": 2467.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2490.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1604.0,
+          "gece": 2265.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1340.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1278.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1120.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 24,
+          "gece_sarj": 0,
+          "gunduz_kg": 6615.599999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 6615.599999999999
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 20,
+          "gece_sarj": 0,
+          "gunduz_kg": 5823.0,
+          "gece_kg": 0.0,
+          "toplam_kg": 5823.0
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "44": {
       "day": "44",
@@ -3472,7 +4321,85 @@
           "down_min": 60.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 1280.0,
+          "gece": 1377.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 967.0,
+          "gece": 2425.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1385.0,
+          "gece": 2300.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1000.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 690.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 36,
+          "gece_sarj": 0,
+          "gunduz_kg": 9923.4,
+          "gece_kg": 0.0,
+          "toplam_kg": 9923.4
+        }
+      ],
+      "mixer_emp_gunduz": 4,
+      "mixer_emp_gece": 1
     },
     "45": {
       "day": "45",
@@ -3782,7 +4709,95 @@
           "down_min": 240.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 1938.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 2064.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 5545.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "arizali"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2204.0,
+          "gece": 1872.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1827.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 2156.0,
+          "gece": 1550.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 2077.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1126.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 600.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 16,
+          "gece_sarj": 0,
+          "gunduz_kg": 4410.4,
+          "gece_kg": 0.0,
+          "toplam_kg": 4410.4
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 16,
+          "gece_sarj": 0,
+          "gunduz_kg": 4658.4,
+          "gece_kg": 0.0,
+          "toplam_kg": 4658.4
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "46": {
       "day": "46",
@@ -4206,7 +5221,85 @@
           "down_min": 180.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 1951.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 3904.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 6373.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2001.0,
+          "gece": 2515.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1761.0,
+          "gece": 1415.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1840.0,
+          "gece": 1825.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1260.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1207.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1079.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 10,
+          "gece_sarj": 0,
+          "gunduz_kg": 2756.5,
+          "gece_kg": 0.0,
+          "toplam_kg": 2756.5
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "47": {
       "day": "47",
@@ -4535,7 +5628,85 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 2742.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 2111.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 5540.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 3030.0,
+          "gece": 2717.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2453.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1530.0,
+          "gece": 2340.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1260.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1391.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 715.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 52,
+          "gece_sarj": 0,
+          "gunduz_kg": 14333.8,
+          "gece_kg": 0.0,
+          "toplam_kg": 14333.8
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "48": {
       "day": "48",
@@ -4900,7 +6071,105 @@
           "down_min": 180.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 2085.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 2903.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 3087.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2262.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 2150.0,
+          "gece": 2555.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1148.0,
+          "gece": 2177.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1947.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 780.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1435.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 25,
+          "gece_sarj": 0,
+          "gunduz_kg": 6891.249999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 6891.249999999999
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 18,
+          "gece_sarj": 0,
+          "gunduz_kg": 5240.7,
+          "gece_kg": 0.0,
+          "toplam_kg": 5240.7
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli (TAKOZ)",
+          "batch_kg": 0.0,
+          "gunduz_sarj": 15,
+          "gece_sarj": 0,
+          "gunduz_kg": 0.0,
+          "gece_kg": 0.0,
+          "toplam_kg": 0.0
+        }
+      ],
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     },
     "49": {
       "day": "49",
@@ -5227,7 +6496,85 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 2207.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 4214.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 6512.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2261.0,
+          "gece": 3215.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1797.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1011.0,
+          "gece": 2262.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 2002.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 671.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1287.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 40,
+          "gece_sarj": 0,
+          "gunduz_kg": 11026.0,
+          "gece_kg": 0.0,
+          "toplam_kg": 11026.0
+        }
+      ],
+      "mixer_emp_gunduz": 9,
+      "mixer_emp_gece": 1
     },
     "50": {
       "day": "50",
@@ -5560,7 +6907,85 @@
           }
         ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 2362.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 5383.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 4608.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2434.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1968.0,
+          "gece": 2360.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1579.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 2446.0,
+          "gece": 2325.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 490.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1369.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 22,
+          "gece_sarj": 0,
+          "gunduz_kg": 6405.299999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 6405.299999999999
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "51": {
       "day": "51",
@@ -5893,7 +7318,85 @@
           "down_min": 0.0,
           "desc": "01:45 Burgu kırıldı."
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 4146.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 4545.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 850.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 2305.0,
+          "gece": 2765.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1606.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1895.0,
+          "gece": 2271.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1195.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1053.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 612.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 39,
+          "gece_sarj": 0,
+          "gunduz_kg": 10750.349999999999,
+          "gece_kg": 0.0,
+          "toplam_kg": 10750.349999999999
+        }
+      ],
+      "mixer_emp_gunduz": 8,
+      "mixer_emp_gece": 1
     },
     "52": {
       "day": "52",
@@ -6306,7 +7809,85 @@
           "down_min": 240.0,
           "desc": ""
         }
-      ]
+      ],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 5961.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 3876.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 1823.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 1519.0,
+          "gece": 2615.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 1900.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 1222.0,
+          "gece": 2280.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 1302.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 1342.0,
+          "gece": 0.0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 1116.0,
+          "gece": 0.0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 47,
+          "gece_sarj": 0,
+          "gunduz_kg": 12955.55,
+          "gece_kg": 0.0,
+          "toplam_kg": 12955.55
+        }
+      ],
+      "mixer_emp_gunduz": 9,
+      "mixer_emp_gece": 1
     }
   }
 }

@@ -277,6 +277,9 @@
                 <button onclick="switchTab('doors')" id="tab-doors" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
                     <i data-lucide="door-open" class="w-4 h-4"></i> Kapı & Stok Takibi
                 </button>
+                <button onclick="switchTab('mixer')" id="tab-mixer" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 text-emerald-400"></i> Mikser & Geri Dönüşüm
+                </button>
                 <button onclick="switchTab('settings')" id="tab-settings" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
                     <i data-lucide="settings" class="w-4 h-4"></i> Makineler & Ürünler
                 </button>
@@ -1023,6 +1026,91 @@
                         <tbody id="tbl-downtimes" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
+            <!-- MİKSER & GERİ DÖNÜŞÜM GÜNLÜK VERİ GİRİŞİ -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-md">
+                <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-4">
+                    <div>
+                        <h3 class="text-lg font-black text-emerald-400 flex items-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-5 h-5"></i> Mikser & Geri Dönüşüm Günlük Girişleri
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Kırım, mikronize ve mikser şarj adetlerini bu alandan kaydedebilirsiniz.</p>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs font-semibold">
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400">Gündüz Çalışan:</span>
+                            <input type="number" id="mixer-emp-gunduz" value="0" class="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-white font-bold text-center focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-400">Gece Çalışan:</span>
+                            <input type="number" id="mixer-emp-gece" value="0" class="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1 text-white font-bold text-center focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Kırım Hatları -->
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                            <i data-lucide="hammer" class="w-4 h-4"></i> Kırım Üretimi (kg)
+                        </h4>
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-800 pb-1">
+                                <tr>
+                                    <th class="p-1.5">Hat</th>
+                                    <th class="p-1.5">Gündüz (kg)</th>
+                                    <th class="p-1.5">Gece (kg)</th>
+                                    <th class="p-1.5 text-center">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-kirim-inputs" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mikronize Hatları -->
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                            <i data-lucide="cog" class="w-4 h-4"></i> Mikronize Üretimi (kg)
+                        </h4>
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-800 pb-1">
+                                <tr>
+                                    <th class="p-1.5">Hat</th>
+                                    <th class="p-1.5">Gündüz (kg)</th>
+                                    <th class="p-1.5">Gece (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mikronize-inputs" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mikser Şarj Girişleri -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="beaker" class="w-4 h-4"></i> Mikser Şarj Girişleri (Reçete Bazlı)
+                        </h4>
+                        <button type="button" onclick="addMixerInputRow()" class="px-3 py-1 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 border border-emerald-600/60">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Yeni Şarj Girişi
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2.5">Makine</th>
+                                    <th class="p-2.5">Ürün / Reçete</th>
+                                    <th class="p-2.5 text-center">Gündüz Şarj</th>
+                                    <th class="p-2.5 text-center">Gece Şarj</th>
+                                    <th class="p-2.5 text-right">1 Şarj (kg)</th>
+                                    <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
+                                    <th class="p-2.5 text-center">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-inputs" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1048,6 +1136,152 @@
         </div>
 
 
+        <!-- TAB: MİKSER & GERİ DÖNÜŞÜM -->
+        <div id="view-mixer" class="space-y-6 hidden">
+            <!-- Header bar: Ay seçimi + Yenile -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                        <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i> Rapor Dönemi / Ay:
+                    </label>
+                    <select id="mixer-month-select" onchange="loadMixerDashboard(this.value)" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="loadMixerDashboard()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i> Yenile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top KPI Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                        <span>Mikser Toplamı</span>
+                        <i data-lucide="beaker" class="w-4 h-4 text-emerald-400"></i>
+                    </div>
+                    <div class="text-2xl font-black text-white" id="mixer-kpi-prod-ton">0.0 Ton</div>
+                    <p class="text-[11px] text-slate-400"><span id="mixer-kpi-sarj" class="font-bold text-emerald-400">0</span> Şarj Karışım</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                        <span>Kırım (Geri Dönüşüm)</span>
+                        <i data-lucide="hammer" class="w-4 h-4 text-amber-400"></i>
+                    </div>
+                    <div class="text-2xl font-black text-amber-400" id="mixer-kpi-kirim-ton">0.0 Ton</div>
+                    <p class="text-[11px] text-slate-400">Kırım Hatları Toplamı</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                        <span>Mikronize Toplamı</span>
+                        <i data-lucide="cog" class="w-4 h-4 text-sky-400"></i>
+                    </div>
+                    <div class="text-2xl font-black text-sky-400" id="mixer-kpi-mikronize-ton">0.0 Ton</div>
+                    <p class="text-[11px] text-slate-400">Mikronize Hatları Toplamı</p>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                    <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                        <span>Kütle Dengesi & Silo</span>
+                        <i data-lucide="scale" class="w-4 h-4 text-violet-400"></i>
+                    </div>
+                    <div class="text-2xl font-black text-violet-400" id="mixer-kpi-balance">0 kg</div>
+                    <p class="text-[11px] text-slate-400">Mikser vs Ekstrüder Tüketimi</p>
+                </div>
+            </div>
+
+            <!-- Reçete Dağılımı ve Hammadde Tüketim Raporu -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Reçete Bazlı Dağılım -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Reçete Bazlı Mikser Dağılımı
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950 text-xs text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2.5">Ürün / Reçete</th>
+                                    <th class="p-2.5 text-center">Şarj</th>
+                                    <th class="p-2.5 text-right">Toplam (kg)</th>
+                                    <th class="p-2.5 text-right">Pay (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-recipes-summary" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Aylık Hammadde Tüketim Raporu -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="boxes" class="w-5 h-5 text-sky-400"></i> Aylık Hammadde Tüketim Özeti
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800 max-h-96">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-950 text-xs text-slate-400 uppercase sticky top-0">
+                                <tr>
+                                    <th class="p-2.5">Hammadde</th>
+                                    <th class="p-2.5 text-right">Toplam Tüketim (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-materials-summary" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kırım & Mikronize Makine Hedef ve Performansı -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Kırım Performansı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="gauge" class="w-5 h-5 text-amber-400"></i> Kırım Aylık Hedef & Verimlilik
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2">Makine</th>
+                                    <th class="p-2 text-center">Gün</th>
+                                    <th class="p-2 text-right">Tonaj (Ton)</th>
+                                    <th class="p-2 text-right">Saatlik (kg/sa)</th>
+                                    <th class="p-2 text-right">26 Gün Hedef</th>
+                                    <th class="p-2 text-right">Verimlilik</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-kirim-perf" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mikronize Performansı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="gauge" class="w-5 h-5 text-sky-400"></i> Mikronize Aylık Hedef & Verimlilik
+                    </h3>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2">Makine</th>
+                                    <th class="p-2 text-center">Gün</th>
+                                    <th class="p-2 text-right">Tonaj (Ton)</th>
+                                    <th class="p-2 text-right">Saatlik (kg/sa)</th>
+                                    <th class="p-2 text-right">26 Gün Hedef</th>
+                                    <th class="p-2 text-right">Verimlilik</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mikronize-perf" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- TAB 5: DİNAMİK MAKINELER & ÜRÜNLER -->
         <div id="view-settings" class="space-y-6 hidden">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1065,6 +1299,9 @@
                         <select id="new-machine-type" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
                             <option value="extruder">Ekstrüder Hat</option>
                             <option value="levha">Levha Hat</option>
+                            <option value="kirim">Kırım Makinesi</option>
+                            <option value="mikronize">Mikronize Makinesi</option>
+                            <option value="mixer">Mikser Makinesi</option>
                         </select>
                         <button type="submit" class="px-4 py-2 bg-ergunbas-600 hover:bg-ergunbas-500 text-white font-bold text-sm rounded-lg transition flex items-center gap-1">
                             <i data-lucide="plus" class="w-4 h-4"></i> Ekle
@@ -1122,6 +1359,32 @@
                                 </tr>
                             </thead>
                             <tbody id="tbl-products" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- REÇETELER YÖNETİMİ -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 lg:col-span-2">
+                    <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="beaker" class="w-5 h-5 text-emerald-400"></i> Mikser Üretim Reçeteleri ve Hammadde Oranları
+                            </h3>
+                            <p class="text-xs text-slate-400">Her 1 şarj karışım için hammadde kg oranlarını buradan takip edebilir veya silebilirsiniz.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Reçete İsmi</th>
+                                    <th class="p-3 text-right">1 Şarj Ağırlığı</th>
+                                    <th class="p-3">Hammadde İçerikleri (Oranlar)</th>
+                                    <th class="p-3 text-right">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-recipes-admin" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
@@ -1422,11 +1685,11 @@
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'daily', 'doors', 'settings', 'users'].forEach(t => {
+            ['dashboard', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
                 const viewEl = document.getElementById(`view-${t}`);
                 if (viewEl) viewEl.classList.add('hidden');
                 const btn = document.getElementById(`tab-${t}`);
-                if (btn) btn.className = "px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
+                if (btn) btn.className = `px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5${t === 'mixer' ? ' shrink-0' : ''}`;
             });
 
             const targetView = document.getElementById(`view-${tabId}`);
@@ -1437,18 +1700,21 @@
             if (tabId === 'dashboard') loadDashboard();
             if (tabId === 'daily') loadDayData();
             if (tabId === 'doors') loadDoorStats();
+            if (tabId === 'mixer') loadMixerDashboard();
             if (tabId === 'settings') loadSettings();
             if (tabId === 'users') loadUsers();
         }
 
         async function fetchMachinesAndProducts() {
             try {
-                const [mRes, pRes] = await Promise.all([
+                const [mRes, pRes, rRes] = await Promise.all([
                     fetch('/api/machines'),
-                    fetch('/api/products')
+                    fetch('/api/products'),
+                    fetch('/api/mixer_recipes')
                 ]);
                 machinesList = await mRes.json();
                 productsList = await pRes.json();
+                mixerRecipesList = await rRes.json();
             } catch(e) {
                 console.error('Fetch machines/products failed:', e);
             }
@@ -2662,6 +2928,12 @@
             renderLevhaTable('tbl-gece-lev', dayData.gece.levha);
 
             renderDowntimesTable(dayData.downtimes || []);
+
+            renderKirimTable(dayData.kirim || []);
+            renderMikronizeTable(dayData.mikronize || []);
+            renderMixerTable(dayData.mixer || []);
+            if (document.getElementById('mixer-emp-gunduz')) document.getElementById('mixer-emp-gunduz').value = dayData.mixer_emp_gunduz || 0;
+            if (document.getElementById('mixer-emp-gece')) document.getElementById('mixer-emp-gece').value = dayData.mixer_emp_gece || 0;
         }
 
         function updateLevhaTotals(tbodyId) {
@@ -3060,7 +3332,12 @@
                     extruders: getExtrudersFromUI('tbl-gece-ext'),
                     levha: getLevhaFromUI('tbl-gece-lev')
                 },
-                downtimes: getDowntimesFromUI()
+                downtimes: getDowntimesFromUI(),
+                kirim: getKirimFromUI(),
+                mikronize: getMikronizeFromUI(),
+                mixer: getMixerFromUI(),
+                mixer_emp_gunduz: parseInt(document.getElementById('mixer-emp-gunduz')?.value) || 0,
+                mixer_emp_gece: parseInt(document.getElementById('mixer-emp-gece')?.value) || 0
             };
 
             try {
@@ -3171,26 +3448,440 @@
             safeCreateIcons();
         }
 
+        // =====================================================================
+        // MİKSER & GERİ DÖNÜŞÜM FRONTEND LOGIC
+        // =====================================================================
+
+        let mixerDashboardData = null;
+        let mixerRecipesList = [];
+
+        async function loadMixerRecipes() {
+            try {
+                const res = await fetch('/api/mixer_recipes');
+                mixerRecipesList = await res.json();
+                renderMixerRecipesAdminTable();
+            } catch(e) {
+                console.error('loadMixerRecipes failed:', e);
+            }
+        }
+
+        async function loadMixerDashboard(forcedMonth) {
+            try {
+                let url = '/api/mixer/summary';
+                if (forcedMonth) url += `?month=${forcedMonth}`;
+                const res = await fetch(url);
+                mixerDashboardData = await res.json();
+
+                // Ay seçicisini doldur
+                const monthSel = document.getElementById('mixer-month-select');
+                if (monthSel && mixerDashboardData.available_months) {
+                    const currentVal = forcedMonth || mixerDashboardData.selected_month;
+                    monthSel.innerHTML = mixerDashboardData.available_months.slice().reverse().map(m => {
+                        const [y, mo] = m.split('-');
+                        const monthNames = { '01':'Ocak', '02':'Şubat', '03':'Mart', '04':'Nisan', '05':'Mayıs', '06':'Haziran', '07':'Temmuz', '08':'Ağustos', '09':'Eylül', '10':'Ekim', '11':'Kasım', '12':'Aralık' };
+                        const label = `${monthNames[mo] || mo} ${y}`;
+                        return `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${label}</option>`;
+                    }).join('');
+                }
+
+                // KPI Kartları
+                document.getElementById('mixer-kpi-prod-ton').textContent = `${mixerDashboardData.total_mixer_ton} Ton`;
+                document.getElementById('mixer-kpi-sarj').textContent = (mixerDashboardData.total_mixer_sarj || 0).toLocaleString('tr-TR');
+                document.getElementById('mixer-kpi-kirim-ton').textContent = `${mixerDashboardData.total_kirim_ton} Ton`;
+                document.getElementById('mixer-kpi-mikronize-ton').textContent = `${mixerDashboardData.total_mikronize_ton} Ton`;
+                
+                const mb = mixerDashboardData.mass_balance;
+                const balEl = document.getElementById('mixer-kpi-balance');
+                if (balEl && mb) {
+                    const sign = mb.balance_kg >= 0 ? '+' : '';
+                    balEl.textContent = `${sign}${mb.balance_kg.toLocaleString('tr-TR')} kg`;
+                    balEl.className = `text-2xl font-black ${mb.balance_kg >= 0 ? 'text-emerald-400' : 'text-amber-400'}`;
+                }
+
+                // Reçete Bazlı Dağılım Tablosu
+                const tblRec = document.getElementById('tbl-mixer-recipes-summary');
+                if (tblRec) {
+                    if (!mixerDashboardData.recipes || mixerDashboardData.recipes.length === 0) {
+                        tblRec.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">Bu döneme ait reçete kaydı bulunamadı.</td></tr>';
+                    } else {
+                        tblRec.innerHTML = mixerDashboardData.recipes.map(r => `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-2.5 font-bold text-white">${r.name}</td>
+                                <td class="p-2.5 text-center font-semibold text-emerald-400">${r.sarj}</td>
+                                <td class="p-2.5 text-right font-semibold text-white">${r.prod_kg.toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-right font-bold text-sky-400">%${r.share_pct}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                // Aylık Hammadde Tüketim Tablosu
+                const tblMat = document.getElementById('tbl-mixer-materials-summary');
+                if (tblMat) {
+                    if (!mixerDashboardData.materials || mixerDashboardData.materials.length === 0) {
+                        tblMat.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-slate-500">Hammadde tüketim verisi bulunamadı.</td></tr>';
+                    } else {
+                        tblMat.innerHTML = mixerDashboardData.materials.map(m => `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-2.5 font-semibold text-slate-200">${m.material}</td>
+                                <td class="p-2.5 text-right font-bold text-sky-300">${m.total_kg.toLocaleString('tr-TR')} kg</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                // Kırım Performans Tablosu
+                const tblKirim = document.getElementById('tbl-kirim-perf');
+                if (tblKirim) {
+                    tblKirim.innerHTML = (mixerDashboardData.kirim_performance || []).map(p => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2 font-bold text-white">${p.name}</td>
+                            <td class="p-2 text-center text-slate-300">${p.days} gün</td>
+                            <td class="p-2 text-right font-bold text-amber-400">${p.prod_ton} Ton</td>
+                            <td class="p-2 text-right text-slate-400">${p.hourly_avg_kg} kg/sa</td>
+                            <td class="p-2 text-right text-slate-400">${p.target_26d_ton} Ton</td>
+                            <td class="p-2 text-right font-bold text-emerald-400">%${p.efficiency_pct}</td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="6" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                }
+
+                // Mikronize Performans Tablosu
+                const tblMik = document.getElementById('tbl-mikronize-perf');
+                if (tblMik) {
+                    tblMik.innerHTML = (mixerDashboardData.mikronize_performance || []).map(p => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2 font-bold text-white">${p.name}</td>
+                            <td class="p-2 text-center text-slate-300">${p.days} gün</td>
+                            <td class="p-2 text-right font-bold text-sky-400">${p.prod_ton} Ton</td>
+                            <td class="p-2 text-right text-slate-400">${p.hourly_avg_kg} kg/sa</td>
+                            <td class="p-2 text-right text-slate-400">${p.target_26d_ton} Ton</td>
+                            <td class="p-2 text-right font-bold text-emerald-400">%${p.efficiency_pct}</td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="6" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                }
+
+                safeCreateIcons();
+            } catch(e) {
+                console.error('loadMixerDashboard failed:', e);
+            }
+        }
+
+        function renderKirimTable(kirimData) {
+            const tbody = document.getElementById('tbl-kirim-inputs');
+            if (!tbody) return;
+
+            const kirimMachines = (machinesList || []).filter(m => m.type === 'kirim');
+            const defaultList = kirimMachines.length > 0 
+                ? kirimMachines.map(m => m.name)
+                : ['Kırım 1', 'Kırım 2', 'Kırım 3', 'Kırım 4'];
+
+            const existingMap = {};
+            (kirimData || []).forEach(k => { existingMap[k.hat] = k; });
+
+            tbody.innerHTML = defaultList.map(name => {
+                const item = existingMap[name] || { gunduz: 0, gece: 0, status: 'normal' };
+                const isArizali = item.status === 'arizali';
+                return `
+                    <tr class="hover:bg-slate-900/50 transition">
+                        <td class="p-1.5 font-bold text-slate-200">${name}</td>
+                        <td class="p-1.5">
+                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gunduz w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500" value="${item.gunduz || ''}" placeholder="0" ${isArizali ? 'disabled' : ''}>
+                        </td>
+                        <td class="p-1.5">
+                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gece w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500" value="${item.gece || ''}" placeholder="0" ${isArizali ? 'disabled' : ''}>
+                        </td>
+                        <td class="p-1.5 text-center">
+                            <label class="inline-flex items-center gap-1 cursor-pointer text-[11px] font-semibold text-slate-400 select-none">
+                                <input type="checkbox" data-hat="${name}" class="kirim-input-arizali rounded border-slate-700 text-red-600 focus:ring-red-500" ${isArizali ? 'checked' : ''} onchange="toggleKirimArizali(this)">
+                                <span class="${isArizali ? 'text-red-400 font-bold' : ''}">Arızalı</span>
+                            </label>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleKirimArizali(checkbox) {
+            const tr = checkbox.closest('tr');
+            const gInput = tr.querySelector('.kirim-input-gunduz');
+            const nInput = tr.querySelector('.kirim-input-gece');
+            const span = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                gInput.value = '';
+                nInput.value = '';
+                gInput.disabled = true;
+                nInput.disabled = true;
+                if (span) { span.classList.add('text-red-400', 'font-bold'); }
+            } else {
+                gInput.disabled = false;
+                nInput.disabled = false;
+                if (span) { span.classList.remove('text-red-400', 'font-bold'); }
+            }
+        }
+
+        function renderMikronizeTable(mikData) {
+            const tbody = document.getElementById('tbl-mikronize-inputs');
+            if (!tbody) return;
+
+            const mikMachines = (machinesList || []).filter(m => m.type === 'mikronize');
+            const defaultList = mikMachines.length > 0
+                ? mikMachines.map(m => m.name)
+                : ['Mikronize 1', 'Mikronize 2', 'Mikronize 3', 'Mikronize 4', 'Mikronize 5', 'Mikronize 6'];
+
+            const existingMap = {};
+            (mikData || []).forEach(m => { existingMap[m.hat] = m; });
+
+            tbody.innerHTML = defaultList.map(name => {
+                const item = existingMap[name] || { gunduz: 0, gece: 0 };
+                return `
+                    <tr class="hover:bg-slate-900/50 transition">
+                        <td class="p-1.5 font-bold text-slate-200">${name}</td>
+                        <td class="p-1.5">
+                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gunduz w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500" value="${item.gunduz || ''}" placeholder="0">
+                        </td>
+                        <td class="p-1.5">
+                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gece w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500" value="${item.gece || ''}" placeholder="0">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderMixerTable(mixerData) {
+            const tbody = document.getElementById('tbl-mixer-inputs');
+            if (!tbody) return;
+
+            if (!mixerData || mixerData.length === 0) {
+                tbody.innerHTML = '';
+                addMixerInputRow();
+                return;
+            }
+
+            tbody.innerHTML = '';
+            mixerData.forEach(row => addMixerInputRow(row));
+        }
+
+        function addMixerInputRow(data) {
+            const tbody = document.getElementById('tbl-mixer-inputs');
+            if (!tbody) return;
+
+            const mixerMachines = (machinesList || []).filter(m => m.type === 'mixer');
+            const defaultMixers = mixerMachines.length > 0 ? mixerMachines.map(m => m.name) : ['Mixer 1', 'Mixer 2', 'Mixer 3'];
+
+            const defaultRecipes = (mixerRecipesList && mixerRecipesList.length > 0)
+                ? mixerRecipesList
+                : [
+                    { name: 'Kasa Pervaz', batch_kg: 275.65 },
+                    { name: 'Seren', batch_kg: 291.15 },
+                    { name: 'Deck Kahverengi', batch_kg: 242.70 },
+                    { name: 'Deck Antrasit-Siyah', batch_kg: 240.45 },
+                    { name: 'Kit Kat Kahverengi', batch_kg: 242.70 },
+                    { name: 'Kit Kat Antrasit-Siyah', batch_kg: 240.45 },
+                    { name: 'Levha Renkli (Takoz)', batch_kg: 334.30 },
+                    { name: 'Levha Beyaz', batch_kg: 281.50 }
+                ];
+
+            const curMakine = data?.makine || defaultMixers[0];
+            const curRecipe = data?.recipe || defaultRecipes[0].name;
+            const curGSarj = data?.gunduz_sarj ?? '';
+            const curNSarj = data?.gece_sarj ?? '';
+            
+            const matchedRec = defaultRecipes.find(r => r.name === curRecipe) || defaultRecipes[0];
+            const batchKg = data?.batch_kg || matchedRec.batch_kg || 0;
+            const totalSarj = (parseInt(curGSarj) || 0) + (parseInt(curNSarj) || 0);
+            const totalKg = data?.toplam_kg || (totalSarj * batchKg);
+
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-900/50 transition";
+            tr.innerHTML = `
+                <td class="p-2">
+                    <select class="mixer-input-makine bg-slate-900 border border-slate-700 text-white rounded px-2.5 py-1 text-xs font-bold focus:ring-1 focus:ring-emerald-500">
+                        ${defaultMixers.map(m => `<option value="${m}" ${m === curMakine ? 'selected' : ''}>${m}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="p-2">
+                    <select onchange="updateMixerRowKg(this)" class="mixer-input-recipe bg-slate-900 border border-slate-700 text-white rounded px-2.5 py-1 text-xs font-bold focus:ring-1 focus:ring-emerald-500 w-44">
+                        ${defaultRecipes.map(r => `<option value="${r.name}" data-batch="${r.batch_kg}" ${r.name === curRecipe ? 'selected' : ''}>${r.name}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="p-2 text-center">
+                    <input type="number" oninput="updateMixerRowKg(this)" class="mixer-input-g-sarj w-20 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-bold text-center focus:ring-1 focus:ring-emerald-500" value="${curGSarj}" placeholder="0">
+                </td>
+                <td class="p-2 text-center">
+                    <input type="number" oninput="updateMixerRowKg(this)" class="mixer-input-n-sarj w-20 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-bold text-center focus:ring-1 focus:ring-emerald-500" value="${curNSarj}" placeholder="0">
+                </td>
+                <td class="p-2 text-right font-mono text-slate-300">
+                    <span class="mixer-row-batch-kg">${batchKg.toFixed(2)}</span> kg
+                </td>
+                <td class="p-2 text-right font-bold text-emerald-400 font-mono">
+                    <span class="mixer-row-total-kg">${totalKg.toLocaleString('tr-TR', {maximumFractionDigits:2})}</span> kg
+                </td>
+                <td class="p-2 text-center">
+                    <button type="button" onclick="this.closest('tr').remove()" class="text-slate-500 hover:text-red-400 transition p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            safeCreateIcons();
+        }
+
+        function updateMixerRowKg(element) {
+            const tr = element.closest('tr');
+            const recipeSelect = tr.querySelector('.mixer-input-recipe');
+            const selectedOpt = recipeSelect.options[recipeSelect.selectedIndex];
+            const batchKg = parseFloat(selectedOpt?.getAttribute('data-batch')) || 0;
+            
+            const gSarj = parseInt(tr.querySelector('.mixer-input-g-sarj')?.value) || 0;
+            const nSarj = parseInt(tr.querySelector('.mixer-input-n-sarj')?.value) || 0;
+            const totalSarj = gSarj + nSarj;
+            const totalKg = totalSarj * batchKg;
+
+            const batchSpan = tr.querySelector('.mixer-row-batch-kg');
+            const totalSpan = tr.querySelector('.mixer-row-total-kg');
+            if (batchSpan) batchSpan.textContent = batchKg.toFixed(2);
+            if (totalSpan) totalSpan.textContent = totalKg.toLocaleString('tr-TR', {maximumFractionDigits:2});
+        }
+
+        function getKirimFromUI() {
+            const list = [];
+            document.querySelectorAll('#tbl-kirim-inputs tr').forEach(tr => {
+                const gInput = tr.querySelector('.kirim-input-gunduz');
+                const nInput = tr.querySelector('.kirim-input-gece');
+                const chk = tr.querySelector('.kirim-input-arizali');
+                if (!gInput) return;
+                const hat = gInput.getAttribute('data-hat');
+                const status = chk && chk.checked ? 'arizali' : 'normal';
+                const gunduz = status === 'arizali' ? 0.0 : (parseFloat(gInput.value) || 0.0);
+                const gece = status === 'arizali' ? 0.0 : (parseFloat(nInput.value) || 0.0);
+                list.push({ hat, gunduz, gece, status });
+            });
+            return list;
+        }
+
+        function getMikronizeFromUI() {
+            const list = [];
+            document.querySelectorAll('#tbl-mikronize-inputs tr').forEach(tr => {
+                const gInput = tr.querySelector('.mik-input-gunduz');
+                const nInput = tr.querySelector('.mik-input-gece');
+                if (!gInput) return;
+                const hat = gInput.getAttribute('data-hat');
+                const gunduz = parseFloat(gInput.value) || 0.0;
+                const gece = parseFloat(nInput.value) || 0.0;
+                list.push({ hat, gunduz, gece });
+            });
+            return list;
+        }
+
+        function getMixerFromUI() {
+            const list = [];
+            document.querySelectorAll('#tbl-mixer-inputs tr').forEach(tr => {
+                const makineSel = tr.querySelector('.mixer-input-makine');
+                const recipeSel = tr.querySelector('.mixer-input-recipe');
+                const gInput = tr.querySelector('.mixer-input-g-sarj');
+                const nInput = tr.querySelector('.mixer-input-n-sarj');
+                if (!makineSel || !recipeSel) return;
+
+                const makine = makineSel.value;
+                const recipe = recipeSel.value;
+                const gunduz_sarj = parseInt(gInput?.value) || 0;
+                const gece_sarj = parseInt(nInput?.value) || 0;
+                const selectedOpt = recipeSel.options[recipeSel.selectedIndex];
+                const batch_kg = parseFloat(selectedOpt?.getAttribute('data-batch')) || 0.0;
+                const total_sarj = gunduz_sarj + gece_sarj;
+                const toplam_kg = total_sarj * batch_kg;
+
+                if (total_sarj > 0 || toplam_kg > 0) {
+                    list.push({
+                        makine,
+                        recipe,
+                        batch_kg,
+                        gunduz_sarj,
+                        gece_sarj,
+                        gunduz_kg: gunduz_sarj * batch_kg,
+                        gece_kg: gece_sarj * batch_kg,
+                        toplam_kg
+                    });
+                }
+            });
+            return list;
+        }
+
+        function renderMixerRecipesAdminTable() {
+            const tbody = document.getElementById('tbl-mixer-recipes-admin');
+            if (!tbody) return;
+
+            if (!mixerRecipesList || mixerRecipesList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">Henüz reçete tanımlanmadı.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = mixerRecipesList.map(r => {
+                const ingSummary = (r.ingredients || []).map(ing => `<span class="inline-block px-2 py-0.5 rounded bg-slate-800 text-[11px] font-mono text-slate-300 mr-1 mb-1">${ing.material}: <strong>${ing.kg} kg</strong></span>`).join('');
+                return `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 font-bold text-white">${r.name}</td>
+                        <td class="p-3 text-right font-black text-emerald-400 font-mono">${(r.batch_kg || 0).toFixed(2)} kg</td>
+                        <td class="p-3 text-xs">${ingSummary}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteMixerRecipe('${r.id}')" class="text-slate-500 hover:text-red-400 transition p-1.5" title="Reçeteyi Sil">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            safeCreateIcons();
+        }
+
+        async function deleteMixerRecipe(id) {
+            if (!confirm("Bu reçeteyi silmek istediğinize emin misiniz?")) return;
+            try {
+                const res = await fetch(`/api/mixer_recipes/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Username': currentUser?.username || '' }
+                });
+                if (res.ok) {
+                    showToast("Reçete başarıyla silindi!");
+                    await loadMixerRecipes();
+                } else {
+                    alert("Reçete silinemedi!");
+                }
+            } catch(e) {
+                console.error('deleteMixerRecipe failed:', e);
+            }
+        }
+
         async function loadSettings() {
             await fetchMachinesAndProducts();
 
             const tblM = document.getElementById('tbl-machines');
             if (tblM) {
-                tblM.innerHTML = machinesList.map(m => `
-                    <tr class="hover:bg-slate-900/50">
-                        <td class="p-3 font-semibold text-white">${m.name}</td>
-                        <td class="p-3">
-                            <span class="px-2.5 py-0.5 rounded text-xs font-bold ${m.type === 'extruder' ? 'bg-ergunbas-600/20 text-ergunbas-500 border border-ergunbas-600/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">
-                                ${m.type === 'extruder' ? 'Ekstrüder' : 'Levha'}
-                            </span>
-                        </td>
-                        <td class="p-3 text-right">
-                            <button onclick="deleteMachine('${m.id}')" class="edit-action p-1 text-red-400 hover:text-red-300">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                const typeBadges = {
+                    'extruder': { label: 'Ekstrüder', cls: 'bg-ergunbas-600/20 text-ergunbas-400 border border-ergunbas-600/30' },
+                    'levha': { label: 'Levha', cls: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+                    'kirim': { label: 'Kırım', cls: 'bg-amber-600/20 text-amber-400 border border-amber-600/30' },
+                    'mikronize': { label: 'Mikronize', cls: 'bg-sky-600/20 text-sky-400 border border-sky-600/30' },
+                    'mixer': { label: 'Mikser', cls: 'bg-emerald-600/20 text-emerald-400 border border-emerald-600/30' },
+                };
+                tblM.innerHTML = machinesList.map(m => {
+                    const badge = typeBadges[m.type] || { label: m.type, cls: 'bg-slate-800 text-slate-300' };
+                    return `
+                        <tr class="hover:bg-slate-900/50">
+                            <td class="p-3 font-semibold text-white">${m.name}</td>
+                            <td class="p-3">
+                                <span class="px-2.5 py-0.5 rounded text-xs font-bold border ${badge.cls}">
+                                    ${badge.label}
+                                </span>
+                            </td>
+                            <td class="p-3 text-right">
+                                <button onclick="deleteMachine('${m.id}')" class="edit-action p-1 text-red-400 hover:text-red-300">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             }
 
             const tblP = document.getElementById('tbl-products');
@@ -3213,6 +3904,7 @@
                 `).join('');
             }
 
+            renderMixerRecipesAdminTable();
             safeCreateIcons();
         }
 

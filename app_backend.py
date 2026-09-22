@@ -282,6 +282,7 @@ def load_data():
             _data_cache = {
                 "machines": core.get("machines", []),
                 "products": core.get("products", []),
+                "mixer_recipes": core.get("mixer_recipes", []),
                 "daily_data": daily_data
             }
             return _data_cache
@@ -294,7 +295,7 @@ def load_data():
 
     # GitHub devre dışı/tamamen başarısızsa yerel dosyaya düş
     if not os.path.exists(DATA_FILE):
-        _data_cache = {"machines": [], "products": [], "daily_data": {}}
+        _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "daily_data": {}}
         return _data_cache
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         _data_cache = json.load(f)
@@ -311,11 +312,15 @@ def save_data(data):
     if not _github_enabled():
         return
 
-    # 1) Çekirdek veri (makineler + ürünler) — sadece gerçekten değiştiyse yaz
-    core_payload = {"machines": data.get("machines", []), "products": data.get("products", [])}
+    # 1) Çekirdek veri (makineler + ürünler + reçeteler) — sadece gerçekten değiştiyse yaz
+    core_payload = {
+        "machines": data.get("machines", []),
+        "products": data.get("products", []),
+        "mixer_recipes": data.get("mixer_recipes", [])
+    }
     core_hash = _content_hash(core_payload)
     if _last_synced_hashes.get("__core__") != core_hash:
-        if github_put_file(CORE_FILE_NAME, core_payload, "Çekirdek veri (makine/ürün) güncellendi (otomatik)"):
+        if github_put_file(CORE_FILE_NAME, core_payload, "Çekirdek veri (makine/ürün/reçete) güncellendi (otomatik)"):
             _last_synced_hashes["__core__"] = core_hash
 
     # 2) Günlük veriyi takvim ayına göre grupla
@@ -399,6 +404,11 @@ class DailyDataUpdate(BaseModel):
     gunduz: ShiftData
     gece: ShiftData
     downtimes: List[DowntimeEntry] = []
+    kirim: Optional[List[Dict[str, Any]]] = None
+    mikronize: Optional[List[Dict[str, Any]]] = None
+    mixer: Optional[List[Dict[str, Any]]] = None
+    mixer_emp_gunduz: Optional[int] = None
+    mixer_emp_gece: Optional[int] = None
 
 class AddDateRequest(BaseModel):
     date_str: str
@@ -1606,6 +1616,313 @@ def update_product(product_id: str, update: ProductUpdate, x_username: Optional[
     raise HTTPException(status_code=404, detail="Ürün bulunamadı")
 
 # =====================================================================
+# MIXER & GERİ DÖNÜŞÜM (REÇETE & ÖZET) ENDPOINTS
+# =====================================================================
+
+class IngredientItem(BaseModel):
+    material: str
+    kg: float
+
+class MixerRecipeCreate(BaseModel):
+    name: str
+    batch_kg: float
+    ingredients: List[IngredientItem] = []
+
+class MixerRecipeUpdate(BaseModel):
+    name: Optional[str] = None
+    batch_kg: Optional[float] = None
+    ingredients: Optional[List[IngredientItem]] = None
+
+@app.get("/api/mixer_recipes")
+def get_mixer_recipes():
+    data = load_data()
+    return data.get("mixer_recipes", [])
+
+@app.post("/api/mixer_recipes")
+def add_mixer_recipe(recipe: MixerRecipeCreate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    data = load_data()
+    recipes = data.setdefault("mixer_recipes", [])
+    slug = re.sub(r'[^a-zA-Z0-9]+', '_', recipe.name.lower()).strip('_')
+    new_id = f"rec_{slug}_{len(recipes) + 1}"
+    new_rec = {
+        "id": new_id,
+        "name": recipe.name,
+        "batch_kg": recipe.batch_kg,
+        "ingredients": [ing.dict() for ing in recipe.ingredients]
+    }
+    recipes.append(new_rec)
+    save_data(data)
+    return new_rec
+
+@app.put("/api/mixer_recipes/{recipe_id}")
+def update_mixer_recipe(recipe_id: str, update: MixerRecipeUpdate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    data = load_data()
+    recipes = data.setdefault("mixer_recipes", [])
+    for r in recipes:
+        if r["id"] == recipe_id:
+            if update.name is not None:
+                r["name"] = update.name
+            if update.batch_kg is not None:
+                r["batch_kg"] = update.batch_kg
+            if update.ingredients is not None:
+                r["ingredients"] = [ing.dict() for ing in update.ingredients]
+            save_data(data)
+            return {"status": "success", "recipe": r}
+    raise HTTPException(status_code=404, detail="Reçete bulunamadı")
+
+@app.delete("/api/mixer_recipes/{recipe_id}")
+def delete_mixer_recipe(recipe_id: str, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    data = load_data()
+    recipes = data.setdefault("mixer_recipes", [])
+    data["mixer_recipes"] = [r for r in recipes if r["id"] != recipe_id]
+    save_data(data)
+    return {"status": "success"}
+
+@app.get("/api/mixer/summary")
+def get_mixer_summary(month: Optional[str] = None):
+    data = load_data()
+    daily_data = data.get("daily_data", {})
+    recipes = {r["name"].lower(): r for r in data.get("mixer_recipes", [])}
+
+    # Tarihlere göre ay listesini bul
+    available_months_set = set()
+    for k, d in daily_data.items():
+        dt = parse_date_label(d.get("date", ""))
+        if dt:
+            available_months_set.add(f"{dt.year:04d}-{dt.month:02d}")
+    available_months = sorted(list(available_months_set))
+    if not available_months:
+        available_months = ["2026-09"]
+
+    selected_month = month if (month and month in available_months) else available_months[-1]
+
+    # Seçili ayın günlerini filtrele
+    month_days = {}
+    for k, d in daily_data.items():
+        dt = parse_date_label(d.get("date", ""))
+        if dt and f"{dt.year:04d}-{dt.month:02d}" == selected_month:
+            month_days[k] = d
+
+    total_kirim_kg = 0.0
+    total_mikronize_kg = 0.0
+    total_mixer_kg = 0.0
+    total_mixer_sarj = 0
+    total_emp_gunduz = 0
+    total_emp_gece = 0
+    days_with_data = 0
+
+    recipe_totals = {}
+    material_consumption = {}
+    kirim_machines = {}
+    mikronize_machines = {}
+    daily_history = []
+
+    sorted_day_keys = get_sorted_day_keys(month_days)
+
+    for k in sorted_day_keys:
+        d = month_days[k]
+        date_str = d.get("date", k)
+        d_kirim = d.get("kirim", [])
+        d_mikronize = d.get("mikronize", [])
+        d_mixer = d.get("mixer", [])
+        emp_g = d.get("mixer_emp_gunduz", 0) or 0
+        emp_n = d.get("mixer_emp_gece", 0) or 0
+
+        day_k_kg = 0.0
+        day_m_kg = 0.0
+        day_mx_kg = 0.0
+        day_mx_sarj = 0
+
+        # Kırım
+        for ke in d_kirim:
+            hat = ke.get("hat", "Bilinmeyen")
+            kg = (ke.get("gunduz") or 0.0) + (ke.get("gece") or 0.0)
+            status = ke.get("status", "normal")
+            day_k_kg += kg
+            if hat not in kirim_machines:
+                kirim_machines[hat] = {"days": 0, "kg": 0.0, "arizali_count": 0}
+            if status == "arizali":
+                kirim_machines[hat]["arizali_count"] += 1
+            if kg > 0:
+                kirim_machines[hat]["days"] += 1
+                kirim_machines[hat]["kg"] += kg
+
+        # Mikronize
+        for me in d_mikronize:
+            hat = me.get("hat", "Bilinmeyen")
+            kg = (me.get("gunduz") or 0.0) + (me.get("gece") or 0.0)
+            day_m_kg += kg
+            if hat not in mikronize_machines:
+                mikronize_machines[hat] = {"days": 0, "kg": 0.0}
+            if kg > 0:
+                mikronize_machines[hat]["days"] += 1
+                mikronize_machines[hat]["kg"] += kg
+
+        # Mikser
+        for mx in d_mixer:
+            rec_name = mx.get("recipe", "Bilinmeyen")
+            g_sarj = mx.get("gunduz_sarj", 0) or 0
+            n_sarj = mx.get("gece_sarj", 0) or 0
+            sarj = g_sarj + n_sarj
+            day_mx_sarj += sarj
+
+            # Reçete eşleşmesi
+            matched_rec = None
+            clean_rec_lower = rec_name.lower().replace(" ", "").replace("-", "")
+            for r_k, r_obj in recipes.items():
+                if r_k.replace(" ", "").replace("-", "") in clean_rec_lower or clean_rec_lower in r_k.replace(" ", "").replace("-", ""):
+                    matched_rec = r_obj
+                    break
+
+            b_kg = mx.get("batch_kg") or (matched_rec.get("batch_kg") if matched_rec else 0.0) or 0.0
+            kg = (mx.get("toplam_kg") or 0.0)
+            if kg <= 0 and sarj > 0 and b_kg > 0:
+                kg = sarj * b_kg
+            day_mx_kg += kg
+
+            if rec_name not in recipe_totals:
+                recipe_totals[rec_name] = {"sarj": 0, "kg": 0.0}
+            recipe_totals[rec_name]["sarj"] += sarj
+            recipe_totals[rec_name]["kg"] += kg
+
+            # Hammadde Tüketimi
+            if matched_rec:
+                for ing in matched_rec.get("ingredients", []):
+                    mat = ing.get("material", "").strip()
+                    mat_kg = (ing.get("kg") or 0.0) * sarj
+                    if mat not in material_consumption:
+                        material_consumption[mat] = {"total_kg": 0.0, "by_recipe": {}}
+                    material_consumption[mat]["total_kg"] += mat_kg
+                    material_consumption[mat]["by_recipe"][rec_name] = material_consumption[mat]["by_recipe"].get(rec_name, 0.0) + mat_kg
+
+        if day_k_kg > 0 or day_m_kg > 0 or day_mx_kg > 0:
+            days_with_data += 1
+
+        total_kirim_kg += day_k_kg
+        total_mikronize_kg += day_m_kg
+        total_mixer_kg += day_mx_kg
+        total_mixer_sarj += day_mx_sarj
+        total_emp_gunduz += emp_g
+        total_emp_gece += emp_n
+
+        daily_history.append({
+            "key": k,
+            "date": date_str,
+            "kirim_kg": round(day_k_kg, 2),
+            "mikronize_kg": round(day_m_kg, 2),
+            "mixer_kg": round(day_mx_kg, 2),
+            "mixer_sarj": day_mx_sarj,
+            "emp_gunduz": emp_g,
+            "emp_gece": emp_n
+        })
+
+    # Reçete Listesi ve Payları
+    recipe_summary_list = []
+    for r_name, r_val in recipe_totals.items():
+        share = round((r_val["kg"] / total_mixer_kg * 100), 2) if total_mixer_kg > 0 else 0
+        recipe_summary_list.append({
+            "name": r_name,
+            "sarj": r_val["sarj"],
+            "prod_kg": round(r_val["kg"], 2),
+            "share_pct": share
+        })
+    recipe_summary_list.sort(key=lambda x: x["prod_kg"], reverse=True)
+
+    # Hammadde Tüketim Listesi
+    material_list = []
+    for mat, m_info in material_consumption.items():
+        material_list.append({
+            "material": mat,
+            "total_kg": round(m_info["total_kg"], 2),
+            "by_recipe": {rn: round(kv, 2) for rn, kv in m_info["by_recipe"].items()}
+        })
+    material_list.sort(key=lambda x: x["total_kg"], reverse=True)
+
+    # Makine Hedef & Performans (Excel'deki formüller: 1 gün = 7.5 saat, 26 gün hedefi)
+    kirim_perf_list = []
+    for h_name, h_stat in kirim_machines.items():
+        days = h_stat["days"]
+        ton = h_stat["kg"] / 1000.0
+        day_avg_ton = (ton / days) if days > 0 else 0
+        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
+        target_26d_ton = day_avg_ton * 26
+        missing_ton = max(0, target_26d_ton - ton)
+        efficiency = (days / 26) if days <= 26 else 1.0
+        kirim_perf_list.append({
+            "name": h_name,
+            "days": days,
+            "prod_ton": round(ton, 2),
+            "day_avg_ton": round(day_avg_ton, 2),
+            "hourly_avg_kg": round(hourly_avg_kg, 1),
+            "target_26d_ton": round(target_26d_ton, 2),
+            "missing_ton": round(missing_ton, 2),
+            "efficiency_pct": round(efficiency * 100, 1)
+        })
+
+    mikronize_perf_list = []
+    for h_name, h_stat in mikronize_machines.items():
+        days = h_stat["days"]
+        ton = h_stat["kg"] / 1000.0
+        day_avg_ton = (ton / days) if days > 0 else 0
+        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
+        target_26d_ton = day_avg_ton * 26
+        missing_ton = max(0, target_26d_ton - ton)
+        efficiency = (days / 26) if days <= 26 else 1.0
+        mikronize_perf_list.append({
+            "name": h_name,
+            "days": days,
+            "prod_ton": round(ton, 2),
+            "day_avg_ton": round(day_avg_ton, 2),
+            "hourly_avg_kg": round(hourly_avg_kg, 1),
+            "target_26d_ton": round(target_26d_ton, 2),
+            "missing_ton": round(missing_ton, 2),
+            "efficiency_pct": round(efficiency * 100, 1)
+        })
+
+    # Entegre Kütle Dengesi: O ayki Ekstrüder + Levha üretim ve firesi
+    ext_lev_prod_kg = 0.0
+    ext_lev_fire_kg = 0.0
+    for k, d in month_days.items():
+        for shift in ["gunduz", "gece"]:
+            for ext in d.get(shift, {}).get("extruders", []):
+                ext_lev_prod_kg += ext.get("prod_kg", 0) or 0
+                ext_lev_fire_kg += ext.get("fire_kg", 0) or 0
+            for lev in d.get(shift, {}).get("levha", []):
+                ext_lev_prod_kg += lev.get("total_kg", 0) or 0
+                ext_lev_fire_kg += lev.get("dead_fire_kg", 0) or 0
+
+    balance_kg = total_mixer_kg - (ext_lev_prod_kg + ext_lev_fire_kg)
+
+    return {
+        "selected_month": selected_month,
+        "available_months": available_months,
+        "days_count": days_with_data,
+        "total_mixer_kg": round(total_mixer_kg, 2),
+        "total_mixer_ton": round(total_mixer_kg / 1000.0, 2),
+        "total_kirim_kg": round(total_kirim_kg, 2),
+        "total_kirim_ton": round(total_kirim_kg / 1000.0, 2),
+        "total_mikronize_kg": round(total_mikronize_kg, 2),
+        "total_mikronize_ton": round(total_mikronize_kg / 1000.0, 2),
+        "total_mixer_sarj": total_mixer_sarj,
+        "recipes": recipe_summary_list,
+        "materials": material_list,
+        "kirim_performance": kirim_perf_list,
+        "mikronize_performance": mikronize_perf_list,
+        "daily_history": daily_history,
+        "mass_balance": {
+            "mixer_prod_kg": round(total_mixer_kg, 2),
+            "profile_consumed_kg": round(ext_lev_prod_kg + ext_lev_fire_kg, 2),
+            "profile_net_prod_kg": round(ext_lev_prod_kg, 2),
+            "profile_scrap_kg": round(ext_lev_fire_kg, 2),
+            "balance_kg": round(balance_kg, 2),
+            "recycled_scrap_kg": round(total_kirim_kg, 2)
+        }
+    }
+
+# =====================================================================
 # USER MANAGEMENT ENDPOINTS
 # =====================================================================
 
@@ -1882,12 +2199,18 @@ def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Option
     data = load_data()
     date_label = data["daily_data"].get(date_key, {}).get("date") or date_key
 
+    cur_day = data["daily_data"].get(date_key, {})
     data["daily_data"][date_key] = {
         "day": date_key,
         "date": date_label,
         "gunduz": update.gunduz.dict(),
         "gece": update.gece.dict(),
-        "downtimes": [d.dict() for d in update.downtimes]
+        "downtimes": [d.dict() for d in update.downtimes],
+        "kirim": update.kirim if update.kirim is not None else cur_day.get("kirim", []),
+        "mikronize": update.mikronize if update.mikronize is not None else cur_day.get("mikronize", []),
+        "mixer": update.mixer if update.mixer is not None else cur_day.get("mixer", []),
+        "mixer_emp_gunduz": update.mixer_emp_gunduz if update.mixer_emp_gunduz is not None else cur_day.get("mixer_emp_gunduz", 0),
+        "mixer_emp_gece": update.mixer_emp_gece if update.mixer_emp_gece is not None else cur_day.get("mixer_emp_gece", 0)
     }
 
     for shift in ["gunduz", "gece"]:

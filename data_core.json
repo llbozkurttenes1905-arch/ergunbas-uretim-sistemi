@@ -49,6 +49,71 @@
       "id": "lev_12",
       "name": "201",
       "type": "levha"
+    },
+    {
+      "id": "kirim_1",
+      "name": "Kirim 1",
+      "type": "kirim"
+    },
+    {
+      "id": "kirim_2",
+      "name": "Kirim 2",
+      "type": "kirim"
+    },
+    {
+      "id": "kirim_3",
+      "name": "Kirim 3",
+      "type": "kirim"
+    },
+    {
+      "id": "kirim_4",
+      "name": "Kirim 4",
+      "type": "kirim"
+    },
+    {
+      "id": "mik_1",
+      "name": "Mikronize 1",
+      "type": "mikronize"
+    },
+    {
+      "id": "mik_2",
+      "name": "Mikronize 2",
+      "type": "mikronize"
+    },
+    {
+      "id": "mik_3",
+      "name": "Mikronize 3",
+      "type": "mikronize"
+    },
+    {
+      "id": "mik_4",
+      "name": "Mikronize 4",
+      "type": "mikronize"
+    },
+    {
+      "id": "mik_5",
+      "name": "Mikronize 5",
+      "type": "mikronize"
+    },
+    {
+      "id": "mik_6",
+      "name": "Mikronize 6",
+      "type": "mikronize"
+    },
+    {
+      "id": "mixer_1",
+      "name": "Mixer 1",
+      "type": "mixer"
+    },
+    {
+      "id": "mixer_2",
+      "name": "Mixer 2",
+      "type": "mixer"
+    },
+    {
+      "id": "mixer_3",
+      "name": "Mixer 3",
+      "type": "mixer"
     }
   ],
   "products": [
@@ -954,6 +1019,412 @@
       "category": "diger",
       "door_ratio": 1.0,
       "description": ""
+    }
+  ],
+  "mixer_recipes": [
+    {
+      "id": "rec_kasa_pervaz",
+      "name": "Kasa Pervaz",
+      "batch_kg": 275.65,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 5K",
+          "kg": 80.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 3.5
+        },
+        {
+          "material": "PE WAX",
+          "kg": 1.0
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.15
+        },
+        {
+          "material": "GERİ DÖNÜŞÜM",
+          "kg": 40.0
+        }
+      ]
+    },
+    {
+      "id": "rec_seren",
+      "name": "Seren",
+      "batch_kg": 291.15,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 135.0
+        },
+        {
+          "material": "KALSİT",
+          "kg": 80.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 4.0
+        },
+        {
+          "material": "PE WAX",
+          "kg": 1.0
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.15
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 70.0
+        }
+      ]
+    },
+    {
+      "id": "rec_deck_kahve",
+      "name": "Deck Kahverengi",
+      "batch_kg": 242.7,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 15.0
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 60.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 5.0
+        },
+        {
+          "material": "K-60",
+          "kg": 1.0
+        },
+        {
+          "material": "KPE-20",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE-135",
+          "kg": 4.0
+        },
+        {
+          "material": "UV-622",
+          "kg": 0.1
+        },
+        {
+          "material": "UV-326",
+          "kg": 0.25
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 0.5
+        },
+        {
+          "material": "Ca Zn STABİLİZATÖR",
+          "kg": 1.0
+        },
+        {
+          "material": "DMA-650",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.25
+        },
+        {
+          "material": "KAHVERENGİ-B",
+          "kg": 2.8
+        },
+        {
+          "material": "KIRMIZI-B",
+          "kg": 0.8
+        }
+      ]
+    },
+    {
+      "id": "rec_deck_antrasit",
+      "name": "Deck Antrasit-Siyah",
+      "batch_kg": 240.45,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 15.0
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 60.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 5.0
+        },
+        {
+          "material": "K-60",
+          "kg": 1.0
+        },
+        {
+          "material": "KPE-20",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE-135",
+          "kg": 4.0
+        },
+        {
+          "material": "UV-622",
+          "kg": 0.1
+        },
+        {
+          "material": "UV-326",
+          "kg": 0.25
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 0.5
+        },
+        {
+          "material": "Ca Zn STABİLİZATÖR",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 1.6
+        },
+        {
+          "material": "DMA-650",
+          "kg": 1.0
+        }
+      ]
+    },
+    {
+      "id": "rec_kitkat_kahve",
+      "name": "Kit Kat Kahverengi",
+      "batch_kg": 242.7,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 15.0
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 60.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 5.0
+        },
+        {
+          "material": "K-60",
+          "kg": 1.0
+        },
+        {
+          "material": "KPE-20",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE-135",
+          "kg": 4.0
+        },
+        {
+          "material": "UV-622",
+          "kg": 0.1
+        },
+        {
+          "material": "UV-326",
+          "kg": 0.25
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 0.5
+        },
+        {
+          "material": "Ca Zn STABİLİZATÖR",
+          "kg": 1.0
+        },
+        {
+          "material": "DMA-650",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.25
+        },
+        {
+          "material": "KAHVERENGİ-B",
+          "kg": 2.8
+        },
+        {
+          "material": "KIRMIZI-B",
+          "kg": 0.8
+        }
+      ]
+    },
+    {
+      "id": "rec_kitkat_antrasit",
+      "name": "Kit Kat Antrasit-Siyah",
+      "batch_kg": 240.45,
+      "ingredients": [
+        {
+          "material": "40 AMBAR",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 15.0
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 60.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 5.0
+        },
+        {
+          "material": "K-60",
+          "kg": 1.0
+        },
+        {
+          "material": "KPE-20",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE-135",
+          "kg": 4.0
+        },
+        {
+          "material": "UV-622",
+          "kg": 0.1
+        },
+        {
+          "material": "UV-326",
+          "kg": 0.25
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 0.5
+        },
+        {
+          "material": "Ca Zn STABİLİZATÖR",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 1.6
+        },
+        {
+          "material": "DMA-650",
+          "kg": 1.0
+        }
+      ]
+    },
+    {
+      "id": "rec_levha_renkli",
+      "name": "Levha Renkli (Takoz)",
+      "batch_kg": 334.3,
+      "ingredients": [
+        {
+          "material": "PVC",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 150.0
+        },
+        {
+          "material": "ASMIX 42555-2FB",
+          "kg": 5.7
+        },
+        {
+          "material": "PRY 901",
+          "kg": 1.5
+        },
+        {
+          "material": "MSY 701",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE",
+          "kg": 9.0
+        },
+        {
+          "material": "PE WAX",
+          "kg": 1.0
+        },
+        {
+          "material": "KIRIK AMBAR",
+          "kg": 15.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.1
+        }
+      ]
+    },
+    {
+      "id": "rec_levha_beyaz",
+      "name": "Levha Beyaz",
+      "batch_kg": 281.5,
+      "ingredients": [
+        {
+          "material": "PVC",
+          "kg": 200.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 50.0
+        },
+        {
+          "material": "ASMIX 42555 FX",
+          "kg": 6.0
+        },
+        {
+          "material": "PRY 901",
+          "kg": 1.5
+        },
+        {
+          "material": "MSY 701",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE",
+          "kg": 10.0
+        },
+        {
+          "material": "TİTAN",
+          "kg": 13.0
+        }
+      ]
     }
   ]
 }

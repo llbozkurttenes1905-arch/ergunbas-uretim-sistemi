@@ -1027,6 +1027,8 @@
                         <tbody id="tbl-downtimes" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
+            </div>
+
             <!-- MİKSER & GERİ DÖNÜŞÜM GÜNLÜK VERİ GİRİŞİ -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-md">
                 <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-4">
@@ -1449,6 +1451,8 @@
         let currentWeeklyList = []; // o an ekranda gösterilen (seçili aya ait) haftalık kartlar
         let machinesList = [];
         let productsList = [];
+        let mixerDashboardData = null;
+        let mixerRecipesList = [];
         let prodChart = null;
         let fireChart = null;
         let extProductChart = null;
@@ -3452,9 +3456,6 @@
         // =====================================================================
         // MİKSER & GERİ DÖNÜŞÜM FRONTEND LOGIC
         // =====================================================================
-
-        let mixerDashboardData = null;
-        let mixerRecipesList = [];
 
         async function loadMixerRecipes() {
             try {

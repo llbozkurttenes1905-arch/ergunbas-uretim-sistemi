@@ -477,10 +477,19 @@
                 <p class="text-xs text-slate-500 mb-4">Seçili ay boyunca hangi üründen (Ekstrüder) veya hangi renk/modelden (Levha) ne kadar üretildiğini gösterir — hat farketmeksizin, ürün bazında toplam. Yeni ay başladığında bu liste otomatik olarak sıfırdan başlar; geçmiş ayları buradan seçerek görebilirsiniz.</p>
 
                 <!-- Ekstrüder Ürünleri -->
+                <!-- Ekstrüder Ürünleri -->
                 <div class="mb-8">
-                    <h3 class="text-sm font-bold text-sky-400 mb-3 flex items-center gap-1.5">
-                        <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri
-                    </h3>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-sky-400 flex items-center gap-1.5">
+                                <i data-lucide="factory" class="w-4 h-4"></i> Ekstrüder Ürünleri (Genel &gt; Ölçü Detayı)
+                            </h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Ürün satırına tıklayarak o ürüne ait tüm farklı boy ve ölçü detaylarını inceleyebilirsiniz.</p>
+                        </div>
+                        <button type="button" onclick="toggleAllProductGroups('tbl-monthly-extruder-products')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-sky-400"></i> Tümünü Aç / Kapat
+                        </button>
+                    </div>
                     <div class="mb-4" id="chart-monthly-extruder-products-wrap" style="height: 288px;">
                         <canvas id="chart-monthly-extruder-products"></canvas>
                     </div>
@@ -488,7 +497,7 @@
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
                                 <tr>
-                                    <th class="p-2.5">Ürün</th>
+                                    <th class="p-2.5">Ürün / Ölçü Detayı</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
                                     <th class="p-2.5 text-right">Pay (%)</th>
@@ -503,9 +512,17 @@
 
                 <!-- Levha Renkleri -->
                 <div>
-                    <h3 class="text-sm font-bold text-fuchsia-400 mb-3 flex items-center gap-1.5">
-                        <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri
-                    </h3>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-fuchsia-400 flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-4 h-4"></i> Levha Renkleri / Modelleri (Genel &gt; Ölçü Detayı)
+                            </h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Renk satırına tıklayarak o renge ait farklı en ve ölçü detaylarını inceleyebilirsiniz.</p>
+                        </div>
+                        <button type="button" onclick="toggleAllProductGroups('tbl-monthly-levha-colors')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-fuchsia-400"></i> Tümünü Aç / Kapat
+                        </button>
+                    </div>
                     <div class="mb-4" id="chart-monthly-levha-colors-wrap" style="height: 288px;">
                         <canvas id="chart-monthly-levha-colors"></canvas>
                     </div>
@@ -513,7 +530,7 @@
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
                                 <tr>
-                                    <th class="p-2.5">Renk / Model</th>
+                                    <th class="p-2.5">Renk & Model / Ölçü Detayı</th>
                                     <th class="p-2.5 text-right">Toplam Adet</th>
                                     <th class="p-2.5 text-right">Toplam Üretim (kg)</th>
                                     <th class="p-2.5 text-right">Pay (%)</th>
@@ -2373,21 +2390,83 @@
             const selectedMonthKey = monthSelect ? monthSelect.value : (forceMonthKey || mp.latest_month_key);
             const monthData = mp.months[selectedMonthKey] || { extruder: [], levha: [] };
 
+            // Ürün ve ölçü/boy ayrıştırma yardımcı fonksiyonu:
+            // "100 mm KASA (2.15m)" -> baseName: "100 mm KASA", variant: "2.15m"
+            // "TEAK (93cm)" -> baseName: "TEAK", variant: "93cm"
+            const parseNameAndVariant = (rawName) => {
+                if (!rawName) return { baseName: 'Bilinmeyen', variant: null };
+                const m = rawName.match(/^(.+?)\s*\(([^)]+)\)$/);
+                if (m) {
+                    return { baseName: m[1].trim(), variant: m[2].trim() };
+                }
+                return { baseName: rawName.trim(), variant: null };
+            };
+
+            const groupProductItems = (rawItems) => {
+                const groupsMap = new Map();
+
+                rawItems.forEach(p => {
+                    const { baseName, variant } = parseNameAndVariant(p.name);
+                    if (!groupsMap.has(baseName)) {
+                        groupsMap.set(baseName, {
+                            baseName: baseName,
+                            qty: 0,
+                            prod_kg: 0,
+                            fire_kg: 0,
+                            variants: []
+                        });
+                    }
+                    const grp = groupsMap.get(baseName);
+                    grp.qty += (p.qty || 0);
+                    grp.prod_kg += (p.prod_kg || 0);
+                    grp.fire_kg += (p.fire_kg || 0);
+                    grp.variants.push({
+                        ...p,
+                        variantLabel: variant || p.name
+                    });
+                });
+
+                const totalProd = Array.from(groupsMap.values()).reduce((sum, g) => sum + g.prod_kg, 0);
+
+                const sortedGroups = Array.from(groupsMap.values()).map(g => {
+                    const pKg = Math.round(g.prod_kg * 100) / 100;
+                    const fKg = Math.round(g.fire_kg * 100) / 100;
+                    const fr = (pKg + fKg) > 0 ? Math.round((fKg / (pKg + fKg) * 100) * 100) / 100 : 0;
+                    const pct = totalProd > 0 ? Math.round((pKg / totalProd * 100) * 100) / 100 : 0;
+
+                    // Alt ölçüleri üretim miktarına göre çoktan aza sırala
+                    g.variants.sort((a, b) => b.prod_kg - a.prod_kg);
+
+                    return {
+                        baseName: g.baseName,
+                        qty: g.qty,
+                        prod_kg: pKg,
+                        fire_kg: fKg,
+                        fire_ratio: fr,
+                        pct_of_type: pct,
+                        variants: g.variants
+                    };
+                });
+
+                // Ana ürün gruplarını toplam üretime göre çoktan aza sırala
+                sortedGroups.sort((a, b) => b.prod_kg - a.prod_kg);
+                return { sortedGroups, totalProd };
+            };
+
             const renderTypeChartAndTable = (chartVarSetter, canvasId, tbodyId, items, barColor) => {
-                const labels = items.map(p => `${p.name} (%${p.pct_of_type})`);
-                const values = items.map(p => p.prod_kg);
+                const { sortedGroups, totalProd } = groupProductItems(items);
+                const isLevha = tbodyId.includes('levha');
+
+                const labels = sortedGroups.map(g => `${g.baseName} (%${g.pct_of_type})`);
+                const values = sortedGroups.map(g => g.prod_kg);
 
                 const canvas = document.getElementById(canvasId);
                 if (canvas) {
-                    // Ürün sayısına göre GRAFİĞİN KABININ (wrapper div) yüksekliğini dinamik
-                    // ayarla — canvas'ın kendisine değil, Chart.js responsive:true olduğu için
-                    // kabına göre kendini ayarlıyor; sadece canvas'a yükseklik vermek yeterli
-                    // olmuyordu çünkü kap sabit yükseklikteydi ve taşan barlar kesiliyordu.
-                    const rowHeight = 34;
-                    const axisAndPadding = 50; // x ekseni + üst/alt boşluk için pay
-                    const minHeight = 288;
+                    const rowHeight = 36;
+                    const axisAndPadding = 50;
+                    const minHeight = 260;
                     const wrap = canvas.closest('[id$="-wrap"]') || canvas.parentElement;
-                    wrap.style.height = Math.max(minHeight, items.length * rowHeight + axisAndPadding) + 'px';
+                    wrap.style.height = Math.max(minHeight, sortedGroups.length * rowHeight + axisAndPadding) + 'px';
                     const existing = chartVarSetter.get();
                     if (existing) existing.destroy();
                     const ctx = canvas.getContext('2d');
@@ -2396,7 +2475,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: 'Üretim (kg)',
+                                label: 'Toplam Üretim (kg)',
                                 data: values,
                                 backgroundColor: barColor,
                                 borderRadius: 6
@@ -2411,8 +2490,8 @@
                                 tooltip: {
                                     callbacks: {
                                         label: (ctx) => {
-                                            const p = items[ctx.dataIndex];
-                                            return `${p.prod_kg.toLocaleString('tr-TR')} kg (%${p.pct_of_type})`;
+                                            const g = sortedGroups[ctx.dataIndex];
+                                            return `${g.prod_kg.toLocaleString('tr-TR')} kg (%${g.pct_of_type}) • ${g.variants.length} ölçü/detay`;
                                         }
                                     }
                                 }
@@ -2424,14 +2503,11 @@
                                     ticks: {
                                         color: '#94a3b8',
                                         font: { size: 11 },
-                                        // Uzun etiketlerin kesilmemesi için maksimum karakter sınırı yok;
-                                        // sol taraf için yeterli padding ile göster.
                                         callback: function(val, index) {
                                             return this.getLabelForValue(val);
                                         }
                                     },
                                     afterFit: function(scaleInstance) {
-                                        // Etiketlerin tam görünmesi için minimum sol genişlik
                                         scaleInstance.width = Math.max(scaleInstance.width, 220);
                                     }
                                 }
@@ -2446,21 +2522,104 @@
 
                 const tbody = document.getElementById(tbodyId);
                 if (tbody) {
-                    if (items.length === 0) {
+                    if (sortedGroups.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu döneme ait veri bulunamadı.</td></tr>';
                     } else {
-                        tbody.innerHTML = items.map(p => `
-                            <tr class="hover:bg-slate-800/40 transition">
-                                <td class="p-2.5 font-bold text-white">${p.name}</td>
-                                <td class="p-2.5 text-right text-slate-300">${p.qty.toLocaleString('tr-TR')}</td>
-                                <td class="p-2.5 text-right font-semibold text-white">${p.prod_kg.toLocaleString('tr-TR')}</td>
-                                <td class="p-2.5 text-right font-bold text-sky-400">%${p.pct_of_type}</td>
-                                <td class="p-2.5 text-right font-semibold text-amber-400">${p.fire_kg.toLocaleString('tr-TR')}</td>
-                                <td class="p-2.5 text-right font-semibold ${p.fire_ratio > 15 ? 'text-red-400' : (p.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${p.fire_ratio}</td>
-                            </tr>
-                        `).join('');
+                        tbody.innerHTML = sortedGroups.map((grp, gIdx) => {
+                            const grpId = `${tbodyId}-g-${gIdx}`;
+                            const multiVariant = grp.variants.length > 1;
+
+                            // 1) ANA SATIR (Genel Başlık — tüm ölçülerin toplamı)
+                            const parentRow = `
+                                <tr onclick="toggleProductGroup('${grpId}')" class="group cursor-pointer hover:bg-slate-800/60 transition select-none bg-slate-900/50 border-t border-slate-800">
+                                    <td class="p-2.5 font-bold text-white flex items-center gap-2">
+                                        <span id="${grpId}-icon" class="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 text-slate-400 group-hover:text-white group-hover:bg-slate-700 transition-all duration-200">
+                                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                        </span>
+                                        <span class="text-sm font-black text-slate-100">${grp.baseName}</span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${multiVariant ? (isLevha ? 'bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-800/60' : 'bg-sky-950/80 text-sky-300 border border-sky-800/60') : 'bg-slate-800 text-slate-400'}">
+                                            ${grp.variants.length} Ölçü
+                                        </span>
+                                    </td>
+                                    <td class="p-2.5 text-right font-bold text-slate-200">${grp.qty.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2.5 text-right font-black text-white">${grp.prod_kg.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2.5 text-right font-black ${isLevha ? 'text-fuchsia-400' : 'text-sky-400'}">%${grp.pct_of_type}</td>
+                                    <td class="p-2.5 text-right font-bold text-amber-400">${grp.fire_kg.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2.5 text-right font-bold ${grp.fire_ratio > 15 ? 'text-red-400' : (grp.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${grp.fire_ratio}</td>
+                                </tr>
+                            `;
+
+                            // 2) ALT SATIRLAR (Özel Başlık / Detay Ölçüleri) — Tıklanınca açılır
+                            const childRows = grp.variants.map(v => `
+                                <tr class="${grpId}-sub hidden bg-slate-950/80 hover:bg-slate-900/60 transition border-l-4 ${isLevha ? 'border-l-fuchsia-500/70' : 'border-l-sky-500/70'}">
+                                    <td class="p-2 pl-9 text-xs font-semibold text-slate-300 flex items-center gap-2">
+                                        <span class="text-slate-600 font-mono">↳</span>
+                                        <span class="inline-block px-2 py-0.5 rounded bg-slate-800/90 text-white font-bold border border-slate-700/60">${v.variantLabel}</span>
+                                        <span class="text-slate-400 text-[11px]">(${v.name})</span>
+                                    </td>
+                                    <td class="p-2 text-right text-xs font-medium text-slate-400">${v.qty.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2 text-right text-xs font-semibold text-slate-200">${v.prod_kg.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2 text-right text-xs font-semibold ${isLevha ? 'text-fuchsia-400/90' : 'text-sky-400/90'}">%${v.pct_of_type}</td>
+                                    <td class="p-2 text-right text-xs font-medium text-amber-400/90">${v.fire_kg.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2 text-right text-xs font-semibold ${v.fire_ratio > 15 ? 'text-red-400' : (v.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${v.fire_ratio}</td>
+                                </tr>
+                            `).join('');
+
+                            return parentRow + childRows;
+                        }).join('');
                     }
                 }
+            };
+
+            // Global grup aç/kapat fonksiyonları
+            window.toggleProductGroup = function(grpId) {
+                const subRows = document.querySelectorAll(`.${grpId}-sub`);
+                const icon = document.getElementById(`${grpId}-icon`);
+                let willShow = false;
+                subRows.forEach(row => {
+                    if (row.classList.contains('hidden')) {
+                        row.classList.remove('hidden');
+                        willShow = true;
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+                if (icon) {
+                    const svg = icon.querySelector('svg');
+                    if (willShow) {
+                        if (svg) svg.classList.add('rotate-90');
+                        icon.classList.add('text-sky-400', 'bg-sky-950/80');
+                    } else {
+                        if (svg) svg.classList.remove('rotate-90');
+                        icon.classList.remove('text-sky-400', 'bg-sky-950/80');
+                    }
+                }
+            };
+
+            window.toggleAllProductGroups = function(tbodyId) {
+                const tbody = document.getElementById(tbodyId);
+                if (!tbody) return;
+                const allSubs = tbody.querySelectorAll('tr[class*="-sub"]');
+                if (!allSubs.length) return;
+                const anyHidden = Array.from(allSubs).some(r => r.classList.contains('hidden'));
+                allSubs.forEach(r => {
+                    if (anyHidden) {
+                        r.classList.remove('hidden');
+                    } else {
+                        r.classList.add('hidden');
+                    }
+                });
+                const allIcons = tbody.querySelectorAll('span[id$="-icon"]');
+                allIcons.forEach(ic => {
+                    const svg = ic.querySelector('svg');
+                    if (anyHidden) {
+                        if (svg) svg.classList.add('rotate-90');
+                        ic.classList.add('text-sky-400', 'bg-sky-950/80');
+                    } else {
+                        if (svg) svg.classList.remove('rotate-90');
+                        ic.classList.remove('text-sky-400', 'bg-sky-950/80');
+                    }
+                });
             };
 
             renderTypeChartAndTable(

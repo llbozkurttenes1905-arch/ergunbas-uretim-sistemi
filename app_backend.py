@@ -1697,7 +1697,19 @@ def get_mixer_summary(month: Optional[str] = None):
     if not available_months:
         available_months = ["2026-09"]
 
-    selected_month = month if (month and month in available_months) else available_months[-1]
+    if month and month in available_months:
+        selected_month = month
+    else:
+        months_with_mixer = set()
+        for k, d in daily_data.items():
+            if d.get("mixer") or d.get("kirim") or d.get("mikronize"):
+                dt = parse_date_label(d.get("date", ""))
+                if dt:
+                    months_with_mixer.add(f"{dt.year:04d}-{dt.month:02d}")
+        if months_with_mixer:
+            selected_month = sorted(list(months_with_mixer))[-1]
+        else:
+            selected_month = available_months[-1]
 
     # Seçili ayın günlerini filtrele
     month_days = {}

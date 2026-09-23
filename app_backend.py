@@ -17,7 +17,8 @@ from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.pdfbase import pdfmetrics
@@ -38,6 +39,41 @@ try:
 except Exception:
     PDF_FONT = "Helvetica"
     PDF_FONT_BOLD = "Helvetica-Bold"
+
+class NumberedCanvas(canvas.Canvas):
+    """Her sayfaya sayfa numarası ('Sayfa X / Y') ve kurumsal gizlilik alt bilgisi ekler."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._saved_page_states = []
+
+    def showPage(self):
+        self._saved_page_states.append(dict(self.__dict__))
+        self._startPage()
+
+    def save(self):
+        num_pages = len(self._saved_page_states)
+        for state in self._saved_page_states:
+            self.__dict__.update(state)
+            self.draw_page_number(num_pages)
+            super().showPage()
+        super().save()
+
+    def draw_page_number(self, page_count):
+        self.saveState()
+        self.setFont(PDF_FONT, 7.5)
+        self.setFillColor(colors.HexColor("#64748B"))
+        
+        # Alt Ayırıcı Çizgi
+        self.setStrokeColor(colors.HexColor("#E2E8F0"))
+        self.setLineWidth(0.5)
+        self.line(1.2 * cm, 1.2 * cm, 19.8 * cm, 1.2 * cm)
+
+        # Metinler
+        footer_text = "ERGÜNBAŞ Group — Günlük Yönetici Özeti (Gizli & Kurumsal Rapor)"
+        page_text = f"Sayfa {self._pageNumber} / {page_count}"
+        self.drawString(1.2 * cm, 0.8 * cm, footer_text)
+        self.drawRightString(19.8 * cm, 0.8 * cm, page_text)
+        self.restoreState()
 
 # ============================================================================
 # GITHUB TABANLI KALICI DEPOLAMA
@@ -2910,7 +2946,7 @@ def export_pdf():
 
 @app.get("/api/export_daily_pdf")
 def export_daily_pdf(date: Optional[str] = None):
-    """Belirli bir günün Günlük Yönetici Özeti (KPI, Vardiya Kırılımı, Kapı Kapasitesi, Hat Üretimleri, Duruşlar) PDF Raporunu oluşturur."""
+    """Belirli bir günün Günlük Yönetici Özeti (KPI, Vardiya Kırılımı, Kapı Kapasitesi, Kafa Sayılı Hat Üretimleri, Duruşlar) Resmi PDF Raporunu oluşturur."""
     data = load_data()
     daily_data = data.get("daily_data", {})
     if not daily_data:
@@ -2956,7 +2992,8 @@ def export_daily_pdf(date: Optional[str] = None):
         s_data = day_obj.get(shift_name, {})
         emp = s_data.get("employees", 0)
         tot_emp += emp
-        
+        shift_label = "Gündüz" if shift_name == "gunduz" else "Gece"
+
         for ext in s_data.get("extruders", []):
             p_kg = float(ext.get("prod_kg", 0) or 0)
             f_kg = float(ext.get("fire_kg", 0) or 0)
@@ -2964,12 +3001,18 @@ def export_daily_pdf(date: Optional[str] = None):
             ext_fire += f_kg
             shift_stats[shift_name]["prod"] += p_kg
             shift_stats[shift_name]["fire"] += f_kg
-            if p_kg > 0 or f_kg > 0:
+            if p_kg > 0 or f_kg > 0 or ext.get("product"):
+                try:
+                    h_val = int(float(ext.get("heads", 1) or 1))
+                except Exception:
+                    h_val = 1
+                heads_str = f"{h_val} Kafa"
                 line_rows.append([
-                    "Gündüz" if shift_name == "gunduz" else "Gece",
-                    ext.get("hat", ""),
-                    ext.get("product", ""),
-                    f"{ext.get('qty', 0)} ad",
+                    shift_label,
+                    str(ext.get("hat", "")),
+                    heads_str,
+                    ext.get("product", "") or "—",
+                    f"{int(float(ext.get('qty', 0) or 0))} ad",
                     f"{p_kg:,.1f} kg",
                     f"{f_kg:,.1f} kg"
                 ])
@@ -2981,12 +3024,13 @@ def export_daily_pdf(date: Optional[str] = None):
             lev_fire += f_kg
             shift_stats[shift_name]["prod"] += p_kg
             shift_stats[shift_name]["fire"] += f_kg
-            if p_kg > 0 or f_kg > 0:
+            if p_kg > 0 or f_kg > 0 or lev.get("color"):
                 line_rows.append([
-                    "Gündüz" if shift_name == "gunduz" else "Gece",
-                    lev.get("hat", ""),
-                    f"Levha ({lev.get('color', '')})",
-                    f"{lev.get('qty', 0)} plk",
+                    shift_label,
+                    str(lev.get("hat", "")),
+                    "1 Kafa",
+                    f"Levha ({lev.get('color', '')})" if lev.get("color") else "Levha",
+                    f"{int(float(lev.get('qty', 0) or 0))} plk",
                     f"{p_kg:,.1f} kg",
                     f"{f_kg:,.1f} kg"
                 ])
@@ -3003,56 +3047,93 @@ def export_daily_pdf(date: Optional[str] = None):
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
-        topMargin=1.2 * cm, bottomMargin=1.2 * cm,
+        topMargin=1.2 * cm, bottomMargin=1.6 * cm,
         leftMargin=1.2 * cm, rightMargin=1.2 * cm
     )
 
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=16, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
-    subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=9, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
-    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=11, textColor=colors.HexColor("#0F172A"), spaceBefore=10, spaceAfter=4)
-    normal_style = ParagraphStyle("NormalTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8)
-    kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
-    kpi_val_style = ParagraphStyle("KpiVal", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=12, alignment=TA_CENTER)
+    title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=14, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
+    subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8.5, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
+    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=10.5, textColor=colors.HexColor("#0F172A"), spaceBefore=10, spaceAfter=4)
 
-    def make_table(head_row, data_rows, col_widths=None, align_right_from=1):
-        rows = [head_row] + data_rows
-        t = Table(rows, colWidths=col_widths, repeatRows=1)
-        style_cmds = [
-            ("FONTNAME", (0, 0), (-1, 0), PDF_FONT_BOLD),
-            ("FONTNAME", (0, 1), (-1, -1), PDF_FONT),
-            ("FONTSIZE", (0, 0), (-1, -1), 8),
+    def make_table(head_row, data_rows, col_widths=None, align_cols=None):
+        n_cols = len(head_row)
+        if not align_cols:
+            align_cols = ['L'] + ['R'] * (n_cols - 1)
+
+        th_L = ParagraphStyle("TH_L", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_LEFT)
+        th_R = ParagraphStyle("TH_R", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_RIGHT)
+        th_C = ParagraphStyle("TH_C", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_CENTER)
+
+        td_L = ParagraphStyle("TD_L", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_LEFT, leading=9.5)
+        td_R = ParagraphStyle("TD_R", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_RIGHT, leading=9.5)
+        td_C = ParagraphStyle("TD_C", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_CENTER, leading=9.5)
+
+        def get_th(a): return th_R if a == 'R' else (th_C if a == 'C' else th_L)
+        def get_td(a): return td_R if a == 'R' else (td_C if a == 'C' else td_L)
+
+        formatted_rows = []
+        head_cells = []
+        for idx, val in enumerate(head_row):
+            a = align_cols[idx] if idx < len(align_cols) else 'L'
+            head_cells.append(val if isinstance(val, Paragraph) else Paragraph(str(val), get_th(a)))
+        formatted_rows.append(head_cells)
+
+        for r in data_rows:
+            row_cells = []
+            for idx, val in enumerate(r):
+                a = align_cols[idx] if idx < len(align_cols) else 'L'
+                row_cells.append(val if isinstance(val, Paragraph) else Paragraph(str(val), get_td(a)))
+            formatted_rows.append(row_cells)
+
+        t = Table(formatted_rows, colWidths=col_widths, repeatRows=1)
+        t.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0F172A")),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
             ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 3),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
-        ]
-        for col in range(align_right_from, len(head_row)):
-            style_cmds.append(("ALIGN", (col, 0), (col, -1), "RIGHT"))
-        t.setStyle(TableStyle(style_cmds))
+            ("TOPPADDING", (0, 0), (-1, -1), 3.5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
+            ("LEFTPADDING", (0, 0), (-1, -1), 4),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+        ]))
         return t
 
     story = []
 
-    # ---- HEADER ----
-    header_table_data = [
-        [
-            Paragraph("<b>ERGÜNBAŞ GROUP</b><br/><font size=9 color='#E11D48'>GÜNLÜK YÖNETİCİ ÜRETİM ÖZETİ RAPORU</font>", title_style),
-            Paragraph(f"<b>TARİH:</b> {date_str}<br/><font size=7 color='#64748B'>Rapor Zamanı: {datetime.now().strftime('%H:%M')}</font>", ParagraphStyle("HRight", parent=subtitle_style, alignment=TA_RIGHT))
+    # ---- KURUMSAL HEADER ----
+    logo_path = os.path.join(APP_DIR, "static", "logo.png")
+    if os.path.exists(logo_path):
+        header_left = [
+            RLImage(logo_path, width=4.2 * cm, height=1.25 * cm),
+            Spacer(1, 2),
+            Paragraph("<font size=9 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
         ]
+    else:
+        header_left = [
+            Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style),
+            Paragraph("<font size=9 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
+        ]
+
+    doc_no = f"EGS-RAPOR-{date_str.replace('.', '')}"
+    header_right = [
+        Paragraph(f"<b>TARİH:</b> {date_str}", ParagraphStyle("HDate", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=10, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)),
+        Paragraph(f"<b>Rapor No:</b> {doc_no}", ParagraphStyle("HNo", parent=subtitle_style, alignment=TA_RIGHT)),
+        Paragraph(f"<b>Basım Saati:</b> {datetime.now().strftime('%H:%M')}", ParagraphStyle("HTime", parent=subtitle_style, alignment=TA_RIGHT))
     ]
-    htable = Table(header_table_data, colWidths=[11.5 * cm, 6.5 * cm])
+
+    htable = Table([[header_left, header_right]], colWidths=[11.6 * cm, 7.0 * cm])
     htable.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6)
     ]))
     story.append(htable)
-    story.append(Spacer(1, 8))
+    story.append(Spacer(1, 6))
 
     # ---- KPI KARTLARI TABLOSU (4 SÜTUN x 2 SATIR) ----
+    kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
+    kpi_val_style = ParagraphStyle("KpiVal", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=11.5, alignment=TA_CENTER)
+
     kpi_matrix = [
         [
             Paragraph("TOPLAM ÜRETİM", kpi_label_style),
@@ -3064,7 +3145,7 @@ def export_daily_pdf(date: Optional[str] = None):
             Paragraph(f"{tot_prod_kg:,.1f} kg", kpi_val_style),
             Paragraph(f"{tot_fire_kg:,.1f} kg", ParagraphStyle("v1", parent=kpi_val_style, textColor=colors.HexColor("#D97706"))),
             Paragraph(f"%{fire_ratio:.2f}", ParagraphStyle("v2", parent=kpi_val_style, textColor=colors.HexColor("#EA580C"))),
-            Paragraph(f"{tot_emp} Kişi / {int(tot_downtime_min)} dk", ParagraphStyle("v3", parent=kpi_val_style, fontSize=10, textColor=colors.HexColor("#4F46E5"))),
+            Paragraph(f"{tot_emp} Kişi / {int(tot_downtime_min)} dk", ParagraphStyle("v3", parent=kpi_val_style, fontSize=9.5, textColor=colors.HexColor("#4F46E5"))),
         ],
         [
             Paragraph("KG / ÇALIŞAN", kpi_label_style),
@@ -3076,10 +3157,10 @@ def export_daily_pdf(date: Optional[str] = None):
             Paragraph(f"{kg_per_emp:.1f} kg", kpi_val_style),
             Paragraph(f"{kg_per_hour:.1f} kg/sa", kpi_val_style),
             Paragraph(f"{door_stats.get('completable_doors', 0)} Adet", ParagraphStyle("v4", parent=kpi_val_style, textColor=colors.HexColor("#059669"))),
-            Paragraph("24 Saat Aktif", ParagraphStyle("v5", parent=kpi_val_style, fontSize=10)),
+            Paragraph("24 Saat Aktif", ParagraphStyle("v5", parent=kpi_val_style, fontSize=9.5)),
         ]
     ]
-    t_kpi = Table(kpi_matrix, colWidths=[4.5 * cm] * 4)
+    t_kpi = Table(kpi_matrix, colWidths=[4.65 * cm] * 4)
     t_kpi.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
         ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
@@ -3088,7 +3169,7 @@ def export_daily_pdf(date: Optional[str] = None):
         ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
     ]))
     story.append(t_kpi)
-    story.append(Spacer(1, 8))
+    story.append(Spacer(1, 6))
 
     # ---- VARDİYA BAZINDA KIRILIM TABLOSU ----
     story.append(Paragraph("Vardiya Bazında Üretim & Fire Kırılımı", h2_style))
@@ -3101,8 +3182,8 @@ def export_daily_pdf(date: Optional[str] = None):
         fr = (f / (p + f) * 100) if (p + f) > 0 else 0.0
         kpe = (p / st["emp"]) if st["emp"] > 0 else 0.0
         v_rows.append([s_lbl, f"{st['emp']} kişi", f"{p:,.1f} kg", f"{f:,.1f} kg", f"%{fr:.2f}", f"{kpe:.1f} kg"])
-    story.append(make_table(v_head, v_rows, col_widths=[4 * cm, 2.5 * cm, 3 * cm, 3 * cm, 2.5 * cm, 3 * cm]))
-    story.append(Spacer(1, 8))
+    story.append(make_table(v_head, v_rows, col_widths=[4.1 * cm, 2.5 * cm, 3.0 * cm, 3.0 * cm, 2.5 * cm, 3.5 * cm], align_cols=['L', 'R', 'R', 'R', 'R', 'R']))
+    story.append(Spacer(1, 6))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ) TABLOSU ----
     story.append(Paragraph("Kapı Kapasitesi (Reçete Eşdeğeri) Dökümü", h2_style))
@@ -3121,35 +3202,37 @@ def export_daily_pdf(date: Optional[str] = None):
             f"{cd.get('door_eq', 0):,.1f} kapı",
             f"{cd.get('carryover', 0):,.1f}"
         ])
-    story.append(make_table(door_head, door_rows, col_widths=[3 * cm, 2.5 * cm, 2.5 * cm, 2.5 * cm, 2.5 * cm, 2.5 * cm, 2.5 * cm]))
-    story.append(Spacer(1, 8))
+    story.append(make_table(door_head, door_rows, col_widths=[3.0 * cm, 2.6 * cm, 2.6 * cm, 2.6 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['L', 'R', 'R', 'R', 'C', 'R', 'R']))
+    story.append(Spacer(1, 6))
 
-    # ---- HAT BAZINDA DÖKÜM TABLOSU ----
+    # ---- HAT BAZINDA DÖKÜM TABLOSU (KAFA SAYISI DAHİL) ----
     if line_rows:
-        story.append(Paragraph("Hat Bazında Günlük Üretim ve Fire Detayı", h2_style))
-        line_head = ["Vardiya", "Hat", "Ürün / Profil", "Adet / Plaka", "Üretim (kg)", "Fire (kg)"]
-        story.append(make_table(line_head, line_rows[:25], col_widths=[2.5 * cm, 3 * cm, 5.5 * cm, 2.5 * cm, 2.2 * cm, 2.3 * cm]))
-        story.append(Spacer(1, 8))
+        story.append(Paragraph("Hat Bazında Günlük Üretim ve Fire Detayı (Kafa Sayıları Dahil)", h2_style))
+        line_head = ["Vardiya", "Hat No", "Kafa Sayısı", "Ürün / Profil", "Adet / Plaka", "Üretim (kg)", "Fire (kg)"]
+        story.append(make_table(line_head, line_rows, col_widths=[2.2 * cm, 1.8 * cm, 1.8 * cm, 5.0 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['C', 'C', 'C', 'L', 'R', 'R', 'R']))
+        story.append(Spacer(1, 6))
 
     # ---- DURUŞ VE FİRE SEBEPLERİ TABLOSU ----
     dt_list = day_obj.get("downtimes", [])
     if dt_list:
         story.append(Paragraph("Günlük Duruş ve Fire Nedenleri", h2_style))
-        dt_head = ["Vardiya", "Hat", "Fire Sebebi", "Fire (kg)", "Duruş Sebebi", "Duruş (dk)", "Açıklama"]
+        dt_head = ["Vardiya", "Hat No", "Fire Sebebi", "Fire (kg)", "Duruş Sebebi", "Duruş (dk)", "Açıklama"]
         dt_rows = []
         for dt in dt_list:
+            s_val = dt.get("shift", "")
+            s_label = "Gündüz" if s_val in ["gunduz", "Gündüz"] else ("Gece" if s_val in ["gece", "Gece"] else s_val)
             dt_rows.append([
-                dt.get("shift", ""),
-                dt.get("hat", ""),
+                s_label,
+                str(dt.get("hat", "")),
                 dt.get("fire_reason", "") or "—",
-                f"{float(dt.get('fire_kg', 0) or 0):,.1f}",
+                f"{float(dt.get('fire_kg', 0) or 0):,.1f} kg",
                 dt.get("down_reason", "") or "—",
                 f"{int(float(dt.get('down_min', 0) or 0))} dk",
                 dt.get("desc", "") or "—"
             ])
-        story.append(make_table(dt_head, dt_rows, col_widths=[2 * cm, 2.5 * cm, 3 * cm, 2 * cm, 3 * cm, 2 * cm, 3.5 * cm]))
+        story.append(make_table(dt_head, dt_rows, col_widths=[2.2 * cm, 1.6 * cm, 3.2 * cm, 2.0 * cm, 3.4 * cm, 2.0 * cm, 4.2 * cm], align_cols=['C', 'C', 'L', 'R', 'L', 'R', 'L']))
 
-    doc.build(story)
+    doc.build(story, canvasmaker=NumberedCanvas)
     buf.seek(0)
 
     filename = f"ERGUNBAS_Gunluk_Rapor_{date_str}.pdf"

@@ -2946,73 +2946,93 @@ def export_pdf():
 
 @app.get("/api/export_daily_pdf")
 def export_daily_pdf(date: Optional[str] = None):
-    """Belirli bir günün Günlük Yönetici Özeti (KPI, Vardiya Kırılımı, Kapı Kapasitesi, Kafa Sayılı Hat Üretimleri, Duruşlar) Resmi PDF Raporunu oluşturur."""
-    data = load_data()
-    daily_data = data.get("daily_data", {})
-    if not daily_data:
+    """Belirli bir günün Günlük Yönetici Özeti (KPI, Ekstrüder/Levha Ayrı Kırılımları, Devir Zincirli Kapı Kapasitesi, Kafa Sayılı Hat Üretimleri, Duruşlar) Resmi PDF Raporunu oluşturur."""
+    dash = get_dashboard_summary()
+    daily_chart = dash.get("daily_chart", [])
+    if not daily_chart:
         raise HTTPException(status_code=404, detail="Veri bulunamadı.")
 
-    target_key = None
+    target_day = None
     if date:
         date_clean = date.strip()
-        if date_clean in daily_data:
-            target_key = date_clean
-        else:
-            for k, d in daily_data.items():
-                if d.get("date") == date_clean:
-                    target_key = k
-                    break
+        # 1. Doğrudan DD.MM.YYYY veya key eşleşmesi
+        for d in daily_chart:
+            if d.get("date") == date_clean or str(d.get("key")) == date_clean:
+                target_day = d
+                break
+        # 2. YYYY-MM-DD (ISO) eşleşmesi
+        if not target_day:
+            parts = date_clean.split("-")
+            if len(parts) == 3:
+                iso_conv = f"{parts[2]}.{parts[1]}.{parts[0]}"
+                for d in daily_chart:
+                    if d.get("date") == iso_conv:
+                        target_day = d
+                        break
 
-    if not target_key:
-        sorted_keys = get_sorted_day_keys(daily_data)
-        target_key = sorted_keys[-1]
+    if not target_day:
+        # Verisi olan en güncel günü seç
+        days_with_data = [d for d in daily_chart if (d.get("prod_kg", 0) > 0 or d.get("fire_kg", 0) > 0)]
+        target_day = days_with_data[-1] if days_with_data else daily_chart[-1]
 
-    day_obj = daily_data[target_key]
-    date_str = day_obj.get("date", target_key)
+    date_str = target_day.get("date", "")
+    target_key = str(target_day.get("key", ""))
 
-    # Kapı Kapasitesi Hesapla
-    door_stats = compute_door_capacity(data, filter_date_keys=[target_key])
+    data = load_data()
+    day_obj = data.get("daily_data", {}).get(target_key, {})
 
-    # Günlük Üretim & Fire Hesapla
-    ext_prod = 0.0
-    ext_fire = 0.0
-    lev_prod = 0.0
-    lev_fire = 0.0
-    tot_emp = 0
-    tot_downtime_min = 0.0
+    # Ana Metrikler (Dashboard ile %100 Birebir Eşleşen Veriler)
+    tot_prod_kg = float(target_day.get("prod_kg", 0) or 0)
+    tot_fire_kg = float(target_day.get("fire_kg", 0) or 0)
+    fire_ratio = float(target_day.get("fire_ratio", 0) or 0)
+    tot_emp = int(target_day.get("employees", 0) or 0)
+    tot_hours = float(target_day.get("hours", 0) or 0)
+    tot_downtime = float(target_day.get("downtime_min", 0) or 0)
+    kg_per_emp = float(target_day.get("kg_per_employee", 0) or 0)
+    kg_per_hour = float(target_day.get("kg_per_hour", 0) or 0)
 
-    shift_stats = {
-        "gunduz": {"prod": 0.0, "fire": 0.0, "emp": day_obj.get("gunduz", {}).get("employees", 0), "hours": day_obj.get("gunduz", {}).get("hours", 12)},
-        "gece": {"prod": 0.0, "fire": 0.0, "emp": day_obj.get("gece", {}).get("employees", 0), "hours": day_obj.get("gece", {}).get("hours", 12)},
-    }
+    ext_sum = target_day.get("extruder_summary", {})
+    lev_sum = target_day.get("levha_summary", {})
 
-    line_rows = []
+    ext_p = float(ext_sum.get("total_prod_kg", 0) or 0)
+    ext_f = float(ext_sum.get("total_fire_kg", 0) or 0)
+    ext_fr = float(ext_sum.get("fire_ratio", 0) or 0)
+    ext_p_pct = round((ext_p / tot_prod_kg * 100), 1) if tot_prod_kg > 0 else 0.0
+    ext_f_pct = round((ext_f / tot_fire_kg * 100), 1) if tot_fire_kg > 0 else 0.0
 
-    for shift_name in ["gunduz", "gece"]:
+    lev_p = float(lev_sum.get("total_prod_kg", 0) or 0)
+    lev_f = float(lev_sum.get("total_fire_kg", 0) or 0)
+    lev_fr = float(lev_sum.get("fire_ratio", 0) or 0)
+    lev_p_pct = round((lev_p / tot_prod_kg * 100), 1) if tot_prod_kg > 0 else 0.0
+    lev_f_pct = round((lev_f / tot_fire_kg * 100), 1) if tot_fire_kg > 0 else 0.0
+
+    door_stats = target_day.get("door_stats", {})
+    completable_doors = door_stats.get("completable_doors", 0)
+
+    # Ekstrüder ve Levha Hat Detaylarını Topla
+    ext_rows = []
+    lev_rows = []
+    ext_total_qty = 0
+    lev_total_qty = 0
+
+    for shift_name, shift_lbl in [("gunduz", "Gündüz"), ("gece", "Gece")]:
         s_data = day_obj.get(shift_name, {})
-        emp = s_data.get("employees", 0)
-        tot_emp += emp
-        shift_label = "Gündüz" if shift_name == "gunduz" else "Gece"
-
         for ext in s_data.get("extruders", []):
             p_kg = float(ext.get("prod_kg", 0) or 0)
             f_kg = float(ext.get("fire_kg", 0) or 0)
-            ext_prod += p_kg
-            ext_fire += f_kg
-            shift_stats[shift_name]["prod"] += p_kg
-            shift_stats[shift_name]["fire"] += f_kg
+            qty = int(float(ext.get("qty", 0) or 0))
             if p_kg > 0 or f_kg > 0 or ext.get("product"):
                 try:
                     h_val = int(float(ext.get("heads", 1) or 1))
                 except Exception:
                     h_val = 1
-                heads_str = f"{h_val} Kafa"
-                line_rows.append([
-                    shift_label,
+                ext_total_qty += qty
+                ext_rows.append([
+                    shift_lbl,
                     str(ext.get("hat", "")),
-                    heads_str,
+                    f"{h_val} Kafa",
                     ext.get("product", "") or "—",
-                    f"{int(float(ext.get('qty', 0) or 0))} ad",
+                    f"{qty:,} ad",
                     f"{p_kg:,.1f} kg",
                     f"{f_kg:,.1f} kg"
                 ])
@@ -3020,54 +3040,42 @@ def export_daily_pdf(date: Optional[str] = None):
         for lev in s_data.get("levha", []):
             p_kg = float(lev.get("total_kg", 0) or 0)
             f_kg = float(lev.get("dead_fire_kg", 0) or 0)
-            lev_prod += p_kg
-            lev_fire += f_kg
-            shift_stats[shift_name]["prod"] += p_kg
-            shift_stats[shift_name]["fire"] += f_kg
+            qty = int(float(lev.get("qty", 0) or 0))
             if p_kg > 0 or f_kg > 0 or lev.get("color"):
-                line_rows.append([
-                    shift_label,
+                lev_total_qty += qty
+                lev_rows.append([
+                    shift_lbl,
                     str(lev.get("hat", "")),
-                    "1 Kafa",
                     f"Levha ({lev.get('color', '')})" if lev.get("color") else "Levha",
-                    f"{int(float(lev.get('qty', 0) or 0))} plk",
+                    f"{qty:,} plk",
                     f"{p_kg:,.1f} kg",
                     f"{f_kg:,.1f} kg"
                 ])
 
-    for dt_item in day_obj.get("downtimes", []):
-        tot_downtime_min += float(dt_item.get("down_min", 0) or 0)
-
-    tot_prod_kg = ext_prod + lev_prod
-    tot_fire_kg = ext_fire + lev_fire
-    fire_ratio = (tot_fire_kg / (tot_prod_kg + tot_fire_kg) * 100) if (tot_prod_kg + tot_fire_kg) > 0 else 0.0
-    kg_per_emp = (tot_prod_kg / tot_emp) if tot_emp > 0 else 0.0
-    kg_per_hour = (tot_prod_kg / 24.0) if tot_prod_kg > 0 else 0.0
-
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
-        topMargin=1.2 * cm, bottomMargin=1.6 * cm,
+        topMargin=1.0 * cm, bottomMargin=1.5 * cm,
         leftMargin=1.2 * cm, rightMargin=1.2 * cm
     )
 
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=14, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
-    subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8.5, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
-    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=10.5, textColor=colors.HexColor("#0F172A"), spaceBefore=10, spaceAfter=4)
+    title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=13, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
+    subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
+    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=10, textColor=colors.HexColor("#0F172A"), spaceBefore=8, spaceAfter=3)
 
     def make_table(head_row, data_rows, col_widths=None, align_cols=None):
         n_cols = len(head_row)
         if not align_cols:
             align_cols = ['L'] + ['R'] * (n_cols - 1)
 
-        th_L = ParagraphStyle("TH_L", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_LEFT)
-        th_R = ParagraphStyle("TH_R", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_RIGHT)
-        th_C = ParagraphStyle("TH_C", fontName=PDF_FONT_BOLD, fontSize=8, textColor=colors.white, alignment=TA_CENTER)
+        th_L = ParagraphStyle("TH_L", fontName=PDF_FONT_BOLD, fontSize=7.5, textColor=colors.white, alignment=TA_LEFT)
+        th_R = ParagraphStyle("TH_R", fontName=PDF_FONT_BOLD, fontSize=7.5, textColor=colors.white, alignment=TA_RIGHT)
+        th_C = ParagraphStyle("TH_C", fontName=PDF_FONT_BOLD, fontSize=7.5, textColor=colors.white, alignment=TA_CENTER)
 
-        td_L = ParagraphStyle("TD_L", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_LEFT, leading=9.5)
-        td_R = ParagraphStyle("TD_R", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_RIGHT, leading=9.5)
-        td_C = ParagraphStyle("TD_C", fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#1E293B"), alignment=TA_CENTER, leading=9.5)
+        td_L = ParagraphStyle("TD_L", fontName=PDF_FONT, fontSize=7, textColor=colors.HexColor("#1E293B"), alignment=TA_LEFT, leading=9)
+        td_R = ParagraphStyle("TD_R", fontName=PDF_FONT, fontSize=7, textColor=colors.HexColor("#1E293B"), alignment=TA_RIGHT, leading=9)
+        td_C = ParagraphStyle("TD_C", fontName=PDF_FONT, fontSize=7, textColor=colors.HexColor("#1E293B"), alignment=TA_CENTER, leading=9)
 
         def get_th(a): return th_R if a == 'R' else (th_C if a == 'C' else th_L)
         def get_td(a): return td_R if a == 'R' else (td_C if a == 'C' else td_L)
@@ -3092,10 +3100,10 @@ def export_daily_pdf(date: Optional[str] = None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
             ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 3.5),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5),
-            ("LEFTPADDING", (0, 0), (-1, -1), 4),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ("LEFTPADDING", (0, 0), (-1, -1), 3.5),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 3.5),
         ]))
         return t
 
@@ -3104,11 +3112,11 @@ def export_daily_pdf(date: Optional[str] = None):
     # ---- KURUMSAL HEADER ----
     logo_path = os.path.join(APP_DIR, "static", "logo.png")
     if os.path.exists(logo_path):
-        logo_img = RLImage(logo_path, width=1.4 * cm, height=1.4 * cm)
+        logo_img = RLImage(logo_path, width=1.35 * cm, height=1.35 * cm)
         header_title = Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style)
-        header_sub = Paragraph("<font size=8.5 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
+        header_sub = Paragraph("<font size=8 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
         
-        logo_text_cell = Table([[logo_img, [header_title, Spacer(1, 1), header_sub]]], colWidths=[1.6 * cm, 10.0 * cm])
+        logo_text_cell = Table([[logo_img, [header_title, Spacer(1, 1), header_sub]]], colWidths=[1.55 * cm, 10.05 * cm])
         logo_text_cell.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
             ("LEFTPADDING", (0, 0), (-1, -1), 0),
@@ -3120,27 +3128,27 @@ def export_daily_pdf(date: Optional[str] = None):
     else:
         header_left = [
             Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style),
-            Paragraph("<font size=8.5 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
+            Paragraph("<font size=8 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
         ]
 
     doc_no = f"EGS-RAPOR-{date_str.replace('.', '')}"
     header_right = [
-        Paragraph(f"<b>TARİH:</b> {date_str}", ParagraphStyle("HDate", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=10, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)),
-        Paragraph(f"<b>Rapor No:</b> {doc_no}", ParagraphStyle("HNo", parent=subtitle_style, alignment=TA_RIGHT)),
-        Paragraph(f"<b>Basım Saati:</b> {datetime.now().strftime('%H:%M')}", ParagraphStyle("HTime", parent=subtitle_style, alignment=TA_RIGHT))
+        Paragraph(f"<b>TARİH:</b> {date_str}", ParagraphStyle("HDate", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=9.5, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)),
+        Paragraph(f"<b>Rapor No:</b> {doc_no}", ParagraphStyle("HNo", parent=subtitle_style, fontSize=7.5, alignment=TA_RIGHT)),
+        Paragraph(f"<b>Basım Saati:</b> {datetime.now().strftime('%H:%M')}", ParagraphStyle("HTime", parent=subtitle_style, fontSize=7.5, alignment=TA_RIGHT))
     ]
 
     htable = Table([[header_left, header_right]], colWidths=[11.6 * cm, 7.0 * cm])
     htable.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6)
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4)
     ]))
     story.append(htable)
-    story.append(Spacer(1, 6))
+    story.append(Spacer(1, 4))
 
-    # ---- KPI KARTLARI TABLOSU (4 SÜTUN x 2 SATIR) ----
-    kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
-    kpi_val_style = ParagraphStyle("KpiVal", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=11.5, alignment=TA_CENTER)
+    # ---- KPI KARTLARI TABLOSU (EKSTRÜDER VE LEVHA KIRILIMLARIYLA) ----
+    kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
+    kpi_val_style = ParagraphStyle("KpiVal", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=11, alignment=TA_CENTER)
 
     kpi_matrix = [
         [
@@ -3150,22 +3158,22 @@ def export_daily_pdf(date: Optional[str] = None):
             Paragraph("ÇALIŞAN / DURUŞ", kpi_label_style),
         ],
         [
-            Paragraph(f"{tot_prod_kg:,.1f} kg", kpi_val_style),
-            Paragraph(f"{tot_fire_kg:,.1f} kg", ParagraphStyle("v1", parent=kpi_val_style, textColor=colors.HexColor("#D97706"))),
-            Paragraph(f"%{fire_ratio:.2f}", ParagraphStyle("v2", parent=kpi_val_style, textColor=colors.HexColor("#EA580C"))),
-            Paragraph(f"{tot_emp} Kişi / {int(tot_downtime_min)} dk", ParagraphStyle("v3", parent=kpi_val_style, fontSize=9.5, textColor=colors.HexColor("#4F46E5"))),
+            Paragraph(f"{tot_prod_kg:,.1f} kg<br/><font size=6.5 color='#0284C7'><b>Eks:</b> {ext_p:,.1f} kg (%{ext_p_pct})</font><br/><font size=6.5 color='#C026D3'><b>Lev:</b> {lev_p:,.1f} kg (%{lev_p_pct})</font>", kpi_val_style),
+            Paragraph(f"{tot_fire_kg:,.1f} kg<br/><font size=6.5 color='#0284C7'><b>Eks:</b> {ext_f:,.1f} kg (%{ext_f_pct})</font><br/><font size=6.5 color='#C026D3'><b>Lev:</b> {lev_f:,.1f} kg (%{lev_f_pct})</font>", ParagraphStyle("v1", parent=kpi_val_style, textColor=colors.HexColor("#D97706"))),
+            Paragraph(f"%{fire_ratio:.2f}<br/><font size=6.5 color='#0284C7'><b>Eks:</b> %{ext_fr:.2f}</font><br/><font size=6.5 color='#C026D3'><b>Lev:</b> %{lev_fr:.2f}</font>", ParagraphStyle("v2", parent=kpi_val_style, textColor=colors.HexColor("#EA580C"))),
+            Paragraph(f"{tot_emp} Kişi / {int(tot_downtime)} dk<br/><font size=6.5 color='#475569'><b>Net Çalışma:</b> {tot_hours:.1f} sa</font><br/><font size=6.5 color='#475569'><b>Duruş:</b> {int(tot_downtime)} dk</font>", ParagraphStyle("v3", parent=kpi_val_style, textColor=colors.HexColor("#4F46E5"))),
         ],
         [
             Paragraph("KG / ÇALIŞAN", kpi_label_style),
             Paragraph("SAATLİK ÜRETİM", kpi_label_style),
             Paragraph("TAM KAPI EŞDEĞERİ", kpi_label_style),
-            Paragraph("KAPASİTE KULLANIM", kpi_label_style),
+            Paragraph("ÇALIŞMA DURUMU", kpi_label_style),
         ],
         [
-            Paragraph(f"{kg_per_emp:.1f} kg", kpi_val_style),
-            Paragraph(f"{kg_per_hour:.1f} kg/sa", kpi_val_style),
-            Paragraph(f"{door_stats.get('completable_doors', 0)} Adet", ParagraphStyle("v4", parent=kpi_val_style, textColor=colors.HexColor("#059669"))),
-            Paragraph("24 Saat Aktif", ParagraphStyle("v5", parent=kpi_val_style, fontSize=9.5)),
+            Paragraph(f"{kg_per_emp:.1f} kg<br/><font size=6.5 color='#64748B'>Kişi başı ortalama net</font>", kpi_val_style),
+            Paragraph(f"{kg_per_hour:.1f} kg/sa<br/><font size=6.5 color='#64748B'>24 saat fabrika ortalaması</font>", kpi_val_style),
+            Paragraph(f"{completable_doors} Adet<br/><font size=6.5 color='#059669'>Reçete darboğaz sonucu</font>", ParagraphStyle("v4", parent=kpi_val_style, textColor=colors.HexColor("#059669"))),
+            Paragraph("24 Saat Aktif<br/><font size=6.5 color='#64748B'>Çift vardiya çalışma</font>", ParagraphStyle("v5", parent=kpi_val_style, fontSize=10)),
         ]
     ]
     t_kpi = Table(kpi_matrix, colWidths=[4.65 * cm] * 4)
@@ -3173,52 +3181,72 @@ def export_daily_pdf(date: Optional[str] = None):
         ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
         ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
         ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-        ("TOPPADDING", (0, 0), (-1, -1), 4),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+        ("TOPPADDING", (0, 0), (-1, -1), 3),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
     ]))
     story.append(t_kpi)
-    story.append(Spacer(1, 6))
+    story.append(Spacer(1, 4))
 
     # ---- VARDİYA BAZINDA KIRILIM TABLOSU ----
     story.append(Paragraph("Vardiya Bazında Üretim & Fire Kırılımı", h2_style))
-    v_head = ["Vardiya", "Çalışan", "Üretim (kg)", "Fire (kg)", "Fire Oranı", "Kg / Personel"]
+    v_head = ["Vardiya", "Çalışan", "Üretim (kg)", "Fire (kg)", "Fire Oranı", "Kg / Personel", "Saatlik (Net)"]
     v_rows = []
+    shifts_data = target_day.get("shifts", {})
     for s_key, s_lbl in [("gunduz", "Gündüz Vardiyası"), ("gece", "Gece Vardiyası")]:
-        st = shift_stats[s_key]
-        p = st["prod"]
-        f = st["fire"]
-        fr = (f / (p + f) * 100) if (p + f) > 0 else 0.0
-        kpe = (p / st["emp"]) if st["emp"] > 0 else 0.0
-        v_rows.append([s_lbl, f"{st['emp']} kişi", f"{p:,.1f} kg", f"{f:,.1f} kg", f"%{fr:.2f}", f"{kpe:.1f} kg"])
-    story.append(make_table(v_head, v_rows, col_widths=[4.1 * cm, 2.5 * cm, 3.0 * cm, 3.0 * cm, 2.5 * cm, 3.5 * cm], align_cols=['L', 'R', 'R', 'R', 'R', 'R']))
-    story.append(Spacer(1, 6))
+        st = shifts_data.get(s_key, {})
+        p = float(st.get("prod_kg", 0) or 0)
+        f = float(st.get("fire_kg", 0) or 0)
+        fr = float(st.get("fire_ratio", 0) or 0)
+        emp = int(st.get("employees", 0) or 0)
+        kpe = float(st.get("kg_per_employee", 0) or 0)
+        kph = float(st.get("kg_per_hour_net", 0) or 0)
+        v_rows.append([s_lbl, f"{emp} kişi", f"{p:,.1f} kg", f"{f:,.1f} kg", f"%{fr:.2f}", f"{kpe:.1f} kg", f"{kph:.1f} kg/sa"])
+    # Toplam satırı
+    v_rows.append(["GENEL TOPLAM", f"{tot_emp} kişi", f"{tot_prod_kg:,.1f} kg", f"{tot_fire_kg:,.1f} kg", f"%{fire_ratio:.2f}", f"{kg_per_emp:.1f} kg", f"{kg_per_hour:.1f} kg/sa"])
+    t_v = make_table(v_head, v_rows, col_widths=[3.8 * cm, 2.2 * cm, 2.7 * cm, 2.7 * cm, 2.2 * cm, 2.5 * cm, 2.5 * cm], align_cols=['L', 'R', 'R', 'R', 'R', 'R', 'R'])
+    story.append(t_v)
+    story.append(Spacer(1, 4))
 
-    # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ) TABLOSU ----
-    story.append(Paragraph("Kapı Kapasitesi (Reçete Eşdeğeri) Dökümü", h2_style))
+    # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----
+    story.append(Paragraph(f"Kapı Kapasitesi (Reçete Eşdeğeri & Devir Zinciri) — Tamamlanan: {completable_doors} Adet Kapı", h2_style))
     door_head = ["Kategori", "Dünden Devir", "Bugünkü Üretim", "Toplam Havuz", "Reçete Oranı", "Kapı Eşdeğeri", "Yarına Devir"]
     door_rows = []
     details = door_stats.get("details", {})
-    cat_names = {"pervaz": "Pervaz", "kasa": "Kasa", "seren": "Seren", "levha": "Levha"}
-    for cat_key, cat_lbl in cat_names.items():
+    cat_names = [("pervaz", "Pervaz"), ("kasa", "Kasa"), ("seren", "Seren"), ("levha", "Levha")]
+    for cat_key, cat_lbl in cat_names:
         cd = details.get(cat_key, {})
         door_rows.append([
             cat_lbl,
-            f"{cd.get('carryover', 0):,.1f}",
-            f"{cd.get('produced', 0):,.1f}",
-            f"{(cd.get('carryover', 0) + cd.get('produced', 0)):,.1f}",
+            f"{float(cd.get('carryover_in', 0) or 0):,.1f}",
+            f"{float(cd.get('produced', 0) or 0):,.1f}",
+            f"{float(cd.get('available', 0) or 0):,.1f}",
             f"{cd.get('req_per_door', 0)} ad",
-            f"{cd.get('door_eq', 0):,.1f} kapı",
-            f"{cd.get('carryover', 0):,.1f}"
+            f"{float(cd.get('door_eq', 0) or 0):,.1f} kapı",
+            f"{float(cd.get('carryover', 0) or 0):,.1f}"
         ])
-    story.append(make_table(door_head, door_rows, col_widths=[3.0 * cm, 2.6 * cm, 2.6 * cm, 2.6 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['L', 'R', 'R', 'R', 'C', 'R', 'R']))
-    story.append(Spacer(1, 6))
+    t_door = make_table(door_head, door_rows, col_widths=[3.0 * cm, 2.6 * cm, 2.6 * cm, 2.6 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['L', 'R', 'R', 'R', 'C', 'R', 'R'])
+    story.append(t_door)
+    story.append(Spacer(1, 4))
 
-    # ---- HAT BAZINDA DÖKÜM TABLOSU (KAFA SAYISI DAHİL) ----
-    if line_rows:
-        story.append(Paragraph("Hat Bazında Günlük Üretim ve Fire Detayı (Kafa Sayıları Dahil)", h2_style))
-        line_head = ["Vardiya", "Hat No", "Kafa Sayısı", "Ürün / Profil", "Adet / Plaka", "Üretim (kg)", "Fire (kg)"]
-        story.append(make_table(line_head, line_rows, col_widths=[2.2 * cm, 1.8 * cm, 1.8 * cm, 5.0 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['C', 'C', 'C', 'L', 'R', 'R', 'R']))
-        story.append(Spacer(1, 6))
+    # ---- EKSTRÜDER HATLARI TABLOSU (KAFA SAYILARI DAHİL) ----
+    if ext_rows:
+        story.append(Paragraph(f"Ekstrüder Hatları Üretim ve Fire Detayı ({len(ext_rows)} Kayıt)", h2_style))
+        ext_head = ["Vardiya", "Hat No", "Kafa Sayısı", "Ürün / Profil", "Adet", "Üretim (kg)", "Fire (kg)"]
+        ext_rows_with_total = ext_rows + [
+            ["TOPLAM (Ekstrüder)", "-", "-", f"{len(ext_rows)} hat kaydı", f"{ext_total_qty:,} ad", f"{ext_p:,.1f} kg", f"{ext_f:,.1f} kg"]
+        ]
+        story.append(make_table(ext_head, ext_rows_with_total, col_widths=[2.2 * cm, 1.8 * cm, 1.8 * cm, 5.0 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['C', 'C', 'C', 'L', 'R', 'R', 'R']))
+        story.append(Spacer(1, 4))
+
+    # ---- LEVHA HATLARI TABLOSU ----
+    if lev_rows:
+        story.append(Paragraph(f"Levha Hatları Üretim ve Fire Detayı ({len(lev_rows)} Kayıt)", h2_style))
+        lev_head = ["Vardiya", "Hat No", "Ürün / Renk", "Plaka", "Üretim (kg)", "Fire (kg)"]
+        lev_rows_with_total = lev_rows + [
+            ["TOPLAM (Levha)", "-", f"{len(lev_rows)} hat kaydı", f"{lev_total_qty:,} plk", f"{lev_p:,.1f} kg", f"{lev_f:,.1f} kg"]
+        ]
+        story.append(make_table(lev_head, lev_rows_with_total, col_widths=[2.2 * cm, 2.0 * cm, 7.0 * cm, 2.2 * cm, 2.6 * cm, 2.6 * cm], align_cols=['C', 'C', 'L', 'R', 'R', 'R']))
+        story.append(Spacer(1, 4))
 
     # ---- DURUŞ VE FİRE SEBEPLERİ TABLOSU ----
     dt_list = day_obj.get("downtimes", [])

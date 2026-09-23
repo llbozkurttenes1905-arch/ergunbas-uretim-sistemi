@@ -8267,7 +8267,7 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Operatör izinli.",
-          "down_min": 0.0,
+          "down_min": 720.0,
           "desc": "Operatör eksikliğinden dolayı çalıştırılmadı."
         }
       ],

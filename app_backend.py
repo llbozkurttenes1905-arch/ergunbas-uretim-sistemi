@@ -3104,15 +3104,23 @@ def export_daily_pdf(date: Optional[str] = None):
     # ---- KURUMSAL HEADER ----
     logo_path = os.path.join(APP_DIR, "static", "logo.png")
     if os.path.exists(logo_path):
-        header_left = [
-            RLImage(logo_path, width=4.2 * cm, height=1.25 * cm),
-            Spacer(1, 2),
-            Paragraph("<font size=9 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
-        ]
+        logo_img = RLImage(logo_path, width=1.4 * cm, height=1.4 * cm)
+        header_title = Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style)
+        header_sub = Paragraph("<font size=8.5 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
+        
+        logo_text_cell = Table([[logo_img, [header_title, Spacer(1, 1), header_sub]]], colWidths=[1.6 * cm, 10.0 * cm])
+        logo_text_cell.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ]))
+        header_left = logo_text_cell
     else:
         header_left = [
             Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style),
-            Paragraph("<font size=9 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
+            Paragraph("<font size=8.5 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM & PERFORMANS RAPORU</b></font>", subtitle_style)
         ]
 
     doc_no = f"EGS-RAPOR-{date_str.replace('.', '')}"
@@ -3175,7 +3183,7 @@ def export_daily_pdf(date: Optional[str] = None):
     story.append(Paragraph("Vardiya Bazında Üretim & Fire Kırılımı", h2_style))
     v_head = ["Vardiya", "Çalışan", "Üretim (kg)", "Fire (kg)", "Fire Oranı", "Kg / Personel"]
     v_rows = []
-    for s_key, s_lbl in [("gunduz", "☀️ Gündüz Vardiyası"), ("gece", "🌙 Gece Vardiyası")]:
+    for s_key, s_lbl in [("gunduz", "Gündüz Vardiyası"), ("gece", "Gece Vardiyası")]:
         st = shift_stats[s_key]
         p = st["prod"]
         f = st["fire"]

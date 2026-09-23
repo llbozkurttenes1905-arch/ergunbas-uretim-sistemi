@@ -272,17 +272,16 @@ def require_editor(x_username: Optional[str]):
         raise HTTPException(status_code=403, detail="Salt okunur yetkiniz var, veri girişi/düzenleme yapamazsınız.")
 
 def require_daily_operator(x_username: Optional[str]):
-    """GÜNLÜK ÜRETİM VERİ GİRİŞİ sadece 'operator' rolündeki kullanıcı tarafından yapılabilir.
-    'admin' rolü sistem yönetimi (kullanıcı/makine/ürün) için ayrılmıştır ve günlük veri
-    girişi yapamaz. 'viewer' zaten hiçbir şekilde veri giremez."""
+    """GÜNLÜK ÜRETİM VERİ GİRİŞİ 'admin' ve 'operator' rolleri tarafından yapılabilir.
+    'viewer' (salt okunur) kullanıcılar veri girişi yapamaz."""
     if not x_username:
-        return  # header gönderilmediyse (eski istemci) engelleme, geriye dönük uyumluluk
+        return  # header gönderilmediyse geriye dönük uyumluluk
     users_data = load_users()
     user = next((u for u in users_data.get("users", []) if u.get("username") == x_username), None)
-    if user and user.get("role") != "operator":
+    if user and user.get("role") not in ("admin", "operator"):
         raise HTTPException(
             status_code=403,
-            detail="Günlük üretim veri girişi sadece yetkili operatör (Sorumlu Mühendis) tarafından yapılabilir."
+            detail="Günlük üretim veri girişi yetkiniz bulunmamaktadır (Salt okunur)."
         )
 
 app = FastAPI(title="ERGUNBAS Group Ekstrüder ve Levha Üretim Yönetim Sistemi")

@@ -2136,18 +2136,18 @@
 
         function applyRolePermissions() {
             const isViewer = !!(currentUser && currentUser.role === 'viewer');
-            const isDailyOperator = !!(currentUser && currentUser.role === 'operator');
+            const canEditDaily = !!(currentUser && (currentUser.role === 'operator' || currentUser.role === 'admin'));
             document.body.classList.toggle('role-viewer', isViewer);
-            // Günlük veri girişi sadece 'operator' rolüne açık; admin ve viewer için kilitli
-            document.body.classList.toggle('daily-locked', !isDailyOperator);
+            // Günlük veri girişi hem 'admin' hem 'operator' rolüne açıktır; sadece 'viewer' için kilitli
+            document.body.classList.toggle('daily-locked', !canEditDaily);
 
             const banner = document.getElementById('viewer-banner');
             const bannerText = document.getElementById('viewer-banner-text');
             if (banner && bannerText) {
                 if (isViewer) {
                     bannerText.textContent = 'Salt Okunur Mod — Sadece görüntüleme yetkiniz var, veri girişi/düzenleme yapamazsınız.';
-                } else if (!isDailyOperator) {
-                    bannerText.textContent = 'Günlük veri girişi sadece yetkili operatör (Sorumlu Mühendis) tarafından yapılabilir. Bu sekmede salt okunur görüntüleme yapıyorsunuz.';
+                } else if (!canEditDaily) {
+                    bannerText.textContent = 'Günlük veri girişi sadece yetkili kullanıcılar (Yönetici ve Operatör) tarafından yapılabilir.';
                 }
             }
         }
@@ -4270,7 +4270,8 @@
 
                 if (res.ok) {
                     showToast("Günlük veriler ERGUNBAS veritabanına başarıyla kaydedildi!");
-                    loadDashboard();
+                    await loadDashboard();
+                    await loadDayData();
                 } else {
                     let msg = 'Veriler kaydedilemedi!';
                     try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}

@@ -8143,14 +8143,14 @@
             "row": 0,
             "hat": "106",
             "product": "140 mm KASA",
-            "length": 2.22,
-            "speed": 0.6,
+            "length": 0.0,
+            "speed": 0.0,
             "heads": 1.0,
-            "hours": 10.0,
-            "prod_kg": 5.33,
-            "fire_kg": 858.99,
-            "qty": 1,
-            "sets": 0.4
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0.0
           },
           {
             "row": 0,
@@ -8260,6 +8260,15 @@
           "down_reason": "Kalıp temizliği.",
           "down_min": 120.0,
           "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Operatör izinli.",
+          "down_min": 0.0,
+          "desc": "Operatör eksikliğinden dolayı çalıştırılmadı."
         }
       ],
       "kirim": [
@@ -8267,17 +8276,17 @@
           "hat": "Kirim 1",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         },
         {
           "hat": "Kirim 2",
-          "gunduz": 0,
+          "gunduz": 4570,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kirim 3",
-          "gunduz": 0,
+          "gunduz": 4504,
           "gece": 0,
           "status": "normal"
         },
@@ -8285,44 +8294,55 @@
           "hat": "Kirim 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0
+          "gunduz": 2260,
+          "gece": 3360
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
+          "gunduz": 1935,
           "gece": 0
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0
+          "gunduz": 1407,
+          "gece": 2585
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
+          "gunduz": 1983,
           "gece": 0
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 1297,
           "gece": 0
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 725,
           "gece": 0
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 31,
+          "gece_sarj": 0,
+          "gunduz_kg": 8545.15,
+          "gece_kg": 0,
+          "toplam_kg": 8545.15
+        }
+      ],
+      "mixer_emp_gunduz": 13,
+      "mixer_emp_gece": 1
     }
   }
 }

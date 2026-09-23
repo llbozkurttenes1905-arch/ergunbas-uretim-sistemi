@@ -2157,7 +2157,7 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             safeCreateIcons();
             
             // Check if user session exists
@@ -2184,9 +2184,9 @@
                 }
                 
                 // Load data
-                fetchMachinesAndProducts();
-                fetchDashboardAndDates();
-                loadDashboard();
+                await fetchMachinesAndProducts();
+                await fetchDashboardAndDates();
+                await loadDashboard();
                 loadUsers(); // Operatör dropdown'larını doldur
             } else {
                 // Keep overlay visible
@@ -3784,6 +3784,9 @@
         }
 
         async function loadDayData() {
+            if (!machinesList || machinesList.length === 0 || !productsList || productsList.length === 0 || !mixerRecipesList || mixerRecipesList.length === 0) {
+                await fetchMachinesAndProducts();
+            }
             const daySelect = document.getElementById('select-day');
             if (!daySelect) return;
             currentDateKey = daySelect.value;
@@ -3931,13 +3934,14 @@
 
         function buildProductOptionsHtml(selectedValue, categoryFilterFn) {
             // Katalogdan (Ayarlar > Makineler & Ürünler) seçenekleri oluşturur.
-            // Eğer mevcut değer katalogda TAM OLARAK yoksa (eski/tutarsız yazım),
-            // veriyi sessizce kaybetmemek için o değeri de işaretli şekilde ekler.
-            const filtered = productsList.filter(categoryFilterFn);
+            const list = productsList || [];
+            const filtered = list.filter(categoryFilterFn);
             let html = '<option value="">— Seçiniz —</option>';
             let found = false;
+            const selNorm = (selectedValue || '').trim().toLocaleLowerCase('tr-TR');
             filtered.forEach(p => {
-                const isSelected = (p.name === selectedValue);
+                const pNorm = (p.name || '').trim().toLocaleLowerCase('tr-TR');
+                const isSelected = (p.name === selectedValue || (selNorm && pNorm === selNorm));
                 if (isSelected) found = true;
                 const desc = (p.description || '').replace(/"/g, '&quot;');
                 html += `<option value="${p.name}" title="${desc}" ${isSelected ? 'selected' : ''}>${p.name}</option>`;
@@ -5198,31 +5202,59 @@
                     { name: 'Deck Antrasit-Siyah', batch_kg: 240.45 },
                     { name: 'Kit Kat Kahverengi', batch_kg: 242.70 },
                     { name: 'Kit Kat Antrasit-Siyah', batch_kg: 240.45 },
-                    { name: 'Levha Renkli (Takoz)', batch_kg: 334.30 },
+                    { name: 'Levha Renkli', batch_kg: 334.30 },
                     { name: 'Levha Beyaz', batch_kg: 281.50 }
                 ];
 
-            const curMakine = data?.makine || defaultMixers[0];
-            const curRecipe = data?.recipe || defaultRecipes[0].name;
+            const curMakine = (data?.makine || defaultMixers[0] || 'Mixer 1').toString().trim();
+            const curRecipe = (data?.recipe || (defaultRecipes[0]?.name || 'Kasa Pervaz')).toString().trim();
             const curGSarj = data?.gunduz_sarj ?? '';
             const curNSarj = data?.gece_sarj ?? '';
             
-            const matchedRec = defaultRecipes.find(r => r.name === curRecipe) || defaultRecipes[0];
-            const batchKg = data?.batch_kg || matchedRec.batch_kg || 0;
+            const curRecNorm = curRecipe.toLocaleLowerCase('tr-TR');
+            const matchedRec = defaultRecipes.find(r => {
+                const rNorm = r.name.trim().toLocaleLowerCase('tr-TR');
+                return rNorm === curRecNorm || (curRecNorm.startsWith('levha renkli') && rNorm.startsWith('levha renkli'));
+            }) || null;
+
+            const effectiveRecipeName = matchedRec ? matchedRec.name : curRecipe;
+            const batchKg = data?.batch_kg || (matchedRec ? matchedRec.batch_kg : 0);
             const totalSarj = (parseInt(curGSarj) || 0) + (parseInt(curNSarj) || 0);
             const totalKg = data?.toplam_kg || (totalSarj * batchKg);
+
+            // Mixer options
+            let mixerFound = false;
+            let mixerOpts = defaultMixers.map(m => {
+                const isSel = (m.trim().toLocaleLowerCase('tr-TR') === curMakine.toLocaleLowerCase('tr-TR'));
+                if (isSel) mixerFound = true;
+                return `<option value="${m}" ${isSel ? 'selected' : ''}>${m}</option>`;
+            }).join('');
+            if (curMakine && !mixerFound) {
+                mixerOpts = `<option value="${curMakine}" selected>${curMakine}</option>` + mixerOpts;
+            }
+
+            // Recipe options
+            let recipeFound = false;
+            let recipeOpts = defaultRecipes.map(r => {
+                const isSel = (r.name.trim().toLocaleLowerCase('tr-TR') === effectiveRecipeName.toLocaleLowerCase('tr-TR'));
+                if (isSel) recipeFound = true;
+                return `<option value="${r.name}" data-batch="${r.batch_kg}" ${isSel ? 'selected' : ''}>${r.name}</option>`;
+            }).join('');
+            if (curRecipe && !recipeFound) {
+                recipeOpts = `<option value="${curRecipe}" data-batch="${batchKg}" selected>${curRecipe}</option>` + recipeOpts;
+            }
 
             const tr = document.createElement('tr');
             tr.className = "hover:bg-slate-900/50 transition";
             tr.innerHTML = `
                 <td class="p-2">
                     <select class="mixer-input-makine bg-slate-900 border border-slate-700 text-white rounded px-2.5 py-1 text-xs font-bold focus:ring-1 focus:ring-emerald-500">
-                        ${defaultMixers.map(m => `<option value="${m}" ${m === curMakine ? 'selected' : ''}>${m}</option>`).join('')}
+                        ${mixerOpts}
                     </select>
                 </td>
                 <td class="p-2">
                     <select onchange="updateMixerRowKg(this)" class="mixer-input-recipe bg-slate-900 border border-slate-700 text-white rounded px-2.5 py-1 text-xs font-bold focus:ring-1 focus:ring-emerald-500 w-44">
-                        ${defaultRecipes.map(r => `<option value="${r.name}" data-batch="${r.batch_kg}" ${r.name === curRecipe ? 'selected' : ''}>${r.name}</option>`).join('')}
+                        ${recipeOpts}
                     </select>
                 </td>
                 <td class="p-2 text-center">
@@ -5232,10 +5264,10 @@
                     <input type="number" oninput="updateMixerRowKg(this)" class="mixer-input-n-sarj w-20 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-bold text-center focus:ring-1 focus:ring-emerald-500" value="${curNSarj}" placeholder="0">
                 </td>
                 <td class="p-2 text-right font-mono text-slate-300">
-                    <span class="mixer-row-batch-kg">${batchKg.toFixed(2)}</span> kg
+                    <span class="mixer-row-batch-kg">${(batchKg || 0).toFixed(2)}</span> kg
                 </td>
                 <td class="p-2 text-right font-bold text-emerald-400 font-mono">
-                    <span class="mixer-row-total-kg">${totalKg.toLocaleString('tr-TR', {maximumFractionDigits:2})}</span> kg
+                    <span class="mixer-row-total-kg">${(totalKg || 0).toLocaleString('tr-TR', {maximumFractionDigits:2})}</span> kg
                 </td>
                 <td class="p-2 text-center">
                     <button type="button" onclick="this.closest('tr').remove()" class="text-slate-500 hover:text-red-400 transition p-1">

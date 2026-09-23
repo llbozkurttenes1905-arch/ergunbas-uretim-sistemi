@@ -278,6 +278,20 @@
       "name": "35X80 Pervaz",
       "category": "pervaz",
       "door_ratio": 5.0
+    },
+    {
+      "id": "k_200",
+      "name": "200 mm Kasa",
+      "category": "kasa",
+      "door_ratio": 2.5,
+      "description": ""
+    },
+    {
+      "id": "p_cam_citasi",
+      "name": "Cam Çıtası",
+      "category": "diger",
+      "door_ratio": 0.0,
+      "description": ""
     }
   ],
   "mixer_recipes": [

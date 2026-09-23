@@ -1632,7 +1632,7 @@
                             <h3 class="text-lg font-bold text-white flex items-center gap-2">
                                 <i data-lucide="beaker" class="w-5 h-5 text-emerald-400"></i> Mikser Üretim Reçeteleri ve Hammadde Oranları
                             </h3>
-                            <p class="text-xs text-slate-400">Her 1 şarj karışım için hammadde kg oranlarını buradan takip edebilir veya silebilirsiniz.</p>
+                            <p class="text-xs text-slate-400">Her 1 şarj karışım için hammadde kg oranlarını buradan takip edebilir, düzenleyebilir veya silebilirsiniz.</p>
                         </div>
                     </div>
 
@@ -1648,6 +1648,64 @@
                             </thead>
                             <tbody id="tbl-mixer-recipes-admin" class="divide-y divide-slate-800"></tbody>
                         </table>
+                    </div>
+
+                    <!-- YENİ REÇETE EKLE FORMU -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Yeni Reçete Oluştur
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input type="text" id="new-recipe-name" placeholder="Reçete Adı (örn: Deck Kahverengi)" class="md:col-span-2 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <input type="number" id="new-recipe-batch-kg" placeholder="1 Şarj Ağırlığı (kg)" step="0.01" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div id="new-recipe-ingredients" class="space-y-2">
+                            <div class="flex gap-2 items-center recipe-ing-row">
+                                <input type="text" placeholder="Hammadde Adı" class="flex-1 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-material">
+                                <input type="number" placeholder="Miktar (kg)" step="0.01" class="w-32 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-kg">
+                                <button onclick="removeIngRow(this)" class="text-slate-600 hover:text-red-400 transition p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="addIngRow('new-recipe-ingredients')" class="flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Hammadde Ekle
+                            </button>
+                            <button onclick="submitNewRecipe()" class="flex items-center gap-1 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition">
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i> Reçeteyi Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REÇETE DÜZENLEME MODAL -->
+        <div id="modal-edit-recipe" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                <div class="flex items-center justify-between p-5 border-b border-slate-800">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="edit" class="w-4 h-4 text-amber-400"></i> Reçete Düzenle
+                    </h3>
+                    <button onclick="closeEditRecipeModal()" class="text-slate-400 hover:text-white transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="p-5 space-y-4">
+                    <input type="hidden" id="edit-recipe-id">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="edit-recipe-name" placeholder="Reçete Adı" class="md:col-span-2 bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <input type="number" id="edit-recipe-batch-kg" placeholder="1 Şarj (kg)" step="0.01" class="bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-2">Hammaddeler</p>
+                        <div id="edit-recipe-ingredients" class="space-y-2"></div>
+                        <button onclick="addIngRow('edit-recipe-ingredients')" class="mt-2 flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Hammadde Ekle
+                        </button>
+                    </div>
+                    <div class="flex gap-3 pt-2 border-t border-slate-800">
+                        <button onclick="saveEditedRecipe()" class="flex-1 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm rounded-lg transition flex items-center justify-center gap-1">
+                            <i data-lucide="save" class="w-4 h-4"></i> Değişiklikleri Kaydet
+                        </button>
+                        <button onclick="closeEditRecipeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm rounded-lg transition">İptal</button>
                     </div>
                 </div>
             </div>
@@ -4411,7 +4469,10 @@
                         <td class="p-3 font-bold text-white">${r.name}</td>
                         <td class="p-3 text-right font-black text-emerald-400 font-mono">${(r.batch_kg || 0).toFixed(2)} kg</td>
                         <td class="p-3 text-xs">${ingSummary}</td>
-                        <td class="p-3 text-right">
+                        <td class="p-3 text-right whitespace-nowrap">
+                            <button onclick="openEditRecipeModal('${r.id}')" class="text-slate-400 hover:text-amber-400 transition p-1.5 mr-1" title="Reçeteyi Düzenle">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
                             <button onclick="deleteMixerRecipe('${r.id}')" class="text-slate-500 hover:text-red-400 transition p-1.5" title="Reçeteyi Sil">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -4420,6 +4481,131 @@
                 `;
             }).join('');
             safeCreateIcons();
+        }
+
+        // --- Hammadde satırı yardımcıları ---
+        function addIngRow(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center recipe-ing-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Hammadde Adı" class="flex-1 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-material">
+                <input type="number" placeholder="Miktar (kg)" step="0.01" class="w-32 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-kg">
+                <button onclick="removeIngRow(this)" class="text-slate-600 hover:text-red-400 transition p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+            `;
+            container.appendChild(div);
+            safeCreateIcons();
+        }
+
+        function removeIngRow(btn) {
+            const row = btn.closest('.recipe-ing-row');
+            if (row) row.remove();
+        }
+
+        function collectIngredients(containerId) {
+            const rows = document.querySelectorAll(`#${containerId} .recipe-ing-row`);
+            const ings = [];
+            rows.forEach(row => {
+                const mat = row.querySelector('.ing-material')?.value?.trim();
+                const kg  = parseFloat(row.querySelector('.ing-kg')?.value || 0);
+                if (mat && kg > 0) ings.push({ material: mat, kg });
+            });
+            return ings;
+        }
+
+        // --- Yeni Reçete Kaydet ---
+        async function submitNewRecipe() {
+            const name     = document.getElementById('new-recipe-name')?.value?.trim();
+            const batchKg  = parseFloat(document.getElementById('new-recipe-batch-kg')?.value || 0);
+            const ings     = collectIngredients('new-recipe-ingredients');
+
+            if (!name) { alert('Reçete adı boş bırakılamaz!'); return; }
+            if (batchKg <= 0) { alert('1 şarj ağırlığı giriniz!'); return; }
+            if (ings.length === 0) { alert('En az 1 hammadde giriniz!'); return; }
+
+            try {
+                const res = await fetch('/api/mixer_recipes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify({ name, batch_kg: batchKg, ingredients: ings })
+                });
+                if (res.ok) {
+                    showToast('Reçete başarıyla oluşturuldu!');
+                    // Formu sıfırla
+                    document.getElementById('new-recipe-name').value = '';
+                    document.getElementById('new-recipe-batch-kg').value = '';
+                    const cont = document.getElementById('new-recipe-ingredients');
+                    cont.innerHTML = `
+                        <div class="flex gap-2 items-center recipe-ing-row">
+                            <input type="text" placeholder="Hammadde Adı" class="flex-1 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-material">
+                            <input type="number" placeholder="Miktar (kg)" step="0.01" class="w-32 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-emerald-500 focus:outline-none ing-kg">
+                            <button onclick="removeIngRow(this)" class="text-slate-600 hover:text-red-400 transition p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>`;
+                    safeCreateIcons();
+                    await loadMixerRecipes();
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    alert('Reçete kaydedilemedi: ' + (err.detail || res.status));
+                }
+            } catch(e) {
+                console.error('submitNewRecipe failed:', e);
+            }
+        }
+
+        // --- Reçete Düzenle Modal ---
+        function openEditRecipeModal(id) {
+            const recipe = mixerRecipesList.find(r => r.id === id);
+            if (!recipe) return;
+
+            document.getElementById('edit-recipe-id').value   = recipe.id;
+            document.getElementById('edit-recipe-name').value = recipe.name;
+            document.getElementById('edit-recipe-batch-kg').value = recipe.batch_kg || '';
+
+            const ingContainer = document.getElementById('edit-recipe-ingredients');
+            ingContainer.innerHTML = (recipe.ingredients || []).map(ing => `
+                <div class="flex gap-2 items-center recipe-ing-row">
+                    <input type="text" placeholder="Hammadde Adı" value="${ing.material}" class="flex-1 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-amber-500 focus:outline-none ing-material">
+                    <input type="number" placeholder="Miktar (kg)" step="0.01" value="${ing.kg}" class="w-32 bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-amber-500 focus:outline-none ing-kg">
+                    <button onclick="removeIngRow(this)" class="text-slate-600 hover:text-red-400 transition p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            `).join('');
+
+            document.getElementById('modal-edit-recipe').classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function closeEditRecipeModal() {
+            document.getElementById('modal-edit-recipe').classList.add('hidden');
+        }
+
+        async function saveEditedRecipe() {
+            const id      = document.getElementById('edit-recipe-id').value;
+            const name    = document.getElementById('edit-recipe-name')?.value?.trim();
+            const batchKg = parseFloat(document.getElementById('edit-recipe-batch-kg')?.value || 0);
+            const ings    = collectIngredients('edit-recipe-ingredients');
+
+            if (!name) { alert('Reçete adı boş bırakılamaz!'); return; }
+            if (batchKg <= 0) { alert('1 şarj ağırlığı giriniz!'); return; }
+            if (ings.length === 0) { alert('En az 1 hammadde giriniz!'); return; }
+
+            try {
+                const res = await fetch(`/api/mixer_recipes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify({ name, batch_kg: batchKg, ingredients: ings })
+                });
+                if (res.ok) {
+                    showToast('Reçete başarıyla güncellendi!');
+                    closeEditRecipeModal();
+                    await loadMixerRecipes();
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    alert('Reçete güncellenemedi: ' + (err.detail || res.status));
+                }
+            } catch(e) {
+                console.error('saveEditedRecipe failed:', e);
+            }
         }
 
         async function deleteMixerRecipe(id) {
@@ -4439,6 +4625,8 @@
                 console.error('deleteMixerRecipe failed:', e);
             }
         }
+
+
 
         async function loadSettings() {
             await fetchMachinesAndProducts();

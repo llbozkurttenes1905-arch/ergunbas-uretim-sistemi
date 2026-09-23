@@ -1156,58 +1156,110 @@
                 </div>
             </div>
 
-            <!-- Top KPI Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+            <!-- BÖLÜM 1: GENEL & AYLIK ÖZET BAŞLIĞI -->
+            <div class="flex items-center gap-3 pt-1 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-700/50 to-emerald-700/50"></div>
+                <h2 class="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="pie-chart" class="w-4 h-4"></i> 1. AYLIK GENEL ÖZET & VARDİYA DAĞILIMI
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">Seçili aya ait toplamlar ve gündüz/gece kırılımı</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-emerald-700/50 to-emerald-700/50"></div>
+            </div>
+
+            <!-- 4 Büyük KPI Kartı (Gündüz vs Gece Kırılımlı) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Mikser Kartı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-sm">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
                         <span>Mikser Toplamı</span>
                         <i data-lucide="beaker" class="w-4 h-4 text-emerald-400"></i>
                     </div>
                     <div class="text-2xl font-black text-white" id="mixer-kpi-prod-ton">0.0 Ton</div>
                     <p class="text-[11px] text-slate-400"><span id="mixer-kpi-sarj" class="font-bold text-emerald-400">0</span> Şarj Karışım</p>
+                    <div class="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-amber-400 font-semibold block">☀️ Gündüz</span>
+                            <span id="mixer-kpi-gunduz" class="font-bold text-slate-200">0.0 Ton (0 şarj)</span>
+                        </div>
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-sky-400 font-semibold block">🌙 Gece</span>
+                            <span id="mixer-kpi-gece" class="font-bold text-slate-200">0.0 Ton (0 şarj)</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                <!-- Kırım Kartı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-sm">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
                         <span>Kırım (Geri Dönüşüm)</span>
                         <i data-lucide="hammer" class="w-4 h-4 text-amber-400"></i>
                     </div>
                     <div class="text-2xl font-black text-amber-400" id="mixer-kpi-kirim-ton">0.0 Ton</div>
-                    <p class="text-[11px] text-slate-400">Kırım Hatları Toplamı</p>
+                    <p class="text-[11px] text-slate-400">4 Kırım Hattı Toplamı</p>
+                    <div class="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-amber-400 font-semibold block">☀️ Gündüz</span>
+                            <span id="mixer-kpi-kirim-gunduz" class="font-bold text-slate-200">0.0 Ton</span>
+                        </div>
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-sky-400 font-semibold block">🌙 Gece</span>
+                            <span id="mixer-kpi-kirim-gece" class="font-bold text-slate-200">0.0 Ton</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                <!-- Mikronize Kartı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-sm">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
                         <span>Mikronize Toplamı</span>
                         <i data-lucide="cog" class="w-4 h-4 text-sky-400"></i>
                     </div>
                     <div class="text-2xl font-black text-sky-400" id="mixer-kpi-mikronize-ton">0.0 Ton</div>
-                    <p class="text-[11px] text-slate-400">Mikronize Hatları Toplamı</p>
+                    <p class="text-[11px] text-slate-400">6 Mikronize Hattı Toplamı</p>
+                    <div class="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-amber-400 font-semibold block">☀️ Gündüz</span>
+                            <span id="mixer-kpi-mik-gunduz" class="font-bold text-slate-200">0.0 Ton</span>
+                        </div>
+                        <div class="bg-slate-950/50 p-1.5 rounded-lg border border-slate-800">
+                            <span class="text-sky-400 font-semibold block">🌙 Gece</span>
+                            <span id="mixer-kpi-mik-gece" class="font-bold text-slate-200">0.0 Ton</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-1 shadow-sm">
+                <!-- Kütle Dengesi -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-sm">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
                         <span>Kütle Dengesi & Silo</span>
                         <i data-lucide="scale" class="w-4 h-4 text-violet-400"></i>
                     </div>
                     <div class="text-2xl font-black text-violet-400" id="mixer-kpi-balance">0 kg</div>
-                    <p class="text-[11px] text-slate-400">Mikser vs Ekstrüder Tüketimi</p>
+                    <p class="text-[11px] text-slate-400" id="mixer-kpi-balance-desc">Mikser Üretimi - Hat Tüketimi</p>
+                    <div class="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-0.5">
+                        <div class="flex justify-between">
+                            <span>Hat Tüketimi (Üretim+Fire):</span>
+                            <span id="mixer-kpi-consumed" class="font-bold text-slate-200">0.0 Ton</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Reçete Dağılımı ve Hammadde Tüketim Raporu -->
+            <!-- Reçete Dağılımı ve Aylık Hammadde Tüketim Raporu -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Reçete Bazlı Dağılım -->
+                <!-- Reçete Dağılımı -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Reçete Bazlı Mikser Dağılımı
+                        <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Reçete Bazlı Dağılım (Gündüz / Gece)
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-950 text-xs text-slate-400 uppercase">
                                 <tr>
                                     <th class="p-2.5">Ürün / Reçete</th>
-                                    <th class="p-2.5 text-center">Şarj</th>
+                                    <th class="p-2.5 text-center" title="Gündüz Şarj">☀️ Gündüz</th>
+                                    <th class="p-2.5 text-center" title="Gece Şarj">🌙 Gece</th>
+                                    <th class="p-2.5 text-center">Toplam Şarj</th>
                                     <th class="p-2.5 text-right">Toplam (kg)</th>
                                     <th class="p-2.5 text-right">Pay (%)</th>
                                 </tr>
@@ -1217,7 +1269,7 @@
                     </div>
                 </div>
 
-                <!-- Aylık Hammadde Tüketim Raporu -->
+                <!-- Aylık Hammadde Tüketimi -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="boxes" class="w-5 h-5 text-sky-400"></i> Aylık Hammadde Tüketim Özeti
@@ -1236,23 +1288,24 @@
                 </div>
             </div>
 
-            <!-- Kırım & Mikronize Makine Hedef ve Performansı -->
+            <!-- Kırım & Mikronize Makine Performansları (26 Gün Hedefsiz) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Kırım Performansı -->
+                <!-- Kırım -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gauge" class="w-5 h-5 text-amber-400"></i> Kırım Aylık Hedef & Verimlilik
+                        <i data-lucide="gauge" class="w-5 h-5 text-amber-400"></i> Kırım Hatları Aylık Performansı
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-950 text-slate-400 uppercase">
                                 <tr>
                                     <th class="p-2">Makine</th>
-                                    <th class="p-2 text-center">Gün</th>
-                                    <th class="p-2 text-right">Tonaj (Ton)</th>
-                                    <th class="p-2 text-right">Saatlik (kg/sa)</th>
-                                    <th class="p-2 text-right">26 Gün Hedef</th>
-                                    <th class="p-2 text-right">Verimlilik</th>
+                                    <th class="p-2 text-center">Çalışılan Gün</th>
+                                    <th class="p-2 text-right">☀️ Gündüz</th>
+                                    <th class="p-2 text-right">🌙 Gece</th>
+                                    <th class="p-2 text-right font-bold text-amber-400">Toplam (Ton)</th>
+                                    <th class="p-2 text-right">Günlük Ort. (kg)</th>
+                                    <th class="p-2 text-center">Arızalı Gün</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-kirim-perf" class="divide-y divide-slate-800"></tbody>
@@ -1260,26 +1313,232 @@
                     </div>
                 </div>
 
-                <!-- Mikronize Performansı -->
+                <!-- Mikronize -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gauge" class="w-5 h-5 text-sky-400"></i> Mikronize Aylık Hedef & Verimlilik
+                        <i data-lucide="gauge" class="w-5 h-5 text-sky-400"></i> Mikronize Hatları Aylık Performansı
                     </h3>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-950 text-slate-400 uppercase">
                                 <tr>
                                     <th class="p-2">Makine</th>
-                                    <th class="p-2 text-center">Gün</th>
-                                    <th class="p-2 text-right">Tonaj (Ton)</th>
-                                    <th class="p-2 text-right">Saatlik (kg/sa)</th>
-                                    <th class="p-2 text-right">26 Gün Hedef</th>
-                                    <th class="p-2 text-right">Verimlilik</th>
+                                    <th class="p-2 text-center">Çalışılan Gün</th>
+                                    <th class="p-2 text-right">☀️ Gündüz</th>
+                                    <th class="p-2 text-right">🌙 Gece</th>
+                                    <th class="p-2 text-right font-bold text-sky-400">Toplam (Ton)</th>
+                                    <th class="p-2 text-right">Günlük Ort. (kg)</th>
+                                    <th class="p-2 text-center">Arızalı Gün</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-mikronize-perf" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <!-- BÖLÜM 2: HAFTALIK ÖZET -->
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-amber-700/50 to-amber-700/50"></div>
+                <h2 class="text-sm font-black text-amber-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="calendar-range" class="w-4 h-4"></i> 2. HAFTALIK ÖZETLER (GÜNDÜZ & GECE AYRIMI)
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">7'şerli periyotlar halinde üretim dökümleri</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-amber-700/50 to-amber-700/50"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="mixer-weekly-cards-grid">
+                <!-- JS ile dinamik haftalık kartlar buraya basılacak -->
+            </div>
+
+            <!-- BÖLÜM 3: GÜNLÜK DETAYLI ÖZET -->
+            <div class="flex items-center gap-3 pt-2 pb-1">
+                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-sky-700/50 to-sky-700/50"></div>
+                <h2 class="text-sm font-black text-sky-400 uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> 3. GÜNLÜK DETAYLI ÖZET & VARDİYA PERSONELİ
+                    <span class="text-[10px] font-medium text-slate-500 normal-case tracking-normal">Günü seçerek hat bazında tüm detayları inceleyin</span>
+                </h2>
+                <div class="h-px flex-1 bg-gradient-to-l from-transparent via-sky-700/50 to-sky-700/50"></div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-sm">
+                <!-- Gün Seçici Barı ve Vardiya Personeli -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label for="mixer-dash-day-select" class="text-sm font-bold text-white flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i> Gün Seçin:
+                        </label>
+                        <select id="mixer-dash-day-select" onchange="onMixerDayChange(this.value)" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-sky-500 focus:outline-none"></select>
+                    </div>
+
+                    <!-- Vardiya Personeli -->
+                    <div class="flex flex-wrap items-center gap-3 text-xs">
+                        <div class="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                            <span class="text-amber-400 font-bold">☀️ Gündüz Personeli:</span>
+                            <span id="mixer-day-emp-gunduz" class="text-slate-200 font-semibold">—</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                            <span class="text-sky-400 font-bold">🌙 Gece Personeli:</span>
+                            <span id="mixer-day-emp-gece" class="text-slate-200 font-semibold">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Günlük KPI Mini Kartlar -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="mixer-day-mini-kpi">
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-xs text-slate-400 font-medium flex items-center justify-between">
+                            Mikser Günlük
+                            <i data-lucide="beaker" class="w-4 h-4 text-emerald-400"></i>
+                        </span>
+                        <div class="text-xl font-black text-white" id="mixer-day-kpi-mixer">0 kg (0 şarj)</div>
+                        <div class="text-[11px] text-slate-400">
+                            ☀️ Gündüz: <span id="mixer-day-kpi-mixer-g" class="text-amber-400 font-bold">0 kg</span> | 
+                            🌙 Gece: <span id="mixer-day-kpi-mixer-n" class="text-sky-400 font-bold">0 kg</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-xs text-slate-400 font-medium flex items-center justify-between">
+                            Kırım Günlük
+                            <i data-lucide="hammer" class="w-4 h-4 text-amber-400"></i>
+                        </span>
+                        <div class="text-xl font-black text-amber-400" id="mixer-day-kpi-kirim">0 kg</div>
+                        <div class="text-[11px] text-slate-400">
+                            ☀️ Gündüz: <span id="mixer-day-kpi-kirim-g" class="text-amber-300 font-bold">0 kg</span> | 
+                            🌙 Gece: <span id="mixer-day-kpi-kirim-n" class="text-sky-300 font-bold">0 kg</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-1">
+                        <span class="text-xs text-slate-400 font-medium flex items-center justify-between">
+                            Mikronize Günlük
+                            <i data-lucide="cog" class="w-4 h-4 text-sky-400"></i>
+                        </span>
+                        <div class="text-xl font-black text-sky-400" id="mixer-day-kpi-mik">0 kg</div>
+                        <div class="text-[11px] text-slate-400">
+                            ☀️ Gündüz: <span id="mixer-day-kpi-mik-g" class="text-amber-300 font-bold">0 kg</span> | 
+                            🌙 Gece: <span id="mixer-day-kpi-mik-n" class="text-sky-300 font-bold">0 kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Günlük Mikser Üretim Tablosu -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <i data-lucide="beaker" class="w-4 h-4 text-emerald-400"></i> Günlük Mikser Kazan Üretimleri (Reçete & Vardiya Detayı)
+                    </h4>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2.5">Kazan / Makine</th>
+                                    <th class="p-2.5">Reçete</th>
+                                    <th class="p-2.5 text-right">Şarj Başı (kg)</th>
+                                    <th class="p-2.5 text-center">☀️ Gündüz Şarj</th>
+                                    <th class="p-2.5 text-right">☀️ Gündüz (kg)</th>
+                                    <th class="p-2.5 text-center">🌙 Gece Şarj</th>
+                                    <th class="p-2.5 text-right">🌙 Gece (kg)</th>
+                                    <th class="p-2.5 text-center font-bold text-white">Toplam Şarj</th>
+                                    <th class="p-2.5 text-right font-bold text-emerald-400">Toplam (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-day-mixer" class="divide-y divide-slate-800">
+                                <tr><td colspan="9" class="p-4 text-center text-slate-500">Kayıt bulunamadı.</td></tr>
+                            </tbody>
+                            <tfoot id="tfoot-mixer-day-mixer" class="bg-slate-950/80 font-bold"></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Günlük Kırım ve Mikronize Tabloları -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Kırım -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                            <i data-lucide="hammer" class="w-4 h-4 text-amber-400"></i> Günlük Kırım Hatları (Geri Dönüşüm)
+                        </h4>
+                        <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-950 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="p-2.5">Hat No</th>
+                                        <th class="p-2.5 text-right">☀️ Gündüz (kg)</th>
+                                        <th class="p-2.5 text-right">🌙 Gece (kg)</th>
+                                        <th class="p-2.5 text-right font-bold text-amber-400">Toplam (kg)</th>
+                                        <th class="p-2.5 text-center">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl-mixer-day-kirim" class="divide-y divide-slate-800">
+                                    <tr><td colspan="5" class="p-4 text-center text-slate-500">Kayıt bulunamadı.</td></tr>
+                                </tbody>
+                                <tfoot id="tfoot-mixer-day-kirim" class="bg-slate-950/80 font-bold"></tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Mikronize -->
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                            <i data-lucide="cog" class="w-4 h-4 text-sky-400"></i> Günlük Mikronize Hatları
+                        </h4>
+                        <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-950 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="p-2.5">Hat No</th>
+                                        <th class="p-2.5 text-right">☀️ Gündüz (kg)</th>
+                                        <th class="p-2.5 text-right">🌙 Gece (kg)</th>
+                                        <th class="p-2.5 text-right font-bold text-sky-400">Toplam (kg)</th>
+                                        <th class="p-2.5 text-center">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl-mixer-day-mikronize" class="divide-y divide-slate-800">
+                                    <tr><td colspan="5" class="p-4 text-center text-slate-500">Kayıt bulunamadı.</td></tr>
+                                </tbody>
+                                <tfoot id="tfoot-mixer-day-mikronize" class="bg-slate-950/80 font-bold"></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Günlük Hammadde Sarfiyatı -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <i data-lucide="boxes" class="w-4 h-4 text-sky-400"></i> O Gün Tüketilen Hammaddeler (Reçete Formüllerine Göre Otomatik)
+                    </h4>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
+                                <tr>
+                                    <th class="p-2.5">Hammadde Cinsi</th>
+                                    <th class="p-2.5 text-right">Günlük Tüketim (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-mixer-day-materials" class="divide-y divide-slate-800">
+                                <tr><td colspan="2" class="p-3 text-center text-slate-500">Hammadde tüketim verisi yok.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HAFTALIK MİKSER DETAY MODALI -->
+        <div id="modal-mixer-week" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/40">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="calendar-range" class="w-5 h-5 text-amber-400"></i>
+                            <span id="modal-mixer-week-title">Haftalık Mikser & Geri Dönüşüm Detayı</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Bu haftaya ait gün gün üretim ve vardiya dökümü</p>
+                    </div>
+                    <button onclick="closeMixerWeekModal()" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto custom-scrollbar space-y-4" id="modal-mixer-week-content">
+                    <!-- Hafta günlerinin tablosu buraya gelecek -->
                 </div>
             </div>
         </div>
@@ -3486,11 +3745,26 @@
                     }).join('');
                 }
 
-                // KPI Kartları
+                // 1. KPI Kartları (Gündüz vs Gece Alt Göstergeleri)
                 document.getElementById('mixer-kpi-prod-ton').textContent = `${mixerDashboardData.total_mixer_ton} Ton`;
                 document.getElementById('mixer-kpi-sarj').textContent = (mixerDashboardData.total_mixer_sarj || 0).toLocaleString('tr-TR');
+                
+                const elMixG = document.getElementById('mixer-kpi-gunduz');
+                if (elMixG) elMixG.textContent = `${mixerDashboardData.total_mixer_gunduz_ton || 0} Ton (${mixerDashboardData.total_mixer_gunduz_sarj || 0} şarj)`;
+                const elMixN = document.getElementById('mixer-kpi-gece');
+                if (elMixN) elMixN.textContent = `${mixerDashboardData.total_mixer_gece_ton || 0} Ton (${mixerDashboardData.total_mixer_gece_sarj || 0} şarj)`;
+
                 document.getElementById('mixer-kpi-kirim-ton').textContent = `${mixerDashboardData.total_kirim_ton} Ton`;
+                const elKirimG = document.getElementById('mixer-kpi-kirim-gunduz');
+                if (elKirimG) elKirimG.textContent = `${mixerDashboardData.total_kirim_gunduz_ton || 0} Ton`;
+                const elKirimN = document.getElementById('mixer-kpi-kirim-gece');
+                if (elKirimN) elKirimN.textContent = `${mixerDashboardData.total_kirim_gece_ton || 0} Ton`;
+
                 document.getElementById('mixer-kpi-mikronize-ton').textContent = `${mixerDashboardData.total_mikronize_ton} Ton`;
+                const elMikG = document.getElementById('mixer-kpi-mik-gunduz');
+                if (elMikG) elMikG.textContent = `${mixerDashboardData.total_mikronize_gunduz_ton || 0} Ton`;
+                const elMikN = document.getElementById('mixer-kpi-mik-gece');
+                if (elMikN) elMikN.textContent = `${mixerDashboardData.total_mikronize_gece_ton || 0} Ton`;
                 
                 const mb = mixerDashboardData.mass_balance;
                 const balEl = document.getElementById('mixer-kpi-balance');
@@ -3499,25 +3773,31 @@
                     balEl.textContent = `${sign}${mb.balance_kg.toLocaleString('tr-TR')} kg`;
                     balEl.className = `text-2xl font-black ${mb.balance_kg >= 0 ? 'text-emerald-400' : 'text-amber-400'}`;
                 }
+                const consumedEl = document.getElementById('mixer-kpi-consumed');
+                if (consumedEl && mb) {
+                    consumedEl.textContent = `${((mb.profile_consumed_kg || 0)/1000).toFixed(2)} Ton`;
+                }
 
-                // Reçete Bazlı Dağılım Tablosu
+                // 2. Reçete Bazlı Dağılım Tablosu (Gündüz & Gece Şarjlı)
                 const tblRec = document.getElementById('tbl-mixer-recipes-summary');
                 if (tblRec) {
                     if (!mixerDashboardData.recipes || mixerDashboardData.recipes.length === 0) {
-                        tblRec.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">Bu döneme ait reçete kaydı bulunamadı.</td></tr>';
+                        tblRec.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu döneme ait reçete kaydı bulunamadı.</td></tr>';
                     } else {
                         tblRec.innerHTML = mixerDashboardData.recipes.map(r => `
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-2.5 font-bold text-white">${r.name}</td>
-                                <td class="p-2.5 text-center font-semibold text-emerald-400">${r.sarj}</td>
-                                <td class="p-2.5 text-right font-semibold text-white">${r.prod_kg.toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-center font-semibold text-amber-400">${r.gunduz_sarj || 0}</td>
+                                <td class="p-2.5 text-center font-semibold text-sky-400">${r.gece_sarj || 0}</td>
+                                <td class="p-2.5 text-center font-bold text-emerald-400">${r.sarj}</td>
+                                <td class="p-2.5 text-right font-semibold text-white">${(r.prod_kg || 0).toLocaleString('tr-TR')} kg</td>
                                 <td class="p-2.5 text-right font-bold text-sky-400">%${r.share_pct}</td>
                             </tr>
                         `).join('');
                     }
                 }
 
-                // Aylık Hammadde Tüketim Tablosu
+                // 3. Aylık Hammadde Tüketim Tablosu
                 const tblMat = document.getElementById('tbl-mixer-materials-summary');
                 if (tblMat) {
                     if (!mixerDashboardData.materials || mixerDashboardData.materials.length === 0) {
@@ -3526,46 +3806,352 @@
                         tblMat.innerHTML = mixerDashboardData.materials.map(m => `
                             <tr class="hover:bg-slate-800/40 transition">
                                 <td class="p-2.5 font-semibold text-slate-200">${m.material}</td>
-                                <td class="p-2.5 text-right font-bold text-sky-300">${m.total_kg.toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-right font-bold text-sky-300">${(m.total_kg || 0).toLocaleString('tr-TR')} kg</td>
                             </tr>
                         `).join('');
                     }
                 }
 
-                // Kırım Performans Tablosu
+                // 4. Kırım Performans Tablosu (26 Gün Hedefsiz)
                 const tblKirim = document.getElementById('tbl-kirim-perf');
                 if (tblKirim) {
                     tblKirim.innerHTML = (mixerDashboardData.kirim_performance || []).map(p => `
                         <tr class="hover:bg-slate-800/40 transition">
                             <td class="p-2 font-bold text-white">${p.name}</td>
                             <td class="p-2 text-center text-slate-300">${p.days} gün</td>
+                            <td class="p-2 text-right font-semibold text-amber-300">${p.gunduz_ton || 0} T</td>
+                            <td class="p-2 text-right font-semibold text-sky-300">${p.gece_ton || 0} T</td>
                             <td class="p-2 text-right font-bold text-amber-400">${p.prod_ton} Ton</td>
-                            <td class="p-2 text-right text-slate-400">${p.hourly_avg_kg} kg/sa</td>
-                            <td class="p-2 text-right text-slate-400">${p.target_26d_ton} Ton</td>
-                            <td class="p-2 text-right font-bold text-emerald-400">%${p.efficiency_pct}</td>
+                            <td class="p-2 text-right text-slate-300 font-mono">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-center ${p.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${p.arizali_count > 0 ? p.arizali_count + ' gün' : '—'}</td>
                         </tr>
-                    `).join('') || '<tr><td colspan="6" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    `).join('') || '<tr><td colspan="7" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
                 }
 
-                // Mikronize Performans Tablosu
+                // 5. Mikronize Performans Tablosu (26 Gün Hedefsiz)
                 const tblMik = document.getElementById('tbl-mikronize-perf');
                 if (tblMik) {
                     tblMik.innerHTML = (mixerDashboardData.mikronize_performance || []).map(p => `
                         <tr class="hover:bg-slate-800/40 transition">
                             <td class="p-2 font-bold text-white">${p.name}</td>
                             <td class="p-2 text-center text-slate-300">${p.days} gün</td>
+                            <td class="p-2 text-right font-semibold text-amber-300">${p.gunduz_ton || 0} T</td>
+                            <td class="p-2 text-right font-semibold text-sky-300">${p.gece_ton || 0} T</td>
                             <td class="p-2 text-right font-bold text-sky-400">${p.prod_ton} Ton</td>
-                            <td class="p-2 text-right text-slate-400">${p.hourly_avg_kg} kg/sa</td>
-                            <td class="p-2 text-right text-slate-400">${p.target_26d_ton} Ton</td>
-                            <td class="p-2 text-right font-bold text-emerald-400">%${p.efficiency_pct}</td>
+                            <td class="p-2 text-right text-slate-300 font-mono">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-center ${p.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${p.arizali_count > 0 ? p.arizali_count + ' gün' : '—'}</td>
                         </tr>
-                    `).join('') || '<tr><td colspan="6" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    `).join('') || '<tr><td colspan="7" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
                 }
+
+                // 6. Haftalık Özet Kartları
+                renderMixerWeeklyCards(mixerDashboardData.weekly_summary || []);
+
+                // 7. Günlük Detaylı Özet ve Gün Seçici
+                initMixerDailySection(mixerDashboardData.daily_details || []);
 
                 safeCreateIcons();
             } catch(e) {
                 console.error('loadMixerDashboard failed:', e);
             }
+        }
+
+        function renderMixerWeeklyCards(weeklyList) {
+            const container = document.getElementById('mixer-weekly-cards-grid');
+            if (!container) return;
+
+            if (!weeklyList || weeklyList.length === 0) {
+                container.innerHTML = '<div class="col-span-full p-6 text-center text-slate-500 bg-slate-900 border border-slate-800 rounded-2xl">Bu aya ait haftalık veri bulunamadı.</div>';
+                return;
+            }
+
+            container.innerHTML = weeklyList.map((w, idx) => `
+                <div onclick="openMixerWeekDetail(${idx})" class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-5 space-y-4 shadow-sm hover:shadow-lg transition cursor-pointer group">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="font-black text-white group-hover:text-amber-400 transition flex items-center gap-1.5">
+                                <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i> ${w.label}
+                            </h3>
+                            <span class="text-[11px] text-slate-400">${w.days_count} gün aktif kayıt</span>
+                        </div>
+                        <span class="text-xs text-amber-400 group-hover:translate-x-1 transition-transform flex items-center gap-1 font-semibold">
+                            Detay <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </span>
+                    </div>
+
+                    <!-- Mikser -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-semibold flex items-center gap-1">
+                                <i data-lucide="beaker" class="w-3.5 h-3.5 text-emerald-400"></i> Mikser Toplamı:
+                            </span>
+                            <span class="font-black text-emerald-400 text-sm">${w.mixer.toplam_ton} Ton <span class="text-[10px] text-slate-400 font-normal">(${w.mixer.toplam_sarj} şarj)</span></span>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-slate-400 bg-slate-950/40 px-2 py-1 rounded">
+                            <span>☀️ Gündüz: <strong class="text-slate-200">${w.mixer.gunduz_ton} Ton</strong> (${w.mixer.gunduz_sarj} şarj)</span>
+                            <span>🌙 Gece: <strong class="text-slate-200">${w.mixer.gece_ton} Ton</strong> (${w.mixer.gece_sarj} şarj)</span>
+                        </div>
+                    </div>
+
+                    <!-- Kırım & Mikronize Kırılımı -->
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 space-y-0.5">
+                            <span class="text-slate-400 text-[11px] block">Kırım (Geri Dön.)</span>
+                            <div class="font-bold text-amber-400 text-sm">${w.kirim.toplam_ton} Ton</div>
+                            <div class="text-[10px] text-slate-400">G: ${w.kirim.gunduz_ton}T | N: ${w.kirim.gece_ton}T</div>
+                        </div>
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 space-y-0.5">
+                            <span class="text-slate-400 text-[11px] block">Mikronize</span>
+                            <div class="font-bold text-sky-400 text-sm">${w.mikronize.toplam_ton} Ton</div>
+                            <div class="text-[10px] text-slate-400">G: ${w.mikronize.gunduz_ton}T | N: ${w.mikronize.gece_ton}T</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            safeCreateIcons();
+        }
+
+        function openMixerWeekDetail(idx) {
+            if (!mixerDashboardData || !mixerDashboardData.weekly_summary) return;
+            const w = mixerDashboardData.weekly_summary[idx];
+            if (!w) return;
+
+            document.getElementById('modal-mixer-week-title').textContent = `${w.label} Üretim Detayı`;
+            const content = document.getElementById('modal-mixer-week-content');
+
+            // Hafta günlerini bul
+            const daysInWeek = (mixerDashboardData.daily_details || []).filter(d => w.days.some(x => x.key === d.key));
+
+            content.innerHTML = `
+                <!-- Özet Kartları -->
+                <div class="grid grid-cols-3 gap-3 text-center mb-4">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block font-semibold">Mikser</span>
+                        <span class="text-lg font-black text-emerald-400">${w.mixer.toplam_ton} Ton</span>
+                        <span class="text-[10px] text-slate-400 block">G: ${w.mixer.gunduz_ton}T | N: ${w.mixer.gece_ton}T</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block font-semibold">Kırım</span>
+                        <span class="text-lg font-black text-amber-400">${w.kirim.toplam_ton} Ton</span>
+                        <span class="text-[10px] text-slate-400 block">G: ${w.kirim.gunduz_ton}T | N: ${w.kirim.gece_ton}T</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block font-semibold">Mikronize</span>
+                        <span class="text-lg font-black text-sky-400">${w.mikronize.toplam_ton} Ton</span>
+                        <span class="text-[10px] text-slate-400 block">G: ${w.mikronize.gunduz_ton}T | N: ${w.mikronize.gece_ton}T</span>
+                    </div>
+                </div>
+
+                <!-- Gün Gün Döküm Tablosu -->
+                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase">
+                            <tr>
+                                <th class="p-2.5">Tarih</th>
+                                <th class="p-2.5 text-center">Gündüz Personel</th>
+                                <th class="p-2.5 text-center">Gece Personel</th>
+                                <th class="p-2.5 text-right text-emerald-400">Mikser (kg)</th>
+                                <th class="p-2.5 text-center">Mikser Şarj</th>
+                                <th class="p-2.5 text-right text-amber-400">Kırım (kg)</th>
+                                <th class="p-2.5 text-right text-sky-400">Mikronize (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            ${daysInWeek.map(d => `
+                                <tr class="hover:bg-slate-800/40">
+                                    <td class="p-2.5 font-bold text-white">${d.date}</td>
+                                    <td class="p-2.5 text-center text-slate-300">${d.emp_gunduz || '—'}</td>
+                                    <td class="p-2.5 text-center text-slate-300">${d.emp_gece || '—'}</td>
+                                    <td class="p-2.5 text-right font-bold text-emerald-400 font-mono">${(d.mixer_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                    <td class="p-2.5 text-center text-slate-300">${d.mixer_totals.toplam_sarj || 0}</td>
+                                    <td class="p-2.5 text-right font-bold text-amber-400 font-mono">${(d.kirim_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                    <td class="p-2.5 text-right font-bold text-sky-400 font-mono">${(d.mikronize_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('modal-mixer-week').classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function closeMixerWeekModal() {
+            const m = document.getElementById('modal-mixer-week');
+            if (m) m.classList.add('hidden');
+        }
+
+        function initMixerDailySection(dailyList) {
+            const daySel = document.getElementById('mixer-dash-day-select');
+            if (!daySel) return;
+
+            if (!dailyList || dailyList.length === 0) {
+                daySel.innerHTML = '<option value="">Kayıtlı gün yok</option>';
+                return;
+            }
+
+            daySel.innerHTML = dailyList.slice().reverse().map(d => `
+                <option value="${d.key}">${d.date}</option>
+            `).join('');
+
+            // En son günü göster
+            const initialKey = dailyList[dailyList.length - 1].key;
+            daySel.value = initialKey;
+            renderMixerDayDetail(initialKey);
+        }
+
+        function onMixerDayChange(dayKey) {
+            renderMixerDayDetail(dayKey);
+        }
+
+        function renderMixerDayDetail(dayKey) {
+            if (!mixerDashboardData || !mixerDashboardData.daily_details) return;
+            const day = mixerDashboardData.daily_details.find(d => String(d.key) === String(dayKey));
+            if (!day) return;
+
+            // Personeller
+            document.getElementById('mixer-day-emp-gunduz').textContent = day.emp_gunduz ? `${day.emp_gunduz} Kişi` : '—';
+            document.getElementById('mixer-day-emp-gece').textContent = day.emp_gece ? `${day.emp_gece} Kişi` : '—';
+
+            // Mini KPI Kartları
+            document.getElementById('mixer-day-kpi-mixer').textContent = `${(day.mixer_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg (${day.mixer_totals.toplam_sarj || 0} şarj)`;
+            document.getElementById('mixer-day-kpi-mixer-g').textContent = `${(day.mixer_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('mixer-day-kpi-mixer-n').textContent = `${(day.mixer_totals.gece_kg || 0).toLocaleString('tr-TR')} kg`;
+
+            document.getElementById('mixer-day-kpi-kirim').textContent = `${(day.kirim_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('mixer-day-kpi-kirim-g').textContent = `${(day.kirim_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('mixer-day-kpi-kirim-n').textContent = `${(day.kirim_totals.gece_kg || 0).toLocaleString('tr-TR')} kg`;
+
+            document.getElementById('mixer-day-kpi-mik').textContent = `${(day.mikronize_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('mixer-day-kpi-mik-g').textContent = `${(day.mikronize_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('mixer-day-kpi-mik-n').textContent = `${(day.mikronize_totals.gece_kg || 0).toLocaleString('tr-TR')} kg`;
+
+            // Mikser Tablosu
+            const tblMix = document.getElementById('tbl-mixer-day-mixer');
+            const tfootMix = document.getElementById('tfoot-mixer-day-mixer');
+            if (tblMix) {
+                if (!day.mixer || day.mixer.length === 0) {
+                    tblMix.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-slate-500">Bu gün için mikser kaydı girilmedi.</td></tr>';
+                    if (tfootMix) tfootMix.innerHTML = '';
+                } else {
+                    tblMix.innerHTML = day.mixer.map(m => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2.5 font-bold text-white">${m.makine || '—'}</td>
+                            <td class="p-2.5 font-semibold text-slate-200">${m.recipe}</td>
+                            <td class="p-2.5 text-right font-mono text-slate-400">${(m.batch_kg || 0).toFixed(1)} kg</td>
+                            <td class="p-2.5 text-center font-bold text-amber-400">${m.gunduz_sarj || 0}</td>
+                            <td class="p-2.5 text-right font-mono text-amber-300 font-semibold">${(m.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-center font-bold text-sky-400">${m.gece_sarj || 0}</td>
+                            <td class="p-2.5 text-right font-mono text-sky-300 font-semibold">${(m.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-center font-black text-white">${m.toplam_sarj || 0}</td>
+                            <td class="p-2.5 text-right font-black text-emerald-400 font-mono">${(m.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                        </tr>
+                    `).join('');
+
+                    if (tfootMix) {
+                        tfootMix.innerHTML = `
+                            <tr class="border-t border-slate-700 text-white">
+                                <td colspan="3" class="p-2.5">GÜNLÜK TOPLAM</td>
+                                <td class="p-2.5 text-center text-amber-400 font-black">${day.mixer_totals.gunduz_sarj || 0}</td>
+                                <td class="p-2.5 text-right text-amber-300 font-black font-mono">${(day.mixer_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-center text-sky-400 font-black">${day.mixer_totals.gece_sarj || 0}</td>
+                                <td class="p-2.5 text-right text-sky-300 font-black font-mono">${(day.mixer_totals.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-center text-white font-black">${day.mixer_totals.toplam_sarj || 0}</td>
+                                <td class="p-2.5 text-right text-emerald-400 font-black font-mono">${(day.mixer_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+
+            // Kırım Tablosu
+            const tblK = document.getElementById('tbl-mixer-day-kirim');
+            const tfootK = document.getElementById('tfoot-mixer-day-kirim');
+            if (tblK) {
+                if (!day.kirim || day.kirim.length === 0) {
+                    tblK.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-500">Kırım verisi yok.</td></tr>';
+                    if (tfootK) tfootK.innerHTML = '';
+                } else {
+                    tblK.innerHTML = day.kirim.map(k => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2 font-bold text-white">${k.hat}</td>
+                            <td class="p-2 text-right font-mono text-amber-300">${(k.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono text-sky-300">${(k.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono font-bold text-amber-400">${(k.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-center">
+                                ${k.status === 'arizali' 
+                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">Arızalı</span>' 
+                                    : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                    if (tfootK) {
+                        tfootK.innerHTML = `
+                            <tr class="border-t border-slate-700 text-white">
+                                <td class="p-2 font-bold">TOPLAM</td>
+                                <td class="p-2 text-right text-amber-300 font-bold font-mono">${(day.kirim_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right text-sky-300 font-bold font-mono">${(day.kirim_totals.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right text-amber-400 font-black font-mono">${(day.kirim_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td></td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+
+            // Mikronize Tablosu
+            const tblM = document.getElementById('tbl-mixer-day-mikronize');
+            const tfootM = document.getElementById('tfoot-mixer-day-mikronize');
+            if (tblM) {
+                if (!day.mikronize || day.mikronize.length === 0) {
+                    tblM.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-500">Mikronize verisi yok.</td></tr>';
+                    if (tfootM) tfootM.innerHTML = '';
+                } else {
+                    tblM.innerHTML = day.mikronize.map(m => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2 font-bold text-white">${m.hat}</td>
+                            <td class="p-2 text-right font-mono text-amber-300">${(m.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono text-sky-300">${(m.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono font-bold text-sky-400">${(m.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-center">
+                                ${m.status === 'arizali' 
+                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">Arızalı</span>' 
+                                    : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                    if (tfootM) {
+                        tfootM.innerHTML = `
+                            <tr class="border-t border-slate-700 text-white">
+                                <td class="p-2 font-bold">TOPLAM</td>
+                                <td class="p-2 text-right text-amber-300 font-bold font-mono">${(day.mikronize_totals.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right text-sky-300 font-bold font-mono">${(day.mikronize_totals.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right text-sky-400 font-black font-mono">${(day.mikronize_totals.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td></td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+
+            // O gün tüketilen hammaddeler
+            const tblMats = document.getElementById('tbl-mixer-day-materials');
+            if (tblMats) {
+                if (!day.materials || day.materials.length === 0) {
+                    tblMats.innerHTML = '<tr><td colspan="2" class="p-3 text-center text-slate-500">Bu gün için hammadde tüketim kaydı yok.</td></tr>';
+                } else {
+                    tblMats.innerHTML = day.materials.map(mat => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-2 font-semibold text-slate-200">${mat.material}</td>
+                            <td class="p-2 text-right font-bold text-sky-300 font-mono">${(mat.kg || 0).toLocaleString('tr-TR')} kg</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            safeCreateIcons();
         }
 
         function renderKirimTable(kirimData) {

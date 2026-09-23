@@ -1719,9 +1719,20 @@ def get_mixer_summary(month: Optional[str] = None):
             month_days[k] = d
 
     total_kirim_kg = 0.0
+    total_kirim_gunduz_kg = 0.0
+    total_kirim_gece_kg = 0.0
+
     total_mikronize_kg = 0.0
+    total_mikronize_gunduz_kg = 0.0
+    total_mikronize_gece_kg = 0.0
+
     total_mixer_kg = 0.0
+    total_mixer_gunduz_kg = 0.0
+    total_mixer_gece_kg = 0.0
     total_mixer_sarj = 0
+    total_mixer_gunduz_sarj = 0
+    total_mixer_gece_sarj = 0
+
     total_emp_gunduz = 0
     total_emp_gece = 0
     days_with_data = 0
@@ -1730,12 +1741,14 @@ def get_mixer_summary(month: Optional[str] = None):
     material_consumption = {}
     kirim_machines = {}
     mikronize_machines = {}
-    daily_history = []
+    daily_details = []
 
     sorted_day_keys = get_sorted_day_keys(month_days)
 
     for k in sorted_day_keys:
         d = month_days[k]
+        dt = parse_date_label(d.get("date", ""))
+        day_num = dt.day if dt else (int(k) if k.isdigit() else 1)
         date_str = d.get("date", k)
         d_kirim = d.get("kirim", [])
         d_mikronize = d.get("mikronize", [])
@@ -1743,43 +1756,80 @@ def get_mixer_summary(month: Optional[str] = None):
         emp_g = d.get("mixer_emp_gunduz", 0) or 0
         emp_n = d.get("mixer_emp_gece", 0) or 0
 
-        day_k_kg = 0.0
-        day_m_kg = 0.0
-        day_mx_kg = 0.0
-        day_mx_sarj = 0
-
         # Kırım
+        k_items = []
+        day_k_g_kg = 0.0
+        day_k_n_kg = 0.0
         for ke in d_kirim:
             hat = ke.get("hat", "Bilinmeyen")
-            kg = (ke.get("gunduz") or 0.0) + (ke.get("gece") or 0.0)
+            g = float(ke.get("gunduz") or 0.0)
+            n = float(ke.get("gece") or 0.0)
+            t = g + n
             status = ke.get("status", "normal")
-            day_k_kg += kg
+            day_k_g_kg += g
+            day_k_n_kg += n
+            k_items.append({
+                "hat": hat,
+                "gunduz_kg": round(g, 2),
+                "gece_kg": round(n, 2),
+                "toplam_kg": round(t, 2),
+                "status": status
+            })
             if hat not in kirim_machines:
-                kirim_machines[hat] = {"days": 0, "kg": 0.0, "arizali_count": 0}
+                kirim_machines[hat] = {"days": 0, "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0}
             if status == "arizali":
                 kirim_machines[hat]["arizali_count"] += 1
-            if kg > 0:
+            if t > 0:
                 kirim_machines[hat]["days"] += 1
-                kirim_machines[hat]["kg"] += kg
+                kirim_machines[hat]["kg"] += t
+                kirim_machines[hat]["gunduz_kg"] += g
+                kirim_machines[hat]["gece_kg"] += n
 
         # Mikronize
+        m_items = []
+        day_m_g_kg = 0.0
+        day_m_n_kg = 0.0
         for me in d_mikronize:
             hat = me.get("hat", "Bilinmeyen")
-            kg = (me.get("gunduz") or 0.0) + (me.get("gece") or 0.0)
-            day_m_kg += kg
+            g = float(me.get("gunduz") or 0.0)
+            n = float(me.get("gece") or 0.0)
+            t = g + n
+            status = me.get("status", "normal")
+            day_m_g_kg += g
+            day_m_n_kg += n
+            m_items.append({
+                "hat": hat,
+                "gunduz_kg": round(g, 2),
+                "gece_kg": round(n, 2),
+                "toplam_kg": round(t, 2),
+                "status": status
+            })
             if hat not in mikronize_machines:
-                mikronize_machines[hat] = {"days": 0, "kg": 0.0}
-            if kg > 0:
+                mikronize_machines[hat] = {"days": 0, "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0}
+            if status == "arizali":
+                mikronize_machines[hat]["arizali_count"] += 1
+            if t > 0:
                 mikronize_machines[hat]["days"] += 1
-                mikronize_machines[hat]["kg"] += kg
+                mikronize_machines[hat]["kg"] += t
+                mikronize_machines[hat]["gunduz_kg"] += g
+                mikronize_machines[hat]["gece_kg"] += n
 
         # Mikser
+        mx_items = []
+        day_mx_g_kg = 0.0
+        day_mx_n_kg = 0.0
+        day_mx_g_sarj = 0
+        day_mx_n_sarj = 0
+        day_mats = {}
+
         for mx in d_mixer:
             rec_name = mx.get("recipe", "Bilinmeyen")
-            g_sarj = mx.get("gunduz_sarj", 0) or 0
-            n_sarj = mx.get("gece_sarj", 0) or 0
+            makine = mx.get("makine", "")
+            g_sarj = int(mx.get("gunduz_sarj") or 0)
+            n_sarj = int(mx.get("gece_sarj") or 0)
             sarj = g_sarj + n_sarj
-            day_mx_sarj += sarj
+            day_mx_g_sarj += g_sarj
+            day_mx_n_sarj += n_sarj
 
             # Reçete eşleşmesi
             matched_rec = None
@@ -1789,16 +1839,35 @@ def get_mixer_summary(month: Optional[str] = None):
                     matched_rec = r_obj
                     break
 
-            b_kg = mx.get("batch_kg") or (matched_rec.get("batch_kg") if matched_rec else 0.0) or 0.0
-            kg = (mx.get("toplam_kg") or 0.0)
-            if kg <= 0 and sarj > 0 and b_kg > 0:
-                kg = sarj * b_kg
-            day_mx_kg += kg
+            b_kg = float(mx.get("batch_kg") or (matched_rec.get("batch_kg") if matched_rec else 0.0) or 0.0)
+            t_kg = float(mx.get("toplam_kg") or 0.0)
+            if t_kg <= 0 and sarj > 0 and b_kg > 0:
+                t_kg = sarj * b_kg
+            g_kg = g_sarj * b_kg if b_kg > 0 else (t_kg * (g_sarj / sarj) if sarj > 0 else 0.0)
+            n_kg = t_kg - g_kg
+            day_mx_g_kg += g_kg
+            day_mx_n_kg += n_kg
+
+            mx_items.append({
+                "makine": makine,
+                "recipe": rec_name,
+                "batch_kg": round(b_kg, 2),
+                "gunduz_sarj": g_sarj,
+                "gece_sarj": n_sarj,
+                "toplam_sarj": sarj,
+                "gunduz_kg": round(g_kg, 2),
+                "gece_kg": round(n_kg, 2),
+                "toplam_kg": round(t_kg, 2)
+            })
 
             if rec_name not in recipe_totals:
-                recipe_totals[rec_name] = {"sarj": 0, "kg": 0.0}
+                recipe_totals[rec_name] = {"sarj": 0, "gunduz_sarj": 0, "gece_sarj": 0, "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0}
             recipe_totals[rec_name]["sarj"] += sarj
-            recipe_totals[rec_name]["kg"] += kg
+            recipe_totals[rec_name]["gunduz_sarj"] += g_sarj
+            recipe_totals[rec_name]["gece_sarj"] += n_sarj
+            recipe_totals[rec_name]["kg"] += t_kg
+            recipe_totals[rec_name]["gunduz_kg"] += g_kg
+            recipe_totals[rec_name]["gece_kg"] += n_kg
 
             # Hammadde Tüketimi
             if matched_rec:
@@ -1809,36 +1878,145 @@ def get_mixer_summary(month: Optional[str] = None):
                         material_consumption[mat] = {"total_kg": 0.0, "by_recipe": {}}
                     material_consumption[mat]["total_kg"] += mat_kg
                     material_consumption[mat]["by_recipe"][rec_name] = material_consumption[mat]["by_recipe"].get(rec_name, 0.0) + mat_kg
+                    day_mats[mat] = day_mats.get(mat, 0.0) + mat_kg
 
-        if day_k_kg > 0 or day_m_kg > 0 or day_mx_kg > 0:
+        day_total_k_kg = day_k_g_kg + day_k_n_kg
+        day_total_m_kg = day_m_g_kg + day_m_n_kg
+        day_total_mx_kg = day_mx_g_kg + day_mx_n_kg
+        day_total_mx_sarj = day_mx_g_sarj + day_mx_n_sarj
+
+        if day_total_k_kg > 0 or day_total_m_kg > 0 or day_total_mx_kg > 0:
             days_with_data += 1
 
-        total_kirim_kg += day_k_kg
-        total_mikronize_kg += day_m_kg
-        total_mixer_kg += day_mx_kg
-        total_mixer_sarj += day_mx_sarj
-        total_emp_gunduz += emp_g
-        total_emp_gece += emp_n
+        total_kirim_gunduz_kg += day_k_g_kg
+        total_kirim_gece_kg += day_k_n_kg
+        total_kirim_kg += day_total_k_kg
 
-        daily_history.append({
+        total_mikronize_gunduz_kg += day_m_g_kg
+        total_mikronize_gece_kg += day_m_n_kg
+        total_mikronize_kg += day_total_m_kg
+
+        total_mixer_gunduz_kg += day_mx_g_kg
+        total_mixer_gece_kg += day_mx_n_kg
+        total_mixer_kg += day_total_mx_kg
+        total_mixer_gunduz_sarj += day_mx_g_sarj
+        total_mixer_gece_sarj += day_mx_n_sarj
+        total_mixer_sarj += day_total_mx_sarj
+
+        total_emp_gunduz += (emp_g if isinstance(emp_g, (int, float)) else 0)
+        total_emp_gece += (emp_n if isinstance(emp_n, (int, float)) else 0)
+
+        daily_details.append({
             "key": k,
             "date": date_str,
-            "kirim_kg": round(day_k_kg, 2),
-            "mikronize_kg": round(day_m_kg, 2),
-            "mixer_kg": round(day_mx_kg, 2),
-            "mixer_sarj": day_mx_sarj,
+            "day_num": day_num,
             "emp_gunduz": emp_g,
-            "emp_gece": emp_n
+            "emp_gece": emp_n,
+            "kirim": k_items,
+            "kirim_totals": {
+                "gunduz_kg": round(day_k_g_kg, 2),
+                "gece_kg": round(day_k_n_kg, 2),
+                "toplam_kg": round(day_total_k_kg, 2)
+            },
+            "mikronize": m_items,
+            "mikronize_totals": {
+                "gunduz_kg": round(day_m_g_kg, 2),
+                "gece_kg": round(day_m_n_kg, 2),
+                "toplam_kg": round(day_total_m_kg, 2)
+            },
+            "mixer": mx_items,
+            "mixer_totals": {
+                "gunduz_kg": round(day_mx_g_kg, 2),
+                "gece_kg": round(day_mx_n_kg, 2),
+                "toplam_kg": round(day_total_mx_kg, 2),
+                "gunduz_sarj": day_mx_g_sarj,
+                "gece_sarj": day_mx_n_sarj,
+                "toplam_sarj": day_total_mx_sarj
+            },
+            "materials": [{"material": m, "kg": round(kg, 2)} for m, kg in sorted(day_mats.items(), key=lambda x: -x[1])]
         })
 
-    # Reçete Listesi ve Payları
+    # Haftalık Özet Hesaplama (7'şer günlük bloklar)
+    week_defs = [
+        (1, 7, "1. Hafta (1-7)"),
+        (8, 14, "2. Hafta (8-14)"),
+        (15, 21, "3. Hafta (15-21)"),
+        (22, 28, "4. Hafta (22-28)"),
+        (29, 31, "5. Hafta (29-31)")
+    ]
+
+    weekly_summary = []
+    for start_d, end_d, label in week_defs:
+        w_days = [d for d in daily_details if start_d <= d["day_num"] <= end_d]
+        if not w_days:
+            continue
+        w_mx_g_kg = sum(d["mixer_totals"]["gunduz_kg"] for d in w_days)
+        w_mx_n_kg = sum(d["mixer_totals"]["gece_kg"] for d in w_days)
+        w_mx_tot_kg = w_mx_g_kg + w_mx_n_kg
+        w_mx_g_sarj = sum(d["mixer_totals"]["gunduz_sarj"] for d in w_days)
+        w_mx_n_sarj = sum(d["mixer_totals"]["gece_sarj"] for d in w_days)
+
+        w_k_g_kg = sum(d["kirim_totals"]["gunduz_kg"] for d in w_days)
+        w_k_n_kg = sum(d["kirim_totals"]["gece_kg"] for d in w_days)
+        w_k_tot_kg = w_k_g_kg + w_k_n_kg
+
+        w_m_g_kg = sum(d["mikronize_totals"]["gunduz_kg"] for d in w_days)
+        w_m_n_kg = sum(d["mikronize_totals"]["gece_kg"] for d in w_days)
+        w_m_tot_kg = w_m_g_kg + w_m_n_kg
+
+        weekly_summary.append({
+            "label": label,
+            "start_day": start_d,
+            "end_day": end_d,
+            "days_count": len(w_days),
+            "mixer": {
+                "toplam_ton": round(w_mx_tot_kg / 1000.0, 2),
+                "toplam_kg": round(w_mx_tot_kg, 2),
+                "gunduz_kg": round(w_mx_g_kg, 2),
+                "gece_kg": round(w_mx_n_kg, 2),
+                "gunduz_ton": round(w_mx_g_kg / 1000.0, 2),
+                "gece_ton": round(w_mx_n_kg / 1000.0, 2),
+                "toplam_sarj": w_mx_g_sarj + w_mx_n_sarj,
+                "gunduz_sarj": w_mx_g_sarj,
+                "gece_sarj": w_mx_n_sarj
+            },
+            "kirim": {
+                "toplam_ton": round(w_k_tot_kg / 1000.0, 2),
+                "gunduz_ton": round(w_k_g_kg / 1000.0, 2),
+                "gece_ton": round(w_k_n_kg / 1000.0, 2),
+                "toplam_kg": round(w_k_tot_kg, 2),
+                "gunduz_kg": round(w_k_g_kg, 2),
+                "gece_kg": round(w_k_n_kg, 2)
+            },
+            "mikronize": {
+                "toplam_ton": round(w_m_tot_kg / 1000.0, 2),
+                "gunduz_ton": round(w_m_g_kg / 1000.0, 2),
+                "gece_ton": round(w_m_n_kg / 1000.0, 2),
+                "toplam_kg": round(w_m_tot_kg, 2),
+                "gunduz_kg": round(w_m_g_kg, 2),
+                "gece_kg": round(w_m_n_kg, 2)
+            },
+            "days": [{
+                "key": d["key"],
+                "date": d["date"],
+                "mixer_kg": d["mixer_totals"]["toplam_kg"],
+                "kirim_kg": d["kirim_totals"]["toplam_kg"],
+                "mikronize_kg": d["mikronize_totals"]["toplam_kg"]
+            } for d in w_days]
+        })
+
+    # Reçete Listesi ve Payları (Gündüz vs Gece Kırılımlı)
     recipe_summary_list = []
     for r_name, r_val in recipe_totals.items():
         share = round((r_val["kg"] / total_mixer_kg * 100), 2) if total_mixer_kg > 0 else 0
         recipe_summary_list.append({
             "name": r_name,
             "sarj": r_val["sarj"],
+            "gunduz_sarj": r_val["gunduz_sarj"],
+            "gece_sarj": r_val["gece_sarj"],
             "prod_kg": round(r_val["kg"], 2),
+            "gunduz_kg": round(r_val["gunduz_kg"], 2),
+            "gece_kg": round(r_val["gece_kg"], 2),
             "share_pct": share
         })
     recipe_summary_list.sort(key=lambda x: x["prod_kg"], reverse=True)
@@ -1853,45 +2031,43 @@ def get_mixer_summary(month: Optional[str] = None):
         })
     material_list.sort(key=lambda x: x["total_kg"], reverse=True)
 
-    # Makine Hedef & Performans (Excel'deki formüller: 1 gün = 7.5 saat, 26 gün hedefi)
+    # Sadeleştirilmiş Makine Gerçekleşen Performans Tabloları (26 gün hedefsiz)
     kirim_perf_list = []
     for h_name, h_stat in kirim_machines.items():
         days = h_stat["days"]
         ton = h_stat["kg"] / 1000.0
-        day_avg_ton = (ton / days) if days > 0 else 0
+        g_ton = h_stat["gunduz_kg"] / 1000.0
+        n_ton = h_stat["gece_kg"] / 1000.0
+        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0
         hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
-        target_26d_ton = day_avg_ton * 26
-        missing_ton = max(0, target_26d_ton - ton)
-        efficiency = (days / 26) if days <= 26 else 1.0
         kirim_perf_list.append({
             "name": h_name,
             "days": days,
             "prod_ton": round(ton, 2),
-            "day_avg_ton": round(day_avg_ton, 2),
+            "gunduz_ton": round(g_ton, 2),
+            "gece_ton": round(n_ton, 2),
+            "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
-            "target_26d_ton": round(target_26d_ton, 2),
-            "missing_ton": round(missing_ton, 2),
-            "efficiency_pct": round(efficiency * 100, 1)
+            "arizali_count": h_stat.get("arizali_count", 0)
         })
 
     mikronize_perf_list = []
     for h_name, h_stat in mikronize_machines.items():
         days = h_stat["days"]
         ton = h_stat["kg"] / 1000.0
-        day_avg_ton = (ton / days) if days > 0 else 0
+        g_ton = h_stat["gunduz_kg"] / 1000.0
+        n_ton = h_stat["gece_kg"] / 1000.0
+        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0
         hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
-        target_26d_ton = day_avg_ton * 26
-        missing_ton = max(0, target_26d_ton - ton)
-        efficiency = (days / 26) if days <= 26 else 1.0
         mikronize_perf_list.append({
             "name": h_name,
             "days": days,
             "prod_ton": round(ton, 2),
-            "day_avg_ton": round(day_avg_ton, 2),
+            "gunduz_ton": round(g_ton, 2),
+            "gece_ton": round(n_ton, 2),
+            "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
-            "target_26d_ton": round(target_26d_ton, 2),
-            "missing_ton": round(missing_ton, 2),
-            "efficiency_pct": round(efficiency * 100, 1)
+            "arizali_count": h_stat.get("arizali_count", 0)
         })
 
     # Entegre Kütle Dengesi: O ayki Ekstrüder + Levha üretim ve firesi
@@ -1914,16 +2090,31 @@ def get_mixer_summary(month: Optional[str] = None):
         "days_count": days_with_data,
         "total_mixer_kg": round(total_mixer_kg, 2),
         "total_mixer_ton": round(total_mixer_kg / 1000.0, 2),
+        "total_mixer_gunduz_kg": round(total_mixer_gunduz_kg, 2),
+        "total_mixer_gece_kg": round(total_mixer_gece_kg, 2),
+        "total_mixer_gunduz_ton": round(total_mixer_gunduz_kg / 1000.0, 2),
+        "total_mixer_gece_ton": round(total_mixer_gece_kg / 1000.0, 2),
+        "total_mixer_sarj": total_mixer_sarj,
+        "total_mixer_gunduz_sarj": total_mixer_gunduz_sarj,
+        "total_mixer_gece_sarj": total_mixer_gece_sarj,
         "total_kirim_kg": round(total_kirim_kg, 2),
         "total_kirim_ton": round(total_kirim_kg / 1000.0, 2),
+        "total_kirim_gunduz_kg": round(total_kirim_gunduz_kg, 2),
+        "total_kirim_gece_kg": round(total_kirim_gece_kg, 2),
+        "total_kirim_gunduz_ton": round(total_kirim_gunduz_kg / 1000.0, 2),
+        "total_kirim_gece_ton": round(total_kirim_gece_kg / 1000.0, 2),
         "total_mikronize_kg": round(total_mikronize_kg, 2),
         "total_mikronize_ton": round(total_mikronize_kg / 1000.0, 2),
-        "total_mixer_sarj": total_mixer_sarj,
+        "total_mikronize_gunduz_kg": round(total_mikronize_gunduz_kg, 2),
+        "total_mikronize_gece_kg": round(total_mikronize_gece_kg, 2),
+        "total_mikronize_gunduz_ton": round(total_mikronize_gunduz_kg / 1000.0, 2),
+        "total_mikronize_gece_ton": round(total_mikronize_gece_kg / 1000.0, 2),
         "recipes": recipe_summary_list,
         "materials": material_list,
         "kirim_performance": kirim_perf_list,
         "mikronize_performance": mikronize_perf_list,
-        "daily_history": daily_history,
+        "weekly_summary": weekly_summary,
+        "daily_details": daily_details,
         "mass_balance": {
             "mixer_prod_kg": round(total_mixer_kg, 2),
             "profile_consumed_kg": round(ext_lev_prod_kg + ext_lev_fire_kg, 2),

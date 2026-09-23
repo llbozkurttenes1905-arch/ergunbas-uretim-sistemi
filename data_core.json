@@ -1033,36 +1033,6 @@
       "door_ratio": 0
     },
     {
-      "id": "p_137",
-      "name": "D. Budak",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
-      "id": "p_138",
-      "name": "K. Ceviz",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
-      "id": "p_139",
-      "name": "B. Teak",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
-      "id": "p_140",
-      "name": "Antrasit",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
-      "id": "p_141",
-      "name": "M. Teak",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
       "id": "p_142",
       "name": "Kitkat (Antrasit)",
       "category": "diger",
@@ -1070,13 +1040,7 @@
     },
     {
       "id": "p_143",
-      "name": "Beyaz",
-      "category": "levha",
-      "door_ratio": 2.0
-    },
-    {
-      "id": "p_144",
-      "name": "M. B. Teak",
+      "name": "BEYAZ",
       "category": "levha",
       "door_ratio": 2.0
     },
@@ -1097,13 +1061,6 @@
       "name": "Kitkat (emboslu) Antrasit",
       "category": "diger",
       "door_ratio": 0.0
-    },
-    {
-      "id": "p_148",
-      "name": "Cam Çıtası",
-      "category": "diger",
-      "door_ratio": 0.0,
-      "description": ""
     }
   ],
   "mixer_recipes": [

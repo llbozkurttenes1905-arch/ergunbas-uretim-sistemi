@@ -1831,11 +1831,14 @@ def get_mixer_summary(month: Optional[str] = None):
             day_mx_g_sarj += g_sarj
             day_mx_n_sarj += n_sarj
 
-            # Reçete eşleşmesi
+            # Reçete eşleşmesi — ismi normalize ederek karşılaştır
             matched_rec = None
-            clean_rec_lower = rec_name.lower().replace(" ", "").replace("-", "")
+            import re as _re
+            def _norm(s):
+                return _re.sub(r'[^a-z0-9]', '', s.lower())
+            clean_key = _norm(rec_name)
             for r_k, r_obj in recipes.items():
-                if r_k.replace(" ", "").replace("-", "") in clean_rec_lower or clean_rec_lower in r_k.replace(" ", "").replace("-", ""):
+                if _norm(r_k) == clean_key or _norm(r_k) in clean_key or clean_key in _norm(r_k):
                     matched_rec = r_obj
                     break
 

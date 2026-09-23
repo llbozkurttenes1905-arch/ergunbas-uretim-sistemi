@@ -516,6 +516,17 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
     seren_prod = 0.0
     levha_prod = 0.0
 
+    door_req = {"pervaz": 5.0, "kasa": 2.5, "seren": 3.5, "levha": 2.0}
+    prod_cat_map = {}
+    for p in db_data.get("products", []):
+        p_c = (p.get("category") or "").strip().lower()
+        p_n = (p.get("name") or "").strip().lower()
+        p_r = p.get("door_ratio")
+        if p_n and p_c:
+            prod_cat_map[p_n] = p_c
+        if p_c in door_req and p_r and float(p_r) > 0:
+            door_req[p_c] = float(p_r)
+
     days_to_process = filter_date_keys if filter_date_keys else list(db_data["daily_data"].keys())
 
     for d_str in days_to_process:
@@ -525,23 +536,28 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
 
         for shift in ["gunduz", "gece"]:
             for item in day_obj.get(shift, {}).get("extruders", []):
-                p_name = item.get("product", "").lower()
-                qty = item.get("qty", 0)
-                if "pervaz" in p_name:
+                raw_p = (item.get("product") or "").strip().lower()
+                qty = float(item.get("qty", 0) or 0)
+                cat = prod_cat_map.get(raw_p)
+                if not cat:
+                    if "pervaz" in raw_p: cat = "pervaz"
+                    elif "kasa" in raw_p: cat = "kasa"
+                    elif "seren" in raw_p: cat = "seren"
+                if cat == "pervaz":
                     pervaz_prod += qty
-                elif "kasa" in p_name:
+                elif cat == "kasa":
                     kasa_prod += qty
-                elif "seren" in p_name:
+                elif cat == "seren":
                     seren_prod += qty
 
             for item in day_obj.get(shift, {}).get("levha", []):
-                qty = item.get("qty", 0)
+                qty = float(item.get("qty", 0) or 0)
                 levha_prod += qty
 
-    pervaz_req = 5.0
-    kasa_req = 2.5
-    seren_req = 3.5
-    levha_req = 2.0
+    pervaz_req = door_req["pervaz"]
+    kasa_req = door_req["kasa"]
+    seren_req = door_req["seren"]
+    levha_req = door_req["levha"]
 
     pervaz_eq = pervaz_prod / pervaz_req if pervaz_req else 0
     kasa_eq = kasa_prod / kasa_req if kasa_req else 0
@@ -646,22 +662,23 @@ def get_sorted_day_keys(daily_data):
     return sorted(daily_data.keys(), key=sort_key)
 
 
-def get_day_category_qty(day_obj):
+def get_day_category_qty(day_obj, prod_cat_map=None):
     """Bir günün ham üretim adetlerini kategori bazında döndürür (pervaz, kasa, seren, levha).
     Kapı devir zincirinde (gün gün kümülatif aktarım) kullanılır."""
     qty = {"pervaz": 0.0, "kasa": 0.0, "seren": 0.0, "levha": 0.0}
     for shift in ["gunduz", "gece"]:
         for item in day_obj.get(shift, {}).get("extruders", []):
-            p_name = item.get("product", "").lower()
-            q = item.get("qty", 0)
-            if "pervaz" in p_name:
-                qty["pervaz"] += q
-            elif "kasa" in p_name:
-                qty["kasa"] += q
-            elif "seren" in p_name:
-                qty["seren"] += q
+            raw_p = (item.get("product") or "").strip().lower()
+            q = float(item.get("qty", 0) or 0)
+            cat = prod_cat_map.get(raw_p) if prod_cat_map else None
+            if not cat:
+                if "pervaz" in raw_p: cat = "pervaz"
+                elif "kasa" in raw_p: cat = "kasa"
+                elif "seren" in raw_p: cat = "seren"
+            if cat in qty:
+                qty[cat] += q
         for item in day_obj.get(shift, {}).get("levha", []):
-            qty["levha"] += item.get("qty", 0)
+            qty["levha"] += float(item.get("qty", 0) or 0)
     return qty
 
 
@@ -717,9 +734,18 @@ def get_dashboard_summary():
     daily_chart = []
     sorted_keys = get_sorted_day_keys(data["daily_data"])
 
-    # Kapı kapasitesi DEVİR ZİNCİRİ: bir günün fazlası, sıradaki güne (kronolojik
-    # sırada) taşınır. Kategori bazında koşan (running) bakiye.
+    # Kapı kapasitesi DEVİR ZİNCİRİ: bir günün fazlası, sıradaki güne taşınır.
+    # Reçete katsayıları ürünler kataloğundan dinamik alınır
     door_req = {"pervaz": 5.0, "kasa": 2.5, "seren": 3.5, "levha": 2.0}
+    prod_cat_map = {}
+    for p in data.get("products", []):
+        p_c = (p.get("category") or "").strip().lower()
+        p_n = (p.get("name") or "").strip().lower()
+        p_r = p.get("door_ratio")
+        if p_n and p_c:
+            prod_cat_map[p_n] = p_c
+        if p_c in door_req and p_r and float(p_r) > 0:
+            door_req[p_c] = float(p_r)
     running_carryover = {"pervaz": 0.0, "kasa": 0.0, "seren": 0.0, "levha": 0.0}
 
     for d_str in sorted_keys:
@@ -1055,7 +1081,7 @@ def get_dashboard_summary():
         # Bu güne özel kapı kapasitesi/reçete eşdeğeri hesabı — DEVİR ZİNCİRİ:
         # önceki günden gelen fazlalık (running_carryover) bugünün üretimine eklenir,
         # tamamlanan kapılar düşüldükten sonra kalan fazlalık bir sonraki güne aktarılır.
-        today_qty = get_day_category_qty(day_obj)
+        today_qty = get_day_category_qty(day_obj, prod_cat_map)
         available = {cat: running_carryover[cat] + today_qty[cat] for cat in door_req}
         eq = {cat: (available[cat] / door_req[cat] if door_req[cat] else 0) for cat in door_req}
         has_any = any(available[cat] > 0 for cat in door_req)

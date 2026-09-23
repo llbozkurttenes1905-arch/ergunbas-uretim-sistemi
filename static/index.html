@@ -2823,7 +2823,7 @@
                     tblSummary.innerHTML = `
                         <tr onclick="showDoorComponentDetail('pervaz')" class="hover:bg-slate-900/50 cursor-pointer transition">
                             <td class="p-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-ergunbas-500"></span> Pervaz</td>
-                            <td class="p-3 text-ergunbas-500 font-bold">5.0 Adet</td>
+                            <td class="p-3 text-ergunbas-500 font-bold">${doorDetails.pervaz.req_per_door || 5.0} Adet</td>
                             <td class="p-3">${doorDetails.pervaz.produced}</td>
                             <td class="p-3 font-bold text-emerald-400">${doorDetails.pervaz.door_eq} Kapı</td>
                             <td class="p-3 text-slate-400">${doorDetails.pervaz.used} Adet</td>
@@ -2831,7 +2831,7 @@
                         </tr>
                         <tr onclick="showDoorComponentDetail('kasa')" class="hover:bg-slate-900/50 cursor-pointer transition">
                             <td class="p-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kasa</td>
-                            <td class="p-3 text-ergunbas-500 font-bold">2.5 Adet</td>
+                            <td class="p-3 text-ergunbas-500 font-bold">${doorDetails.kasa.req_per_door || 2.5} Adet</td>
                             <td class="p-3">${doorDetails.kasa.produced}</td>
                             <td class="p-3 font-bold text-emerald-400">${doorDetails.kasa.door_eq} Kapı</td>
                             <td class="p-3 text-slate-400">${doorDetails.kasa.used} Adet</td>
@@ -2839,7 +2839,7 @@
                         </tr>
                         <tr onclick="showDoorComponentDetail('seren')" class="hover:bg-slate-900/50 cursor-pointer transition">
                             <td class="p-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Seren</td>
-                            <td class="p-3 text-ergunbas-500 font-bold">3.5 Adet</td>
+                            <td class="p-3 text-ergunbas-500 font-bold">${doorDetails.seren.req_per_door || 3.5} Adet</td>
                             <td class="p-3">${doorDetails.seren.produced}</td>
                             <td class="p-3 font-bold text-emerald-400">${doorDetails.seren.door_eq} Kapı</td>
                             <td class="p-3 text-slate-400">${doorDetails.seren.used} Adet</td>
@@ -2847,7 +2847,7 @@
                         </tr>
                         <tr onclick="showDoorComponentDetail('levha')" class="hover:bg-slate-900/50 cursor-pointer transition">
                             <td class="p-3 font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Levha</td>
-                            <td class="p-3 text-ergunbas-500 font-bold">2.0 Adet</td>
+                            <td class="p-3 text-ergunbas-500 font-bold">${doorDetails.levha.req_per_door || 2.0} Adet</td>
                             <td class="p-3">${doorDetails.levha.produced}</td>
                             <td class="p-3 font-bold text-emerald-400">${doorDetails.levha.door_eq} Kapı</td>
                             <td class="p-3 text-slate-400">${doorDetails.levha.used} Adet</td>
@@ -2965,9 +2965,13 @@
                 sel.appendChild(opt);
             });
 
-            const targetKey = (prevValue && dashboardData.months_chart_available.some(m => m.key === prevValue))
+            const hasData = (key) => {
+                const mt = (dashboardData.monthly_totals || []).find(m => m.key === key);
+                return mt && (mt.prod_ton > 0 || mt.doors > 0);
+            };
+            const targetKey = (prevValue && hasData(prevValue) && dashboardData.months_chart_available.some(m => m.key === prevValue))
                 ? prevValue
-                : (dashboardData.current_month_key || (dashboardData.months_chart_available.length ? dashboardData.months_chart_available[dashboardData.months_chart_available.length - 1].key : ''));
+                : (dashboardData.current_month_key || (dashboardData.months_chart_available.length ? dashboardData.months_chart_available[0].key : ''));
             if (targetKey) sel.value = targetKey;
 
             renderDashMonthView();
@@ -3411,11 +3415,13 @@
         }
 
         function showDoorComponentDetail(cat) {
-            if (!dashboardData || !dashboardData.door_stats) return;
-            const item = dashboardData.door_stats.details[cat];
-            const titleMap = { 'pervaz': 'Pervaz (5 ad/kapı)', 'kasa': 'Kasa (2.5 ad/kapı)', 'seren': 'Seren (3.5 ad/kapı)', 'levha': 'Levha (2 ad/kapı)' };
+            if (!dashboardData || !dashboardData.door_stats || !dashboardData.door_stats.details) return;
+            const item = dashboardData.door_stats.details[cat] || {};
+            const r = item.req_per_door || (cat === 'pervaz' ? 5 : (cat === 'kasa' ? 2.5 : (cat === 'seren' ? 3.5 : 2)));
+            const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+            const titleText = `${catLabel} (${r} ad/kapı)`;
 
-            document.getElementById('modal-title').innerHTML = `<i data-lucide="layers" class="w-6 h-6 text-emerald-400"></i> ${titleMap[cat]} Ürün Detayı`;
+            document.getElementById('modal-title').innerHTML = `<i data-lucide="layers" class="w-6 h-6 text-emerald-400"></i> ${titleText} Ürün Detayı`;
             document.getElementById('modal-subtitle').textContent = `1 Kapı için gerekli reçete katsayısı ve devir stok durumu`;
 
             document.getElementById('modal-body').innerHTML = `

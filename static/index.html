@@ -1247,30 +1247,38 @@
 
             <!-- Reçete Dağılımı ve Aylık Hammadde Tüketim Raporu -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Reçete Dağılımı -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Reçete Bazlı Dağılım (Gündüz / Gece)
-                    </h3>
+                <!-- Reçete Dağılımı (Excel Ürün Bazında Aylık Mikser Tablosu) -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm lg:col-span-2">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-400"></i> Ürün / Reçete Bazında Aylık Mikser Üretimi & Tonaj (Gündüz / Gece)
+                        </h3>
+                        <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full">Excel Formülleriyle Birebir Uyumlu</span>
+                    </div>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-950 text-xs text-slate-400 uppercase">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase">
                                 <tr>
                                     <th class="p-2.5">Ürün / Reçete</th>
-                                    <th class="p-2.5 text-center" title="Gündüz Şarj">☀️ Gündüz</th>
-                                    <th class="p-2.5 text-center" title="Gece Şarj">🌙 Gece</th>
-                                    <th class="p-2.5 text-center">Toplam Şarj</th>
-                                    <th class="p-2.5 text-right">Toplam (kg)</th>
-                                    <th class="p-2.5 text-right">Pay (%)</th>
+                                    <th class="p-2.5 text-center text-amber-400" title="Gündüz Şarj">☀️ Gündüz Şarj</th>
+                                    <th class="p-2.5 text-center text-sky-400" title="Gece Şarj">🌙 Gece Şarj</th>
+                                    <th class="p-2.5 text-center font-bold text-emerald-400">Toplam Şarj</th>
+                                    <th class="p-2.5 text-right text-amber-400">Gündüz Tonaj</th>
+                                    <th class="p-2.5 text-right text-sky-400">Gece Tonaj</th>
+                                    <th class="p-2.5 text-right font-bold text-emerald-400">Toplam Tonaj</th>
+                                    <th class="p-2.5 text-center">Veri Girilen Gün</th>
+                                    <th class="p-2.5 text-right">Gün Ort. Tonaj</th>
+                                    <th class="p-2.5 text-right font-bold text-sky-300">Pay (%)</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-mixer-recipes-summary" class="divide-y divide-slate-800"></tbody>
+                            <tfoot id="tfoot-mixer-recipes-summary" class="bg-slate-950 font-bold text-slate-200 border-t-2 border-slate-700"></tfoot>
                         </table>
                     </div>
                 </div>
 
                 <!-- Aylık Hammadde Tüketimi -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm lg:col-span-2">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="boxes" class="w-5 h-5 text-sky-400"></i> Aylık Hammadde Tüketim Özeti
                     </h3>
@@ -1288,51 +1296,95 @@
                 </div>
             </div>
 
-            <!-- Kırım & Mikronize Makine Performansları (26 Gün Hedefsiz) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Kırım -->
+            <!-- MAKİNE / HAT BAZINDA AYLIK PERFORMANS TABLOLARI (EXCEL FORMÜLLERİYLE BİREBİR) -->
+            <div class="space-y-6">
+                <!-- Mikser Hatları Performansı -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gauge" class="w-5 h-5 text-amber-400"></i> Kırım Hatları Aylık Performansı
-                    </h3>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="beaker" class="w-5 h-5 text-emerald-400"></i> Mikser Hatları / Kazanları Aylık Performansı
+                        </h3>
+                        <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full font-medium">Kazan Bazında Detay</span>
+                    </div>
                     <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
                         <table class="w-full text-left text-xs">
                             <thead class="bg-slate-950 text-slate-400 uppercase">
                                 <tr>
-                                    <th class="p-2">Makine</th>
-                                    <th class="p-2 text-center">Çalışılan Gün</th>
-                                    <th class="p-2 text-right">☀️ Gündüz</th>
-                                    <th class="p-2 text-right">🌙 Gece</th>
-                                    <th class="p-2 text-right font-bold text-amber-400">Toplam (Ton)</th>
-                                    <th class="p-2 text-right">Günlük Ort. (kg)</th>
-                                    <th class="p-2 text-center">Arızalı Gün</th>
+                                    <th class="p-2.5">Makine</th>
+                                    <th class="p-2.5 text-center">Çalışılan Gün (☀️/🌙/Top)</th>
+                                    <th class="p-2.5 text-center text-amber-400">☀️ Gündüz Şarj</th>
+                                    <th class="p-2.5 text-center text-sky-400">🌙 Gece Şarj</th>
+                                    <th class="p-2.5 text-center font-bold text-emerald-400">Toplam Şarj</th>
+                                    <th class="p-2.5 text-right text-amber-400">☀️ Gündüz (Ton)</th>
+                                    <th class="p-2.5 text-right text-sky-400">🌙 Gece (Ton)</th>
+                                    <th class="p-2.5 text-right font-bold text-emerald-400">Toplam (Ton)</th>
+                                    <th class="p-2.5 text-right">Gün Ort. (kg)</th>
+                                    <th class="p-2.5 text-right text-sky-300">⏱️ Saatlik Ort. (kg/saat)</th>
+                                    <th class="p-2.5">Basılan Reçeteler</th>
                                 </tr>
                             </thead>
-                            <tbody id="tbl-kirim-perf" class="divide-y divide-slate-800"></tbody>
+                            <tbody id="tbl-mixer-perf" class="divide-y divide-slate-800"></tbody>
+                            <tfoot id="tfoot-mixer-perf" class="bg-slate-950 font-bold text-slate-200 border-t-2 border-slate-700"></tfoot>
                         </table>
                     </div>
                 </div>
 
-                <!-- Mikronize -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="gauge" class="w-5 h-5 text-sky-400"></i> Mikronize Hatları Aylık Performansı
-                    </h3>
-                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-950 text-slate-400 uppercase">
-                                <tr>
-                                    <th class="p-2">Makine</th>
-                                    <th class="p-2 text-center">Çalışılan Gün</th>
-                                    <th class="p-2 text-right">☀️ Gündüz</th>
-                                    <th class="p-2 text-right">🌙 Gece</th>
-                                    <th class="p-2 text-right font-bold text-sky-400">Toplam (Ton)</th>
-                                    <th class="p-2 text-right">Günlük Ort. (kg)</th>
-                                    <th class="p-2 text-center">Arızalı Gün</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbl-mikronize-perf" class="divide-y divide-slate-800"></tbody>
-                        </table>
+                <!-- Kırım & Mikronize Makine Performansları Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Kırım -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i data-lucide="gauge" class="w-5 h-5 text-amber-400"></i> Kırım Hatları Aylık Performansı
+                            </h3>
+                            <span class="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full">4 Hat</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-950 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="p-2">Makine</th>
+                                        <th class="p-2 text-center">Çalışılan Gün</th>
+                                        <th class="p-2 text-right">☀️ Gündüz</th>
+                                        <th class="p-2 text-right">🌙 Gece</th>
+                                        <th class="p-2 text-right font-bold text-amber-400">Toplam (Ton)</th>
+                                        <th class="p-2 text-right">Gün Ort. (kg)</th>
+                                        <th class="p-2 text-right text-amber-300">⏱️ Saatlik (kg/s)</th>
+                                        <th class="p-2 text-center">Arızalı Gün</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl-kirim-perf" class="divide-y divide-slate-800"></tbody>
+                                <tfoot id="tfoot-kirim-perf" class="bg-slate-950 font-bold text-slate-200 border-t-2 border-slate-700"></tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Mikronize -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i data-lucide="gauge" class="w-5 h-5 text-sky-400"></i> Mikronize Hatları Aylık Performansı
+                            </h3>
+                            <span class="text-xs text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">6 Hat</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-950 text-slate-400 uppercase">
+                                    <tr>
+                                        <th class="p-2">Makine</th>
+                                        <th class="p-2 text-center">Çalışılan Gün</th>
+                                        <th class="p-2 text-right">☀️ Gündüz</th>
+                                        <th class="p-2 text-right">🌙 Gece</th>
+                                        <th class="p-2 text-right font-bold text-sky-400">Toplam (Ton)</th>
+                                        <th class="p-2 text-right">Gün Ort. (kg)</th>
+                                        <th class="p-2 text-right text-sky-300">⏱️ Saatlik (kg/s)</th>
+                                        <th class="p-2 text-center">Arızalı Gün</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl-mikronize-perf" class="divide-y divide-slate-800"></tbody>
+                                <tfoot id="tfoot-mikronize-perf" class="bg-slate-950 font-bold text-slate-200 border-t-2 border-slate-700"></tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3836,22 +3888,54 @@
                     consumedEl.textContent = `${((mb.profile_consumed_kg || 0)/1000).toFixed(2)} Ton`;
                 }
 
-                // 2. Reçete Bazlı Dağılım Tablosu (Gündüz & Gece Şarjlı)
+                // 2. Reçete Bazlı Dağılım Tablosu (Excel Row 58-68 ile Birebir Uyumlu)
                 const tblRec = document.getElementById('tbl-mixer-recipes-summary');
+                const tfootRec = document.getElementById('tfoot-mixer-recipes-summary');
                 if (tblRec) {
-                    if (!mixerDashboardData.recipes || mixerDashboardData.recipes.length === 0) {
-                        tblRec.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Bu döneme ait reçete kaydı bulunamadı.</td></tr>';
+                    const recList = mixerDashboardData.recipes || [];
+                    if (recList.length === 0) {
+                        tblRec.innerHTML = '<tr><td colspan="10" class="p-4 text-center text-slate-500">Bu döneme ait reçete kaydı bulunamadı.</td></tr>';
+                        if (tfootRec) tfootRec.innerHTML = '';
                     } else {
-                        tblRec.innerHTML = mixerDashboardData.recipes.map(r => `
-                            <tr class="hover:bg-slate-800/40 transition">
-                                <td class="p-2.5 font-bold text-white">${r.name}</td>
+                        tblRec.innerHTML = recList.map(r => `
+                            <tr class="hover:bg-slate-800/40 transition font-mono">
+                                <td class="p-2.5 font-bold text-white font-sans">${r.name}</td>
                                 <td class="p-2.5 text-center font-semibold text-amber-400">${r.gunduz_sarj || 0}</td>
                                 <td class="p-2.5 text-center font-semibold text-sky-400">${r.gece_sarj || 0}</td>
                                 <td class="p-2.5 text-center font-bold text-emerald-400">${r.sarj}</td>
-                                <td class="p-2.5 text-right font-semibold text-white">${(r.prod_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2.5 text-right font-semibold text-amber-300">${(r.gunduz_ton || 0).toFixed(2)} T</td>
+                                <td class="p-2.5 text-right font-semibold text-sky-300">${(r.gece_ton || 0).toFixed(2)} T</td>
+                                <td class="p-2.5 text-right font-bold text-emerald-400">${(r.prod_ton || 0).toFixed(2)} Ton</td>
+                                <td class="p-2.5 text-center text-slate-300">${r.days_count || 0} gün</td>
+                                <td class="p-2.5 text-right text-slate-300">${(r.day_avg_ton || 0).toFixed(2)} T/gün</td>
                                 <td class="p-2.5 text-right font-bold text-sky-400">%${r.share_pct}</td>
                             </tr>
                         `).join('');
+
+                        if (tfootRec) {
+                            const totG_sarj = recList.reduce((acc, x) => acc + (x.gunduz_sarj || 0), 0);
+                            const totN_sarj = recList.reduce((acc, x) => acc + (x.gece_sarj || 0), 0);
+                            const totSarj = recList.reduce((acc, x) => acc + (x.sarj || 0), 0);
+                            const totG_ton = recList.reduce((acc, x) => acc + (x.gunduz_ton || 0), 0);
+                            const totN_ton = recList.reduce((acc, x) => acc + (x.gece_ton || 0), 0);
+                            const totTon = recList.reduce((acc, x) => acc + (x.prod_ton || 0), 0);
+                            const daysWithData = mixerDashboardData.days_count || 1;
+                            const genAvgTon = totTon / daysWithData;
+                            tfootRec.innerHTML = `
+                                <tr>
+                                    <td class="p-2.5 font-bold uppercase text-white font-sans">TÜM ÜRÜNLER (GENEL TOPLAM)</td>
+                                    <td class="p-2.5 text-center text-amber-400">${totG_sarj}</td>
+                                    <td class="p-2.5 text-center text-sky-400">${totN_sarj}</td>
+                                    <td class="p-2.5 text-center text-emerald-400 font-black">${totSarj}</td>
+                                    <td class="p-2.5 text-right text-amber-300">${totG_ton.toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right text-sky-300">${totN_ton.toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right text-emerald-400 font-black">${totTon.toFixed(2)} Ton</td>
+                                    <td class="p-2.5 text-center text-slate-300">${daysWithData} gün</td>
+                                    <td class="p-2.5 text-right text-slate-200">${genAvgTon.toFixed(2)} T/gün</td>
+                                    <td class="p-2.5 text-right text-sky-400">%100</td>
+                                </tr>
+                            `;
+                        }
                     }
                 }
 
@@ -3862,44 +3946,151 @@
                         tblMat.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-slate-500">Hammadde tüketim verisi bulunamadı.</td></tr>';
                     } else {
                         tblMat.innerHTML = mixerDashboardData.materials.map(m => `
-                            <tr class="hover:bg-slate-800/40 transition">
-                                <td class="p-2.5 font-semibold text-slate-200">${m.material}</td>
+                            <tr class="hover:bg-slate-800/40 transition font-mono">
+                                <td class="p-2.5 font-semibold text-slate-200 font-sans">${m.material}</td>
                                 <td class="p-2.5 text-right font-bold text-sky-300">${(m.total_kg || 0).toLocaleString('tr-TR')} kg</td>
                             </tr>
                         `).join('');
                     }
                 }
 
-                // 4. Kırım Performans Tablosu (26 Gün Hedefsiz)
-                const tblKirim = document.getElementById('tbl-kirim-perf');
-                if (tblKirim) {
-                    tblKirim.innerHTML = (mixerDashboardData.kirim_performance || []).map(p => `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2 font-bold text-white">${p.name}</td>
-                            <td class="p-2 text-center text-slate-300">${p.days} gün</td>
-                            <td class="p-2 text-right font-semibold text-amber-300">${p.gunduz_ton || 0} T</td>
-                            <td class="p-2 text-right font-semibold text-sky-300">${p.gece_ton || 0} T</td>
-                            <td class="p-2 text-right font-bold text-amber-400">${p.prod_ton} Ton</td>
-                            <td class="p-2 text-right text-slate-300 font-mono">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-center ${p.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${p.arizali_count > 0 ? p.arizali_count + ' gün' : '—'}</td>
-                        </tr>
-                    `).join('') || '<tr><td colspan="7" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                // 4. Mikser Hatları / Kazanları Performans Tablosu (Excel Row 44-56 ile Birebir)
+                const tblMixerPerf = document.getElementById('tbl-mixer-perf');
+                const tfootMixerPerf = document.getElementById('tfoot-mixer-perf');
+                if (tblMixerPerf) {
+                    const mixList = mixerDashboardData.mixer_performance || [];
+                    if (mixList.length === 0) {
+                        tblMixerPerf.innerHTML = '<tr><td colspan="11" class="p-4 text-center text-slate-500">Mikser performans verisi bulunamadı.</td></tr>';
+                        if (tfootMixerPerf) tfootMixerPerf.innerHTML = '';
+                    } else {
+                        tblMixerPerf.innerHTML = mixList.map(p => {
+                            const recBadges = Object.entries(p.recipes || {}).map(([rn, s]) => `<span class="inline-block px-2 py-0.5 rounded bg-slate-800 text-[11px] text-slate-300 mr-1 mb-1 border border-slate-700 font-sans">${rn}: <strong class="text-emerald-400 font-mono">${s}</strong></span>`).join('') || '—';
+                            return `
+                                <tr class="hover:bg-slate-800/40 transition font-mono">
+                                    <td class="p-2.5 font-bold text-white font-sans">${p.name}</td>
+                                    <td class="p-2.5 text-center text-slate-300">${p.gunduz_days || 0}G / ${p.gece_days || 0}N (${p.days} gün)</td>
+                                    <td class="p-2.5 text-center font-semibold text-amber-400">${p.gunduz_sarj || 0}</td>
+                                    <td class="p-2.5 text-center font-semibold text-sky-400">${p.gece_sarj || 0}</td>
+                                    <td class="p-2.5 text-center font-bold text-emerald-400">${p.sarj}</td>
+                                    <td class="p-2.5 text-right font-semibold text-amber-300">${(p.gunduz_ton || 0).toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right font-semibold text-sky-300">${(p.gece_ton || 0).toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right font-bold text-emerald-400">${(p.prod_ton || 0).toFixed(2)} Ton</td>
+                                    <td class="p-2.5 text-right text-slate-300">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                    <td class="p-2.5 text-right font-bold text-sky-300">${(p.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
+                                    <td class="p-2.5">${recBadges}</td>
+                                </tr>
+                            `;
+                        }).join('');
+
+                        if (tfootMixerPerf) {
+                            const totDays = mixerDashboardData.days_count || 1;
+                            const totG_sarj = mixList.reduce((acc, x) => acc + (x.gunduz_sarj || 0), 0);
+                            const totN_sarj = mixList.reduce((acc, x) => acc + (x.gece_sarj || 0), 0);
+                            const totSarj = mixList.reduce((acc, x) => acc + (x.sarj || 0), 0);
+                            const totG_ton = mixList.reduce((acc, x) => acc + (x.gunduz_ton || 0), 0);
+                            const totN_ton = mixList.reduce((acc, x) => acc + (x.gece_ton || 0), 0);
+                            const totTon = mixList.reduce((acc, x) => acc + (x.prod_ton || 0), 0);
+                            const totDayAvg = totDays > 0 ? (totTon * 1000 / totDays) : 0;
+                            const totHourlyAvg = totDays > 0 ? (totDayAvg / 7.5) : 0;
+                            tfootMixerPerf.innerHTML = `
+                                <tr>
+                                    <td class="p-2.5 font-bold uppercase text-white font-sans">MİKSER GENEL TOPLAMI</td>
+                                    <td class="p-2.5 text-center text-slate-300">${totDays} gün</td>
+                                    <td class="p-2.5 text-center text-amber-400">${totG_sarj}</td>
+                                    <td class="p-2.5 text-center text-sky-400">${totN_sarj}</td>
+                                    <td class="p-2.5 text-center text-emerald-400 font-black">${totSarj}</td>
+                                    <td class="p-2.5 text-right text-amber-300">${totG_ton.toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right text-sky-300">${totN_ton.toFixed(2)} T</td>
+                                    <td class="p-2.5 text-right text-emerald-400 font-black">${totTon.toFixed(2)} Ton</td>
+                                    <td class="p-2.5 text-right text-slate-200">${totDayAvg.toFixed(1)} kg</td>
+                                    <td class="p-2.5 text-right text-sky-300 font-black">${totHourlyAvg.toFixed(1)} kg/s</td>
+                                    <td class="p-2.5 text-xs text-slate-400 font-sans">Tüm Reçeteler Dahil</td>
+                                </tr>
+                            `;
+                        }
+                    }
                 }
 
-                // 5. Mikronize Performans Tablosu (26 Gün Hedefsiz)
-                const tblMik = document.getElementById('tbl-mikronize-perf');
-                if (tblMik) {
-                    tblMik.innerHTML = (mixerDashboardData.mikronize_performance || []).map(p => `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2 font-bold text-white">${p.name}</td>
-                            <td class="p-2 text-center text-slate-300">${p.days} gün</td>
-                            <td class="p-2 text-right font-semibold text-amber-300">${p.gunduz_ton || 0} T</td>
-                            <td class="p-2 text-right font-semibold text-sky-300">${p.gece_ton || 0} T</td>
-                            <td class="p-2 text-right font-bold text-sky-400">${p.prod_ton} Ton</td>
-                            <td class="p-2 text-right text-slate-300 font-mono">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                // 5. Kırım Performans Tablosu (Excel Row 8-22 ile Birebir)
+                const tblKirim = document.getElementById('tbl-kirim-perf');
+                const tfootKirim = document.getElementById('tfoot-kirim-perf');
+                if (tblKirim) {
+                    const kList = mixerDashboardData.kirim_performance || [];
+                    tblKirim.innerHTML = kList.map(p => `
+                        <tr class="hover:bg-slate-800/40 transition font-mono">
+                            <td class="p-2 font-bold text-white font-sans">${p.name}</td>
+                            <td class="p-2 text-center text-slate-300">${p.gunduz_days || p.days}G / ${p.gece_days || 0}N (${p.days} gün)</td>
+                            <td class="p-2 text-right font-semibold text-amber-300">${(p.gunduz_ton || 0).toFixed(2)} T</td>
+                            <td class="p-2 text-right font-semibold text-sky-300">${(p.gece_ton || 0).toFixed(2)} T</td>
+                            <td class="p-2 text-right font-bold text-amber-400">${(p.prod_ton || 0).toFixed(2)} Ton</td>
+                            <td class="p-2 text-right text-slate-300">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-bold text-amber-300">${(p.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
                             <td class="p-2 text-center ${p.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${p.arizali_count > 0 ? p.arizali_count + ' gün' : '—'}</td>
                         </tr>
-                    `).join('') || '<tr><td colspan="7" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    `).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+
+                    if (tfootKirim && kList.length > 0) {
+                        const totTon = kList.reduce((acc, x) => acc + (x.prod_ton || 0), 0);
+                        const totGTon = kList.reduce((acc, x) => acc + (x.gunduz_ton || 0), 0);
+                        const totNTon = kList.reduce((acc, x) => acc + (x.gece_ton || 0), 0);
+                        const daysWithData = mixerDashboardData.days_count || 1;
+                        const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
+                        const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
+                        const totArizali = kList.reduce((acc, x) => acc + (x.arizali_count || 0), 0);
+                        tfootKirim.innerHTML = `
+                            <tr>
+                                <td class="p-2 font-bold uppercase text-white font-sans">KIRIM TOPLAMI</td>
+                                <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
+                                <td class="p-2 text-right text-amber-300">${totGTon.toFixed(2)} T</td>
+                                <td class="p-2 text-right text-sky-300">${totNTon.toFixed(2)} T</td>
+                                <td class="p-2 text-right text-amber-400 font-black">${totTon.toFixed(2)} Ton</td>
+                                <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
+                                <td class="p-2 text-right text-amber-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
+                                <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                            </tr>
+                        `;
+                    }
+                }
+
+                // 6. Mikronize Performans Tablosu (Excel Row 24-42 ile Birebir)
+                const tblMik = document.getElementById('tbl-mikronize-perf');
+                const tfootMik = document.getElementById('tfoot-mikronize-perf');
+                if (tblMik) {
+                    const mList = mixerDashboardData.mikronize_performance || [];
+                    tblMik.innerHTML = mList.map(p => `
+                        <tr class="hover:bg-slate-800/40 transition font-mono">
+                            <td class="p-2 font-bold text-white font-sans">${p.name}</td>
+                            <td class="p-2 text-center text-slate-300">${p.gunduz_days || p.days}G / ${p.gece_days || 0}N (${p.days} gün)</td>
+                            <td class="p-2 text-right font-semibold text-amber-300">${(p.gunduz_ton || 0).toFixed(2)} T</td>
+                            <td class="p-2 text-right font-semibold text-sky-300">${(p.gece_ton || 0).toFixed(2)} T</td>
+                            <td class="p-2 text-right font-bold text-sky-400">${(p.prod_ton || 0).toFixed(2)} Ton</td>
+                            <td class="p-2 text-right text-slate-300">${(p.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-bold text-sky-300">${(p.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
+                            <td class="p-2 text-center ${p.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${p.arizali_count > 0 ? p.arizali_count + ' gün' : '—'}</td>
+                        </tr>
+                    `).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+
+                    if (tfootMik && mList.length > 0) {
+                        const totTon = mList.reduce((acc, x) => acc + (x.prod_ton || 0), 0);
+                        const totGTon = mList.reduce((acc, x) => acc + (x.gunduz_ton || 0), 0);
+                        const totNTon = mList.reduce((acc, x) => acc + (x.gece_ton || 0), 0);
+                        const daysWithData = mixerDashboardData.days_count || 1;
+                        const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
+                        const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
+                        const totArizali = mList.reduce((acc, x) => acc + (x.arizali_count || 0), 0);
+                        tfootMik.innerHTML = `
+                            <tr>
+                                <td class="p-2 font-bold uppercase text-white font-sans">MİKRONİZE TOPLAMI</td>
+                                <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
+                                <td class="p-2 text-right text-amber-300">${totGTon.toFixed(2)} T</td>
+                                <td class="p-2 text-right text-sky-300">${totNTon.toFixed(2)} T</td>
+                                <td class="p-2 text-right text-sky-400 font-black">${totTon.toFixed(2)} Ton</td>
+                                <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
+                                <td class="p-2 text-right text-sky-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
+                                <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                            </tr>
+                        `;
+                    }
                 }
 
                 // 6. Haftalık Özet Kartları

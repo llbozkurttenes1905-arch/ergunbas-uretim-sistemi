@@ -1480,7 +1480,9 @@ def get_dashboard_summary():
     # Ay seçici için kronolojik (eskiden yeniye) liste — dropdown'da ters çevrilip
     # en yeni ay en üstte / varsayılan seçili gösterilecek
     months_chart_available = [{"key": mk, "label": daily_chart_by_month[mk]["label"]} for mk in sorted(daily_chart_by_month.keys())]
-    current_month_key = months_chart_available[-1]["key"] if months_chart_available else None
+    # Aktif üretimi olan en güncel ayı varsayılan seç (henüz başlamamış / 0 üretimli boş aya düşmemesi için)
+    active_m_keys = [mk for mk in sorted(daily_chart_by_month.keys()) if any(d.get("prod_kg", 0) > 0 for d in daily_chart_by_month[mk].get("days", []))]
+    current_month_key = active_m_keys[-1] if active_m_keys else (months_chart_available[-1]["key"] if months_chart_available else None)
 
     # Arşiv listesinde ("Aylık Kırılım") en yeni ay en üstte görünsün
     monthly_totals.sort(key=lambda x: x["key"], reverse=True)

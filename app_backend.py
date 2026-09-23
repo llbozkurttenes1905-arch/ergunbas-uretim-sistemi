@@ -1779,7 +1779,9 @@ def get_mixer_summary(month: Optional[str] = None):
             if hat not in kirim_machines:
                 kirim_machines[hat] = {
                     "days_set": set(), "gunduz_days_set": set(), "gece_days_set": set(),
-                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0
+                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0,
+                    "arizali_count": 0, "gunduz_arizali_count": 0, "gece_arizali_count": 0,
+                    "personel_count": 0, "gunduz_personel_count": 0, "gece_personel_count": 0
                 }
             if status == "arizali":
                 kirim_machines[hat]["arizali_count"] += 1
@@ -1787,6 +1789,12 @@ def get_mixer_summary(month: Optional[str] = None):
                     kirim_machines[hat]["gunduz_arizali_count"] = kirim_machines[hat].get("gunduz_arizali_count", 0) + 1
                 if n == 0:
                     kirim_machines[hat]["gece_arizali_count"] = kirim_machines[hat].get("gece_arizali_count", 0) + 1
+            elif status in ["personel_yok", "personel", "personel_gelmedi"]:
+                kirim_machines[hat]["personel_count"] = kirim_machines[hat].get("personel_count", 0) + 1
+                if g == 0:
+                    kirim_machines[hat]["gunduz_personel_count"] = kirim_machines[hat].get("gunduz_personel_count", 0) + 1
+                if n == 0:
+                    kirim_machines[hat]["gece_personel_count"] = kirim_machines[hat].get("gece_personel_count", 0) + 1
             if t > 0:
                 kirim_machines[hat]["days_set"].add(k)
                 kirim_machines[hat]["kg"] += t
@@ -1819,8 +1827,9 @@ def get_mixer_summary(month: Optional[str] = None):
             if hat not in mikronize_machines:
                 mikronize_machines[hat] = {
                     "days_set": set(), "gunduz_days_set": set(), "gece_days_set": set(),
-                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0,
-                    "gunduz_arizali_count": 0, "gece_arizali_count": 0
+                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0,
+                    "arizali_count": 0, "gunduz_arizali_count": 0, "gece_arizali_count": 0,
+                    "personel_count": 0, "gunduz_personel_count": 0, "gece_personel_count": 0
                 }
             if status == "arizali":
                 mikronize_machines[hat]["arizali_count"] += 1
@@ -1828,6 +1837,12 @@ def get_mixer_summary(month: Optional[str] = None):
                     mikronize_machines[hat]["gunduz_arizali_count"] = mikronize_machines[hat].get("gunduz_arizali_count", 0) + 1
                 if n == 0:
                     mikronize_machines[hat]["gece_arizali_count"] = mikronize_machines[hat].get("gece_arizali_count", 0) + 1
+            elif status in ["personel_yok", "personel", "personel_gelmedi"]:
+                mikronize_machines[hat]["personel_count"] = mikronize_machines[hat].get("personel_count", 0) + 1
+                if g == 0:
+                    mikronize_machines[hat]["gunduz_personel_count"] = mikronize_machines[hat].get("gunduz_personel_count", 0) + 1
+                if n == 0:
+                    mikronize_machines[hat]["gece_personel_count"] = mikronize_machines[hat].get("gece_personel_count", 0) + 1
             if t > 0:
                 mikronize_machines[hat]["days_set"].add(k)
                 mikronize_machines[hat]["kg"] += t
@@ -2112,17 +2127,20 @@ def get_mixer_summary(month: Optional[str] = None):
         g_day_avg_kg = (h_stat["gunduz_kg"] / g_days) if g_days > 0 else 0.0
         g_hourly_avg_kg = (h_stat["gunduz_kg"] / (g_days * 7.5)) if g_days > 0 else 0.0
         g_arizali = h_stat.get("gunduz_arizali_count", 0)
-        g_net_eff = round((g_days / (g_days + g_arizali) * 100), 1) if (g_days + g_arizali) > 0 else 0.0
+        g_personel = h_stat.get("gunduz_personel_count", 0)
+        g_net_eff = round((g_days / (g_days + g_arizali + g_personel) * 100), 1) if (g_days + g_arizali + g_personel) > 0 else 0.0
         g_gross_eff = round((g_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         n_day_avg_kg = (h_stat["gece_kg"] / n_days) if n_days > 0 else 0.0
         n_hourly_avg_kg = (h_stat["gece_kg"] / (n_days * 7.5)) if n_days > 0 else 0.0
         n_arizali = h_stat.get("gece_arizali_count", 0)
-        n_net_eff = round((n_days / (n_days + n_arizali) * 100), 1) if (n_days + n_arizali) > 0 else 0.0
+        n_personel = h_stat.get("gece_personel_count", 0)
+        n_net_eff = round((n_days / (n_days + n_arizali + n_personel) * 100), 1) if (n_days + n_arizali + n_personel) > 0 else 0.0
         n_gross_eff = round((n_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         tot_arizali = h_stat.get("arizali_count", 0)
-        tot_net_eff = round((days / (days + tot_arizali) * 100), 1) if (days + tot_arizali) > 0 else 0.0
+        tot_personel = h_stat.get("personel_count", 0)
+        tot_net_eff = round((days / (days + tot_arizali + tot_personel) * 100), 1) if (days + tot_arizali + tot_personel) > 0 else 0.0
         tot_gross_eff = round((days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         kirim_perf_list.append({
@@ -2136,6 +2154,7 @@ def get_mixer_summary(month: Optional[str] = None):
             "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
             "arizali_count": tot_arizali,
+            "personel_count": tot_personel,
             "net_efficiency": tot_net_eff,
             "gross_efficiency": tot_gross_eff,
             "gunduz": {
@@ -2144,6 +2163,7 @@ def get_mixer_summary(month: Optional[str] = None):
                 "day_avg_kg": round(g_day_avg_kg, 1),
                 "hourly_avg_kg": round(g_hourly_avg_kg, 1),
                 "arizali_count": g_arizali,
+                "personel_count": g_personel,
                 "net_efficiency": g_net_eff,
                 "gross_efficiency": g_gross_eff
             },
@@ -2153,6 +2173,7 @@ def get_mixer_summary(month: Optional[str] = None):
                 "day_avg_kg": round(n_day_avg_kg, 1),
                 "hourly_avg_kg": round(n_hourly_avg_kg, 1),
                 "arizali_count": n_arizali,
+                "personel_count": n_personel,
                 "net_efficiency": n_net_eff,
                 "gross_efficiency": n_gross_eff
             }
@@ -2172,17 +2193,20 @@ def get_mixer_summary(month: Optional[str] = None):
         g_day_avg_kg = (h_stat["gunduz_kg"] / g_days) if g_days > 0 else 0.0
         g_hourly_avg_kg = (h_stat["gunduz_kg"] / (g_days * 7.5)) if g_days > 0 else 0.0
         g_arizali = h_stat.get("gunduz_arizali_count", 0)
-        g_net_eff = round((g_days / (g_days + g_arizali) * 100), 1) if (g_days + g_arizali) > 0 else 0.0
+        g_personel = h_stat.get("gunduz_personel_count", 0)
+        g_net_eff = round((g_days / (g_days + g_arizali + g_personel) * 100), 1) if (g_days + g_arizali + g_personel) > 0 else 0.0
         g_gross_eff = round((g_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         n_day_avg_kg = (h_stat["gece_kg"] / n_days) if n_days > 0 else 0.0
         n_hourly_avg_kg = (h_stat["gece_kg"] / (n_days * 7.5)) if n_days > 0 else 0.0
         n_arizali = h_stat.get("gece_arizali_count", 0)
-        n_net_eff = round((n_days / (n_days + n_arizali) * 100), 1) if (n_days + n_arizali) > 0 else 0.0
+        n_personel = h_stat.get("gece_personel_count", 0)
+        n_net_eff = round((n_days / (n_days + n_arizali + n_personel) * 100), 1) if (n_days + n_arizali + n_personel) > 0 else 0.0
         n_gross_eff = round((n_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         tot_arizali = h_stat.get("arizali_count", 0)
-        tot_net_eff = round((days / (days + tot_arizali) * 100), 1) if (days + tot_arizali) > 0 else 0.0
+        tot_personel = h_stat.get("personel_count", 0)
+        tot_net_eff = round((days / (days + tot_arizali + tot_personel) * 100), 1) if (days + tot_arizali + tot_personel) > 0 else 0.0
         tot_gross_eff = round((days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
 
         mikronize_perf_list.append({
@@ -2196,6 +2220,7 @@ def get_mixer_summary(month: Optional[str] = None):
             "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
             "arizali_count": tot_arizali,
+            "personel_count": tot_personel,
             "net_efficiency": tot_net_eff,
             "gross_efficiency": tot_gross_eff,
             "gunduz": {
@@ -2204,6 +2229,7 @@ def get_mixer_summary(month: Optional[str] = None):
                 "day_avg_kg": round(g_day_avg_kg, 1),
                 "hourly_avg_kg": round(g_hourly_avg_kg, 1),
                 "arizali_count": g_arizali,
+                "personel_count": g_personel,
                 "net_efficiency": g_net_eff,
                 "gross_efficiency": g_gross_eff
             },
@@ -2213,6 +2239,7 @@ def get_mixer_summary(month: Optional[str] = None):
                 "day_avg_kg": round(n_day_avg_kg, 1),
                 "hourly_avg_kg": round(n_hourly_avg_kg, 1),
                 "arizali_count": n_arizali,
+                "personel_count": n_personel,
                 "net_efficiency": n_net_eff,
                 "gross_efficiency": n_gross_eff
             }

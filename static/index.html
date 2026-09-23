@@ -1080,6 +1080,7 @@
                                     <th class="p-1.5">Hat</th>
                                     <th class="p-1.5">Gündüz (kg)</th>
                                     <th class="p-1.5">Gece (kg)</th>
+                                    <th class="p-1.5 text-center">Durum</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-mikronize-inputs" class="divide-y divide-slate-800/60"></tbody>
@@ -1371,10 +1372,11 @@
                                             <th class="p-2">Makine</th>
                                             <th class="p-2 text-center">Çalışılan Gün</th>
                                             <th class="p-2 text-center">Arızalı Gün</th>
+                                            <th class="p-2 text-center text-purple-400">Personel Yok</th>
                                             <th class="p-2 text-right font-bold text-amber-400">Tonaj (Ton)</th>
                                             <th class="p-2 text-right">Gün Ort. (kg)</th>
                                             <th class="p-2 text-right text-amber-300">⏱️ Saatlik (kg/s)</th>
-                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza)">🟢 Net Verim</th>
+                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza + Personel Yok)">🟢 Net Verim</th>
                                             <th class="p-2 text-center text-blue-400" title="Çalışılan / Toplam Gün">🔵 Brüt Verim</th>
                                         </tr>
                                     </thead>
@@ -1399,10 +1401,11 @@
                                             <th class="p-2">Makine</th>
                                             <th class="p-2 text-center">Çalışılan Gün</th>
                                             <th class="p-2 text-center">Arızalı Gün</th>
+                                            <th class="p-2 text-center text-purple-400">Personel Yok</th>
                                             <th class="p-2 text-right font-bold text-sky-400">Tonaj (Ton)</th>
                                             <th class="p-2 text-right">Gün Ort. (kg)</th>
                                             <th class="p-2 text-right text-sky-300">⏱️ Saatlik (kg/s)</th>
-                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza)">🟢 Net Verim</th>
+                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza + Personel Yok)">🟢 Net Verim</th>
                                             <th class="p-2 text-center text-blue-400" title="Çalışılan / Toplam Gün">🔵 Brüt Verim</th>
                                         </tr>
                                     </thead>
@@ -1466,10 +1469,11 @@
                                             <th class="p-2">Makine</th>
                                             <th class="p-2 text-center">Çalışılan Gün</th>
                                             <th class="p-2 text-center">Arızalı Gün</th>
+                                            <th class="p-2 text-center text-purple-400">Personel Yok</th>
                                             <th class="p-2 text-right font-bold text-amber-400">Tonaj (Ton)</th>
                                             <th class="p-2 text-right">Gün Ort. (kg)</th>
                                             <th class="p-2 text-right text-amber-300">⏱️ Saatlik (kg/s)</th>
-                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza)">🟢 Net Verim</th>
+                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza + Personel Yok)">🟢 Net Verim</th>
                                             <th class="p-2 text-center text-blue-400" title="Çalışılan / Toplam Gün">🔵 Brüt Verim</th>
                                         </tr>
                                     </thead>
@@ -1494,10 +1498,11 @@
                                             <th class="p-2">Makine</th>
                                             <th class="p-2 text-center">Çalışılan Gün</th>
                                             <th class="p-2 text-center">Arızalı Gün</th>
+                                            <th class="p-2 text-center text-purple-400">Personel Yok</th>
                                             <th class="p-2 text-right font-bold text-sky-400">Tonaj (Ton)</th>
                                             <th class="p-2 text-right">Gün Ort. (kg)</th>
                                             <th class="p-2 text-right text-sky-300">⏱️ Saatlik (kg/s)</th>
-                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza)">🟢 Net Verim</th>
+                                            <th class="p-2 text-center text-emerald-400" title="Çalışılan / (Çalışılan + Arıza + Personel Yok)">🟢 Net Verim</th>
                                             <th class="p-2 text-center text-blue-400" title="Çalışılan / Toplam Gün">🔵 Brüt Verim</th>
                                         </tr>
                                     </thead>
@@ -4136,6 +4141,7 @@
                                 <td class="p-2 font-bold text-white font-sans">${p.name}</td>
                                 <td class="p-2 text-center text-slate-300">${g.days || 0} gün</td>
                                 <td class="p-2 text-center ${g.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${g.arizali_count > 0 ? g.arizali_count + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${g.personel_count > 0 ? 'text-purple-400 font-bold' : 'text-slate-500'}">${g.personel_count > 0 ? g.personel_count + ' gün' : '—'}</td>
                                 <td class="p-2 text-right font-bold text-amber-400">${(g.ton || 0).toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-300">${(g.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
                                 <td class="p-2 text-right font-bold text-amber-300">${(g.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
@@ -4143,11 +4149,12 @@
                                 <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">%${g.gross_efficiency || 0}</span></td>
                             </tr>
                         `;
-                    }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    }).join('') || '<tr><td colspan="9" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
 
                     if (tfootKirimG && kList.length > 0) {
                         const totTon = kList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.ton) || 0), 0);
                         const totArizali = kList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.arizali_count) || 0), 0);
+                        const totPersonel = kList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.personel_count) || 0), 0);
                         const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
                         const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
                         tfootKirimG.innerHTML = `
@@ -4155,6 +4162,7 @@
                                 <td class="p-2 font-bold uppercase text-white font-sans">GÜNDÜZ KIRIM TOPLAMI</td>
                                 <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
                                 <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${totPersonel > 0 ? 'text-purple-400' : 'text-slate-500'}">${totPersonel > 0 ? totPersonel + ' gün' : '—'}</td>
                                 <td class="p-2 text-right text-amber-400 font-black">${totTon.toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
                                 <td class="p-2 text-right text-amber-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
@@ -4178,6 +4186,7 @@
                                 <td class="p-2 font-bold text-white font-sans">${p.name}</td>
                                 <td class="p-2 text-center text-slate-300">${g.days || 0} gün</td>
                                 <td class="p-2 text-center ${g.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${g.arizali_count > 0 ? g.arizali_count + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${g.personel_count > 0 ? 'text-purple-400 font-bold' : 'text-slate-500'}">${g.personel_count > 0 ? g.personel_count + ' gün' : '—'}</td>
                                 <td class="p-2 text-right font-bold text-sky-400">${(g.ton || 0).toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-300">${(g.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
                                 <td class="p-2 text-right font-bold text-sky-300">${(g.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
@@ -4185,11 +4194,12 @@
                                 <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">%${g.gross_efficiency || 0}</span></td>
                             </tr>
                         `;
-                    }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    }).join('') || '<tr><td colspan="9" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
 
                     if (tfootMikG && mList.length > 0) {
                         const totTon = mList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.ton) || 0), 0);
                         const totArizali = mList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.arizali_count) || 0), 0);
+                        const totPersonel = mList.reduce((acc, x) => acc + ((x.gunduz && x.gunduz.personel_count) || 0), 0);
                         const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
                         const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
                         tfootMikG.innerHTML = `
@@ -4197,6 +4207,7 @@
                                 <td class="p-2 font-bold uppercase text-white font-sans">GÜNDÜZ MİKRONİZE TOPLAMI</td>
                                 <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
                                 <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${totPersonel > 0 ? 'text-purple-400' : 'text-slate-500'}">${totPersonel > 0 ? totPersonel + ' gün' : '—'}</td>
                                 <td class="p-2 text-right text-sky-400 font-black">${totTon.toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
                                 <td class="p-2 text-right text-sky-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
@@ -4266,6 +4277,7 @@
                                 <td class="p-2 font-bold text-white font-sans">${p.name}</td>
                                 <td class="p-2 text-center text-slate-300">${n.days || 0} gün</td>
                                 <td class="p-2 text-center ${n.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${n.arizali_count > 0 ? n.arizali_count + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${n.personel_count > 0 ? 'text-purple-400 font-bold' : 'text-slate-500'}">${n.personel_count > 0 ? n.personel_count + ' gün' : '—'}</td>
                                 <td class="p-2 text-right font-bold text-amber-400">${(n.ton || 0).toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-300">${(n.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
                                 <td class="p-2 text-right font-bold text-amber-300">${(n.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
@@ -4273,11 +4285,12 @@
                                 <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">%${n.gross_efficiency || 0}</span></td>
                             </tr>
                         `;
-                    }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    }).join('') || '<tr><td colspan="9" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
 
                     if (tfootKirimN && kList.length > 0) {
                         const totTon = kList.reduce((acc, x) => acc + ((x.gece && x.gece.ton) || 0), 0);
                         const totArizali = kList.reduce((acc, x) => acc + ((x.gece && x.gece.arizali_count) || 0), 0);
+                        const totPersonel = kList.reduce((acc, x) => acc + ((x.gece && x.gece.personel_count) || 0), 0);
                         const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
                         const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
                         tfootKirimN.innerHTML = `
@@ -4285,6 +4298,7 @@
                                 <td class="p-2 font-bold uppercase text-white font-sans">GECE KIRIM TOPLAMI</td>
                                 <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
                                 <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${totPersonel > 0 ? 'text-purple-400' : 'text-slate-500'}">${totPersonel > 0 ? totPersonel + ' gün' : '—'}</td>
                                 <td class="p-2 text-right text-amber-400 font-black">${totTon.toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
                                 <td class="p-2 text-right text-amber-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
@@ -4308,6 +4322,7 @@
                                 <td class="p-2 font-bold text-white font-sans">${p.name}</td>
                                 <td class="p-2 text-center text-slate-300">${n.days || 0} gün</td>
                                 <td class="p-2 text-center ${n.arizali_count > 0 ? 'text-red-400 font-bold' : 'text-slate-500'}">${n.arizali_count > 0 ? n.arizali_count + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${n.personel_count > 0 ? 'text-purple-400 font-bold' : 'text-slate-500'}">${n.personel_count > 0 ? n.personel_count + ' gün' : '—'}</td>
                                 <td class="p-2 text-right font-bold text-sky-400">${(n.ton || 0).toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-300">${(n.day_avg_kg || 0).toLocaleString('tr-TR')} kg</td>
                                 <td class="p-2 text-right font-bold text-sky-300">${(n.hourly_avg_kg || 0).toLocaleString('tr-TR')} kg/s</td>
@@ -4315,11 +4330,12 @@
                                 <td class="p-2 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">%${n.gross_efficiency || 0}</span></td>
                             </tr>
                         `;
-                    }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
+                    }).join('') || '<tr><td colspan="9" class="p-3 text-center text-slate-500">Veri bulunamadı.</td></tr>';
 
                     if (tfootMikN && mList.length > 0) {
                         const totTon = mList.reduce((acc, x) => acc + ((x.gece && x.gece.ton) || 0), 0);
                         const totArizali = mList.reduce((acc, x) => acc + ((x.gece && x.gece.arizali_count) || 0), 0);
+                        const totPersonel = mList.reduce((acc, x) => acc + ((x.gece && x.gece.personel_count) || 0), 0);
                         const dayAvg = daysWithData > 0 ? (totTon * 1000 / daysWithData) : 0;
                         const hourlyAvg = daysWithData > 0 ? (dayAvg / 7.5) : 0;
                         tfootMikN.innerHTML = `
@@ -4327,6 +4343,7 @@
                                 <td class="p-2 font-bold uppercase text-white font-sans">GECE MİKRONİZE TOPLAMI</td>
                                 <td class="p-2 text-center text-slate-300">${daysWithData} gün</td>
                                 <td class="p-2 text-center ${totArizali > 0 ? 'text-red-400' : 'text-slate-500'}">${totArizali > 0 ? totArizali + ' gün' : '—'}</td>
+                                <td class="p-2 text-center ${totPersonel > 0 ? 'text-purple-400' : 'text-slate-500'}">${totPersonel > 0 ? totPersonel + ' gün' : '—'}</td>
                                 <td class="p-2 text-right text-sky-400 font-black">${totTon.toFixed(2)} Ton</td>
                                 <td class="p-2 text-right text-slate-200">${dayAvg.toFixed(1)} kg</td>
                                 <td class="p-2 text-right text-sky-300 font-black">${hourlyAvg.toFixed(1)} kg/s</td>
@@ -4582,19 +4599,23 @@
                     tblK.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-500">Kırım verisi yok.</td></tr>';
                     if (tfootK) tfootK.innerHTML = '';
                 } else {
-                    tblK.innerHTML = day.kirim.map(k => `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2 font-bold text-white">${k.hat}</td>
-                            <td class="p-2 text-right font-mono text-amber-300">${(k.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-right font-mono text-sky-300">${(k.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-right font-mono font-bold text-amber-400">${(k.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-center">
-                                ${k.status === 'arizali' 
-                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">Arızalı</span>' 
-                                    : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>'}
-                            </td>
-                        </tr>
-                    `).join('');
+                    tblK.innerHTML = day.kirim.map(k => {
+                        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>';
+                        if (k.status === 'arizali') {
+                            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">⚠️ Arızalı</span>';
+                        } else if (k.status === 'personel_yok' || k.status === 'personel') {
+                            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-800">👤 Personel Yok</span>';
+                        }
+                        return `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-2 font-bold text-white">${k.hat}</td>
+                                <td class="p-2 text-right font-mono text-amber-300">${(k.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right font-mono text-sky-300">${(k.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right font-mono font-bold text-amber-400">${(k.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-center">${statusBadge}</td>
+                            </tr>
+                        `;
+                    }).join('');
                     if (tfootK) {
                         tfootK.innerHTML = `
                             <tr class="border-t border-slate-700 text-white">
@@ -4617,19 +4638,23 @@
                     tblM.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-500">Mikronize verisi yok.</td></tr>';
                     if (tfootM) tfootM.innerHTML = '';
                 } else {
-                    tblM.innerHTML = day.mikronize.map(m => `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2 font-bold text-white">${m.hat}</td>
-                            <td class="p-2 text-right font-mono text-amber-300">${(m.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-right font-mono text-sky-300">${(m.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-right font-mono font-bold text-sky-400">${(m.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2 text-center">
-                                ${m.status === 'arizali' 
-                                    ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">Arızalı</span>' 
-                                    : '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>'}
-                            </td>
-                        </tr>
-                    `).join('');
+                    tblM.innerHTML = day.mikronize.map(m => {
+                        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">Normal</span>';
+                        if (m.status === 'arizali') {
+                            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950/60 text-red-400 border border-red-800">⚠️ Arızalı</span>';
+                        } else if (m.status === 'personel_yok' || m.status === 'personel') {
+                            statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-800">👤 Personel Yok</span>';
+                        }
+                        return `
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-2 font-bold text-white">${m.hat}</td>
+                                <td class="p-2 text-right font-mono text-amber-300">${(m.gunduz_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right font-mono text-sky-300">${(m.gece_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-right font-mono font-bold text-sky-400">${(m.toplam_kg || 0).toLocaleString('tr-TR')} kg</td>
+                                <td class="p-2 text-center">${statusBadge}</td>
+                            </tr>
+                        `;
+                    }).join('');
                     if (tfootM) {
                         tfootM.innerHTML = `
                             <tr class="border-t border-slate-700 text-white">
@@ -4676,42 +4701,40 @@
 
             tbody.innerHTML = defaultList.map(name => {
                 const item = existingMap[name] || { gunduz: 0, gece: 0, status: 'normal' };
-                const isArizali = item.status === 'arizali';
+                const st = item.status || 'normal';
+                const isOff = (st === 'arizali' || st === 'personel_yok' || st === 'personel');
                 return `
                     <tr class="hover:bg-slate-900/50 transition">
                         <td class="p-1.5 font-bold text-slate-200">${name}</td>
                         <td class="p-1.5">
-                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gunduz w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500" value="${item.gunduz || ''}" placeholder="0" ${isArizali ? 'disabled' : ''}>
+                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gunduz w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500 disabled:opacity-30 disabled:bg-slate-950" value="${item.gunduz || ''}" placeholder="0" ${isOff ? 'disabled' : ''}>
                         </td>
                         <td class="p-1.5">
-                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gece w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500" value="${item.gece || ''}" placeholder="0" ${isArizali ? 'disabled' : ''}>
+                            <input type="number" step="0.1" data-hat="${name}" class="kirim-input-gece w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-amber-500 disabled:opacity-30 disabled:bg-slate-950" value="${item.gece || ''}" placeholder="0" ${isOff ? 'disabled' : ''}>
                         </td>
                         <td class="p-1.5 text-center">
-                            <label class="inline-flex items-center gap-1 cursor-pointer text-[11px] font-semibold text-slate-400 select-none">
-                                <input type="checkbox" data-hat="${name}" class="kirim-input-arizali rounded border-slate-700 text-red-600 focus:ring-red-500" ${isArizali ? 'checked' : ''} onchange="toggleKirimArizali(this)">
-                                <span class="${isArizali ? 'text-red-400 font-bold' : ''}">Arızalı</span>
-                            </label>
+                            <select data-hat="${name}" class="kirim-input-status bg-slate-900 border border-slate-700 text-xs rounded px-2 py-1 text-slate-300 font-semibold focus:ring-1 focus:ring-amber-500" onchange="toggleLineStatus(this, 'kirim')">
+                                <option value="normal" ${st === 'normal' ? 'selected' : ''}>🟢 Normal</option>
+                                <option value="arizali" ${st === 'arizali' ? 'selected' : ''}>🔴 Arızalı</option>
+                                <option value="personel_yok" ${(st === 'personel_yok' || st === 'personel') ? 'selected' : ''}>👤 Personel Yok</option>
+                            </select>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function toggleKirimArizali(checkbox) {
-            const tr = checkbox.closest('tr');
-            const gInput = tr.querySelector('.kirim-input-gunduz');
-            const nInput = tr.querySelector('.kirim-input-gece');
-            const span = checkbox.nextElementSibling;
-            if (checkbox.checked) {
-                gInput.value = '';
-                nInput.value = '';
-                gInput.disabled = true;
-                nInput.disabled = true;
-                if (span) { span.classList.add('text-red-400', 'font-bold'); }
+        function toggleLineStatus(select, type) {
+            const tr = select.closest('tr');
+            const gInput = tr.querySelector(type === 'kirim' ? '.kirim-input-gunduz' : '.mik-input-gunduz');
+            const nInput = tr.querySelector(type === 'kirim' ? '.kirim-input-gece' : '.mik-input-gece');
+            const val = select.value;
+            if (val === 'arizali' || val === 'personel_yok') {
+                if (gInput) { gInput.value = ''; gInput.disabled = true; }
+                if (nInput) { nInput.value = ''; nInput.disabled = true; }
             } else {
-                gInput.disabled = false;
-                nInput.disabled = false;
-                if (span) { span.classList.remove('text-red-400', 'font-bold'); }
+                if (gInput) gInput.disabled = false;
+                if (nInput) nInput.disabled = false;
             }
         }
 
@@ -4728,15 +4751,24 @@
             (mikData || []).forEach(m => { existingMap[m.hat] = m; });
 
             tbody.innerHTML = defaultList.map(name => {
-                const item = existingMap[name] || { gunduz: 0, gece: 0 };
+                const item = existingMap[name] || { gunduz: 0, gece: 0, status: 'normal' };
+                const st = item.status || 'normal';
+                const isOff = (st === 'arizali' || st === 'personel_yok' || st === 'personel');
                 return `
                     <tr class="hover:bg-slate-900/50 transition">
                         <td class="p-1.5 font-bold text-slate-200">${name}</td>
                         <td class="p-1.5">
-                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gunduz w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500" value="${item.gunduz || ''}" placeholder="0">
+                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gunduz w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500 disabled:opacity-30 disabled:bg-slate-950" value="${item.gunduz || ''}" placeholder="0" ${isOff ? 'disabled' : ''}>
                         </td>
                         <td class="p-1.5">
-                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gece w-28 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500" value="${item.gece || ''}" placeholder="0">
+                            <input type="number" step="0.1" data-hat="${name}" class="mik-input-gece w-24 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white font-semibold text-right focus:ring-1 focus:ring-sky-500 disabled:opacity-30 disabled:bg-slate-950" value="${item.gece || ''}" placeholder="0" ${isOff ? 'disabled' : ''}>
+                        </td>
+                        <td class="p-1.5 text-center">
+                            <select data-hat="${name}" class="mik-input-status bg-slate-900 border border-slate-700 text-xs rounded px-2 py-1 text-slate-300 font-semibold focus:ring-1 focus:ring-sky-500" onchange="toggleLineStatus(this, 'mikronize')">
+                                <option value="normal" ${st === 'normal' ? 'selected' : ''}>🟢 Normal</option>
+                                <option value="arizali" ${st === 'arizali' ? 'selected' : ''}>🔴 Arızalı</option>
+                                <option value="personel_yok" ${(st === 'personel_yok' || st === 'personel') ? 'selected' : ''}>👤 Personel Yok</option>
+                            </select>
                         </td>
                     </tr>
                 `;
@@ -4844,12 +4876,12 @@
             document.querySelectorAll('#tbl-kirim-inputs tr').forEach(tr => {
                 const gInput = tr.querySelector('.kirim-input-gunduz');
                 const nInput = tr.querySelector('.kirim-input-gece');
-                const chk = tr.querySelector('.kirim-input-arizali');
+                const statusSel = tr.querySelector('.kirim-input-status');
                 if (!gInput) return;
                 const hat = gInput.getAttribute('data-hat');
-                const status = chk && chk.checked ? 'arizali' : 'normal';
-                const gunduz = status === 'arizali' ? 0.0 : (parseFloat(gInput.value) || 0.0);
-                const gece = status === 'arizali' ? 0.0 : (parseFloat(nInput.value) || 0.0);
+                const status = statusSel ? statusSel.value : 'normal';
+                const gunduz = (status === 'normal') ? (parseFloat(gInput.value) || 0.0) : 0.0;
+                const gece = (status === 'normal') ? (parseFloat(nInput.value) || 0.0) : 0.0;
                 list.push({ hat, gunduz, gece, status });
             });
             return list;
@@ -4860,11 +4892,13 @@
             document.querySelectorAll('#tbl-mikronize-inputs tr').forEach(tr => {
                 const gInput = tr.querySelector('.mik-input-gunduz');
                 const nInput = tr.querySelector('.mik-input-gece');
+                const statusSel = tr.querySelector('.mik-input-status');
                 if (!gInput) return;
                 const hat = gInput.getAttribute('data-hat');
-                const gunduz = parseFloat(gInput.value) || 0.0;
-                const gece = parseFloat(nInput.value) || 0.0;
-                list.push({ hat, gunduz, gece });
+                const status = statusSel ? statusSel.value : 'normal';
+                const gunduz = (status === 'normal') ? (parseFloat(gInput.value) || 0.0) : 0.0;
+                const gece = (status === 'normal') ? (parseFloat(nInput.value) || 0.0) : 0.0;
+                list.push({ hat, gunduz, gece, status });
             });
             return list;
         }

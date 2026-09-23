@@ -334,6 +334,37 @@
         </div>
     </div>
 
+    <!-- HEDEF DÜZENLEME MODALI -->
+    <div id="target-edit-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="target" class="w-5 h-5 text-ergunbas-500"></i> Aylık Hedef Belirle
+                </h3>
+                <button onclick="closeEditTargetModal()" class="text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Seçili Ay</label>
+                    <input type="text" id="target-modal-month" disabled class="w-full bg-slate-950 border border-slate-800 text-slate-400 text-sm rounded-lg px-3 py-2 font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Aylık Hedef Kapı Adedi</label>
+                    <input type="number" id="target-modal-input" min="1" step="100" class="w-full bg-slate-950 border border-slate-800 focus:border-ergunbas-500 text-white text-base font-bold rounded-lg px-3 py-2 focus:outline-none">
+                    <p class="text-[11px] text-slate-500 mt-1">Örn: 5000, 6000, 7500. Tüm fabrika bu hedefe göre pacing ve darboğaz takibi yapacaktır.</p>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeEditTargetModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">İptal</button>
+                <button onclick="saveMonthlyTarget()" class="px-4 py-2 bg-ergunbas-600 hover:bg-ergunbas-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="check" class="w-4 h-4"></i> Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Area -->
     <main class="flex-1 p-6 overflow-y-auto custom-scrollbar space-y-6">
 
@@ -599,6 +630,133 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="weekly-cards-container"></div>
+            </div>
+
+            <!-- HEDEF VS GERÇEKLEŞEN & AKILLI KAPI TAHMİNİ (DARBOĞAZ DANIŞMANI) -->
+            <div id="target-projection-card" class="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
+                <!-- Header -->
+                <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-ergunbas-500/10 border border-ergunbas-500/20 flex items-center justify-center text-ergunbas-400 shadow-inner">
+                            <i data-lucide="target" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-base font-bold text-white tracking-tight">Aylık Kapı Hedefi & Akıllı Darboğaz Tahmini</h2>
+                                <span id="target-status-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-slate-800 text-slate-400">Yükleniyor...</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Devir zinciri bazlı gerçekleşme, ay sonu temposu ve 4 bileşenli darboğaz optimizasyonu</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="target-month-badge" class="text-xs font-semibold text-slate-400 bg-slate-950 border border-slate-800 px-3 py-1 rounded-lg">Seçili Ay</span>
+                        <button onclick="openEditTargetModal()" class="flex items-center gap-1.5 px-3 py-1.5 bg-ergunbas-600 hover:bg-ergunbas-500 text-white rounded-lg text-xs font-semibold transition shadow-sm">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Hedefi Değiştir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Metrics Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Hedef Kapı -->
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between text-slate-400 text-xs">
+                            <span class="font-medium">Aylık Hedef</span>
+                            <i data-lucide="flag" class="w-4 h-4 text-slate-500"></i>
+                        </div>
+                        <div class="mt-2">
+                            <span id="proj-target-doors" class="text-2xl font-black text-white">0</span>
+                            <span class="text-xs text-slate-500 ml-1">Kapı</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1" id="proj-days-info">Geçen: 0 gün / Kalan: 0 gün</div>
+                    </div>
+
+                    <!-- Gerçekleşen Kapı -->
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between text-slate-400 text-xs">
+                            <span class="font-medium">Tamamlanan Kapı</span>
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                        </div>
+                        <div class="mt-2">
+                            <span id="proj-completed-doors" class="text-2xl font-black text-emerald-400">0</span>
+                            <span class="text-xs text-slate-500 ml-1">Kapı</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">İlerleme: <strong id="proj-progress-pct" class="text-emerald-400 font-bold">%0</strong></div>
+                    </div>
+
+                    <!-- Günlük Tempolar (Mevcut vs Gereken) -->
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between text-slate-400 text-xs">
+                            <span class="font-medium">Günlük Kapı Çıkışı</span>
+                            <i data-lucide="gauge" class="w-4 h-4 text-sky-400"></i>
+                        </div>
+                        <div class="mt-2">
+                            <span id="proj-current-pace" class="text-2xl font-black text-sky-400">0</span>
+                            <span class="text-xs text-slate-500 ml-1">kapı/gün</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1" id="proj-required-pace-text">Hedef İçin: <strong id="proj-required-pace" class="text-white font-semibold">0</strong> kapı/gün</div>
+                    </div>
+
+                    <!-- Ay Sonu Projeksiyonu -->
+                    <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="flex items-center justify-between text-slate-400 text-xs">
+                            <span class="font-medium">Ay Sonu Beklenen</span>
+                            <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i>
+                        </div>
+                        <div class="mt-2">
+                            <span id="proj-end-doors" class="text-2xl font-black text-amber-400">0</span>
+                            <span class="text-xs text-slate-500 ml-1">Kapı</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mt-1">Projeksiyon Oranı: <strong id="proj-end-pct" class="text-amber-400 font-bold">%0</strong></div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-slate-400">Hedefe Ulaşma İlerlemesi</span>
+                        <span id="proj-bar-label" class="text-white">0 / 0 Kapı (%0)</span>
+                    </div>
+                    <div class="w-full bg-slate-950 rounded-full h-3.5 border border-slate-800/80 overflow-hidden p-0.5">
+                        <div id="proj-progress-bar" class="h-full rounded-full transition-all duration-700 bg-gradient-to-r from-ergunbas-600 to-emerald-500" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Bileşenler (4'lü Reçete Dengesi: Pervaz, Kasa, Seren, Levha) & Akıllı Danışman Kutusu -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-2">
+                    <!-- Bileşen Kartları (7 Sütun) -->
+                    <div class="lg:col-span-7 space-y-2.5">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-slate-500"></i> Reçete Denge Dağılımı (Kapı Eşdeğeri)
+                            </h3>
+                            <span class="text-[10px] text-slate-500">1 Kapı: 5 Pervaz + 2.5 Kasa + 3.5 Seren + 2 Levha</span>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5" id="proj-components-container">
+                            <!-- JS ile dinamik doldurulur -->
+                        </div>
+                    </div>
+
+                    <!-- Akıllı Darboğaz & Aksiyon Kutusu (5 Sütun) -->
+                    <div class="lg:col-span-5 bg-gradient-to-br from-amber-950/20 via-slate-950 to-slate-950 border border-amber-500/30 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    <span>Akıllı Darboğaz Danışmanı</span>
+                                </div>
+                                <span id="proj-bottleneck-badge" class="px-2 py-0.5 rounded text-[10px] font-black bg-rose-500/20 border border-rose-500/40 text-rose-300 uppercase tracking-wider">DARBOĞAZ: SEREN</span>
+                            </div>
+                            <p id="proj-advisor-message" class="text-xs text-slate-300 leading-relaxed font-normal">
+                                Analiz yükleniyor...
+                            </p>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-800/80 flex items-start gap-2 text-xs text-slate-400">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <span id="proj-recommendation" class="text-[11px] text-slate-300">Tavsiye hesaplanıyor...</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Charts Section -->
@@ -2858,7 +3016,219 @@
             const monthDays = (dashboardData.daily_chart_by_month && dashboardData.daily_chart_by_month[monthKey]) || [];
             renderCharts(monthDays);
 
+            loadTargetProjection(monthKey);
+
             safeCreateIcons();
+        }
+
+        let currentTargetProjection = null;
+
+        async function loadTargetProjection(monthKey) {
+            if (!monthKey) {
+                const sel = document.getElementById('dash-month-select');
+                monthKey = sel ? sel.value : null;
+            }
+            if (!monthKey) return;
+
+            try {
+                const res = await fetch(`/api/door_target_projection/${monthKey}`);
+                if (!res.ok) throw new Error('Projeksiyon yüklenemedi');
+                const data = await res.json();
+                currentTargetProjection = data;
+                renderTargetProjectionCard(data);
+            } catch (e) {
+                console.error('Target projection error:', e);
+            }
+        }
+
+        function renderTargetProjectionCard(d) {
+            if (!d) return;
+
+            // Month Badge & Target Status Badge
+            const mb = document.getElementById('target-month-badge');
+            if (mb) {
+                const sel = document.getElementById('dash-month-select');
+                const label = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : d.month_key;
+                mb.textContent = label;
+            }
+
+            const sb = document.getElementById('target-status-badge');
+            if (sb) {
+                sb.textContent = d.status_label;
+                let bgCls = 'bg-rose-500/20 text-rose-400 border border-rose-500/40';
+                if (d.status === 'completed') {
+                    bgCls = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                } else if (d.status === 'on_track') {
+                    bgCls = 'bg-blue-500/20 text-blue-400 border border-blue-500/40';
+                } else if (d.status === 'at_risk') {
+                    bgCls = 'bg-amber-500/20 text-amber-400 border border-amber-500/40';
+                }
+                sb.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase ${bgCls}`;
+            }
+
+            // 4 KPI Numbers
+            const elTarget = document.getElementById('proj-target-doors');
+            if (elTarget) elTarget.textContent = d.target_doors.toLocaleString('tr-TR');
+
+            const elDays = document.getElementById('proj-days-info');
+            if (elDays) elDays.textContent = `Geçen: ${d.days_passed} gün / Kalan: ${d.days_remaining} gün`;
+
+            const elComp = document.getElementById('proj-completed-doors');
+            if (elComp) elComp.textContent = d.completed_doors.toLocaleString('tr-TR');
+
+            const elProg = document.getElementById('proj-progress-pct');
+            if (elProg) elProg.textContent = `%${d.progress_pct}`;
+
+            const elCurPace = document.getElementById('proj-current-pace');
+            if (elCurPace) elCurPace.textContent = d.current_daily_pace.toLocaleString('tr-TR');
+
+            const elReqPace = document.getElementById('proj-required-pace');
+            if (elReqPace) elReqPace.textContent = d.required_daily_pace.toLocaleString('tr-TR');
+
+            const elReqPaceText = document.getElementById('proj-required-pace-text');
+            if (elReqPaceText) {
+                if (d.completed_doors >= d.target_doors) {
+                    elReqPaceText.innerHTML = '<span class="text-emerald-400 font-bold">Hedefe Ulaşıldı!</span>';
+                } else if (d.days_remaining === 0) {
+                    elReqPaceText.innerHTML = '<span class="text-slate-400">Ay Tamamlandı</span>';
+                } else {
+                    elReqPaceText.innerHTML = `Hedef İçin: <strong class="text-white font-semibold">${d.required_daily_pace.toLocaleString('tr-TR')}</strong> kapı/gün`;
+                }
+            }
+
+            const elEndDoors = document.getElementById('proj-end-doors');
+            if (elEndDoors) elEndDoors.textContent = d.projected_month_end_doors.toLocaleString('tr-TR');
+
+            const elEndPct = document.getElementById('proj-end-pct');
+            if (elEndPct) elEndPct.textContent = `%${d.projected_pct}`;
+
+            // Progress Bar
+            const barLabel = document.getElementById('proj-bar-label');
+            if (barLabel) barLabel.textContent = `${d.completed_doors.toLocaleString('tr-TR')} / ${d.target_doors.toLocaleString('tr-TR')} Kapı (%${d.progress_pct})`;
+
+            const bar = document.getElementById('proj-progress-bar');
+            if (bar) {
+                const pctClamped = Math.min(100, Math.max(0, d.progress_pct));
+                bar.style.width = `${pctClamped}%`;
+                if (d.progress_pct >= 100) {
+                    bar.className = 'h-full rounded-full transition-all duration-700 bg-gradient-to-r from-emerald-600 to-emerald-400';
+                } else if (d.progress_pct >= 75) {
+                    bar.className = 'h-full rounded-full transition-all duration-700 bg-gradient-to-r from-ergunbas-600 to-sky-400';
+                } else if (d.progress_pct >= 50) {
+                    bar.className = 'h-full rounded-full transition-all duration-700 bg-gradient-to-r from-amber-600 to-amber-400';
+                } else {
+                    bar.className = 'h-full rounded-full transition-all duration-700 bg-gradient-to-r from-rose-600 to-rose-400';
+                }
+            }
+
+            // Components Grid
+            const compContainer = document.getElementById('proj-components-container');
+            if (compContainer && d.components) {
+                compContainer.innerHTML = Object.entries(d.components).map(([k, c]) => {
+                    const isBottleneck = (k === d.bottleneck_cat && d.completed_doors < d.target_doors);
+                    return `
+                        <div class="p-2.5 rounded-xl border ${isBottleneck ? 'bg-rose-950/20 border-rose-500/50 ring-1 ring-rose-500/30' : 'bg-slate-950/70 border-slate-800/80'} flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold ${isBottleneck ? 'text-rose-400' : 'text-slate-300'}">${c.name}</span>
+                                ${isBottleneck ? '<span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-500/30 text-rose-300">Darboğaz</span>' : `<span class="text-[10px] text-slate-500">${c.req_per_door}x</span>`}
+                            </div>
+                            <div class="mt-2 space-y-0.5 text-xs">
+                                <div class="flex justify-between text-slate-400 text-[11px]">
+                                    <span>Üretim:</span>
+                                    <span class="font-bold text-white">${c.produced.toLocaleString('tr-TR')} ${c.unit}</span>
+                                </div>
+                                <div class="flex justify-between text-[11px]">
+                                    <span class="text-slate-400">Kapı Eşd:</span>
+                                    <span class="font-bold ${isBottleneck ? 'text-rose-400' : 'text-emerald-400'}">${c.door_eq.toLocaleString('tr-TR')}</span>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-slate-500 pt-0.5 border-t border-slate-800/60">
+                                    <span>Hedef Karşılama:</span>
+                                    <span class="font-semibold text-slate-300">%${c.pct}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Advisor & Recommendation
+            const elBnBadge = document.getElementById('proj-bottleneck-badge');
+            if (elBnBadge) {
+                if (d.completed_doors >= d.target_doors) {
+                    elBnBadge.textContent = 'DENGELİ ÜRETİM';
+                    elBnBadge.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 uppercase tracking-wider';
+                } else {
+                    elBnBadge.textContent = `DARBOĞAZ: ${d.bottleneck_name.toUpperCase()}`;
+                    elBnBadge.className = 'px-2 py-0.5 rounded text-[10px] font-black bg-rose-500/20 border border-rose-500/40 text-rose-300 uppercase tracking-wider';
+                }
+            }
+
+            const elAdvMsg = document.getElementById('proj-advisor-message');
+            if (elAdvMsg) elAdvMsg.innerHTML = d.advisor_message;
+
+            const elRec = document.getElementById('proj-recommendation');
+            if (elRec) elRec.textContent = d.recommendation;
+
+            safeCreateIcons();
+        }
+
+        function openEditTargetModal() {
+            if (currentUser && currentUser.role === 'viewer') {
+                showToast('Salt okunur kullanıcısınız, hedef belirleyemezsiniz.');
+                return;
+            }
+            const sel = document.getElementById('dash-month-select');
+            const monthKey = sel ? sel.value : (currentTargetProjection ? currentTargetProjection.month_key : '');
+            const monthText = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : monthKey;
+
+            document.getElementById('target-modal-month').value = `${monthText} (${monthKey})`;
+            document.getElementById('target-modal-input').value = currentTargetProjection ? currentTargetProjection.target_doors : 5000;
+
+            const modal = document.getElementById('target-edit-modal');
+            if (modal) modal.classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function closeEditTargetModal() {
+            const modal = document.getElementById('target-edit-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function saveMonthlyTarget() {
+            const sel = document.getElementById('dash-month-select');
+            const monthKey = sel ? sel.value : (currentTargetProjection ? currentTargetProjection.month_key : '');
+            const targetInput = document.getElementById('target-modal-input');
+            const targetVal = parseInt(targetInput.value);
+
+            if (!targetVal || targetVal <= 0) {
+                showToast('Lütfen geçerli bir hedef kapı sayısı girin.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/targets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Username': currentUser ? currentUser.username : ''
+                    },
+                    body: JSON.stringify({
+                        month_key: monthKey,
+                        target_doors: targetVal
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Hedef kaydedilemedi');
+                }
+
+                closeEditTargetModal();
+                showToast(`${monthKey} ayı hedefi ${targetVal.toLocaleString('tr-TR')} kapı olarak güncellendi.`);
+                loadTargetProjection(monthKey);
+            } catch (e) {
+                showToast(e.message || 'Hedef kaydedilirken bir hata oluştu.');
+            }
         }
 
         function showMonthlyDetail() {

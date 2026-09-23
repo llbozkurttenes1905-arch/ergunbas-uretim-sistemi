@@ -336,6 +336,7 @@ def load_data():
                 "machines": core.get("machines", []),
                 "products": core.get("products", []),
                 "mixer_recipes": core.get("mixer_recipes", []),
+                "monthly_targets": core.get("monthly_targets", {}),
                 "daily_data": daily_data
             }
             return _data_cache
@@ -344,14 +345,16 @@ def load_data():
         legacy, _ = github_get_file("data.json")
         if legacy is not None:
             _data_cache = legacy
+            _data_cache.setdefault("monthly_targets", {})
             return _data_cache
 
     # GitHub devre dışı/tamamen başarısızsa yerel dosyaya düş
     if not os.path.exists(DATA_FILE):
-        _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "daily_data": {}}
+        _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "monthly_targets": {}, "daily_data": {}}
         return _data_cache
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         _data_cache = json.load(f)
+        _data_cache.setdefault("monthly_targets", {})
     return _data_cache
 
 
@@ -363,11 +366,12 @@ def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    # 2) Çekirdek veriyi (makineler + ürünler + reçeteler) yerel dosyaya yaz
+    # 2) Çekirdek veriyi (makineler + ürünler + reçeteler + aylık hedefler) yerel dosyaya yaz
     core_payload = {
         "machines": data.get("machines", []),
         "products": data.get("products", []),
-        "mixer_recipes": data.get("mixer_recipes", [])
+        "mixer_recipes": data.get("mixer_recipes", []),
+        "monthly_targets": data.get("monthly_targets", {})
     }
     with open(os.path.join(APP_DIR, CORE_FILE_NAME), "w", encoding="utf-8") as f:
         json.dump(core_payload, f, ensure_ascii=False, indent=2)
@@ -476,6 +480,10 @@ class DailyDataUpdate(BaseModel):
 
 class AddDateRequest(BaseModel):
     date_str: str
+
+class MonthlyTargetUpdate(BaseModel):
+    month_key: str
+    target_doors: int
 
 
 def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None):
@@ -1558,6 +1566,161 @@ def get_dashboard_summary():
         "latest_day_key": latest_day_key,
         "machines_count": len(data.get("machines", [])),
         "products_count": len(data.get("products", []))
+    }
+
+@app.get("/api/targets")
+def get_monthly_targets():
+    data = load_data()
+    return data.get("monthly_targets", {})
+
+@app.post("/api/targets")
+def set_monthly_target(payload: MonthlyTargetUpdate, x_username: Optional[str] = Header(None)):
+    require_editor(x_username)
+    if payload.target_doors <= 0:
+        raise HTTPException(status_code=400, detail="Hedef kapı sayısı 0'dan büyük olmalıdır.")
+    data = load_data()
+    if "monthly_targets" not in data:
+        data["monthly_targets"] = {}
+    data["monthly_targets"][payload.month_key] = payload.target_doors
+    save_data(data)
+    return {"status": "ok", "month_key": payload.month_key, "target_doors": payload.target_doors}
+
+@app.get("/api/door_target_projection/{month_key}")
+def get_door_target_projection(month_key: str):
+    import calendar
+    data = load_data()
+    dash = get_dashboard_summary()
+    month_days = dash.get("daily_chart_by_month", {}).get(month_key, [])
+
+    targets = data.get("monthly_targets", {})
+    target_doors = int(targets.get(month_key, 5000))
+
+    door_stats = sum_chain_door_stats(month_days)
+    completed_doors = door_stats.get("completable_doors", 0)
+    details = door_stats.get("details", {})
+
+    try:
+        y, m = map(int, month_key.split("-"))
+        total_month_days = calendar.monthrange(y, m)[1]
+    except Exception:
+        total_month_days = 30
+
+    days_passed = len([d for d in month_days if d.get("prod_kg", 0) > 0])
+    days_remaining = max(0, total_month_days - days_passed)
+
+    progress_pct = round((completed_doors / target_doors * 100), 1) if target_doors > 0 else 0
+    current_daily_pace = round(completed_doors / days_passed, 1) if days_passed > 0 else 0
+
+    doors_needed = max(0, target_doors - completed_doors)
+    required_daily_pace = round(doors_needed / days_remaining, 1) if days_remaining > 0 else 0
+
+    projected_month_end_doors = round(completed_doors + (current_daily_pace * days_remaining))
+    projected_pct = round((projected_month_end_doors / target_doors * 100), 1) if target_doors > 0 else 0
+
+    if completed_doors >= target_doors:
+        status = "completed"
+        status_label = "Hedefe Ulaşıldı 🎉"
+        status_color = "emerald"
+    elif projected_month_end_doors >= target_doors:
+        status = "on_track"
+        status_label = "Hedef Yolunda 🚀"
+        status_color = "blue"
+    elif projected_month_end_doors >= target_doors * 0.85:
+        status = "at_risk"
+        status_label = "Hızlanma Gerekiyor ⚠️"
+        status_color = "amber"
+    else:
+        status = "behind"
+        status_label = "Hedefin Gerisinde 🛑"
+        status_color = "rose"
+
+    cat_names = {
+        "pervaz": "Pervaz",
+        "kasa": "Kasa",
+        "seren": "Seren",
+        "levha": "Levha"
+    }
+    cat_units = {
+        "pervaz": "adet",
+        "kasa": "adet",
+        "seren": "adet",
+        "levha": "plaka"
+    }
+
+    components = {}
+    min_door_eq = float("inf")
+    bottleneck_cat = "seren"
+
+    for c, c_name in cat_names.items():
+        det = details.get(c, {})
+        req = det.get("req_per_door", 1.0)
+        target_qty = target_doors * req
+        prod = det.get("produced", 0.0)
+        door_eq = det.get("door_eq", 0.0)
+        used = det.get("used", 0.0)
+        carry = det.get("carryover", 0.0)
+        deficit = max(0.0, target_qty - prod)
+        pct = round((door_eq / target_doors * 100), 1) if target_doors > 0 else 0
+
+        components[c] = {
+            "name": c_name,
+            "unit": cat_units[c],
+            "req_per_door": req,
+            "target_qty": round(target_qty, 1),
+            "produced": round(prod, 1),
+            "door_eq": round(door_eq, 1),
+            "deficit_qty": round(deficit, 1),
+            "pct": pct,
+            "carryover": round(carry, 1)
+        }
+
+        if door_eq < min_door_eq:
+            min_door_eq = door_eq
+            bottleneck_cat = c
+
+    bn_comp = components.get(bottleneck_cat, {})
+    bn_name = bn_comp.get("name", "Bileşen")
+    bn_deficit = bn_comp.get("deficit_qty", 0)
+    bn_unit = bn_comp.get("unit", "adet")
+
+    if completed_doors >= target_doors:
+        advisor_message = f"Tebrikler! {month_key} ayı için belirlenen {target_doors:,.0f} kapı hedefine başarıyla ulaşıldı ({completed_doors:,.0f} kapı tamamlandı)."
+        recommendation = "Mevcut yüksek verimlilik temposu korunabilir, hat bakımları ve hammadde hazırlığı planlanabilir."
+    else:
+        advisor_message = (
+            f"Mevcut üretim dengesinde en kritik darboğaz {bn_name.upper()} hattıdır "
+            f"(Şu ana kadar {bn_comp.get('door_eq', 0):,.0f} kapılık üretim sağlandı). "
+            f"Hedefe ulaşmak için ay sonuna kadar en az {bn_deficit:,.0f} {bn_unit} daha {bn_name} üretilmelidir."
+        )
+        if bottleneck_cat == "levha":
+            recommendation = "Levha 201 ve 202 hatlarındaki çalışma saatlerini artırın veya en firesi optimizasyonu yapın."
+        elif bottleneck_cat == "seren":
+            recommendation = "Seren profili basan ekstrüder hatlarının kafa sayısını veya hat hızını kontrol edin, Seren üretimi önceliklendirilmelidir."
+        elif bottleneck_cat == "kasa":
+            recommendation = "Kasa profil ekstrüder hatlarına hammadde beslemesini ve kalıp ayarlarını optimize edin."
+        else:
+            recommendation = "Pervaz hatlarında kalıp temizliklerini hızlandırın ve vardiya bazlı pervaz üretim hedefini yükseltin."
+
+    return {
+        "month_key": month_key,
+        "target_doors": target_doors,
+        "completed_doors": completed_doors,
+        "progress_pct": progress_pct,
+        "total_month_days": total_month_days,
+        "days_passed": days_passed,
+        "days_remaining": days_remaining,
+        "current_daily_pace": current_daily_pace,
+        "required_daily_pace": required_daily_pace,
+        "projected_month_end_doors": projected_month_end_doors,
+        "projected_pct": projected_pct,
+        "status": status,
+        "status_label": status_label,
+        "status_color": status_color,
+        "bottleneck_cat": bottleneck_cat,
+        "bottleneck_name": bn_name,
+        "advisor_message": advisor_message,
+        "recommendation": recommendation,
+        "components": components
     }
 
 @app.get("/api/formulas")

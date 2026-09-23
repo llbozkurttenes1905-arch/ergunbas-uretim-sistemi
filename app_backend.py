@@ -1783,6 +1783,10 @@ def get_mixer_summary(month: Optional[str] = None):
                 }
             if status == "arizali":
                 kirim_machines[hat]["arizali_count"] += 1
+                if g == 0:
+                    kirim_machines[hat]["gunduz_arizali_count"] = kirim_machines[hat].get("gunduz_arizali_count", 0) + 1
+                if n == 0:
+                    kirim_machines[hat]["gece_arizali_count"] = kirim_machines[hat].get("gece_arizali_count", 0) + 1
             if t > 0:
                 kirim_machines[hat]["days_set"].add(k)
                 kirim_machines[hat]["kg"] += t
@@ -1815,10 +1819,15 @@ def get_mixer_summary(month: Optional[str] = None):
             if hat not in mikronize_machines:
                 mikronize_machines[hat] = {
                     "days_set": set(), "gunduz_days_set": set(), "gece_days_set": set(),
-                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0
+                    "kg": 0.0, "gunduz_kg": 0.0, "gece_kg": 0.0, "arizali_count": 0,
+                    "gunduz_arizali_count": 0, "gece_arizali_count": 0
                 }
             if status == "arizali":
                 mikronize_machines[hat]["arizali_count"] += 1
+                if g == 0:
+                    mikronize_machines[hat]["gunduz_arizali_count"] = mikronize_machines[hat].get("gunduz_arizali_count", 0) + 1
+                if n == 0:
+                    mikronize_machines[hat]["gece_arizali_count"] = mikronize_machines[hat].get("gece_arizali_count", 0) + 1
             if t > 0:
                 mikronize_machines[hat]["days_set"].add(k)
                 mikronize_machines[hat]["kg"] += t
@@ -2086,7 +2095,9 @@ def get_mixer_summary(month: Optional[str] = None):
         })
     material_list.sort(key=lambda x: x["total_kg"], reverse=True)
 
-    # Makine Gerçekleşen Performans Tabloları (Excel Formülleriyle Birebir)
+    # Makine Gerçekleşen Performans Tabloları (Gündüz & Gece Ayrı Verimlilik ve Kapasite Metrikleri)
+    days_with_data = len(sorted_day_keys) or 1
+
     kirim_perf_list = []
     for h_name, h_stat in sorted(kirim_machines.items()):
         days = len(h_stat.get("days_set", set()))
@@ -2095,8 +2106,25 @@ def get_mixer_summary(month: Optional[str] = None):
         ton = h_stat["kg"] / 1000.0
         g_ton = h_stat["gunduz_kg"] / 1000.0
         n_ton = h_stat["gece_kg"] / 1000.0
-        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0
-        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
+        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0.0
+        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0.0
+
+        g_day_avg_kg = (h_stat["gunduz_kg"] / g_days) if g_days > 0 else 0.0
+        g_hourly_avg_kg = (h_stat["gunduz_kg"] / (g_days * 7.5)) if g_days > 0 else 0.0
+        g_arizali = h_stat.get("gunduz_arizali_count", 0)
+        g_net_eff = round((g_days / (g_days + g_arizali) * 100), 1) if (g_days + g_arizali) > 0 else 0.0
+        g_gross_eff = round((g_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        n_day_avg_kg = (h_stat["gece_kg"] / n_days) if n_days > 0 else 0.0
+        n_hourly_avg_kg = (h_stat["gece_kg"] / (n_days * 7.5)) if n_days > 0 else 0.0
+        n_arizali = h_stat.get("gece_arizali_count", 0)
+        n_net_eff = round((n_days / (n_days + n_arizali) * 100), 1) if (n_days + n_arizali) > 0 else 0.0
+        n_gross_eff = round((n_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        tot_arizali = h_stat.get("arizali_count", 0)
+        tot_net_eff = round((days / (days + tot_arizali) * 100), 1) if (days + tot_arizali) > 0 else 0.0
+        tot_gross_eff = round((days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
         kirim_perf_list.append({
             "name": h_name,
             "days": days,
@@ -2107,7 +2135,27 @@ def get_mixer_summary(month: Optional[str] = None):
             "gece_ton": round(n_ton, 2),
             "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
-            "arizali_count": h_stat.get("arizali_count", 0)
+            "arizali_count": tot_arizali,
+            "net_efficiency": tot_net_eff,
+            "gross_efficiency": tot_gross_eff,
+            "gunduz": {
+                "days": g_days,
+                "ton": round(g_ton, 2),
+                "day_avg_kg": round(g_day_avg_kg, 1),
+                "hourly_avg_kg": round(g_hourly_avg_kg, 1),
+                "arizali_count": g_arizali,
+                "net_efficiency": g_net_eff,
+                "gross_efficiency": g_gross_eff
+            },
+            "gece": {
+                "days": n_days,
+                "ton": round(n_ton, 2),
+                "day_avg_kg": round(n_day_avg_kg, 1),
+                "hourly_avg_kg": round(n_hourly_avg_kg, 1),
+                "arizali_count": n_arizali,
+                "net_efficiency": n_net_eff,
+                "gross_efficiency": n_gross_eff
+            }
         })
 
     mikronize_perf_list = []
@@ -2118,8 +2166,25 @@ def get_mixer_summary(month: Optional[str] = None):
         ton = h_stat["kg"] / 1000.0
         g_ton = h_stat["gunduz_kg"] / 1000.0
         n_ton = h_stat["gece_kg"] / 1000.0
-        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0
-        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0
+        day_avg_kg = (h_stat["kg"] / days) if days > 0 else 0.0
+        hourly_avg_kg = (h_stat["kg"] / (days * 7.5)) if days > 0 else 0.0
+
+        g_day_avg_kg = (h_stat["gunduz_kg"] / g_days) if g_days > 0 else 0.0
+        g_hourly_avg_kg = (h_stat["gunduz_kg"] / (g_days * 7.5)) if g_days > 0 else 0.0
+        g_arizali = h_stat.get("gunduz_arizali_count", 0)
+        g_net_eff = round((g_days / (g_days + g_arizali) * 100), 1) if (g_days + g_arizali) > 0 else 0.0
+        g_gross_eff = round((g_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        n_day_avg_kg = (h_stat["gece_kg"] / n_days) if n_days > 0 else 0.0
+        n_hourly_avg_kg = (h_stat["gece_kg"] / (n_days * 7.5)) if n_days > 0 else 0.0
+        n_arizali = h_stat.get("gece_arizali_count", 0)
+        n_net_eff = round((n_days / (n_days + n_arizali) * 100), 1) if (n_days + n_arizali) > 0 else 0.0
+        n_gross_eff = round((n_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        tot_arizali = h_stat.get("arizali_count", 0)
+        tot_net_eff = round((days / (days + tot_arizali) * 100), 1) if (days + tot_arizali) > 0 else 0.0
+        tot_gross_eff = round((days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
         mikronize_perf_list.append({
             "name": h_name,
             "days": days,
@@ -2130,7 +2195,27 @@ def get_mixer_summary(month: Optional[str] = None):
             "gece_ton": round(n_ton, 2),
             "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
-            "arizali_count": h_stat.get("arizali_count", 0)
+            "arizali_count": tot_arizali,
+            "net_efficiency": tot_net_eff,
+            "gross_efficiency": tot_gross_eff,
+            "gunduz": {
+                "days": g_days,
+                "ton": round(g_ton, 2),
+                "day_avg_kg": round(g_day_avg_kg, 1),
+                "hourly_avg_kg": round(g_hourly_avg_kg, 1),
+                "arizali_count": g_arizali,
+                "net_efficiency": g_net_eff,
+                "gross_efficiency": g_gross_eff
+            },
+            "gece": {
+                "days": n_days,
+                "ton": round(n_ton, 2),
+                "day_avg_kg": round(n_day_avg_kg, 1),
+                "hourly_avg_kg": round(n_hourly_avg_kg, 1),
+                "arizali_count": n_arizali,
+                "net_efficiency": n_net_eff,
+                "gross_efficiency": n_gross_eff
+            }
         })
 
     mixer_perf_list = []
@@ -2141,8 +2226,19 @@ def get_mixer_summary(month: Optional[str] = None):
         ton = m_stat["kg"] / 1000.0
         g_ton = m_stat["gunduz_kg"] / 1000.0
         n_ton = m_stat["gece_kg"] / 1000.0
-        day_avg_kg = (m_stat["kg"] / days) if days > 0 else 0
-        hourly_avg_kg = (m_stat["kg"] / (days * 7.5)) if days > 0 else 0
+        day_avg_kg = (m_stat["kg"] / days) if days > 0 else 0.0
+        hourly_avg_kg = (m_stat["kg"] / (days * 7.5)) if days > 0 else 0.0
+
+        g_day_avg_kg = (m_stat["gunduz_kg"] / g_days) if g_days > 0 else 0.0
+        g_hourly_avg_kg = (m_stat["gunduz_kg"] / (g_days * 7.5)) if g_days > 0 else 0.0
+        g_gross_eff = round((g_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        n_day_avg_kg = (m_stat["gece_kg"] / n_days) if n_days > 0 else 0.0
+        n_hourly_avg_kg = (m_stat["gece_kg"] / (n_days * 7.5)) if n_days > 0 else 0.0
+        n_gross_eff = round((n_days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
+        tot_gross_eff = round((days / days_with_data * 100), 1) if days_with_data > 0 else 0.0
+
         mixer_perf_list.append({
             "name": m_name,
             "days": days,
@@ -2156,7 +2252,24 @@ def get_mixer_summary(month: Optional[str] = None):
             "gece_ton": round(n_ton, 2),
             "day_avg_kg": round(day_avg_kg, 1),
             "hourly_avg_kg": round(hourly_avg_kg, 1),
-            "recipes": m_stat["recipes"]
+            "gross_efficiency": tot_gross_eff,
+            "recipes": m_stat["recipes"],
+            "gunduz": {
+                "days": g_days,
+                "sarj": m_stat["gunduz_sarj"],
+                "ton": round(g_ton, 2),
+                "day_avg_kg": round(g_day_avg_kg, 1),
+                "hourly_avg_kg": round(g_hourly_avg_kg, 1),
+                "gross_efficiency": g_gross_eff
+            },
+            "gece": {
+                "days": n_days,
+                "sarj": m_stat["gece_sarj"],
+                "ton": round(n_ton, 2),
+                "day_avg_kg": round(n_day_avg_kg, 1),
+                "hourly_avg_kg": round(n_hourly_avg_kg, 1),
+                "gross_efficiency": n_gross_eff
+            }
         })
 
     # Entegre Kütle Dengesi: O ayki Ekstrüder + Levha üretim ve firesi

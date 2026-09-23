@@ -73,6 +73,23 @@ def parse_date_label(date_label):
     except (ValueError, TypeError):
         return None
 
+def normalize_hat_name(hat_name: str) -> str:
+    """Makine / hat isimlerini standart formata getirir (Örn: 'Kirim 1', 'Kırım 1', 'Krm 1' -> 'Kırım 1')."""
+    if not hat_name:
+        return "Bilinmeyen"
+    s = str(hat_name).strip()
+    import re
+    m_kirim = re.search(r'k[^\d]*r[^\d]*m\s*(\d+)', s, re.IGNORECASE)
+    if m_kirim:
+        return f"Kırım {m_kirim.group(1)}"
+    m_mik = re.search(r'mik[^\d]*r[^\d]*n[^\d]*z[^\d]*e?\s*(\d+)', s, re.IGNORECASE) or re.search(r'mikronize\s*(\d+)', s, re.IGNORECASE)
+    if m_mik:
+        return f"Mikronize {m_mik.group(1)}"
+    m_mix = re.search(r'mix[^\d]*r\s*(\d+)', s, re.IGNORECASE)
+    if m_mix:
+        return f"Mixer {m_mix.group(1)}"
+    return s
+
 
 _data_cache = None
 _users_cache = None
@@ -1762,7 +1779,8 @@ def get_mixer_summary(month: Optional[str] = None):
         day_k_g_kg = 0.0
         day_k_n_kg = 0.0
         for ke in d_kirim:
-            hat = ke.get("hat", "Bilinmeyen")
+            raw_hat = ke.get("hat", "Bilinmeyen")
+            hat = normalize_hat_name(raw_hat)
             g = float(ke.get("gunduz") or 0.0)
             n = float(ke.get("gece") or 0.0)
             t = g + n
@@ -1810,7 +1828,8 @@ def get_mixer_summary(month: Optional[str] = None):
         day_m_g_kg = 0.0
         day_m_n_kg = 0.0
         for me in d_mikronize:
-            hat = me.get("hat", "Bilinmeyen")
+            raw_hat = me.get("hat", "Bilinmeyen")
+            hat = normalize_hat_name(raw_hat)
             g = float(me.get("gunduz") or 0.0)
             n = float(me.get("gece") or 0.0)
             t = g + n

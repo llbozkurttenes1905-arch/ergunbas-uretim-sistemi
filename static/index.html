@@ -2212,6 +2212,7 @@
 
             const select = document.getElementById('select-day');
             if (select) {
+                const prevVal = select.value;
                 select.innerHTML = '';
                 dashboardData.available_dates.forEach(d => {
                     const opt = document.createElement('option');
@@ -2219,6 +2220,11 @@
                     opt.textContent = d.date;
                     select.appendChild(opt);
                 });
+                if (prevVal && dashboardData.available_dates.some(d => d.key === prevVal)) {
+                    select.value = prevVal;
+                } else if (dashboardData.latest_day_key) {
+                    select.value = dashboardData.latest_day_key;
+                }
             }
         }
 
@@ -4029,12 +4035,24 @@
 
         function buildHatOptionsHtml(selectedValue, machineTypeFilter) {
             // Katalogdan (Ayarlar > Makineler & Ürünler) hat/makine seçeneklerini oluşturur.
-            // Elle yazım hatası veya aynı hattın yanlışlıkla iki kez seçilmesini önler.
+            let normVal = (selectedValue || '').trim();
+            if (machineTypeFilter === 'extruder') {
+                const m10 = normVal.match(/10([1-9])/);
+                if (m10) normVal = '10' + m10[1];
+                else {
+                    const m1 = normVal.match(/([1-9])/);
+                    if (m1) normVal = '10' + m1[1];
+                }
+            } else if (machineTypeFilter === 'levha') {
+                if (normVal.includes('202') || (normVal.includes('2') && !normVal.includes('201'))) normVal = '202';
+                else normVal = '201';
+            }
+
             const filtered = machinesList.filter(m => m.type === machineTypeFilter);
             let html = '<option value="">— Seçiniz —</option>';
             let found = false;
             filtered.forEach(m => {
-                const isSelected = (m.name === selectedValue);
+                const isSelected = (m.name === normVal || m.name === selectedValue);
                 if (isSelected) found = true;
                 html += `<option value="${m.name}" ${isSelected ? 'selected' : ''}>${m.name}</option>`;
             });

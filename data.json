@@ -291,7 +291,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.17,
@@ -304,7 +304,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -317,7 +317,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.81,
@@ -330,7 +330,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
@@ -343,7 +343,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.24,
@@ -356,7 +356,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -369,7 +369,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.7,
             "speed": 0.66,
@@ -382,7 +382,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat  7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 5.0,
             "speed": 0.66,
@@ -395,7 +395,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -408,7 +408,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.46,
@@ -423,7 +423,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -441,7 +441,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 84.0,
             "length": 211.0,
@@ -466,7 +466,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.17,
@@ -479,7 +479,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -492,7 +492,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.81,
@@ -505,7 +505,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
@@ -518,7 +518,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.24,
@@ -531,7 +531,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -544,7 +544,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 5.0,
             "speed": 0.66,
@@ -557,7 +557,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 4.0,
             "speed": 0.66,
@@ -570,7 +570,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -583,7 +583,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.46,
@@ -598,7 +598,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 85.0,
             "length": 210.0,
@@ -792,7 +792,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.18,
@@ -805,7 +805,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.94,
@@ -818,7 +818,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.85,
@@ -831,7 +831,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.76,
@@ -844,7 +844,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.29,
@@ -857,7 +857,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
@@ -870,7 +870,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 4.0,
             "speed": 0.71,
@@ -883,7 +883,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat  7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.7,
             "speed": 0.72,
@@ -896,7 +896,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.75,
@@ -909,7 +909,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.69,
@@ -922,7 +922,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.55,
@@ -937,7 +937,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -955,7 +955,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 85.0,
             "length": 211.0,
@@ -973,7 +973,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 93.0,
             "length": 208.0,
@@ -991,7 +991,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 90.0,
             "length": 208.0,
@@ -1016,7 +1016,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -1029,7 +1029,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.6,
@@ -1042,7 +1042,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.03,
@@ -1055,7 +1055,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.45,
@@ -1068,7 +1068,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.95,
@@ -1081,7 +1081,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.02,
@@ -1094,7 +1094,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.47,
@@ -1107,7 +1107,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 2.06,
@@ -1120,7 +1120,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.39,
@@ -1133,7 +1133,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.6,
@@ -1148,7 +1148,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -1166,7 +1166,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 90.0,
             "length": 208.0,
@@ -1382,7 +1382,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.07,
@@ -1395,7 +1395,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -1408,7 +1408,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.81,
@@ -1421,7 +1421,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.76,
@@ -1434,7 +1434,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.2,
@@ -1447,7 +1447,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.66,
@@ -1460,7 +1460,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 0.52,
@@ -1473,7 +1473,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.73,
@@ -1486,7 +1486,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.34,
@@ -1501,7 +1501,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 93.0,
             "length": 211.0,
@@ -1519,7 +1519,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Vizon",
             "width": 93.0,
             "length": 208.0,
@@ -1544,7 +1544,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.61,
@@ -1557,7 +1557,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.05,
@@ -1570,7 +1570,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.39,
@@ -1583,7 +1583,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.02,
@@ -1596,7 +1596,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.04,
@@ -1609,7 +1609,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.47,
@@ -1622,7 +1622,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 2.05,
@@ -1635,7 +1635,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.4,
@@ -1648,7 +1648,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.41,
@@ -1663,7 +1663,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 208.0,
@@ -1823,7 +1823,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.18,
@@ -1836,7 +1836,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.87,
@@ -1849,7 +1849,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.82,
@@ -1862,7 +1862,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.83,
@@ -1875,7 +1875,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.31,
@@ -1888,7 +1888,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.72,
@@ -1901,7 +1901,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.72,
@@ -1914,7 +1914,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 0.56,
@@ -1927,7 +1927,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.66,
@@ -1940,7 +1940,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.65,
@@ -1953,7 +1953,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.24,
@@ -1966,7 +1966,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.47,
@@ -1981,7 +1981,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -2006,7 +2006,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.62,
@@ -2019,7 +2019,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.99,
@@ -2032,7 +2032,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.42,
@@ -2045,7 +2045,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -2058,7 +2058,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.96,
@@ -2071,7 +2071,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.39,
@@ -2084,7 +2084,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 2.05,
@@ -2097,7 +2097,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.52,
@@ -2110,7 +2110,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 0.36,
@@ -2125,7 +2125,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -2312,7 +2312,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.11,
@@ -2325,7 +2325,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.72,
@@ -2338,7 +2338,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.82,
@@ -2351,7 +2351,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.75,
@@ -2364,7 +2364,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.36,
@@ -2377,7 +2377,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.65,
@@ -2390,7 +2390,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.59,
@@ -2403,7 +2403,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat (Antrasit)",
             "length": 3.4,
             "speed": 0.59,
@@ -2416,7 +2416,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.69,
@@ -2429,7 +2429,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.42,
@@ -2444,7 +2444,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -2462,7 +2462,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 211.0,
@@ -2487,7 +2487,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
@@ -2500,7 +2500,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.96,
@@ -2513,7 +2513,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.46,
@@ -2526,7 +2526,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.0,
@@ -2539,7 +2539,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.98,
@@ -2552,7 +2552,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.33,
@@ -2565,7 +2565,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.4,
             "speed": 2.03,
@@ -2578,7 +2578,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.55,
@@ -2591,7 +2591,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.37,
@@ -2606,7 +2606,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -2624,7 +2624,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -2838,7 +2838,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -2851,7 +2851,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.71,
@@ -2864,7 +2864,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "100 mm Kasa",
             "length": 2.45,
             "speed": 0.72,
@@ -2877,7 +2877,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -2890,7 +2890,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.64,
@@ -2903,7 +2903,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.59,
@@ -2916,7 +2916,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Seren",
             "length": 2.5,
             "speed": 1.47,
@@ -2929,7 +2929,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 0.0,
             "speed": 0.0,
@@ -2942,7 +2942,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.4,
             "speed": 0.63,
@@ -2955,7 +2955,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat (Antrasit)",
             "length": 3.0,
             "speed": 0.64,
@@ -2968,7 +2968,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.68,
@@ -2981,7 +2981,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.48,
@@ -2996,7 +2996,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -3014,7 +3014,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -3039,7 +3039,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -3052,7 +3052,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.11,
@@ -3065,7 +3065,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -3078,7 +3078,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.92,
@@ -3091,7 +3091,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.91,
@@ -3104,7 +3104,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.38,
@@ -3117,7 +3117,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 2.02,
@@ -3130,7 +3130,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.32,
@@ -3143,7 +3143,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 0.4,
@@ -3158,7 +3158,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Vizon",
             "width": 94.0,
             "length": 208.0,
@@ -3385,7 +3385,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -3398,7 +3398,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.08,
@@ -3411,7 +3411,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -3424,7 +3424,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -3437,7 +3437,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.02,
@@ -3450,7 +3450,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.48,
@@ -3463,7 +3463,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.64,
@@ -3476,7 +3476,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.39,
@@ -3489,7 +3489,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 0.44,
@@ -3504,7 +3504,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 94.0,
             "length": 211.0,
@@ -3522,7 +3522,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "K. Ceviz",
             "width": 85.0,
             "length": 224.0,
@@ -3540,7 +3540,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "K. Ceviz",
             "width": 93.0,
             "length": 210.0,
@@ -3558,7 +3558,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Sonomo",
             "width": 85.0,
             "length": 224.0,
@@ -3576,7 +3576,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 210.0,
@@ -3601,7 +3601,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -3614,7 +3614,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.08,
@@ -3627,7 +3627,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -3640,7 +3640,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -3653,7 +3653,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 1.02,
@@ -3666,7 +3666,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.48,
@@ -3679,7 +3679,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 0.0,
             "speed": 0.0,
@@ -3692,7 +3692,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.38,
@@ -3705,7 +3705,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.44,
@@ -3720,7 +3720,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "K. Ceviz",
             "width": 93.0,
             "length": 210.0,
@@ -3890,7 +3890,7 @@
         "extruders": [
           {
             "row": 11,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.08,
@@ -3902,7 +3902,7 @@
           },
           {
             "row": 15,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -3914,7 +3914,7 @@
           },
           {
             "row": 19,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.48,
@@ -3933,7 +3933,7 @@
         "extruders": [
           {
             "row": 69,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.08,
@@ -3945,7 +3945,7 @@
           },
           {
             "row": 73,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -3957,7 +3957,7 @@
           },
           {
             "row": 77,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.48,
@@ -4227,7 +4227,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -4240,7 +4240,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.98,
@@ -4253,7 +4253,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.45,
@@ -4266,7 +4266,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.9,
@@ -4279,7 +4279,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.85,
@@ -4292,7 +4292,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.41,
@@ -4305,7 +4305,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.0,
@@ -4318,7 +4318,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.34,
@@ -4331,7 +4331,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 0.42,
@@ -4346,7 +4346,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "K. Ceviz",
             "width": 93.0,
             "length": 211.0,
@@ -4364,7 +4364,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Sonomo",
             "width": 80.0,
             "length": 209.0,
@@ -4389,7 +4389,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.6,
@@ -4402,7 +4402,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.81,
@@ -4415,7 +4415,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.67,
@@ -4428,7 +4428,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
@@ -4441,7 +4441,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.85,
@@ -4454,7 +4454,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.67,
@@ -4467,7 +4467,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.52,
@@ -4480,7 +4480,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.65,
@@ -4493,7 +4493,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.2,
@@ -4508,7 +4508,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 80.0,
             "length": 207.0,
@@ -4526,7 +4526,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 75.0,
             "length": 207.0,
@@ -4544,7 +4544,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 85.0,
             "length": 210.0,
@@ -4762,7 +4762,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.61,
@@ -4775,7 +4775,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.0,
@@ -4788,7 +4788,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.43,
@@ -4801,7 +4801,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.9,
@@ -4814,7 +4814,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.97,
@@ -4827,7 +4827,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.39,
@@ -4840,7 +4840,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.59,
@@ -4853,7 +4853,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.62,
@@ -4866,7 +4866,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.53,
@@ -4881,7 +4881,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Vizon",
             "width": 93.0,
             "length": 208.0,
@@ -4899,7 +4899,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -4917,7 +4917,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 93.0,
             "length": 208.0,
@@ -4942,7 +4942,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 0.0,
             "speed": 0.0,
@@ -4955,7 +4955,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.91,
@@ -4968,7 +4968,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.91,
@@ -4981,7 +4981,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.71,
@@ -4994,7 +4994,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.86,
@@ -5007,7 +5007,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -5020,7 +5020,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.59,
@@ -5033,7 +5033,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.62,
@@ -5046,7 +5046,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.53,
@@ -5061,7 +5061,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -5079,7 +5079,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. B. Teak",
             "width": 94.0,
             "length": 207.0,
@@ -5097,7 +5097,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Beyaz",
             "width": 94.0,
             "length": 207.0,
@@ -5295,7 +5295,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.62,
@@ -5308,7 +5308,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 1.0,
@@ -5321,7 +5321,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.39,
@@ -5334,7 +5334,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.97,
@@ -5347,7 +5347,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.94,
@@ -5360,7 +5360,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 1.41,
@@ -5373,7 +5373,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 2.02,
@@ -5386,7 +5386,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 1.56,
@@ -5399,7 +5399,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 0.38,
@@ -5414,7 +5414,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -5439,7 +5439,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.15,
@@ -5452,7 +5452,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.68,
@@ -5465,7 +5465,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.88,
@@ -5478,7 +5478,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.66,
@@ -5491,7 +5491,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
@@ -5504,7 +5504,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
@@ -5517,7 +5517,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.47,
@@ -5530,7 +5530,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat",
             "length": 3.1,
             "speed": 0.6,
@@ -5543,7 +5543,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat (emboslu) Kahverengi",
             "length": 3.0,
             "speed": 0.59,
@@ -5556,7 +5556,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.67,
@@ -5569,7 +5569,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.36,
@@ -5584,7 +5584,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -5602,7 +5602,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -5620,7 +5620,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 210.0,
@@ -5820,7 +5820,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.2,
@@ -5833,7 +5833,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -5846,7 +5846,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.91,
@@ -5859,7 +5859,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -5872,7 +5872,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.84,
@@ -5885,7 +5885,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.66,
@@ -5898,7 +5898,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.56,
@@ -5911,7 +5911,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.61,
@@ -5924,7 +5924,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.29,
@@ -5939,7 +5939,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 93.0,
             "length": 211.0,
@@ -5957,7 +5957,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 75.0,
             "length": 211.0,
@@ -5982,7 +5982,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.2,
@@ -5995,7 +5995,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -6008,7 +6008,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.91,
@@ -6021,7 +6021,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -6034,7 +6034,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.84,
@@ -6047,7 +6047,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.66,
@@ -6060,7 +6060,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat (emboslu)",
             "length": 3.0,
             "speed": 0.56,
@@ -6073,7 +6073,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.61,
@@ -6086,7 +6086,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.29,
@@ -6101,7 +6101,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 75.0,
             "length": 210.0,
@@ -6364,7 +6364,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.13,
@@ -6377,7 +6377,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -6390,7 +6390,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -6403,7 +6403,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.61,
@@ -6416,7 +6416,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.76,
@@ -6429,7 +6429,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.68,
@@ -6442,7 +6442,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.6,
@@ -6455,7 +6455,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -6468,7 +6468,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.29,
@@ -6483,7 +6483,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 94.0,
             "length": 207.0,
@@ -6501,7 +6501,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -6519,7 +6519,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 94.0,
             "length": 207.0,
@@ -6544,7 +6544,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.13,
@@ -6557,7 +6557,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -6570,7 +6570,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -6583,7 +6583,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.61,
@@ -6596,7 +6596,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.76,
@@ -6609,7 +6609,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.68,
@@ -6622,7 +6622,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.6,
@@ -6635,7 +6635,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -6648,7 +6648,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.29,
@@ -6661,7 +6661,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.32,
@@ -6676,7 +6676,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -6973,7 +6973,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.12,
@@ -6986,7 +6986,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.92,
@@ -6999,7 +6999,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -7012,7 +7012,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.53,
@@ -7025,7 +7025,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.81,
@@ -7038,7 +7038,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.71,
@@ -7051,7 +7051,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.67,
@@ -7064,7 +7064,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.62,
@@ -7077,7 +7077,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.25,
@@ -7092,7 +7092,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -7117,7 +7117,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.13,
@@ -7130,7 +7130,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.9,
@@ -7143,7 +7143,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.8,
@@ -7156,7 +7156,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.51,
@@ -7169,7 +7169,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.82,
@@ -7182,7 +7182,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.65,
@@ -7195,7 +7195,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.66,
@@ -7208,7 +7208,7 @@
           },
           {
             "row": 0,
-            "hat": "Hat 1",
+            "hat": "101",
             "product": "Kitkat (emboslu) Antrasit",
             "length": 3.0,
             "speed": 0.67,
@@ -7221,7 +7221,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.77,
@@ -7234,7 +7234,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.54,
@@ -7249,7 +7249,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 207.0,
@@ -7267,7 +7267,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -7530,7 +7530,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 1.11,
@@ -7543,7 +7543,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.86,
@@ -7556,7 +7556,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.69,
@@ -7569,7 +7569,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -7582,7 +7582,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
@@ -7595,7 +7595,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.71,
@@ -7608,7 +7608,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "Kitkat",
             "length": 3.0,
             "speed": 0.59,
@@ -7621,7 +7621,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -7634,7 +7634,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.38,
@@ -7649,7 +7649,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 93.0,
             "length": 208.0,
@@ -7674,7 +7674,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.91,
@@ -7687,7 +7687,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.86,
@@ -7700,7 +7700,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.77,
@@ -7713,7 +7713,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -7726,7 +7726,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.77,
@@ -7739,7 +7739,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -7752,7 +7752,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -7765,7 +7765,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.74,
@@ -7778,7 +7778,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.38,
@@ -7793,7 +7793,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -8034,7 +8034,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.91,
@@ -8047,7 +8047,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.87,
@@ -8060,7 +8060,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.72,
@@ -8073,7 +8073,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -8086,7 +8086,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.67,
@@ -8099,7 +8099,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -8112,7 +8112,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -8125,7 +8125,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.66,
@@ -8138,7 +8138,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.24,
@@ -8153,7 +8153,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 207.0,
@@ -8171,7 +8171,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 94.0,
             "length": 207.0,
@@ -8196,7 +8196,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.91,
@@ -8209,7 +8209,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.87,
@@ -8222,7 +8222,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.45,
             "speed": 0.85,
@@ -8235,7 +8235,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.72,
@@ -8248,7 +8248,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.57,
@@ -8261,7 +8261,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.67,
@@ -8274,7 +8274,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -8287,7 +8287,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -8300,7 +8300,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.66,
@@ -8313,7 +8313,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.24,
@@ -8328,7 +8328,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 207.0,
@@ -8346,7 +8346,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -8496,7 +8496,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.8,
@@ -8509,7 +8509,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.85,
@@ -8522,7 +8522,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -8535,7 +8535,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.7,
@@ -8548,7 +8548,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
@@ -8561,7 +8561,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.72,
@@ -8574,7 +8574,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.62,
@@ -8587,7 +8587,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.72,
@@ -8600,7 +8600,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.28,
@@ -8615,7 +8615,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Teak",
             "width": 93.0,
             "length": 211.0,
@@ -8633,7 +8633,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 85.0,
             "length": 211.0,
@@ -8658,7 +8658,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.91,
@@ -8671,7 +8671,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.84,
@@ -8684,7 +8684,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.97,
@@ -8697,7 +8697,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.69,
@@ -8710,7 +8710,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
@@ -8723,7 +8723,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.72,
@@ -8736,7 +8736,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.62,
@@ -8749,7 +8749,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.69,
@@ -8762,7 +8762,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.13,
@@ -8777,7 +8777,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 85.0,
             "length": 210.0,
@@ -8795,7 +8795,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "K. Ceviz",
             "width": 94.0,
             "length": 207.0,
@@ -8813,7 +8813,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "B. Teak",
             "width": 94.0,
             "length": 207.0,
@@ -8831,7 +8831,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -9101,7 +9101,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.93,
@@ -9114,7 +9114,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.45,
             "speed": 0.8,
@@ -9127,7 +9127,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -9140,7 +9140,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.68,
@@ -9153,7 +9153,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.91,
@@ -9166,7 +9166,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.75,
@@ -9179,7 +9179,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.64,
@@ -9192,7 +9192,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -9205,7 +9205,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.22,
@@ -9220,7 +9220,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Coco",
             "width": 94.0,
             "length": 208.0,
@@ -9245,7 +9245,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.93,
@@ -9258,7 +9258,7 @@
           },
           {
             "row": 0,
-            "hat": "2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.81,
@@ -9271,7 +9271,7 @@
           },
           {
             "row": 0,
-            "hat": "3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.0,
@@ -9284,7 +9284,7 @@
           },
           {
             "row": 0,
-            "hat": "4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.68,
@@ -9297,7 +9297,7 @@
           },
           {
             "row": 0,
-            "hat": "5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.8,
@@ -9310,7 +9310,7 @@
           },
           {
             "row": 0,
-            "hat": "6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.73,
@@ -9323,7 +9323,7 @@
           },
           {
             "row": 0,
-            "hat": "7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.58,
@@ -9336,7 +9336,7 @@
           },
           {
             "row": 0,
-            "hat": "8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.64,
@@ -9349,7 +9349,7 @@
           },
           {
             "row": 0,
-            "hat": "9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.1,
@@ -9364,7 +9364,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 85.0,
             "length": 210.0,
@@ -9382,7 +9382,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha 1",
+            "hat": "201",
             "color": "Antrasit",
             "width": 94.0,
             "length": 207.0,
@@ -9645,7 +9645,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.9,
@@ -9658,7 +9658,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.83,
@@ -9671,7 +9671,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.88,
@@ -9684,7 +9684,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.8,
@@ -9697,7 +9697,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.64,
@@ -9710,7 +9710,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -9723,7 +9723,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.62,
@@ -9736,7 +9736,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.45,
             "speed": 0.7,
@@ -9749,7 +9749,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -9762,7 +9762,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.13,
@@ -9775,7 +9775,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.5,
             "speed": 1.13,
@@ -9790,7 +9790,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "Antrasit",
             "width": 94.0,
             "length": 207.0,
@@ -9808,7 +9808,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -9833,7 +9833,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
@@ -9846,7 +9846,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.83,
@@ -9859,7 +9859,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.88,
@@ -9872,7 +9872,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.8,
@@ -9885,7 +9885,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.64,
@@ -9898,7 +9898,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.7,
@@ -9911,7 +9911,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.62,
@@ -9924,7 +9924,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.0,
@@ -9937,7 +9937,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.13,
@@ -9952,7 +9952,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "Antrasit",
             "width": 94.0,
             "length": 207.0,
@@ -9970,7 +9970,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "Teak",
             "width": 75.0,
             "length": 210.0,
@@ -9988,7 +9988,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 207.0,
@@ -10160,7 +10160,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
@@ -10173,7 +10173,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.82,
@@ -10186,7 +10186,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.82,
@@ -10199,7 +10199,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
@@ -10212,7 +10212,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.65,
@@ -10225,7 +10225,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
@@ -10238,7 +10238,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.45,
             "speed": 0.67,
@@ -10251,7 +10251,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.6,
@@ -10264,7 +10264,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.12,
@@ -10279,7 +10279,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "D. Budak",
             "width": 94.0,
             "length": 208.0,
@@ -10297,7 +10297,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -10322,7 +10322,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "80X80 Pervaz",
             "length": 2.24,
             "speed": 0.0,
@@ -10335,7 +10335,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "100 mm Kasa",
             "length": 2.15,
             "speed": 0.8,
@@ -10348,7 +10348,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 0.8,
@@ -10361,7 +10361,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.78,
@@ -10374,7 +10374,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "Seren",
             "length": 2.1,
             "speed": 0.65,
@@ -10387,7 +10387,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
@@ -10400,7 +10400,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "200 mm Kasa",
             "length": 2.15,
             "speed": 0.67,
@@ -10413,7 +10413,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "140 mm Kasa",
             "length": 2.15,
             "speed": 0.6,
@@ -10426,7 +10426,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "50x80 Pervaz",
             "length": 2.2,
             "speed": 1.11,
@@ -10441,7 +10441,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "Teak",
             "width": 75.0,
             "length": 200.0,
@@ -10459,7 +10459,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "Sonomo",
             "width": 85.0,
             "length": 210.0,
@@ -10477,7 +10477,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "M. Teak",
             "width": 85.0,
             "length": 210.0,
@@ -11607,7 +11607,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "140 mm Kasa",
             "length": 520.0,
             "speed": 5.0,
@@ -11620,7 +11620,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "Seren",
             "length": 250.0,
             "speed": 2.0,
@@ -11633,7 +11633,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "50x80 Pervaz",
             "length": 25.0,
             "speed": 5.0,
@@ -11646,7 +11646,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11659,7 +11659,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11672,7 +11672,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11685,7 +11685,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11698,7 +11698,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11711,7 +11711,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11726,7 +11726,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -11744,7 +11744,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -11769,7 +11769,7 @@
         "extruders": [
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 1",
+            "hat": "101",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11782,7 +11782,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 2",
+            "hat": "102",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11795,7 +11795,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 3",
+            "hat": "103",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11808,7 +11808,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 4",
+            "hat": "104",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11821,7 +11821,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 5",
+            "hat": "105",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11834,7 +11834,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 6",
+            "hat": "106",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11847,7 +11847,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 7",
+            "hat": "107",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11860,7 +11860,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 8",
+            "hat": "108",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11873,7 +11873,7 @@
           },
           {
             "row": 0,
-            "hat": "Ekstrüder Hat 9",
+            "hat": "109",
             "product": "",
             "length": 0.0,
             "speed": 0.0,
@@ -11888,7 +11888,7 @@
         "levha": [
           {
             "row": 0,
-            "hat": "Levha Hattı 1",
+            "hat": "201",
             "color": "",
             "width": 93.0,
             "length": 208.0,
@@ -11906,7 +11906,7 @@
           },
           {
             "row": 0,
-            "hat": "Levha Hattı 2",
+            "hat": "202",
             "color": "",
             "width": 93.0,
             "length": 208.0,

@@ -126,6 +126,29 @@ def normalize_hat_name(hat_name: str) -> str:
         return f"Mixer {m_mix.group(1)}"
     return s
 
+def normalize_ext_hat(hat_name: str) -> str:
+    """Ekstrüder hat isimlerini standart 101..109 koduna dönüştürür."""
+    if not hat_name:
+        return "101"
+    s = str(hat_name).strip()
+    import re
+    m = re.search(r'10([1-9])', s)
+    if m:
+        return f"10{m.group(1)}"
+    m2 = re.search(r'([1-9])', s)
+    if m2:
+        return f"10{m2.group(1)}"
+    return s
+
+def normalize_lev_hat(hat_name: str) -> str:
+    """Levha hat isimlerini standart 201..202 koduna dönüştürür."""
+    if not hat_name:
+        return "201"
+    s = str(hat_name).strip()
+    if "202" in s or ("2" in s and "201" not in s):
+        return "202"
+    return "201"
+
 
 _data_cache = None
 _users_cache = None
@@ -736,7 +759,7 @@ def get_dashboard_summary():
             for ext in s_data.get("extruders", []):
                 p_kg = ext.get("prod_kg", 0)
                 f_kg = ext.get("fire_kg", 0)
-                h_name = ext.get("hat", "Bilinmeyen Hat")
+                h_name = normalize_ext_hat(ext.get("hat", "101"))
                 h_length = ext.get("length", 0)
                 h_product_raw = ext.get("product", "")
                 # Ekstrüder'de grup anahtarı ÜRÜN ADI + BOY birlikte tutulur: aynı ürün
@@ -788,7 +811,7 @@ def get_dashboard_summary():
             for lev in s_data.get("levha", []):
                 p_kg = lev.get("total_kg", 0)
                 f_kg = lev.get("dead_fire_kg", 0)
-                h_name = lev.get("hat", "Levha Hattı")
+                h_name = normalize_lev_hat(lev.get("hat", "201"))
                 h_color = lev.get("color", "")
                 h_width = lev.get("width", 0)
                 # Levha'da grup anahtarı RENK + EN ÖLÇÜSÜ birlikte tutulur: aynı renk
@@ -2877,6 +2900,7 @@ def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Option
 
     for shift in ["gunduz", "gece"]:
         for ext in data["daily_data"][date_key][shift]["extruders"]:
+            ext["hat"] = normalize_ext_hat(ext.get("hat", "101"))
             p = ext.get("product", "").lower()
             q = ext.get("qty", 0)
             length = ext.get("length", 0) or 0
@@ -2905,6 +2929,7 @@ def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Option
                 ext["sets"] = 0
 
         for lev in data["daily_data"][date_key][shift]["levha"]:
+            lev["hat"] = normalize_lev_hat(lev.get("hat", "201"))
             q = lev.get("qty", 0)
             w = lev.get("width", 93)
             l = lev.get("length", 208)

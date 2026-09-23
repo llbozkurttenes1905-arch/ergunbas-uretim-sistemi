@@ -358,39 +358,50 @@ def load_data():
 def save_data(data):
     global _data_cache, _last_synced_hashes
     _data_cache = data
-    # Yerel dosyaya da yaz (aynı process içinde hızlı erişim + GitHub başarısız olursa yedek)
+
+    # 1) Eski tek dosyalı data.json'a yaz
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    if not _github_enabled():
-        return
-
-    # 1) Çekirdek veri (makineler + ürünler + reçeteler) — sadece gerçekten değiştiyse yaz
+    # 2) Çekirdek veriyi (makineler + ürünler + reçeteler) yerel dosyaya yaz
     core_payload = {
         "machines": data.get("machines", []),
         "products": data.get("products", []),
         "mixer_recipes": data.get("mixer_recipes", [])
     }
-    core_hash = _content_hash(core_payload)
-    if _last_synced_hashes.get("__core__") != core_hash:
-        if github_put_file(CORE_FILE_NAME, core_payload, "Çekirdek veri (makine/ürün/reçete) güncellendi (otomatik)"):
-            _last_synced_hashes["__core__"] = core_hash
+    with open(os.path.join(APP_DIR, CORE_FILE_NAME), "w", encoding="utf-8") as f:
+        json.dump(core_payload, f, ensure_ascii=False, indent=2)
 
-    # 2) Günlük veriyi takvim ayına göre grupla
+    # 3) Günlük veriyi takvim ayına göre grupla ve yerel data_days_YYYY-MM.json dosyalarına yaz
     by_month = {}
     for k, day_obj in data.get("daily_data", {}).items():
         mk = _month_key_for_day(day_obj)
         by_month.setdefault(mk, {})[k] = day_obj
 
-    # 3) Sadece İÇERİĞİ DEĞİŞEN ay dosyalarını GitHub'a yaz (gereksiz yazımları önle)
+    for mk, days in by_month.items():
+        with open(os.path.join(APP_DIR, _days_filename(mk)), "w", encoding="utf-8") as f:
+            json.dump({"days": days}, f, ensure_ascii=False, indent=2)
+
+    # 4) Ay indeksini yerel dosyaya yaz
+    month_key_list = sorted(by_month.keys())
+    with open(os.path.join(APP_DIR, INDEX_FILE_NAME), "w", encoding="utf-8") as f:
+        json.dump({"months": month_key_list}, f, ensure_ascii=False, indent=2)
+
+    if not _github_enabled():
+        return
+
+    # GitHub Contents API Senkronizasyonu (Render/Bulut ortamı için)
+    core_hash = _content_hash(core_payload)
+    if _last_synced_hashes.get("__core__") != core_hash:
+        if github_put_file(CORE_FILE_NAME, core_payload, "Çekirdek veri (makine/ürün/reçete) güncellendi (otomatik)"):
+            _last_synced_hashes["__core__"] = core_hash
+
     for mk, days in by_month.items():
         days_hash = _content_hash(days)
         if _last_synced_hashes.get(mk) != days_hash:
             if github_put_file(_days_filename(mk), {"days": days}, f"{mk} ayı üretim verisi güncellendi (otomatik)"):
                 _last_synced_hashes[mk] = days_hash
 
-    # 4) Ay indeksini güncelle (sadece değiştiyse)
-    month_key_list = sorted(by_month.keys())
     if _last_synced_hashes.get("__index__") != month_key_list:
         if github_put_file(INDEX_FILE_NAME, {"months": month_key_list}, "Ay indeksi güncellendi (otomatik)"):
             _last_synced_hashes["__index__"] = month_key_list

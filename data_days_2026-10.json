@@ -16,23 +16,6 @@
         "levha": []
       },
       "downtimes": []
-    },
-    "36": {
-      "day": "36",
-      "date": "26.10.2026",
-      "gunduz": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "gece": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "downtimes": []
     }
   }
 }

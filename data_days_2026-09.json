@@ -8317,8 +8317,8 @@
           "toplam_kg": 4680.2
         }
       ],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer_emp_gunduz": 11,
+      "mixer_emp_gece": 1
     },
     "54": {
       "day": "54",

@@ -439,9 +439,7 @@
                         <thead class="bg-slate-950/60 text-xs text-slate-400 uppercase tracking-wider">
                             <tr>
                                 <th class="p-2.5">Vardiya Amiri</th>
-                                <th class="p-2.5 text-center">Toplam Vardiya</th>
-                                <th class="p-2.5 text-center text-yellow-400">☀ Gündüz</th>
-                                <th class="p-2.5 text-center text-indigo-400">🌙 Gece</th>
+                                <th class="p-2.5 text-right">Vardiya Sayısı</th>
                                 <th class="p-2.5 text-right">Toplam Üretim</th>
                                 <th class="p-2.5 text-right">Toplam Fire</th>
                                 <th class="p-2.5 text-right">Fire Oranı</th>
@@ -449,7 +447,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbl-genel-vardiya-amiri" class="divide-y divide-slate-800">
-                            <tr><td colspan="8" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>
+                            <tr><td colspan="6" class="p-4 text-center text-slate-500">Veri bulunamadı.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -2784,7 +2782,7 @@
             const operators = dashboardData.monthly_summary.operator_performance || [];
 
             if (operators.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-slate-500">Henüz vardiya amiri girilmemiş.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Henüz vardiya amiri girilmemiş.</td></tr>';
                 return;
             }
 
@@ -2793,34 +2791,40 @@
                 const mainRow = `
                 <tr class="hover:bg-slate-800/40 transition">
                     <td class="p-2.5 font-bold text-white align-top">${o.name}</td>
-                    <td class="p-2.5 text-center font-black text-white align-top text-sm">${o.shift_count}</td>
-                    <td class="p-2.5 text-center align-top">
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-yellow-950/70 text-yellow-400 border border-yellow-700/60 shadow-sm">
-                            ☀ ${o.gunduz_count} Vardiya
-                        </span>
-                        <div class="text-[10px] text-slate-400 font-semibold mt-1">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
-                    </td>
-                    <td class="p-2.5 text-center align-top">
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-indigo-950/70 text-indigo-300 border border-indigo-700/60 shadow-sm">
-                            🌙 ${o.gece_count} Vardiya
-                        </span>
-                        <div class="text-[10px] text-slate-400 font-semibold mt-1">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                    <td class="p-2.5 text-right text-slate-300 align-top font-semibold">
+                        ${o.shift_count} Vardiya
+                        <div class="text-[10px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ ${o.gunduz_count} Gündüz</div>
+                            <div class="text-indigo-400 font-bold">🌙 ${o.gece_count} Gece</div>
+                        </div>
                     </td>
                     <td class="p-2.5 text-right font-semibold text-white align-top">
                         ${o.prod_kg.toLocaleString('tr-TR')} kg
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ Gündüz: ${o.gunduz.prod_kg.toLocaleString('tr-TR')} kg</div>
+                            <div class="text-indigo-400 font-bold">🌙 Gece: ${o.gece.prod_kg.toLocaleString('tr-TR')} kg</div>
+                        </div>
                     </td>
                     <td class="p-2.5 text-right font-semibold text-amber-400 align-top">
                         ${o.fire_kg.toLocaleString('tr-TR')} kg
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ %${o.gunduz.fire_ratio}</div>
+                            <div class="text-indigo-400 font-bold">🌙 %${o.gece.fire_ratio}</div>
+                        </div>
                     </td>
                     <td class="p-2.5 text-right font-semibold align-top ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${o.fire_ratio}</td>
                     <td class="p-2.5 text-right align-top">
                         <span class="font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</span>
+                        <div class="text-[9px] mt-1 space-y-0.5">
+                            <div class="text-yellow-400 font-bold">☀ ${o.gunduz.kg_per_hour.toLocaleString('tr-TR')}</div>
+                            <div class="text-indigo-400 font-bold">🌙 ${o.gece.kg_per_hour.toLocaleString('tr-TR')}</div>
+                        </div>
                     </td>
                 </tr>`;
 
                 const reasonsRow = hasReasons ? `
                 <tr class="bg-slate-950/40">
-                    <td colspan="8" class="px-2.5 pb-3 pt-0">
+                    <td colspan="6" class="px-2.5 pb-3 pt-0">
                         <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Bu Amirin Vardiyalarındaki Başlıca Duruş/Fire Sebepleri</div>
                         <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-0.5">
                             ${o.top_reasons.map(r => `

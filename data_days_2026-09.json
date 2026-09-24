@@ -8220,7 +8220,35 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde değişimi yapıldı.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde beklendi.",
+          "down_min": 420.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği yapıldı.",
+          "down_min": 120.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

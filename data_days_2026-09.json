@@ -8787,8 +8787,8 @@
           "toplam_kg": 8545.15
         }
       ],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 1
     }
   }
 }

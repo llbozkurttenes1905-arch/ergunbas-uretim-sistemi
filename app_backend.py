@@ -11,7 +11,20 @@ import base64
 import hashlib
 import urllib.request
 import urllib.error
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    ZoneInfo = None
+
+def get_turkey_now() -> datetime:
+    """Türkiye yerel saatini (Europe/Istanbul, UTC+3) döner."""
+    if ZoneInfo:
+        try:
+            return datetime.now(ZoneInfo("Europe/Istanbul"))
+        except Exception:
+            pass
+    return datetime.now(timezone.utc) + timedelta(hours=3)
 import openpyxl
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
@@ -3143,7 +3156,7 @@ def export_pdf():
     # ---- BAŞLIK ----
     story.append(Paragraph("ERGUNBAS GROUP", title_style))
     story.append(Paragraph("Üretim &amp; Fire Yönetimi — Genel Toplam Raporu", subtitle_style))
-    story.append(Paragraph(f"Oluşturulma tarihi: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
+    story.append(Paragraph(f"Oluşturulma tarihi: {get_turkey_now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
     story.append(Spacer(1, 12))
 
     # ---- GENEL TOPLAM KPI KARTLARI ----
@@ -3428,7 +3441,7 @@ def export_daily_pdf(date: Optional[str] = None):
     header_right = [
         Paragraph(f"<b>TARİH:</b> {date_str}", ParagraphStyle("HDate", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=9.5, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)),
         Paragraph(f"<b>Rapor No:</b> {doc_no}", ParagraphStyle("HNo", parent=subtitle_style, fontSize=7.5, alignment=TA_RIGHT)),
-        Paragraph(f"<b>Basım Saati:</b> {datetime.now().strftime('%H:%M')}", ParagraphStyle("HTime", parent=subtitle_style, fontSize=7.5, alignment=TA_RIGHT))
+        Paragraph(f"<b>Basım Saati:</b> {get_turkey_now().strftime('%H:%M')}", ParagraphStyle("HTime", parent=subtitle_style, fontSize=7.5, alignment=TA_RIGHT))
     ]
 
     htable = Table([[header_left, header_right]], colWidths=[11.6 * cm, 7.0 * cm])

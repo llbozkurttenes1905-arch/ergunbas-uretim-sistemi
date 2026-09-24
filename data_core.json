@@ -1433,7 +1433,11 @@
       "work_days": 27,
       "daily_target": 475
     },
-    "2026-08": 7500,
+    "2026-08": {
+      "target_doors": 12825,
+      "work_days": 27,
+      "daily_target": 475
+    },
     "2026-10": 5000
   }
 }

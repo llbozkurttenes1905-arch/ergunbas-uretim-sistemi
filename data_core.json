@@ -1055,12 +1055,6 @@
       "name": "Kitkat (kahverengi)",
       "category": "diger",
       "door_ratio": 0.0
-    },
-    {
-      "id": "p_147",
-      "name": "Kitkat (emboslu) Antrasit",
-      "category": "diger",
-      "door_ratio": 0.0
     }
   ],
   "mixer_recipes": [

@@ -1049,12 +1049,6 @@
       "name": "Kitkat (emboslu) Kahverengi",
       "category": "diger",
       "door_ratio": 0.0
-    },
-    {
-      "id": "p_146",
-      "name": "Kitkat (kahverengi)",
-      "category": "diger",
-      "door_ratio": 0.0
     }
   ],
   "mixer_recipes": [

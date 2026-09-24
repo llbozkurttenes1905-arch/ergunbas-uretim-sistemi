@@ -336,27 +336,39 @@
 
     <!-- HEDEF DÜZENLEME MODALI -->
     <div id="target-edit-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
-                    <i data-lucide="target" class="w-5 h-5 text-ergunbas-500"></i> Aylık Hedef Belirle
+                    <i data-lucide="target" class="w-5 h-5 text-ergunbas-500"></i> Hedef ve Gün Belirle
                 </h3>
                 <button onclick="closeEditTargetModal()" class="text-slate-400 hover:text-white transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="space-y-3">
+            <div class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 mb-1">Seçili Ay</label>
                     <input type="text" id="target-modal-month" disabled class="w-full bg-slate-950 border border-slate-800 text-slate-400 text-sm rounded-lg px-3 py-2 font-mono">
                 </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-400 mb-1">📅 Aylık Çalışma Günü</label>
+                        <input type="number" id="target-modal-days" min="1" max="31" step="1" oninput="onTargetModalDaysChange()" placeholder="örn. 24" class="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 text-white text-base font-bold rounded-lg px-3 py-2 focus:outline-none">
+                        <p class="text-[10px] text-slate-500 mt-1">Planlanan çalışma gün hedefi (kalan gün buna göre hesaplanır)</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-amber-400 mb-1">⚡ Günlük Hedef (Kapı/Gün)</label>
+                        <input type="number" id="target-modal-daily" min="1" step="10" oninput="onTargetModalDailyChange()" placeholder="örn. 450" class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 text-white text-base font-bold rounded-lg px-3 py-2 focus:outline-none">
+                        <p class="text-[10px] text-slate-500 mt-1">Günde kaç tam takım kapı hedefleniyor?</p>
+                    </div>
+                </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Aylık Hedef Kapı Adedi</label>
-                    <input type="number" id="target-modal-input" min="1" step="100" class="w-full bg-slate-950 border border-slate-800 focus:border-ergunbas-500 text-white text-base font-bold rounded-lg px-3 py-2 focus:outline-none">
-                    <p class="text-[11px] text-slate-500 mt-1">Örn: 5000, 6000, 7500. Tüm fabrika bu hedefe göre pacing ve darboğaz takibi yapacaktır.</p>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">🎯 Aylık Toplam Hedef Kapı Adedi</label>
+                    <input type="number" id="target-modal-input" min="1" step="100" oninput="onTargetModalMonthlyChange()" class="w-full bg-slate-950 border border-slate-800 focus:border-ergunbas-500 text-white text-lg font-black rounded-lg px-3 py-2 focus:outline-none">
+                    <p class="text-[11px] text-slate-500 mt-1">Çalışma Gün Hedefi × Günlük Hedef = Aylık Hedef otomatik eşitlenir.</p>
                 </div>
             </div>
-            <div class="flex justify-end gap-2 pt-2">
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800/80">
                 <button onclick="closeEditTargetModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">İptal</button>
                 <button onclick="saveMonthlyTarget()" class="px-4 py-2 bg-ergunbas-600 hover:bg-ergunbas-500 text-white rounded-lg text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="check" class="w-4 h-4"></i> Kaydet
@@ -2999,24 +3011,56 @@
                 } else {
                     opTbody.innerHTML = ops.map(o => `
                         <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-2.5 font-bold text-white">${o.name}</td>
-                            <td class="p-2.5 text-center font-black text-white text-sm">${o.shift_count}</td>
-                            <td class="p-2.5 text-center">
+                            <td class="p-2.5 font-bold text-white align-top">${o.name}</td>
+                            <td class="p-2.5 text-center font-black text-white text-sm align-top">${o.shift_count}</td>
+                            <td class="p-2.5 text-center align-top">
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-yellow-950/70 text-yellow-400 border border-yellow-700/60 shadow-sm">
                                     ☀ ${o.gunduz_count} Vardiya
                                 </span>
-                                <div class="text-[10px] text-slate-400 font-semibold mt-1">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[11px] text-white font-bold mt-1.5">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[10px] space-y-0.5 mt-1 pt-1 border-t border-slate-800/80">
+                                    <div class="text-amber-400 font-semibold">Fire: %${o.gunduz?.fire_ratio || 0} <span class="text-slate-500">(${(o.gunduz?.fire_kg || 0).toLocaleString('tr-TR')} kg)</span></div>
+                                    <div class="text-sky-400 font-semibold">Hız: ${(o.gunduz?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                </div>
                             </td>
-                            <td class="p-2.5 text-center">
+                            <td class="p-2.5 text-center align-top">
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-black bg-indigo-950/70 text-indigo-300 border border-indigo-700/60 shadow-sm">
                                     🌙 ${o.gece_count} Vardiya
                                 </span>
-                                <div class="text-[10px] text-slate-400 font-semibold mt-1">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[11px] text-white font-bold mt-1.5">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[10px] space-y-0.5 mt-1 pt-1 border-t border-slate-800/80">
+                                    <div class="text-amber-400 font-semibold">Fire: %${o.gece?.fire_ratio || 0} <span class="text-slate-500">(${(o.gece?.fire_kg || 0).toLocaleString('tr-TR')} kg)</span></div>
+                                    <div class="text-sky-400 font-semibold">Hız: ${(o.gece?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                </div>
                             </td>
-                            <td class="p-2.5 text-right font-semibold text-white">${o.prod_kg.toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2.5 text-right font-semibold text-amber-400">${o.fire_kg.toLocaleString('tr-TR')} kg</td>
-                            <td class="p-2.5 text-right font-semibold ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">%${o.fire_ratio}</td>
-                            <td class="p-2.5 text-right font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</td>
+                            <td class="p-2.5 text-right font-semibold text-white align-top">
+                                <div class="font-bold text-sm">${o.prod_kg.toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[9px] mt-1 space-y-0.5">
+                                    <div class="text-yellow-400 font-bold">☀ Gündüz: ${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                    <div class="text-indigo-400 font-bold">🌙 Gece: ${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                </div>
+                            </td>
+                            <td class="p-2.5 text-right font-semibold text-amber-400 align-top">
+                                <div class="font-bold">${o.fire_kg.toLocaleString('tr-TR')} kg</div>
+                                <div class="text-[9px] mt-1 space-y-0.5">
+                                    <div class="text-yellow-400 font-bold">☀ ${(o.gunduz?.fire_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                    <div class="text-indigo-400 font-bold">🌙 ${(o.gece?.fire_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                </div>
+                            </td>
+                            <td class="p-2.5 text-right font-semibold align-top ${o.fire_ratio > 30 ? 'text-red-400' : (o.fire_ratio > 15 ? 'text-orange-400' : 'text-emerald-400')}">
+                                <div class="font-bold text-sm">%${o.fire_ratio}</div>
+                                <div class="text-[9px] mt-1 space-y-0.5">
+                                    <div class="text-yellow-400 font-bold">☀ %${o.gunduz?.fire_ratio || 0}</div>
+                                    <div class="text-indigo-400 font-bold">🌙 %${o.gece?.fire_ratio || 0}</div>
+                                </div>
+                            </td>
+                            <td class="p-2.5 text-right align-top">
+                                <div class="font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</div>
+                                <div class="text-[9px] mt-1 space-y-0.5">
+                                    <div class="text-yellow-400 font-bold">☀ ${(o.gunduz?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                    <div class="text-indigo-400 font-bold">🌙 ${(o.gece?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                </div>
+                            </td>
                         </tr>
                     `).join('');
                 }
@@ -3171,7 +3215,10 @@
             if (elTarget) elTarget.textContent = d.target_doors.toLocaleString('tr-TR');
 
             const elDays = document.getElementById('proj-days-info');
-            if (elDays) elDays.textContent = `Geçen: ${d.days_passed} gün / Kalan: ${d.days_remaining} gün`;
+            if (elDays) {
+                const workDaysTag = d.work_days ? ` <span class="text-slate-400 font-semibold">(Hedef: ${d.total_month_days} gün)</span>` : '';
+                elDays.innerHTML = `Geçen: <strong>${d.days_passed}</strong> gün / Kalan: <strong>${d.days_remaining}</strong> gün${workDaysTag}`;
+            }
 
             const elComp = document.getElementById('proj-completed-doors');
             if (elComp) elComp.textContent = d.completed_doors.toLocaleString('tr-TR');
@@ -3188,11 +3235,12 @@
             const elReqPaceText = document.getElementById('proj-required-pace-text');
             if (elReqPaceText) {
                 if (d.completed_doors >= d.target_doors) {
-                    elReqPaceText.innerHTML = '<span class="text-emerald-400 font-bold">Hedefe Ulaşıldı!</span>';
+                    elReqPaceText.innerHTML = '<span class="text-emerald-400 font-bold">Hedefe Ulaşıldı! 🎉</span>';
                 } else if (d.days_remaining === 0) {
-                    elReqPaceText.innerHTML = '<span class="text-slate-400">Ay Tamamlandı</span>';
+                    elReqPaceText.innerHTML = '<span class="text-slate-400">Çalışma Günleri Tamamlandı</span>';
                 } else {
-                    elReqPaceText.innerHTML = `Hedef İçin: <strong class="text-white font-semibold">${d.required_daily_pace.toLocaleString('tr-TR')}</strong> kapı/gün`;
+                    const dailyTargetTag = d.daily_target ? `Hedef: <strong class="text-amber-400 font-bold">${d.daily_target.toLocaleString('tr-TR')}</strong> | ` : '';
+                    elReqPaceText.innerHTML = `${dailyTargetTag}Kalan İçin: <strong class="text-white font-semibold">${d.required_daily_pace.toLocaleString('tr-TR')}</strong> kapı/gün`;
                 }
             }
 
@@ -3282,11 +3330,41 @@
             const monthText = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : monthKey;
 
             document.getElementById('target-modal-month').value = `${monthText} (${monthKey})`;
-            document.getElementById('target-modal-input').value = currentTargetProjection ? currentTargetProjection.target_doors : 5000;
+            const targetDoors = currentTargetProjection ? currentTargetProjection.target_doors : 5000;
+            const workDays = currentTargetProjection ? (currentTargetProjection.work_days || currentTargetProjection.total_month_days || 26) : 26;
+            const dailyTarget = currentTargetProjection && currentTargetProjection.daily_target ? currentTargetProjection.daily_target : Math.round(targetDoors / workDays);
+
+            document.getElementById('target-modal-input').value = targetDoors;
+            document.getElementById('target-modal-days').value = workDays;
+            document.getElementById('target-modal-daily').value = dailyTarget;
 
             const modal = document.getElementById('target-edit-modal');
             if (modal) modal.classList.remove('hidden');
             safeCreateIcons();
+        }
+
+        function onTargetModalDaysChange() {
+            const days = parseInt(document.getElementById('target-modal-days').value) || 0;
+            const daily = parseInt(document.getElementById('target-modal-daily').value) || 0;
+            if (days > 0 && daily > 0) {
+                document.getElementById('target-modal-input').value = days * daily;
+            }
+        }
+
+        function onTargetModalDailyChange() {
+            const daily = parseInt(document.getElementById('target-modal-daily').value) || 0;
+            const days = parseInt(document.getElementById('target-modal-days').value) || 26;
+            if (daily > 0 && days > 0) {
+                document.getElementById('target-modal-input').value = days * daily;
+            }
+        }
+
+        function onTargetModalMonthlyChange() {
+            const monthly = parseInt(document.getElementById('target-modal-input').value) || 0;
+            const days = parseInt(document.getElementById('target-modal-days').value) || 26;
+            if (monthly > 0 && days > 0) {
+                document.getElementById('target-modal-daily').value = Math.round(monthly / days);
+            }
         }
 
         function closeEditTargetModal() {
@@ -3298,7 +3376,12 @@
             const sel = document.getElementById('dash-month-select');
             const monthKey = sel ? sel.value : (currentTargetProjection ? currentTargetProjection.month_key : '');
             const targetInput = document.getElementById('target-modal-input');
-            const targetVal = parseInt(targetInput.value);
+            const daysInput = document.getElementById('target-modal-days');
+            const dailyInput = document.getElementById('target-modal-daily');
+
+            const targetVal = parseInt(targetInput?.value);
+            const daysVal = parseInt(daysInput?.value) || null;
+            const dailyVal = parseInt(dailyInput?.value) || null;
 
             if (!targetVal || targetVal <= 0) {
                 showToast('Lütfen geçerli bir hedef kapı sayısı girin.');
@@ -3314,7 +3397,9 @@
                     },
                     body: JSON.stringify({
                         month_key: monthKey,
-                        target_doors: targetVal
+                        target_doors: targetVal,
+                        work_days: daysVal,
+                        daily_target: dailyVal
                     })
                 });
 
@@ -3324,7 +3409,7 @@
                 }
 
                 closeEditTargetModal();
-                showToast(`${monthKey} ayı hedefi ${targetVal.toLocaleString('tr-TR')} kapı olarak güncellendi.`);
+                showToast(`${monthKey} ayı hedefi (${targetVal.toLocaleString('tr-TR')} kapı${daysVal ? ', ' + daysVal + ' iş günü' : ''}) güncellendi.`);
                 loadTargetProjection(monthKey);
             } catch (e) {
                 showToast(e.message || 'Hedef kaydedilirken bir hata oluştu.');
@@ -3406,12 +3491,20 @@
                             <tbody class="divide-y divide-slate-800">
                                 ${ms.operator_performance.map(o => `
                                     <tr class="hover:bg-slate-800/40">
-                                        <td class="p-2 font-bold text-white">${o.name}</td>
-                                        <td class="p-2 text-center font-bold text-slate-300">${o.shift_count}</td>
-                                        <td class="p-2 text-center font-bold text-yellow-400">☀ ${o.gunduz_count} Vardiya <span class="text-[10px] text-slate-400 font-normal">(${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg)</span></td>
-                                        <td class="p-2 text-center font-bold text-indigo-400">🌙 ${o.gece_count} Vardiya <span class="text-[10px] text-slate-400 font-normal">(${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg)</span></td>
-                                        <td class="p-2 text-right font-semibold text-white">${o.prod_kg.toLocaleString('tr-TR')} kg</td>
-                                        <td class="p-2 text-right font-bold text-amber-400">%${o.fire_ratio}</td>
+                                        <td class="p-2 font-bold text-white align-top">${o.name}</td>
+                                        <td class="p-2 text-center font-bold text-slate-300 align-top">${o.shift_count}</td>
+                                        <td class="p-2 text-center align-top">
+                                            <span class="text-yellow-400 font-bold">☀ ${o.gunduz_count} Vardiya</span>
+                                            <div class="text-[11px] text-white font-semibold mt-0.5">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                            <div class="text-[9px] text-amber-400 mt-0.5">Fire: %${o.gunduz?.fire_ratio || 0} · Hız: ${(o.gunduz?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                        </td>
+                                        <td class="p-2 text-center align-top">
+                                            <span class="text-indigo-400 font-bold">🌙 ${o.gece_count} Vardiya</span>
+                                            <div class="text-[11px] text-white font-semibold mt-0.5">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                            <div class="text-[9px] text-amber-400 mt-0.5">Fire: %${o.gece?.fire_ratio || 0} · Hız: ${(o.gece?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
+                                        </td>
+                                        <td class="p-2 text-right font-semibold text-white align-top">${o.prod_kg.toLocaleString('tr-TR')} kg</td>
+                                        <td class="p-2 text-right font-bold text-amber-400 align-top">%${o.fire_ratio}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -3497,22 +3590,24 @@
                         <tbody class="divide-y divide-slate-800">
                             ${w.operator_performance.map(o => `
                                 <tr class="hover:bg-slate-800/40 transition">
-                                    <td class="p-2.5 font-bold text-white">${o.name}</td>
-                                    <td class="p-2.5 text-center font-black text-white">${o.shift_count}</td>
-                                    <td class="p-2.5 text-center">
+                                    <td class="p-2.5 font-bold text-white align-top">${o.name}</td>
+                                    <td class="p-2.5 text-center font-black text-white align-top">${o.shift_count}</td>
+                                    <td class="p-2.5 text-center align-top">
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-black bg-yellow-950/70 text-yellow-400 border border-yellow-800/50">
                                             ☀ ${o.gunduz_count} Vardiya
                                         </span>
-                                        <div class="text-[10px] text-slate-400 font-semibold mt-0.5">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                        <div class="text-[11px] text-white font-bold mt-1">${(o.gunduz?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                        <div class="text-[10px] text-amber-400 mt-0.5">Fire: %${o.gunduz?.fire_ratio || 0} · Hız: ${(o.gunduz?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
                                     </td>
-                                    <td class="p-2.5 text-center">
+                                    <td class="p-2.5 text-center align-top">
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-black bg-indigo-950/70 text-indigo-300 border border-indigo-800/50">
                                             🌙 ${o.gece_count} Vardiya
                                         </span>
-                                        <div class="text-[10px] text-slate-400 font-semibold mt-0.5">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                        <div class="text-[11px] text-white font-bold mt-1">${(o.gece?.prod_kg || 0).toLocaleString('tr-TR')} kg</div>
+                                        <div class="text-[10px] text-amber-400 mt-0.5">Fire: %${o.gece?.fire_ratio || 0} · Hız: ${(o.gece?.kg_per_hour || 0).toLocaleString('tr-TR')} kg/sa</div>
                                     </td>
-                                    <td class="p-2.5 text-right font-semibold text-orange-400">%${o.fire_ratio}</td>
-                                    <td class="p-2.5 text-right font-bold text-sky-400">${o.kg_per_hour.toLocaleString('tr-TR')}</td>
+                                    <td class="p-2.5 text-right font-semibold text-orange-400 align-top">%${o.fire_ratio}</td>
+                                    <td class="p-2.5 text-right font-bold text-sky-400 align-top">${o.kg_per_hour.toLocaleString('tr-TR')} kg/sa</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -4190,8 +4285,7 @@
                     if (m1) normVal = '10' + m1[1];
                 }
             } else if (machineTypeFilter === 'levha') {
-                if (normVal.includes('202') || (normVal.includes('2') && !normVal.includes('201'))) normVal = '202';
-                else normVal = '201';
+                normVal = '201';
             }
 
             const filtered = machinesList.filter(m => m.type === machineTypeFilter);

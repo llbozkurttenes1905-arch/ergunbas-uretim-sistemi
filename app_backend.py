@@ -141,12 +141,7 @@ def normalize_ext_hat(hat_name: str) -> str:
     return s
 
 def normalize_lev_hat(hat_name: str) -> str:
-    """Levha hat isimlerini standart 201..202 koduna dönüştürür."""
-    if not hat_name:
-        return "201"
-    s = str(hat_name).strip()
-    if "202" in s or ("2" in s and "201" not in s):
-        return "202"
+    """Levha hat ismini standart 201 koduna dönüştürür (fabrikada sadece Levha 201 mevcuttur)."""
     return "201"
 
 
@@ -506,6 +501,8 @@ class AddDateRequest(BaseModel):
 class MonthlyTargetUpdate(BaseModel):
     month_key: str
     target_doors: int
+    work_days: Optional[int] = None
+    daily_target: Optional[int] = None
 
 
 def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None):
@@ -1680,9 +1677,19 @@ def set_monthly_target(payload: MonthlyTargetUpdate, x_username: Optional[str] =
     data = load_data()
     if "monthly_targets" not in data:
         data["monthly_targets"] = {}
-    data["monthly_targets"][payload.month_key] = payload.target_doors
+    data["monthly_targets"][payload.month_key] = {
+        "target_doors": payload.target_doors,
+        "work_days": payload.work_days,
+        "daily_target": payload.daily_target
+    }
     save_data(data)
-    return {"status": "ok", "month_key": payload.month_key, "target_doors": payload.target_doors}
+    return {
+        "status": "ok",
+        "month_key": payload.month_key,
+        "target_doors": payload.target_doors,
+        "work_days": payload.work_days,
+        "daily_target": payload.daily_target
+    }
 
 @app.get("/api/door_target_projection/{month_key}")
 def get_door_target_projection(month_key: str):
@@ -1692,7 +1699,15 @@ def get_door_target_projection(month_key: str):
     month_days = dash.get("daily_chart_by_month", {}).get(month_key, [])
 
     targets = data.get("monthly_targets", {})
-    target_doors = int(targets.get(month_key, 5000))
+    target_entry = targets.get(month_key, 5000)
+    if isinstance(target_entry, dict):
+        target_doors = int(target_entry.get("target_doors", 5000))
+        custom_work_days = target_entry.get("work_days")
+        custom_daily_target = target_entry.get("daily_target")
+    else:
+        target_doors = int(target_entry)
+        custom_work_days = None
+        custom_daily_target = None
 
     door_stats = sum_chain_door_stats(month_days)
     completed_doors = door_stats.get("completable_doors", 0)
@@ -1700,10 +1715,11 @@ def get_door_target_projection(month_key: str):
 
     try:
         y, m = map(int, month_key.split("-"))
-        total_month_days = calendar.monthrange(y, m)[1]
+        cal_month_days = calendar.monthrange(y, m)[1]
     except Exception:
-        total_month_days = 30
+        cal_month_days = 30
 
+    total_month_days = int(custom_work_days) if custom_work_days and int(custom_work_days) > 0 else cal_month_days
     days_passed = len([d for d in month_days if d.get("prod_kg", 0) > 0])
     days_remaining = max(0, total_month_days - days_passed)
 
@@ -1792,7 +1808,7 @@ def get_door_target_projection(month_key: str):
             f"Hedefe ulaşmak için ay sonuna kadar en az {bn_deficit:,.0f} {bn_unit} daha {bn_name} üretilmelidir."
         )
         if bottleneck_cat == "levha":
-            recommendation = "Levha 201 ve 202 hatlarındaki çalışma saatlerini artırın veya en firesi optimizasyonu yapın."
+            recommendation = "Levha 201 hattındaki çalışma saatlerini artırın veya fire optimizasyonu yapın."
         elif bottleneck_cat == "seren":
             recommendation = "Seren profili basan ekstrüder hatlarının kafa sayısını veya hat hızını kontrol edin, Seren üretimi önceliklendirilmelidir."
         elif bottleneck_cat == "kasa":
@@ -1803,6 +1819,8 @@ def get_door_target_projection(month_key: str):
     return {
         "month_key": month_key,
         "target_doors": target_doors,
+        "work_days": custom_work_days,
+        "daily_target": custom_daily_target,
         "completed_doors": completed_doors,
         "progress_pct": progress_pct,
         "total_month_days": total_month_days,

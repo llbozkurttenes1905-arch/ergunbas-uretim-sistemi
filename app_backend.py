@@ -1144,6 +1144,7 @@ def get_dashboard_summary():
             }
 
             return {
+                "operator": s.get("operator", ""),
                 "employees": s_emp,
                 "hours": round(s_hours, 2),
                 "prod_kg": round(s_prod, 2),
@@ -1489,6 +1490,53 @@ def get_dashboard_summary():
             })
         mt_hat_breakdown.sort(key=lambda x: x["prod_kg"], reverse=True)
 
+        # Bu aya özel Vardiya Amiri Performansı (hangi amir bu ay kaç gündüz, kaç gece yapmış)
+        mt_operator_totals = {}
+        for d in m_days:
+            for os_entry in d.get("operator_shifts", []):
+                op_name = os_entry["operator"]
+                op_shift = os_entry["shift"]
+                ob = mt_operator_totals.setdefault(op_name, {
+                    "shift_count": 0, "gunduz_count": 0, "gece_count": 0,
+                    "prod_kg": 0.0, "fire_kg": 0.0, "hours_sum": 0.0,
+                    "gunduz_prod_kg": 0.0, "gunduz_fire_kg": 0.0, "gunduz_hours": 0.0,
+                    "gece_prod_kg": 0.0, "gece_fire_kg": 0.0, "gece_hours": 0.0
+                })
+                ob["shift_count"] += 1
+                ob[f"{op_shift}_count"] += 1
+                ob["prod_kg"] += os_entry["prod_kg"]
+                ob["fire_kg"] += os_entry["fire_kg"]
+                ob["hours_sum"] += os_entry["hours"]
+                ob[f"{op_shift}_prod_kg"] += os_entry["prod_kg"]
+                ob[f"{op_shift}_fire_kg"] += os_entry["fire_kg"]
+                ob[f"{op_shift}_hours"] += os_entry["hours"]
+
+        mt_operator_performance = sorted([
+            {
+                "name": name,
+                "shift_count": v["shift_count"],
+                "gunduz_count": v["gunduz_count"],
+                "gece_count": v["gece_count"],
+                "prod_kg": round(v["prod_kg"], 2),
+                "fire_kg": round(v["fire_kg"], 2),
+                "fire_ratio": round((v["fire_kg"] / (v["prod_kg"] + v["fire_kg"]) * 100), 2) if (v["prod_kg"] + v["fire_kg"]) > 0 else 0,
+                "kg_per_hour": round((v["prod_kg"] / v["hours_sum"]), 2) if v["hours_sum"] > 0 else 0,
+                "gunduz": {
+                    "prod_kg": round(v["gunduz_prod_kg"], 2),
+                    "fire_kg": round(v["gunduz_fire_kg"], 2),
+                    "fire_ratio": round((v["gunduz_fire_kg"] / (v["gunduz_prod_kg"] + v["gunduz_fire_kg"]) * 100), 2) if (v["gunduz_prod_kg"] + v["gunduz_fire_kg"]) > 0 else 0,
+                    "kg_per_hour": round((v["gunduz_prod_kg"] / v["gunduz_hours"]), 2) if v["gunduz_hours"] > 0 else 0
+                },
+                "gece": {
+                    "prod_kg": round(v["gece_prod_kg"], 2),
+                    "fire_kg": round(v["gece_fire_kg"], 2),
+                    "fire_ratio": round((v["gece_fire_kg"] / (v["gece_prod_kg"] + v["gece_fire_kg"]) * 100), 2) if (v["gece_prod_kg"] + v["gece_fire_kg"]) > 0 else 0,
+                    "kg_per_hour": round((v["gece_prod_kg"] / v["gece_hours"]), 2) if v["gece_hours"] > 0 else 0
+                }
+            }
+            for name, v in mt_operator_totals.items()
+        ], key=lambda x: x["prod_kg"], reverse=True)
+
         monthly_totals.append({
             "key": mk,
             "label": bucket["label"],
@@ -1499,7 +1547,8 @@ def get_dashboard_summary():
             "doors": mt_door_stats["completable_doors"],
             "days": len(m_days),
             "hat_breakdown": mt_hat_breakdown,
-            "breakdown": mt_breakdown
+            "breakdown": mt_breakdown,
+            "operator_performance": mt_operator_performance
         })
 
     # Ay seçici için kronolojik (eskiden yeniye) liste — dropdown'da ters çevrilip

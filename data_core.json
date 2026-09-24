@@ -1043,12 +1043,6 @@
       "name": "BEYAZ",
       "category": "levha",
       "door_ratio": 2.0
-    },
-    {
-      "id": "p_145",
-      "name": "Kitkat (emboslu) Kahverengi",
-      "category": "diger",
-      "door_ratio": 0.0
     }
   ],
   "mixer_recipes": [

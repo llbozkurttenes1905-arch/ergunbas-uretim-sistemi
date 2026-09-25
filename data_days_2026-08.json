@@ -13808,11 +13808,12 @@
       "mixer_emp_gece": 2
     },
     "30": {
-      "day": 30,
+      "day": "30",
       "date": "30.08.2026",
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -13830,7 +13831,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "DP130-99x42-ANT",
+            "product": "U KAPAMA",
             "length": 2.3,
             "speed": 4.18,
             "heads": 1.0,
@@ -13962,6 +13963,7 @@
             "sets": 152.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
@@ -13980,6 +13982,7 @@
             "sets": 107.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           }
         ]
@@ -13987,6 +13990,7 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -14004,7 +14008,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "DP130-99x42-ANT",
+            "product": "U KAPAMA",
             "length": 2.15,
             "speed": 4.31,
             "heads": 1.0,
@@ -14123,6 +14127,7 @@
             "sets": 60.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           },
           {
@@ -14141,6 +14146,7 @@
             "sets": 165.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           }
         ]
@@ -14149,94 +14155,64 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "personel_yok"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 3844.0,
-          "gece": 0.0,
-          "gunduz_kg": 3844.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 3844.0,
+          "gunduz": 3844,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 2103.0,
-          "gece": 0.0,
-          "gunduz_kg": 2103.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 2103.0,
+          "gunduz": 2103,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 2150.0,
-          "gece": 2790.0,
-          "gunduz_kg": 2150.0,
-          "gece_kg": 2790.0,
-          "toplam_kg": 4940.0,
+          "gunduz": 2150,
+          "gece": 2790,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 1779.0,
-          "gece": 0.0,
-          "gunduz_kg": 1779.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1779.0,
+          "gunduz": 1779,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 548.0,
-          "gece": 1005.0,
-          "gunduz_kg": 548.0,
-          "gece_kg": 1005.0,
-          "toplam_kg": 1553.0,
+          "gunduz": 548,
+          "gece": 1005,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 667.0,
-          "gece": 1145.0,
-          "gunduz_kg": 667.0,
-          "gece_kg": 1145.0,
-          "toplam_kg": 1812.0,
+          "gunduz": 667,
+          "gece": 1145,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 774.0,
-          "gece": 0.0,
-          "gunduz_kg": 774.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 774.0,
+          "gunduz": 774,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 550.0,
-          "gece": 565.0,
-          "gunduz_kg": 550.0,
-          "gece_kg": 565.0,
-          "toplam_kg": 1115.0,
+          "gunduz": 550,
+          "gece": 565,
           "status": "normal"
         }
       ],
@@ -14247,9 +14223,8 @@
           "batch_kg": 275.65,
           "gunduz_sarj": 15,
           "gece_sarj": 0,
-          "toplam_sarj": 15,
           "gunduz_kg": 4134.75,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 4134.75
         },
         {
@@ -14258,10 +14233,9 @@
           "batch_kg": 291.15,
           "gunduz_sarj": 24,
           "gece_sarj": 0,
-          "toplam_sarj": 24,
-          "gunduz_kg": 6987.6,
-          "gece_kg": 0.0,
-          "toplam_kg": 6987.6
+          "gunduz_kg": 6987.599999999999,
+          "gece_kg": 0,
+          "toplam_kg": 6987.599999999999
         }
       ],
       "mixer_emp_gunduz": 12,

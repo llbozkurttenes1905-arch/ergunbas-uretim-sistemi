@@ -9166,6 +9166,24 @@
           "down_reason": "Kalıp bakım yapıldı.",
           "down_min": 480.0,
           "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Soğutma su arızası.",
+          "down_min": 120.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Soğutma su arızası.",
+          "down_min": 120.0,
+          "desc": ""
         }
       ],
       "kirim": [

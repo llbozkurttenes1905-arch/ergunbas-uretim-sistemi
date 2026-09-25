@@ -367,6 +367,7 @@ def load_data():
                 "products": core.get("products", []),
                 "mixer_recipes": core.get("mixer_recipes", []),
                 "monthly_targets": core.get("monthly_targets", {}),
+                "raw_materials_stock": core.get("raw_materials_stock", []),
                 "daily_data": daily_data
             }
             return _data_cache
@@ -376,15 +377,17 @@ def load_data():
         if legacy is not None:
             _data_cache = legacy
             _data_cache.setdefault("monthly_targets", {})
+            _data_cache.setdefault("raw_materials_stock", [])
             return _data_cache
 
     # GitHub devre dışı/tamamen başarısızsa yerel dosyaya düş
     if not os.path.exists(DATA_FILE):
-        _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "monthly_targets": {}, "daily_data": {}}
+        _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "monthly_targets": {}, "raw_materials_stock": [], "daily_data": {}}
         return _data_cache
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         _data_cache = json.load(f)
         _data_cache.setdefault("monthly_targets", {})
+        _data_cache.setdefault("raw_materials_stock", [])
     return _data_cache
 
 
@@ -396,12 +399,13 @@ def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    # 2) Çekirdek veriyi (makineler + ürünler + reçeteler + aylık hedefler) yerel dosyaya yaz
+    # 2) Çekirdek veriyi (makineler + ürünler + reçeteler + aylık hedefler + hammadde stokları) yerel dosyaya yaz
     core_payload = {
         "machines": data.get("machines", []),
         "products": data.get("products", []),
         "mixer_recipes": data.get("mixer_recipes", []),
-        "monthly_targets": data.get("monthly_targets", {})
+        "monthly_targets": data.get("monthly_targets", {}),
+        "raw_materials_stock": data.get("raw_materials_stock", [])
     }
     with open(os.path.join(APP_DIR, CORE_FILE_NAME), "w", encoding="utf-8") as f:
         json.dump(core_payload, f, ensure_ascii=False, indent=2)
@@ -439,6 +443,30 @@ def save_data(data):
     if _last_synced_hashes.get("__index__") != month_key_list:
         if github_put_file(INDEX_FILE_NAME, {"months": month_key_list}, "Ay indeksi güncellendi (otomatik)"):
             _last_synced_hashes["__index__"] = month_key_list
+
+
+def save_core_data(data):
+    """Sadece çekirdek veriyi (makineler, ürünler, reçeteler, hedefler ve hammadde stokları)
+    data_core.json dosyasına ve GitHub'a kaydeder. Gün verilerine dokunmaz."""
+    global _data_cache, _last_synced_hashes
+    if _data_cache is not None:
+        _data_cache["raw_materials_stock"] = data.get("raw_materials_stock", [])
+
+    core_payload = {
+        "machines": data.get("machines", []),
+        "products": data.get("products", []),
+        "mixer_recipes": data.get("mixer_recipes", []),
+        "monthly_targets": data.get("monthly_targets", {}),
+        "raw_materials_stock": data.get("raw_materials_stock", [])
+    }
+    with open(os.path.join(APP_DIR, CORE_FILE_NAME), "w", encoding="utf-8") as f:
+        json.dump(core_payload, f, ensure_ascii=False, indent=2)
+
+    if _github_enabled():
+        core_hash = _content_hash(core_payload)
+        if _last_synced_hashes.get("__core__") != core_hash:
+            if github_put_file(CORE_FILE_NAME, core_payload, "Hammadde stokları ve çekirdek veri güncellendi (otomatik)"):
+                _last_synced_hashes["__core__"] = core_hash
 
 # Models
 class MachineCreate(BaseModel):
@@ -516,6 +544,25 @@ class MonthlyTargetUpdate(BaseModel):
     target_doors: int
     work_days: Optional[int] = None
     daily_target: Optional[int] = None
+
+class RawMaterialStockItem(BaseModel):
+    material: str
+    current_stock_kg: float = 0.0
+    min_stock_kg: float = 0.0
+    silo_capacity_kg: float = 0.0
+    lead_time_days: int = 3
+    unit: str = "kg"
+
+class RawMaterialsStockUpdate(BaseModel):
+    stocks: List[RawMaterialStockItem]
+
+class OrderSimulationRequest(BaseModel):
+    target_doors: int = 1000
+    deduct_carryover: bool = True
+    kasa_ratio: Optional[float] = 2.5
+    pervaz_ratio: Optional[float] = 5.0
+    seren_ratio: Optional[float] = 3.5
+    levha_ratio: Optional[float] = 2.0
 
 
 def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None):
@@ -2713,6 +2760,294 @@ def get_mixer_summary(month: Optional[str] = None):
             "recycled_scrap_kg": round(total_kirim_kg, 2)
         }
     }
+
+
+# =====================================================================
+# HAMMADDE KRİTİK STOK RADARI & SİLO ERKEN UYARISI
+# =====================================================================
+
+DEFAULT_RAW_MATERIALS_STOCK = [
+    {"material": "40 AMBAR", "current_stock_kg": 65000.0, "min_stock_kg": 25000.0, "silo_capacity_kg": 100000.0, "lead_time_days": 3, "unit": "kg"},
+    {"material": "PVC", "current_stock_kg": 28000.0, "min_stock_kg": 15000.0, "silo_capacity_kg": 60000.0, "lead_time_days": 4, "unit": "kg"},
+    {"material": "KALSİT 1K", "current_stock_kg": 22000.0, "min_stock_kg": 12000.0, "silo_capacity_kg": 50000.0, "lead_time_days": 3, "unit": "kg"},
+    {"material": "KALSİT 5K", "current_stock_kg": 8500.0, "min_stock_kg": 12000.0, "silo_capacity_kg": 50000.0, "lead_time_days": 3, "unit": "kg"},
+    {"material": "GERİ DÖNÜŞÜM", "current_stock_kg": 16000.0, "min_stock_kg": 5000.0, "silo_capacity_kg": 35000.0, "lead_time_days": 1, "unit": "kg"},
+    {"material": "TALAŞ", "current_stock_kg": 14000.0, "min_stock_kg": 5000.0, "silo_capacity_kg": 30000.0, "lead_time_days": 3, "unit": "kg"},
+    {"material": "ASC 1010A", "current_stock_kg": 2400.0, "min_stock_kg": 1000.0, "silo_capacity_kg": 6000.0, "lead_time_days": 5, "unit": "kg"},
+    {"material": "CPE", "current_stock_kg": 1900.0, "min_stock_kg": 800.0, "silo_capacity_kg": 5000.0, "lead_time_days": 5, "unit": "kg"},
+    {"material": "ASMIX 42555-2FB", "current_stock_kg": 1200.0, "min_stock_kg": 600.0, "silo_capacity_kg": 4000.0, "lead_time_days": 5, "unit": "kg"},
+    {"material": "PE WAX", "current_stock_kg": 850.0, "min_stock_kg": 400.0, "silo_capacity_kg": 2500.0, "lead_time_days": 4, "unit": "kg"}
+]
+
+
+def _get_or_init_raw_materials_stock(data):
+    stocks = data.get("raw_materials_stock")
+    if not stocks or not isinstance(stocks, list) or len(stocks) == 0:
+        data["raw_materials_stock"] = [dict(s) for s in DEFAULT_RAW_MATERIALS_STOCK]
+        save_core_data(data)
+        return data["raw_materials_stock"]
+    return stocks
+
+
+@app.get("/api/raw_materials_stock")
+def get_raw_materials_stock():
+    data = load_data()
+    stocks = _get_or_init_raw_materials_stock(data)
+
+    # Son aya ait tüketim run-rate hesapla
+    try:
+        mx_summary = get_mixer_summary()
+        days_with_data = max(1, mx_summary.get("days_count", 24))
+        mat_consumption_map = {}
+        for m in mx_summary.get("materials", []):
+            mat_consumption_map[m["material"].strip().lower()] = m.get("total_kg", 0.0)
+    except Exception as e:
+        days_with_data = 24
+        mat_consumption_map = {}
+
+    import datetime
+    now = datetime.datetime.now()
+
+    result_items = []
+    critical_count = 0
+    warning_count = 0
+
+    for s in stocks:
+        mat_name = s.get("material", "").strip()
+        curr_stock = float(s.get("current_stock_kg", 0.0))
+        min_stock = float(s.get("min_stock_kg", 0.0))
+        cap = float(s.get("silo_capacity_kg", 50000.0))
+        lead_days = int(s.get("lead_time_days", 3))
+
+        total_consumed = 0.0
+        norm_name = mat_name.lower().replace(" ", "").replace("i̇", "i").replace("ı", "i")
+        for k_mat, k_kg in mat_consumption_map.items():
+            k_norm = k_mat.replace(" ", "").replace("i̇", "i").replace("ı", "i")
+            if k_norm == norm_name or norm_name in k_norm or k_norm in norm_name:
+                total_consumed = k_kg
+                break
+
+        daily_rate = round(total_consumed / days_with_data, 1) if days_with_data > 0 else 0.0
+
+        if daily_rate > 0:
+            days_rem = round(curr_stock / daily_rate, 1)
+        else:
+            days_rem = 999.0
+
+        if days_rem < 900:
+            runout_dt = now + datetime.timedelta(days=days_rem)
+            runout_str = runout_dt.strftime("%d.%m.%Y")
+        else:
+            runout_str = "Stok Yeterli (>30 gün)"
+
+        if curr_stock <= min_stock or days_rem <= lead_days:
+            status = "critical"
+            status_text = "Acil Sipariş Verilmeli"
+            critical_count += 1
+        elif days_rem <= (lead_days * 2.5) or curr_stock <= (min_stock * 1.35):
+            status = "warning"
+            status_text = "Kritik Eşiğe Yaklaşıyor"
+            warning_count += 1
+        else:
+            status = "safe"
+            status_text = "Güvenli Seviyede"
+
+        fill_pct = round((curr_stock / cap * 100), 1) if cap > 0 else 0.0
+        fill_pct = min(100.0, max(0.0, fill_pct))
+
+        suggested_order = max(0.0, round((cap * 0.85) - curr_stock, 0))
+
+        result_items.append({
+            "material": mat_name,
+            "current_stock_kg": curr_stock,
+            "min_stock_kg": min_stock,
+            "silo_capacity_kg": cap,
+            "lead_time_days": lead_days,
+            "unit": s.get("unit", "kg"),
+            "daily_run_rate_kg": daily_rate,
+            "days_remaining": days_rem if days_rem < 900 else None,
+            "runout_date": runout_str,
+            "fill_pct": fill_pct,
+            "status": status,
+            "status_text": status_text,
+            "suggested_order_kg": suggested_order
+        })
+
+    order_map = {"critical": 0, "warning": 1, "safe": 2}
+    result_items.sort(key=lambda x: (order_map.get(x["status"], 3), x["days_remaining"] or 9999))
+
+    return {
+        "items": result_items,
+        "critical_count": critical_count,
+        "warning_count": warning_count,
+        "total_materials": len(result_items),
+        "days_considered": days_with_data
+    }
+
+
+@app.post("/api/raw_materials_stock")
+def update_raw_materials_stock(payload: RawMaterialsStockUpdate):
+    data = load_data()
+    new_stocks = [item.dict() for item in payload.stocks]
+    data["raw_materials_stock"] = new_stocks
+    save_core_data(data)
+    return {"status": "ok", "message": "Hammadde stokları başarıyla güncellendi", "count": len(new_stocks)}
+
+
+# =====================================================================
+# AKILLI SİPARİŞ & MONTAJ SİMÜLATÖRÜ (TERSİNE PLANLAYICI / REVERSE MRP)
+# =====================================================================
+
+@app.post("/api/simulate_order")
+def simulate_order(req: OrderSimulationRequest):
+    data = load_data()
+    target_doors = req.target_doors
+    if target_doors <= 0:
+        raise HTTPException(status_code=400, detail="Hedef kapı sayısı 0'dan büyük olmalıdır.")
+
+    p_ratio = req.pervaz_ratio or 5.0
+    k_ratio = req.kasa_ratio or 2.5
+    s_ratio = req.seren_ratio or 3.5
+    l_ratio = req.levha_ratio or 2.0
+
+    gross_pervaz = round(target_doors * p_ratio, 1)
+    gross_kasa = round(target_doors * k_ratio, 1)
+    gross_seren = round(target_doors * s_ratio, 1)
+    gross_levha = round(target_doors * l_ratio, 1)
+
+    dash = get_dashboard_summary()
+    daily_chart = dash.get("daily_chart", [])
+    last_carryover = {"pervaz": 0.0, "kasa": 0.0, "seren": 0.0, "levha": 0.0}
+    if daily_chart:
+        last_day = daily_chart[-1]
+        ds = (last_day.get("door_stats") or {}).get("details", {})
+        for cat in ["pervaz", "kasa", "seren", "levha"]:
+            last_carryover[cat] = float((ds.get(cat) or {}).get("carryover", 0.0))
+
+    if req.deduct_carryover:
+        net_pervaz = max(0.0, round(gross_pervaz - last_carryover["pervaz"], 1))
+        net_kasa = max(0.0, round(gross_kasa - last_carryover["kasa"], 1))
+        net_seren = max(0.0, round(gross_seren - last_carryover["seren"], 1))
+        net_levha = max(0.0, round(gross_levha - last_carryover["levha"], 1))
+    else:
+        net_pervaz = gross_pervaz
+        net_kasa = gross_kasa
+        net_seren = gross_seren
+        net_levha = gross_levha
+
+    net_pervaz_kg = round(net_pervaz * 1.05, 1)
+    net_kasa_kg = round(net_kasa * 2.35, 1)
+    net_seren_kg = round(net_seren * 0.85, 1)
+    net_levha_kg = round(net_levha * 6.77, 1)
+
+    total_ext_net_kg = round(net_pervaz_kg + net_kasa_kg + net_seren_kg, 1)
+    total_lev_net_kg = net_levha_kg
+    total_net_prod_kg = round(total_ext_net_kg + total_lev_net_kg, 1)
+
+    ext_fire_kg = round(total_ext_net_kg * 0.05, 1)
+    lev_fire_kg = round(total_lev_net_kg * 0.05, 1)
+    total_gross_kg = round(total_net_prod_kg * 1.05, 1)
+
+    levha_hours_needed = round(net_levha / 42.0, 1) if net_levha > 0 else 0.0
+    levha_shifts_needed = round(levha_hours_needed / 12.0, 1)
+
+    ext_total_machine_hours = round(total_ext_net_kg / 160.0, 1) if total_ext_net_kg > 0 else 0.0
+    ext_calendar_hours = round(ext_total_machine_hours / 7.0, 1)
+    ext_shifts_needed = round(ext_calendar_hours / 12.0, 1)
+
+    if levha_hours_needed > ext_calendar_hours:
+        bottleneck = "Levha 201 Hattı"
+        bottleneck_reason = f"Levha 201 hattı fabrikadaki tek levha makinesidir ve {levha_shifts_needed} vardiya ({levha_hours_needed} saat) çalışmalıdır. Bu siparişin toplam teslimat süresini Levha 201 belirler."
+        total_lead_hours = levha_hours_needed
+    else:
+        bottleneck = "Ekstrüzyon Hatları"
+        bottleneck_reason = f"Ekstrüder hatlarında toplam {total_ext_net_kg:,.0f} kg profil basılmalıdır (7 hat paralel {ext_shifts_needed} vardiya / {ext_calendar_hours} saat)."
+        total_lead_hours = ext_calendar_hours
+
+    total_lead_days = round(total_lead_hours / 24.0, 1)
+
+    kasa_pervaz_gross = round((net_pervaz_kg + net_kasa_kg) * 1.05, 1)
+    seren_gross = round(net_seren_kg * 1.05, 1)
+    levha_gross = round(net_levha_kg * 1.05, 1)
+
+    import math
+    sarj_kp = math.ceil(kasa_pervaz_gross / 275.65) if kasa_pervaz_gross > 0 else 0
+    sarj_seren = math.ceil(seren_gross / 291.15) if seren_gross > 0 else 0
+    sarj_levha = math.ceil(levha_gross / 280.0) if levha_gross > 0 else 0
+    total_mixer_sarj = sarj_kp + sarj_seren + sarj_levha
+
+    mat_needs = {
+        "40 AMBAR": round(total_gross_kg * 0.38, 1),
+        "PVC": round(total_gross_kg * 0.16, 1),
+        "KALSİT 1K": round(total_gross_kg * 0.15, 1),
+        "KALSİT 5K": round(total_gross_kg * 0.15, 1),
+        "GERİ DÖNÜŞÜM": round(total_gross_kg * 0.10, 1),
+        "TALAŞ": round(total_gross_kg * 0.02, 1),
+        "ASC 1010A": round(total_gross_kg * 0.012, 1),
+        "CPE": round(total_gross_kg * 0.01, 1),
+        "ASMIX 42555-2FB": round(total_gross_kg * 0.007, 1),
+        "PE WAX": round(total_gross_kg * 0.004, 1)
+    }
+
+    current_stocks = _get_or_init_raw_materials_stock(data)
+    stock_dict = {s["material"].strip(): float(s.get("current_stock_kg", 0.0)) for s in current_stocks}
+
+    materials_report = []
+    shortage_found = False
+
+    for m_name, req_kg in mat_needs.items():
+        avail_kg = stock_dict.get(m_name, 0.0)
+        diff = round(avail_kg - req_kg, 1)
+        is_ok = diff >= 0
+        if not is_ok:
+            shortage_found = True
+
+        materials_report.append({
+            "material": m_name,
+            "required_kg": req_kg,
+            "available_stock_kg": avail_kg,
+            "diff_kg": diff,
+            "is_sufficient": is_ok,
+            "shortage_kg": round(abs(diff), 1) if not is_ok else 0.0
+        })
+
+    materials_report.sort(key=lambda x: (x["is_sufficient"], -x["shortage_kg"]))
+
+    return {
+        "target_doors": target_doors,
+        "deduct_carryover": req.deduct_carryover,
+        "components": {
+            "pervaz": {"gross_needed": gross_pervaz, "carryover_deducted": last_carryover["pervaz"] if req.deduct_carryover else 0, "net_produce": net_pervaz, "est_kg": net_pervaz_kg, "unit": "adet"},
+            "kasa": {"gross_needed": gross_kasa, "carryover_deducted": last_carryover["kasa"] if req.deduct_carryover else 0, "net_produce": net_kasa, "est_kg": net_kasa_kg, "unit": "adet"},
+            "seren": {"gross_needed": gross_seren, "carryover_deducted": last_carryover["seren"] if req.deduct_carryover else 0, "net_produce": net_seren, "est_kg": net_seren_kg, "unit": "adet"},
+            "levha": {"gross_needed": gross_levha, "carryover_deducted": last_carryover["levha"] if req.deduct_carryover else 0, "net_produce": net_levha, "est_kg": net_levha_kg, "unit": "plaka"}
+        },
+        "totals": {
+            "net_prod_kg": total_net_prod_kg,
+            "fire_est_kg": round(ext_fire_kg + lev_fire_kg, 1),
+            "gross_raw_material_kg": total_gross_kg
+        },
+        "capacities": {
+            "levha_hours": levha_hours_needed,
+            "levha_shifts": levha_shifts_needed,
+            "ext_total_machine_hours": ext_total_machine_hours,
+            "ext_calendar_hours": ext_calendar_hours,
+            "ext_shifts": ext_shifts_needed,
+            "bottleneck": bottleneck,
+            "bottleneck_reason": bottleneck_reason,
+            "total_lead_hours": total_lead_hours,
+            "total_lead_days": total_lead_days
+        },
+        "mixer": {
+            "sarj_kasa_pervaz": sarj_kp,
+            "sarj_seren": sarj_seren,
+            "sarj_levha": sarj_levha,
+            "total_sarj": total_mixer_sarj
+        },
+        "materials": materials_report,
+        "is_ready_for_production": not shortage_found
+    }
+
 
 # =====================================================================
 # USER MANAGEMENT ENDPOINTS

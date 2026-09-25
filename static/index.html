@@ -54,6 +54,34 @@
             border-radius: 3px;
         }
 
+        /* ==== Silo & Stok Radarı Stilleri ==== */
+        .silo-cylinder {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid #334155;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .silo-liquid {
+            width: 100%;
+            transition: height 1s ease-in-out;
+            position: relative;
+        }
+        .silo-liquid-safe {
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+        }
+        .silo-liquid-warning {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+        }
+        .silo-liquid-critical {
+            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+        }
+
         /* ==== Salt Okunur (Görüntüleyici) Modu ==== */
         body.role-viewer #view-daily :is(input,select,textarea):not(#select-day),
         body.role-viewer #view-settings :is(input,select,textarea) {
@@ -1340,6 +1368,134 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-5" id="door-cards-container"></div>
             </div>
+
+            <!-- ============================================================== -->
+            <!-- 🎯 AKILLI SİPARİŞ & MONTAJ SİMÜLATÖRÜ (TERSİNE PLANLAYICI / REVERSE MRP) -->
+            <!-- ============================================================== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+                            <i data-lucide="calculator" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-black text-white tracking-tight">Akıllı Sipariş & Montaj Simülatörü (Tersine Planlayıcı)</h3>
+                                <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-[10px] font-black uppercase tracking-wider">Reverse MRP Engine</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Müşteri siparişi veya hedef kapı adedini girin; sistem bileşen ihtiyaçlarını, devir mahsuplarını, hat sürelerini, darboğazı ve hammadde silo yeterliliğini anında hesaplasın</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simülatör Kontrol Kutusu -->
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 shadow-inner">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hedef Kapı Siparişi Adedi</label>
+                            <div class="relative flex items-center">
+                                <input type="number" id="sim-target-doors" value="1000" min="1" step="50" oninput="runOrderSimulation()"
+                                    class="bg-slate-900 border-2 border-indigo-500/60 focus:border-indigo-500 text-white font-black text-xl rounded-xl px-4 py-2 w-44 focus:outline-none focus:ring-2 focus:ring-indigo-500/30">
+                                <span class="ml-2 font-bold text-slate-300 text-sm">Adet Kapı</span>
+                            </div>
+                        </div>
+
+                        <!-- Hızlı Seçim Butonları -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Hızlı Seçim</label>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="setSimDoors(500)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition">500</button>
+                                <button onclick="setSimDoors(1000)" class="px-2.5 py-1.5 bg-indigo-600 text-xs font-bold text-white rounded-lg shadow-sm">1.000</button>
+                                <button onclick="setSimDoors(1500)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition">1.500</button>
+                                <button onclick="setSimDoors(2500)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition">2.500</button>
+                                <button onclick="setSimDoors(5000)" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition">5.000</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-900 border border-slate-800 px-3.5 py-2.5 rounded-xl hover:border-slate-700 transition">
+                            <input type="checkbox" id="sim-deduct-carryover" checked onchange="runOrderSimulation()" class="w-4 h-4 text-indigo-600 rounded bg-slate-950 border-slate-700 focus:ring-0">
+                            <span class="text-xs font-bold text-slate-200">Mevcut Devir Fazlası Stokları Mahsup Et (Düş)</span>
+                        </label>
+
+                        <button onclick="runOrderSimulation()" class="px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-black text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-2 cursor-pointer">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i> Hesapla / Yenile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simülasyon Sonuç Paneli (KPI'lar) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="sim-kpi-container">
+                    <!-- Dinamik doldurulacak -->
+                </div>
+
+                <!-- Darboğaz İstasyon Uyarı Bandı -->
+                <div id="sim-bottleneck-banner" class="p-4 rounded-xl border border-amber-800/40 bg-amber-950/20 text-xs text-amber-200 flex items-center gap-3">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                    <div id="sim-bottleneck-text">Darboğaz analizi hesaplanıyor...</div>
+                </div>
+
+                <!-- İki Sütunlu Detay Tabloları -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Tablo 1: Bileşen İhtiyaçları & Makine Kapasitesi -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <h4 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+                                <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Bileşen İhtiyacı & Hat Kapasitesi
+                            </h4>
+                            <span class="text-[10px] text-slate-400">Reçete Oranları: 5 / 2.5 / 3.5 / 2</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs">
+                                <thead class="text-slate-400 uppercase text-[10px] bg-slate-900">
+                                    <tr>
+                                        <th class="p-2">Bileşen</th>
+                                        <th class="p-2 text-right">Brüt İhtiyaç</th>
+                                        <th class="p-2 text-right">Devir Mahsup</th>
+                                        <th class="p-2 text-right font-bold text-white">Net İmalat</th>
+                                        <th class="p-2 text-right">Tahmini kg</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sim-components-tbody" class="divide-y divide-slate-800/60"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tablo 2: Tersine Hammadde Tüketimi & Silo Yeterliliği -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <h4 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
+                                <i data-lucide="boxes" class="w-4 h-4 text-sky-400"></i> Tersine Hammadde & Silo Yeterliliği
+                            </h4>
+                            <span id="sim-stock-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">Durum</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar max-h-72">
+                            <table class="w-full text-left text-xs">
+                                <thead class="text-slate-400 uppercase text-[10px] bg-slate-900 sticky top-0">
+                                    <tr>
+                                        <th class="p-2">Hammadde</th>
+                                        <th class="p-2 text-right">Gereken (kg)</th>
+                                        <th class="p-2 text-right">Silodaki Mevcut</th>
+                                        <th class="p-2 text-right">Fark / Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sim-materials-tbody" class="divide-y divide-slate-800/60"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aksiyon Butonları -->
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <span class="text-xs text-slate-400">Bu simülasyon fabrikanın son dönem gerçekleşen ortalama hat hızlarına ve formülasyonlarına dayanır.</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="copySimulationPlan()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Planı Panoya Kopyala
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -1446,6 +1602,44 @@
                             <span id="mixer-kpi-consumed" class="font-bold text-slate-200">0.0 Ton</span>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- ============================================================== -->
+            <!-- 🚨 HAMMADDE KRİTİK STOK RADARI & SİLO ERKEN UYARISI -->
+            <!-- ============================================================== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-lg">
+                <!-- Erken Uyarı Alarm Bandı (Eğer kritik/uyarı varsa görünür) -->
+                <div id="raw-materials-alert-banner" class="hidden p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                    <!-- Dinamik doldurulacak -->
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                            <i data-lucide="radio" class="w-6 h-6 animate-pulse"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-black text-white tracking-tight">Hammadde Kritik Stok Radarı & Silo Erken Uyarısı</h3>
+                                <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-bold border border-slate-700">Canlı Telemetri</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Günlük tüketim hızına (run-rate) göre silo tükenme süreleri, güvenlik stokları ve tahmini sipariş tarihleri</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openUpdateStockModal()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            <i data-lucide="edit-3" class="w-4 h-4 text-emerald-400"></i> Stok Miktarlarını Güncelle / Sayım Gir
+                        </button>
+                        <button onclick="loadRawMaterialsStock(true)" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition cursor-pointer" title="Stokları Yenile">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Silo Kartları Grid'i -->
+                <div id="silo-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Dinamik doldurulacak -->
                 </div>
             </div>
 
@@ -2088,6 +2282,52 @@
                         </button>
                         <button onclick="closeEditRecipeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm rounded-lg transition">İptal</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HAMMADDE STOK GÜNCELLEME MODALI -->
+        <div id="modal-update-stock" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400">
+                            <i data-lucide="edit-3" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-white">Hammadde Stok & Silo Miktarlarını Güncelle</h3>
+                            <p class="text-xs text-slate-400">Depo sayımı veya yeni hammadde irsaliyelerini sisteme işleyin</p>
+                        </div>
+                    </div>
+                    <button onclick="closeUpdateStockModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-xs text-slate-300">Aşağıdaki tabloda her hammadde için <b>Mevcut Stok (kg)</b> ve <b>Kritik Güvenlik Eşiği (kg)</b> değerlerini girip kaydedin:</p>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800 max-h-96">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] sticky top-0">
+                                <tr>
+                                    <th class="p-2.5">Hammadde</th>
+                                    <th class="p-2.5">Mevcut Stok (kg)</th>
+                                    <th class="p-2.5">Kritik Eşik (kg)</th>
+                                    <th class="p-2.5">Silo Kapasitesi (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-update-stock-tbody" class="divide-y divide-slate-800"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button onclick="closeUpdateStockModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                        İptal
+                    </button>
+                    <button onclick="saveStockUpdates()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i> Değişiklikleri Kaydet
+                    </button>
                 </div>
             </div>
         </div>
@@ -4579,6 +4819,9 @@
                 </div>
             `).join('');
 
+            // Akıllı Sipariş & Montaj Simülatörü
+            runOrderSimulation();
+
             safeCreateIcons();
         }
 
@@ -4993,6 +5236,9 @@
 
                 // 7. Günlük Detaylı Özet ve Gün Seçici
                 initMixerDailySection(mixerDashboardData.daily_details || []);
+
+                // 8. Hammadde Kritik Stok Radarı & Silo Erken Uyarısı
+                await loadRawMaterialsStock();
 
                 safeCreateIcons();
             } catch(e) {
@@ -6146,6 +6392,414 @@
                 }
             }
             window.open(url, '_blank');
+        }
+
+        /* =====================================================================
+           1. HAMMADDE KRİTİK STOK RADARI & SİLO ERKEN UYARISI
+           ===================================================================== */
+        let rawMaterialsStockData = null;
+
+        async function loadRawMaterialsStock(force = false) {
+            try {
+                const res = await fetch('/api/raw_materials_stock');
+                if (!res.ok) return;
+                rawMaterialsStockData = await res.json();
+                renderRawMaterialsStock(rawMaterialsStockData);
+            } catch(e) {
+                console.error('loadRawMaterialsStock error:', e);
+            }
+        }
+
+        function renderRawMaterialsStock(data) {
+            if (!data || !data.items) return;
+
+            // 1. Erken Uyarı Alarm Bandı
+            const alertBanner = document.getElementById('raw-materials-alert-banner');
+            if (alertBanner) {
+                if (data.critical_count > 0) {
+                    const criticalItems = data.items.filter(i => i.status === 'critical').map(i => `${i.material} (${i.current_stock_kg.toLocaleString('tr-TR')} kg - ${i.days_remaining ? i.days_remaining + ' gün' : 'Kritik'})`).join(', ');
+                    alertBanner.className = "p-4 rounded-xl border border-rose-500/60 bg-rose-950/40 text-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-rose-950/30";
+                    alertBanner.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-3 w-3 relative shrink-0">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                            </span>
+                            <div>
+                                <b class="font-black text-white text-sm">🔴 ACİL SİPARİŞ UYARISI:</b>
+                                <span class="text-xs text-rose-200 ml-1"><b>${data.critical_count}</b> hammadde kritik güvenlik eşiğinin altında veya tükenmek üzere!</span>
+                                <div class="text-[11px] text-rose-300 font-medium mt-0.5">${criticalItems}</div>
+                            </div>
+                        </div>
+                        <button onclick="openUpdateStockModal()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl transition shrink-0 cursor-pointer shadow-md">
+                            İrsaliye / Stok Gir
+                        </button>
+                    `;
+                    alertBanner.classList.remove('hidden');
+                } else if (data.warning_count > 0) {
+                    alertBanner.className = "p-3.5 rounded-xl border border-amber-500/50 bg-amber-950/30 text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3";
+                    alertBanner.innerHTML = `
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                            <span class="text-xs"><b>🟡 DİKKAT:</b> ${data.warning_count} hammadde 7 gün içinde kritik güvenlik eşiğine yaklaşacak. Sipariş planlamasını kontrol edin.</span>
+                        </div>
+                        <button onclick="openUpdateStockModal()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-lg transition shrink-0 cursor-pointer">
+                            Stok Düzenle
+                        </button>
+                    `;
+                    alertBanner.classList.remove('hidden');
+                } else {
+                    alertBanner.className = "p-3 rounded-xl border border-emerald-500/30 bg-emerald-950/20 text-emerald-300 flex items-center gap-2.5 text-xs font-semibold";
+                    alertBanner.innerHTML = `
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                        <span>🟢 Tüm hammadde ve silo stokları güvenli çalışma seviyesinde. Acil sipariş ihtiyacı bulunmuyor.</span>
+                    `;
+                    alertBanner.classList.remove('hidden');
+                }
+            }
+
+            // 2. Silo Kartları
+            const container = document.getElementById('silo-cards-container');
+            if (!container) return;
+
+            let html = '';
+            data.items.forEach(item => {
+                let statusBadge = '';
+                let liquidClass = 'silo-liquid-safe';
+                let cardBorder = 'border-slate-800';
+
+                if (item.status === 'critical') {
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-black uppercase tracking-wider animate-pulse">ACİL SİPARİŞ</span>';
+                    liquidClass = 'silo-liquid-critical';
+                    cardBorder = 'border-rose-500/60 glow-down';
+                } else if (item.status === 'warning') {
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase tracking-wider">YAKLAŞIYOR</span>';
+                    liquidClass = 'silo-liquid-warning';
+                    cardBorder = 'border-amber-500/40';
+                } else {
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">GÜVENLİ</span>';
+                    liquidClass = 'silo-liquid-safe';
+                    cardBorder = 'border-slate-800';
+                }
+
+                const daysText = item.days_remaining !== null ? `${item.days_remaining.toFixed(1)} Gün Yetiyor` : 'Tüketim Yok';
+                const daysColor = item.status === 'critical' ? 'text-rose-400 font-black' : item.status === 'warning' ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold';
+
+                html += `
+                    <div class="bg-slate-950 border ${cardBorder} rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:border-slate-700 shadow-md">
+                        <div>
+                            <div class="flex items-start justify-between gap-1 mb-2.5">
+                                <span class="font-black text-white text-xs truncate max-w-[130px]" title="${item.material}">${item.material}</span>
+                                ${statusBadge}
+                            </div>
+
+                            <div class="silo-cylinder mb-3">
+                                <div class="silo-liquid ${liquidClass}" style="height: ${Math.max(8, item.fill_pct)}%">
+                                    <div class="absolute inset-0 bg-white/10 opacity-20"></div>
+                                </div>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none drop-shadow">
+                                    <span class="text-xl font-black text-white">%${item.fill_pct.toFixed(0)}</span>
+                                    <span class="text-[10px] font-bold text-slate-300">Silo Doluluk</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5 text-[11px]">
+                                <div class="flex justify-between items-center text-slate-300">
+                                    <span class="text-slate-400">Mevcut Stok:</span>
+                                    <b class="text-white font-mono">${item.current_stock_kg.toLocaleString('tr-TR')} kg</b>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-400 text-[10px]">
+                                    <span>Kritik Eşik:</span>
+                                    <span class="font-mono text-slate-300">${item.min_stock_kg.toLocaleString('tr-TR')} kg</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-400 text-[10px]">
+                                    <span>Günlük Tüketim:</span>
+                                    <span class="font-mono text-sky-300 font-semibold">${item.daily_run_rate_kg.toLocaleString('tr-TR')} kg/g</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 pt-2.5 border-t border-slate-800/80 space-y-1 text-[11px]">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Kalan Süre:</span>
+                                <span class="${daysColor}">${daysText}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>Tükenme:</span>
+                                <span class="text-slate-200 font-medium">${item.runout_date}</span>
+                            </div>
+                            ${item.suggested_order_kg > 0 ? `
+                                <div class="mt-1 pt-1 border-t border-slate-900 flex justify-between items-center text-[10px]">
+                                    <span class="text-slate-500">Öneri Sipariş:</span>
+                                    <b class="text-amber-400 font-mono">+${item.suggested_order_kg.toLocaleString('tr-TR')} kg</b>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Stok Güncelleme Modalı
+        function openUpdateStockModal() {
+            if (!rawMaterialsStockData || !rawMaterialsStockData.items) return;
+            const tbody = document.getElementById('tbl-update-stock-tbody');
+            if (!tbody) return;
+
+            let rows = '';
+            rawMaterialsStockData.items.forEach((item, idx) => {
+                rows += `
+                    <tr class="hover:bg-slate-900/50">
+                        <td class="p-2.5 font-bold text-white">
+                            ${item.material}
+                            <input type="hidden" class="stock-mat-name" value="${item.material}">
+                        </td>
+                        <td class="p-2.5">
+                            <input type="number" step="50" class="stock-current-input w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-2.5 py-1 text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none" value="${item.current_stock_kg}">
+                        </td>
+                        <td class="p-2.5">
+                            <input type="number" step="50" class="stock-min-input w-full bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-none" value="${item.min_stock_kg}">
+                        </td>
+                        <td class="p-2.5">
+                            <input type="number" step="500" class="stock-cap-input w-full bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-none" value="${item.silo_capacity_kg}">
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rows;
+            const modal = document.getElementById('modal-update-stock');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeUpdateStockModal() {
+            const modal = document.getElementById('modal-update-stock');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function saveStockUpdates() {
+            const tbody = document.getElementById('tbl-update-stock-tbody');
+            if (!tbody) return;
+
+            const rows = tbody.querySelectorAll('tr');
+            const stocks = [];
+            rows.forEach(r => {
+                const mat = r.querySelector('.stock-mat-name')?.value;
+                const curr = parseFloat(r.querySelector('.stock-current-input')?.value || 0);
+                const min = parseFloat(r.querySelector('.stock-min-input')?.value || 0);
+                const cap = parseFloat(r.querySelector('.stock-cap-input')?.value || 50000);
+                if (mat) {
+                    stocks.push({
+                        material: mat,
+                        current_stock_kg: curr,
+                        min_stock_kg: min,
+                        silo_capacity_kg: cap,
+                        lead_time_days: 3,
+                        unit: 'kg'
+                    });
+                }
+            });
+
+            try {
+                const res = await fetch('/api/raw_materials_stock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stocks })
+                });
+                if (res.ok) {
+                    closeUpdateStockModal();
+                    showToast("Hammadde stokları başarıyla kaydedildi!");
+                    await loadRawMaterialsStock(true);
+                } else {
+                    alert("Kayıt sırasında hata oluştu!");
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Sunucuya bağlanılamadı.");
+            }
+        }
+
+
+        /* =====================================================================
+           2. AKILLI SİPARİŞ & MONTAJ SİMÜLATÖRÜ (TERSİNE PLANLAYICI / REVERSE MRP)
+           ===================================================================== */
+        let lastSimulationData = null;
+
+        function setSimDoors(qty) {
+            const input = document.getElementById('sim-target-doors');
+            if (input) {
+                input.value = qty;
+                runOrderSimulation();
+            }
+        }
+
+        async function runOrderSimulation() {
+            const input = document.getElementById('sim-target-doors');
+            const deductCb = document.getElementById('sim-deduct-carryover');
+            const doorsQty = parseInt(input ? input.value : 1000) || 1000;
+            const deduct = deductCb ? deductCb.checked : true;
+
+            try {
+                const res = await fetch('/api/simulate_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_doors: doorsQty,
+                        deduct_carryover: deduct
+                    })
+                });
+
+                if (!res.ok) return;
+                lastSimulationData = await res.json();
+                renderSimulationResults(lastSimulationData);
+            } catch(e) {
+                console.error('runOrderSimulation error:', e);
+            }
+        }
+
+        function renderSimulationResults(sim) {
+            if (!sim) return;
+
+            // 1. KPI Kartları
+            const kpiContainer = document.getElementById('sim-kpi-container');
+            if (kpiContainer) {
+                const statusColor = sim.is_ready_for_production ? 'text-emerald-400' : 'text-rose-400';
+                const statusBg = sim.is_ready_for_production ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-rose-500/10 border-rose-500/30';
+                const statusLabel = sim.is_ready_for_production ? '🟢 Üretime Hazır' : '🔴 Satınalma Gerekli';
+
+                kpiContainer.innerHTML = `
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Net Üretim Tonajı</span>
+                        <div class="text-xl font-black text-white mt-1">${(sim.totals.net_prod_kg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400">kg</span></div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">+%5 Fire ile ${sim.totals.gross_raw_material_kg.toLocaleString('tr-TR')} kg hammadde</span>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Toplam İmalat Süresi</span>
+                        <div class="text-xl font-black text-sky-400 mt-1">${sim.capacities.total_lead_days} <span class="text-xs text-slate-400">Gün</span></div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">${sim.capacities.total_lead_hours} saat kesintisiz üretim</span>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Darboğaz İstasyonu</span>
+                        <div class="text-base font-black text-amber-400 mt-1 truncate" title="${sim.capacities.bottleneck}">${sim.capacities.bottleneck}</div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">${sim.capacities.bottleneck.includes('Levha') ? sim.capacities.levha_shifts + ' vardiya' : sim.capacities.ext_shifts + ' vardiya'}</span>
+                    </div>
+
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mikser Şarj İhtiyacı</span>
+                        <div class="text-xl font-black text-violet-400 mt-1">${sim.mixer.total_sarj} <span class="text-xs text-slate-400">Şarj</span></div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">KP: ${sim.mixer.sarj_kasa_pervaz} • Seren: ${sim.mixer.sarj_seren} • Lev: ${sim.mixer.sarj_levha}</span>
+                    </div>
+
+                    <div class="bg-slate-950 border ${statusBg} rounded-xl p-3.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Silo & Stok Durumu</span>
+                        <div class="text-base font-black ${statusColor} mt-1">${statusLabel}</div>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">${sim.is_ready_for_production ? 'Tüm hammaddeler siloda tam' : 'Eksik hammadde için sipariş verilmeli'}</span>
+                    </div>
+                `;
+            }
+
+            // 2. Darboğaz Açıklama Bandı
+            const bnText = document.getElementById('sim-bottleneck-text');
+            if (bnText) {
+                bnText.innerHTML = `<b>Darboğaz Danışmanı:</b> ${sim.capacities.bottleneck_reason}`;
+            }
+
+            // 3. Bileşen İhtiyaç Tablosu
+            const compTbody = document.getElementById('sim-components-tbody');
+            if (compTbody) {
+                const labels = {
+                    pervaz: { name: 'Pervaz Profili', ratio: '5.0 ad/kapı', icon: 'ruler' },
+                    kasa: { name: 'Kasa Profili', ratio: '2.5 ad/kapı', icon: 'box' },
+                    seren: { name: 'Seren Çıtası', ratio: '3.5 ad/kapı', icon: 'align-justify' },
+                    levha: { name: 'Levha Plaka', ratio: '2.0 plaka/kapı', icon: 'square' }
+                };
+
+                let rows = '';
+                ['pervaz', 'kasa', 'seren', 'levha'].forEach(cKey => {
+                    const c = sim.components[cKey] || {};
+                    const info = labels[cKey] || {};
+                    rows += `
+                        <tr class="hover:bg-slate-900/40">
+                            <td class="p-2 font-bold text-white">
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="${info.icon}" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span>${info.name}</span>
+                                    <span class="text-[10px] text-slate-500 font-normal">(${info.ratio})</span>
+                                </div>
+                            </td>
+                            <td class="p-2 text-right font-mono text-slate-300">${c.gross_needed.toLocaleString('tr-TR')} ${c.unit}</td>
+                            <td class="p-2 text-right font-mono text-amber-400">-${(c.carryover_deducted || 0).toLocaleString('tr-TR')}</td>
+                            <td class="p-2 text-right font-mono font-black text-emerald-400">${c.net_produce.toLocaleString('tr-TR')} ${c.unit}</td>
+                            <td class="p-2 text-right font-mono text-white">${c.est_kg.toLocaleString('tr-TR')} kg</td>
+                        </tr>
+                    `;
+                });
+                compTbody.innerHTML = rows;
+            }
+
+            // 4. Hammadde ve Silo Yeterlilik Tablosu
+            const matTbody = document.getElementById('sim-materials-tbody');
+            const matBadge = document.getElementById('sim-stock-status-badge');
+            if (matBadge) {
+                matBadge.className = sim.is_ready_for_production ? "px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black" : "px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-black";
+                matBadge.textContent = sim.is_ready_for_production ? "Yeterli" : "Eksik Malzeme Var";
+            }
+
+            if (matTbody) {
+                let mRows = '';
+                (sim.materials || []).forEach(m => {
+                    const statusCell = m.is_sufficient
+                        ? `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">+${m.diff_kg.toLocaleString('tr-TR')} kg (Yeterli)</span>`
+                        : `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-black animate-pulse">🔴 ${m.shortage_kg.toLocaleString('tr-TR')} kg Eksik</span>`;
+
+                    mRows += `
+                        <tr class="hover:bg-slate-900/40">
+                            <td class="p-2 font-bold text-white">${m.material}</td>
+                            <td class="p-2 text-right font-mono text-slate-200">${m.required_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono text-slate-400">${m.available_stock_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2 text-right font-mono">${statusCell}</td>
+                        </tr>
+                    `;
+                });
+                matTbody.innerHTML = mRows;
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Simülasyon Planını Panoya Kopyalama
+        function copySimulationPlan() {
+            if (!lastSimulationData) return;
+            const s = lastSimulationData;
+            const text = `
+=== ERGUNBAS GROUP | TERSİNE ÜRETİM & PLANLAMA EMRİ ===
+Hedef Sipariş: ${s.target_doors} Adet Kapı
+Net Üretim Tonajı: ${s.totals.net_prod_kg.toLocaleString('tr-TR')} kg (+%5 Fire ile ${s.totals.gross_raw_material_kg.toLocaleString('tr-TR')} kg)
+Tahmini Termin / İmalat Süresi: ${s.capacities.total_lead_days} Gün (${s.capacities.total_lead_hours} saat)
+Darboğaz İstasyonu: ${s.capacities.bottleneck} (${s.capacities.bottleneck_reason})
+Mikser Toplam Şarj İhtiyacı: ${s.mixer.total_sarj} Şarj
+
+[BİLEŞEN İMALAT DÖKÜMÜ]
+- Pervaz: ${s.components.pervaz.net_produce.toLocaleString('tr-TR')} adet (${s.components.pervaz.est_kg.toLocaleString('tr-TR')} kg)
+- Kasa: ${s.components.kasa.net_produce.toLocaleString('tr-TR')} adet (${s.components.kasa.est_kg.toLocaleString('tr-TR')} kg)
+- Seren: ${s.components.seren.net_produce.toLocaleString('tr-TR')} adet (${s.components.seren.est_kg.toLocaleString('tr-TR')} kg)
+- Levha: ${s.components.levha.net_produce.toLocaleString('tr-TR')} plaka (${s.components.levha.est_kg.toLocaleString('tr-TR')} kg)
+
+[HAMMADDE SİLO DURUMU]
+${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString('tr-TR')} kg | Silo ${m.available_stock_kg.toLocaleString('tr-TR')} kg | ${m.is_sufficient ? 'YETERLİ' : 'EKSİK (' + m.shortage_kg.toLocaleString('tr-TR') + ' kg SİPARİŞ VERİLMELİ)'}`).join('\n')}
+======================================================
+            `.trim();
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Simülasyon planı panoya kopyalandı!");
+            }).catch(() => {
+                alert("Panoya kopyalanamadı.");
+            });
         }
     </script>
 </body>

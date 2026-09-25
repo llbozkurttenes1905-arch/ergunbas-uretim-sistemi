@@ -14214,11 +14214,12 @@
       "mixer_emp_gece": 2
     },
     "31": {
-      "day": 31,
+      "day": "31",
       "date": "31.08.2026",
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -14236,7 +14237,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "DP130-99x42-ANT",
+            "product": "U KAPAMA",
             "length": 2.3,
             "speed": 4.31,
             "heads": 1.0,
@@ -14355,6 +14356,7 @@
             "sets": 130.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
@@ -14373,6 +14375,7 @@
             "sets": 120.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 23.0
           }
         ]
@@ -14380,6 +14383,7 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -14397,7 +14401,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "DP130-99x42-ANT",
+            "product": "U KAPAMA",
             "length": 2.3,
             "speed": 4.31,
             "heads": 1.0,
@@ -14499,100 +14503,90 @@
             "sets": 192.0
           }
         ],
-        "levha": []
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "",
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
+            "qty": 0,
+            "total_m2": 0.0,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 0.0,
+            "dead_fire_kg": 0.0,
+            "total_kg": 0.0,
+            "sets": 0.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": null,
+            "en_firesi_cm": 15.0
+          }
+        ]
       },
       "downtimes": [],
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 2155.0,
-          "gece": 0.0,
-          "gunduz_kg": 2155.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 2155.0,
+          "gunduz": 2155,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 3372.0,
-          "gece": 0.0,
-          "gunduz_kg": 3372.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 3372.0,
+          "gunduz": 3372,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 1388.0,
-          "gece": 0.0,
-          "gunduz_kg": 1388.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1388.0,
+          "gunduz": 1388,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 3545.0,
-          "gece": 0.0,
-          "gunduz_kg": 3545.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 3545.0,
+          "gunduz": 3545,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 2309.0,
-          "gece": 0.0,
-          "gunduz_kg": 2309.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 2309.0,
+          "gunduz": 2309,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1161.0,
-          "gece": 0.0,
-          "gunduz_kg": 1161.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1161.0,
+          "gunduz": 1161,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 1065.0,
-          "gece": 0.0,
-          "gunduz_kg": 1065.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1065.0,
+          "gunduz": 1065,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 1378.0,
-          "gece": 0.0,
-          "gunduz_kg": 1378.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1378.0,
+          "gunduz": 1378,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 1164.0,
-          "gece": 0.0,
-          "gunduz_kg": 1164.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 1164.0,
+          "gunduz": 1164,
+          "gece": 0,
           "status": "normal"
         }
       ],
@@ -14603,9 +14597,8 @@
           "batch_kg": 275.65,
           "gunduz_sarj": 41,
           "gece_sarj": 0,
-          "toplam_sarj": 41,
           "gunduz_kg": 11301.65,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 11301.65
         }
       ],

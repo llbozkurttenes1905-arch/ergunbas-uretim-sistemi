@@ -1192,7 +1192,10 @@ def get_dashboard_summary():
             },
             "door_stats": day_door_stats,
             "fire_reasons": day_fire_reasons_list,
-            "downtimes": day_downtimes_list
+            "downtimes": day_downtimes_list,
+            "mixer": day_obj.get("mixer", []),
+            "kirim": day_obj.get("kirim", []),
+            "mikronize": day_obj.get("mikronize", [])
         })
 
     # Toplam kayıtlı gün sayısı (varsayılan görüntülenecek gün = verisi olan en güncel gün)

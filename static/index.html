@@ -54,6 +54,39 @@
             border-radius: 3px;
         }
 
+        /* ==== Canlı Fabrika Zemin & TV Modu Stilleri ==== */
+        @keyframes pulse-glow-emerald {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.35), inset 0 0 10px rgba(16, 185, 129, 0.15); }
+            50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.75), inset 0 0 15px rgba(16, 185, 129, 0.35); }
+        }
+        @keyframes pulse-glow-rose {
+            0%, 100% { box-shadow: 0 0 15px rgba(244, 63, 94, 0.4), inset 0 0 10px rgba(244, 63, 94, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(244, 63, 94, 0.85), inset 0 0 20px rgba(244, 63, 94, 0.5); }
+        }
+        @keyframes pulse-glow-amber {
+            0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); }
+            50% { box-shadow: 0 0 22px rgba(245, 158, 11, 0.7); }
+        }
+        .glow-active {
+            animation: pulse-glow-emerald 2.5s infinite;
+        }
+        .glow-down {
+            animation: pulse-glow-rose 1.5s infinite;
+        }
+        .glow-amber {
+            animation: pulse-glow-amber 2s infinite;
+        }
+        body.tv-mode header {
+            display: none !important;
+        }
+        body.tv-mode #toast {
+            display: none !important;
+        }
+        body.tv-mode main {
+            padding: 0.75rem !important;
+            max-width: 100% !important;
+        }
+
         /* ==== Salt Okunur (Görüntüleyici) Modu ==== */
         body.role-viewer #view-daily :is(input,select,textarea):not(#select-day),
         body.role-viewer #view-settings :is(input,select,textarea) {
@@ -270,6 +303,14 @@
             <nav id="nav-scroll" class="flex space-x-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800 overflow-x-auto whitespace-nowrap max-w-full lg:max-w-none">
                 <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 bg-ergunbas-600 text-white shadow-lg shadow-ergunbas-600/30 shrink-0">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Özetler (Aylık, Haftalık & Günlük)
+                </button>
+                <button onclick="switchTab('factory')" id="tab-factory" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0 relative group">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Canlı Fabrika (Dijital İkiz)</span>
                 </button>
                 <button onclick="switchTab('daily')" id="tab-daily" class="px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0">
                     <i data-lucide="edit-3" class="w-4 h-4"></i> Günlük Veri Girişi
@@ -982,6 +1023,278 @@
             </div>
         </div>
         </div><!-- end view-dashboard -->
+
+        <!-- TAB: CANLI FABRİKA ZEMİN HARİTASI & DİJİTAL İKİZ (DIGITAL TWIN & TV ANDON) -->
+        <div id="view-factory" class="space-y-6 hidden">
+            <!-- Control Deck (Üst Kontrol Paneli) -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="relative p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                            <i data-lucide="cpu" class="w-7 h-7"></i>
+                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">Canlı Fabrika Zemin Haritası & Dijital İkiz</h2>
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-black uppercase tracking-wider animate-pulse flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Canlı Yayın
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Ekstrüder hatları, Levha 201, hammadde hazırlık ve montaj istasyonunun anlık telemetrisi</p>
+                        </div>
+                    </div>
+
+                    <!-- Canlı Saat, Gün Seçici & Andon TV Butonları -->
+                    <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-between lg:justify-end">
+                        <!-- Dijital Saat & Canlılık -->
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-1.5 flex items-center gap-2 shadow-inner">
+                            <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+                            <span id="factory-clock" class="font-mono text-base sm:text-lg font-black text-emerald-400 tracking-wider">--:--:--</span>
+                        </div>
+
+                        <!-- Gün Seçici (Zaman Makinesi) -->
+                        <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1 shadow-inner">
+                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                            <select id="factory-day-select" onchange="onFactoryDayChange()" class="bg-transparent text-white text-xs font-bold py-1 px-1 focus:outline-none cursor-pointer">
+                                <option value="">Tarih Yükleniyor...</option>
+                            </select>
+                        </div>
+
+                        <!-- TV / Andon Tam Ekran Modu Butonu -->
+                        <button onclick="toggleFactoryTvMode()" id="btn-factory-tv" class="px-3.5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="tv" class="w-4 h-4"></i> <span id="factory-tv-btn-text">📺 TV / Andon Modu</span>
+                        </button>
+
+                        <!-- Yenileme Butonu & 30s Sayaç -->
+                        <button onclick="loadFactoryMap(true)" title="Verileri Şimdi Yenile" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition flex items-center justify-center cursor-pointer">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Nöbetçi Vardiya Amirleri & Otomatik Yenileme Şeridi -->
+                <div class="mt-4 pt-3.5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-slate-400 font-bold uppercase tracking-wider text-[11px] flex items-center gap-1">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-400"></i> Nöbetçi Amirler:
+                        </span>
+                        <span id="factory-op-gunduz" class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold flex items-center gap-1">
+                            <span>☀ Gündüz:</span> <b id="factory-op-gunduz-name" class="text-amber-200 font-black">-</b>
+                        </span>
+                        <span id="factory-op-gece" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-semibold flex items-center gap-1">
+                            <span>🌙 Gece:</span> <b id="factory-op-gece-name" class="text-indigo-200 font-black">-</b>
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2 text-slate-400 text-[11px] font-medium">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>Oto-Yenileme: <b id="factory-refresh-counter" class="text-emerald-400 font-mono font-bold">30</b> sn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Dev LED / Neon Sayaç (Factory Floor HUD) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Aktif Hatlar -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-lg group hover:border-emerald-500/50 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-400">Aktif Hat Sayısı</span>
+                        <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="activity" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="factory-stat-active-lines" class="text-2xl sm:text-3xl font-black text-white tracking-tight">0 / 10</span>
+                        <span class="text-xs font-bold text-emerald-400">Hat Çalışıyor</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>Ekstrüder: <b id="factory-stat-ext-active" class="text-white">0/9</b></span>
+                        <span>Levha: <b id="factory-stat-lev-active" class="text-white">0/1</b></span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                </div>
+
+                <!-- Günlük Üretim Toplamı -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-lg group hover:border-sky-500/50 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-400">Zemin Toplam Üretim</span>
+                        <div class="p-2 rounded-xl bg-sky-500/10 text-sky-400"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="factory-stat-total-prod" class="text-2xl sm:text-3xl font-black text-white tracking-tight">0</span>
+                        <span class="text-xs font-bold text-sky-400">kg</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>☀ Gündüz: <b id="factory-stat-prod-gunduz" class="text-amber-300">0 kg</b></span>
+                        <span>🌙 Gece: <b id="factory-stat-prod-gece" class="text-indigo-300">0 kg</b></span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-500"></div>
+                </div>
+
+                <!-- Tamamlanan Kapı Adedi -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-lg group hover:border-amber-500/50 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-400">Tamamlanan Kapı</span>
+                        <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="door-open" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="factory-stat-doors" class="text-2xl sm:text-3xl font-black text-white tracking-tight">0</span>
+                        <span class="text-xs font-bold text-amber-400">Kapı</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>Hedefe Oran: <b id="factory-stat-target-pct" class="text-amber-300">%0</b></span>
+                        <span id="factory-stat-bottleneck" class="text-rose-400 font-semibold truncate max-w-[120px]">Darboğaz: -</span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500"></div>
+                </div>
+
+                <!-- Zemin Fire & Duruş -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 relative overflow-hidden shadow-lg group hover:border-rose-500/50 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-400">Fire Oranı & Duruş</span>
+                        <div class="p-2 rounded-xl bg-rose-500/10 text-rose-400"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="factory-stat-fire-ratio" class="text-2xl sm:text-3xl font-black text-white tracking-tight">%0.0</span>
+                        <span id="factory-stat-fire-kg" class="text-xs font-bold text-rose-400">(0 kg)</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span>Toplam Duruş: <b id="factory-stat-downtime" class="text-rose-300">0 dk</b></span>
+                        <span id="factory-stat-speed" class="text-slate-400">Hız: <b id="factory-stat-speed-val" class="text-white">0 kg/sa</b></span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-red-500"></div>
+                </div>
+            </div>
+
+            <!-- ANA ZEMİN: BÖLÜM 1 & 2 (EKSTRÜZYON & LEVHA ALANI) -->
+            <div class="space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        <h3 class="text-sm sm:text-base font-black text-white tracking-tight uppercase">Ana Üretim Sahası (Ekstrüder 101-109 & Levha 201)</h3>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Çalışıyor</span>
+                        <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span> Duruşta / Fire</span>
+                        <span class="flex items-center gap-1.5 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span> Boşta</span>
+                    </div>
+                </div>
+
+                <!-- Ekstrüder Hatları Grid'i (9 Hat) -->
+                <div id="factory-extruder-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dinamik JavaScript ile doldurulacak (Hat 101-109) -->
+                </div>
+
+                <!-- Levha 201 Özel Kartı (Geniş / Vurgulu Darboğaz Kartı) -->
+                <div id="factory-levha-card-container">
+                    <!-- Dinamik JavaScript ile doldurulacak (Levha 201) -->
+                </div>
+            </div>
+
+            <!-- ANA ZEMİN: BÖLÜM 3 (HAMMADDE HAZIRLIK & GERİ DÖNÜŞÜM KOMPLEKSİ) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-xl bg-violet-500/10 text-violet-400"><i data-lucide="refresh-cw" class="w-5 h-5"></i></div>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-black text-white tracking-tight uppercase">Hammadde Hazırlık & Geri Dönüşüm Tesisi</h3>
+                            <p class="text-xs text-slate-400">Mikser karıştırma şarjları, kırma üniteleri ve mikronize hatlarının canlı durumu</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400">Toplam Hammadde Çıktısı:</span>
+                        <div class="text-sm font-black text-violet-300" id="factory-prep-total-kg">0 kg</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Mikser Grubu (1, 2, 3) -->
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="disc" class="w-4 h-4 text-emerald-400"></i> Mikserler (1 - 3)
+                            </span>
+                            <span id="factory-prep-mixer-summary" class="text-[11px] font-bold text-emerald-400">0 Şarj</span>
+                        </div>
+                        <div id="factory-prep-mixer-list" class="space-y-2 text-xs">
+                            <div class="text-slate-500 text-center py-3">Veri bekleniyor...</div>
+                        </div>
+                    </div>
+
+                    <!-- Kırım Grubu (1 - 4) -->
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="scissors" class="w-4 h-4 text-amber-400"></i> Kırım Hatları (1 - 4)
+                            </span>
+                            <span id="factory-prep-kirim-summary" class="text-[11px] font-bold text-amber-400">0 kg</span>
+                        </div>
+                        <div id="factory-prep-kirim-list" class="space-y-2 text-xs">
+                            <div class="text-slate-500 text-center py-3">Veri bekleniyor...</div>
+                        </div>
+                    </div>
+
+                    <!-- Mikronize Grubu (1 - 6) -->
+                    <div class="bg-slate-950 border border-slate-800/80 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-4 h-4 text-sky-400"></i> Mikronize Hatları (1 - 6)
+                            </span>
+                            <span id="factory-prep-mikronize-summary" class="text-[11px] font-bold text-sky-400">0 kg</span>
+                        </div>
+                        <div id="factory-prep-mikronize-list" class="space-y-2 text-xs">
+                            <div class="text-slate-500 text-center py-3">Veri bekleniyor...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANA ZEMİN: BÖLÜM 4 (KAPI MONTAJ VE BİLEŞEN TERAZİSİ) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="scale" class="w-5 h-5"></i></div>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-black text-white tracking-tight uppercase">Kapı Montaj İstasyonu & Bileşen Terazisi</h3>
+                            <p class="text-xs text-slate-400">Pervaz, Kasa, Seren ve Levha üretimlerinin kapı tamamlama denkliği ve kümülatif dengesi</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400">Tamamlanan Net Kapı:</span>
+                        <div class="text-base font-black text-emerald-400" id="factory-balance-doors">0 Kapı</div>
+                    </div>
+                </div>
+
+                <!-- 4 Bileşen Terazisi Grid'i -->
+                <div id="factory-balance-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Dinamik JavaScript ile doldurulacak -->
+                </div>
+            </div>
+        </div><!-- end view-factory -->
+
+        <!-- MAKİNE DETAY MODALI (FABRİKA ZEMİN HARİTASI İÇİN) -->
+        <div id="modal-factory-machine" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div id="modal-fm-icon" class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
+                            <i data-lucide="cpu" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 id="modal-fm-title" class="text-lg font-black text-white">Hat Detayı</h3>
+                            <p id="modal-fm-subtitle" class="text-xs text-slate-400">Anlık üretim, hız ve vardiya performansı</p>
+                        </div>
+                    </div>
+                    <button onclick="closeFactoryMachineModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="modal-fm-content" class="space-y-4 text-xs">
+                    <!-- Dinamik doldurulacak -->
+                </div>
+            </div>
+        </div>
 
         <!-- TAB 2: GÜNLÜK VERİ GİRİŞİ -->
         <div id="view-daily" class="space-y-6 hidden">
@@ -2394,24 +2707,26 @@
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
+            ['dashboard', 'factory', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
                 const viewEl = document.getElementById(`view-${t}`);
                 if (viewEl) viewEl.classList.add('hidden');
                 const btn = document.getElementById(`tab-${t}`);
-                if (btn) btn.className = `px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5${t === 'mixer' ? ' shrink-0' : ''}`;
+                if (btn) btn.className = `px-3.5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-1.5 shrink-0`;
             });
 
             const targetView = document.getElementById(`view-${tabId}`);
             if (targetView) targetView.classList.remove('hidden');
             const activeBtn = document.getElementById(`tab-${tabId}`);
-            if (activeBtn) activeBtn.className = "px-3.5 py-2 text-xs font-bold rounded-lg transition-all bg-ergunbas-600 text-white shadow-lg shadow-ergunbas-600/30 flex items-center gap-1.5";
+            if (activeBtn) activeBtn.className = "px-3.5 py-2 text-xs font-bold rounded-lg transition-all bg-ergunbas-600 text-white shadow-lg shadow-ergunbas-600/30 flex items-center gap-1.5 shrink-0";
 
             if (tabId === 'dashboard') loadDashboard();
+            if (tabId === 'factory') loadFactoryMap();
             if (tabId === 'daily') loadDayData();
             if (tabId === 'doors') loadDoorStats();
             if (tabId === 'mixer') loadMixerDashboard();
             if (tabId === 'settings') loadSettings();
             if (tabId === 'users') loadUsers();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         async function fetchMachinesAndProducts() {
@@ -6146,6 +6461,763 @@
                 }
             }
             window.open(url, '_blank');
+        }
+
+        /* =========================================================================
+           CANLI FABRİKA ZEMİN HARİTASI & DİJİTAL İKİZ (DIGITAL TWIN & TV ANDON)
+           ========================================================================= */
+        let factoryAutoRefreshInterval = null;
+        let factoryRefreshSecondsRemaining = 30;
+        let factorySelectedDayKey = null;
+
+        // Canlı Dijital Saat Başlatıcı
+        function initFactoryClock() {
+            function updateClock() {
+                const clockEl = document.getElementById('factory-clock');
+                if (!clockEl) return;
+                const now = new Date();
+                const trTime = now.toLocaleTimeString('tr-TR', { timeZone: 'Europe/Istanbul', hour12: false });
+                clockEl.textContent = trTime;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+        initFactoryClock();
+
+        // 30 Saniye Otomatik Yenileme Döngüsü
+        function initFactoryAutoRefresh() {
+            if (factoryAutoRefreshInterval) clearInterval(factoryAutoRefreshInterval);
+            factoryRefreshSecondsRemaining = 30;
+            const counterEl = document.getElementById('factory-refresh-counter');
+            if (counterEl) counterEl.textContent = factoryRefreshSecondsRemaining;
+
+            factoryAutoRefreshInterval = setInterval(() => {
+                const factoryView = document.getElementById('view-factory');
+                if (!factoryView || factoryView.classList.contains('hidden')) return;
+
+                factoryRefreshSecondsRemaining--;
+                const cEl = document.getElementById('factory-refresh-counter');
+                if (cEl) cEl.textContent = Math.max(0, factoryRefreshSecondsRemaining);
+
+                if (factoryRefreshSecondsRemaining <= 0) {
+                    factoryRefreshSecondsRemaining = 30;
+                    loadFactoryMap(true);
+                }
+            }, 1000);
+        }
+        initFactoryAutoRefresh();
+
+        // TV / Andon Tam Ekran Modu Aç/Kapat
+        function toggleFactoryTvMode() {
+            const isTv = document.body.classList.toggle('tv-mode');
+            const btnText = document.getElementById('factory-tv-btn-text');
+            const btn = document.getElementById('btn-factory-tv');
+
+            if (isTv) {
+                if (btnText) btnText.textContent = "❌ TV Modundan Çık";
+                if (btn) btn.className = "px-3.5 py-2 bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-rose-700/30 flex items-center gap-1.5 cursor-pointer";
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+            } else {
+                if (btnText) btnText.textContent = "📺 TV / Andon Modu";
+                if (btn) btn.className = "px-3.5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 cursor-pointer";
+                if (document.exitFullscreen && document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+        }
+
+        // Gün Değişimi
+        function onFactoryDayChange() {
+            const sel = document.getElementById('factory-day-select');
+            if (sel) {
+                factorySelectedDayKey = sel.value;
+                renderFactoryDay(factorySelectedDayKey);
+            }
+        }
+
+        // Ana Fabrika Zemin Yükleme Fonksiyonu
+        async function loadFactoryMap(forceReload = false) {
+            try {
+                if (!dashboardData || forceReload) {
+                    const res = await fetch('/api/dashboard');
+                    if (res.ok) {
+                        dashboardData = await res.json();
+                    }
+                }
+                if (!dashboardData || !dashboardData.daily_chart || dashboardData.daily_chart.length === 0) {
+                    return;
+                }
+
+                // Gün seçici dropdown'ı doldur
+                const daySelect = document.getElementById('factory-day-select');
+                if (daySelect) {
+                    const currentVal = factorySelectedDayKey || daySelect.value || dashboardData.latest_day_key;
+                    daySelect.innerHTML = '';
+                    const reversedList = [...dashboardData.daily_chart].reverse();
+                    reversedList.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.key;
+                        const isToday = (d.key === dashboardData.latest_day_key);
+                        opt.textContent = `${d.date || d.key} ${isToday ? '★ (En Güncel)' : ''}`;
+                        if (d.key === currentVal) opt.selected = true;
+                        daySelect.appendChild(opt);
+                    });
+                    factorySelectedDayKey = daySelect.value || dashboardData.latest_day_key;
+                }
+
+                renderFactoryDay(factorySelectedDayKey);
+            } catch (err) {
+                console.error('loadFactoryMap error:', err);
+            }
+        }
+
+        // Seçili Günün Zemin Haritasını Render Et
+        function renderFactoryDay(dayKey) {
+            if (!dashboardData || !dashboardData.daily_chart) return;
+            const dayObj = dashboardData.daily_chart.find(d => d.key === dayKey) || dashboardData.daily_chart[dashboardData.daily_chart.length - 1];
+            if (!dayObj) return;
+
+            // 1. Nöbetçi Amirler
+            const opGunduz = (dayObj.shifts && dayObj.shifts.gunduz && dayObj.shifts.gunduz.operator) ? dayObj.shifts.gunduz.operator : '-';
+            const opGece = (dayObj.shifts && dayObj.shifts.gece && dayObj.shifts.gece.operator) ? dayObj.shifts.gece.operator : '-';
+            const elOpGunduz = document.getElementById('factory-op-gunduz-name');
+            const elOpGece = document.getElementById('factory-op-gece-name');
+            if (elOpGunduz) elOpGunduz.textContent = opGunduz;
+            if (elOpGece) elOpGece.textContent = opGece;
+
+            // 2. Makine ve Hat İncelemesi (101-109 Ekstrüder + 201 Levha)
+            const extHatList = ['101', '102', '103', '104', '105', '106', '107', '108', '109'];
+            let activeExtCount = 0;
+            let activeLevCount = 0;
+
+            // Duruş haritası (hat adına göre gruplanmış)
+            const hatDowntimes = {};
+            (dayObj.downtimes || []).forEach(dt => {
+                const normHat = (dt.hat || '').trim().replace(/^0+/, '');
+                if (!hatDowntimes[normHat]) hatDowntimes[normHat] = [];
+                hatDowntimes[normHat].push(dt);
+            });
+
+            // Ekstrüder Grid Render
+            const extGrid = document.getElementById('factory-extruder-grid');
+            if (extGrid) {
+                let html = '';
+                extHatList.forEach(hatNum => {
+                    const mData = (dayObj.machines || []).find(m => {
+                        const mHat = (m.hat || '').trim().replace(/^0+/, '');
+                        return mHat === hatNum;
+                    });
+
+                    const prodKg = mData ? (mData.prod_kg || 0) : 0;
+                    const fireKg = mData ? (mData.fire_kg || 0) : 0;
+                    const fireRatio = mData ? (mData.fire_ratio || 0) : 0;
+                    const hours = mData ? (mData.hours || 0) : 0;
+                    const kgPerHour = mData ? (mData.kg_per_hour || 0) : 0;
+
+                    const dts = hatDowntimes[hatNum] || [];
+                    const hasDowntime = dts.length > 0;
+                    const isRunning = prodKg > 0;
+
+                    if (isRunning) activeExtCount++;
+
+                    let statusBadge = '';
+                    let borderClass = 'border-slate-800 bg-slate-950/80';
+                    let screwAnim = '';
+
+                    if (isRunning && !hasDowntime) {
+                        borderClass = 'border-emerald-500/50 bg-slate-900/90 glow-active';
+                        statusBadge = '<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> ÇALIŞIYOR</span>';
+                        screwAnim = '<i data-lucide="cog" class="w-4 h-4 text-emerald-400 animate-spin"></i>';
+                    } else if (hasDowntime) {
+                        borderClass = 'border-rose-500/60 bg-slate-900/90 glow-down';
+                        statusBadge = '<span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span> DURUŞTA</span>';
+                        screwAnim = '<i data-lucide="alert-octagon" class="w-4 h-4 text-rose-400 animate-bounce"></i>';
+                    } else {
+                        borderClass = 'border-slate-800/80 bg-slate-950/60 opacity-75';
+                        statusBadge = '<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-wider">BOŞTA</span>';
+                        screwAnim = '<i data-lucide="pause-circle" class="w-4 h-4 text-slate-500"></i>';
+                    }
+
+                    const pList = (mData && mData.products_detail) ? mData.products_detail : [];
+                    const mainProdName = pList.length > 0 ? `${pList[0].name} (${pList[0].qty} adet)` : (mData && mData.products ? mData.products : '-');
+
+                    let downtimeNotice = '';
+                    if (hasDowntime) {
+                        const dtTotalMin = dts.reduce((sum, d) => sum + (parseFloat(d.down_min) || 0), 0);
+                        const reasons = dts.map(d => d.down_reason || d.fire_reason || 'Duruş').filter(Boolean).slice(0, 2).join(', ');
+                        downtimeNotice = `
+                            <div class="mt-2.5 p-2 rounded-lg bg-rose-950/50 border border-rose-800/40 text-[11px] text-rose-300 flex items-center justify-between">
+                                <span class="truncate max-w-[170px] font-medium" title="${reasons}">⚠ ${reasons}</span>
+                                <span class="font-bold text-rose-200 shrink-0">${dtTotalMin} dk</span>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div onclick="openFactoryMachineModal('ext_${hatNum}')" class="border ${borderClass} rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] cursor-pointer shadow-lg relative flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2.5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-xl bg-slate-800/90 border border-slate-700 flex items-center justify-center font-black text-white text-xs">
+                                            ${hatNum}
+                                        </div>
+                                        <div>
+                                            <span class="text-xs font-black text-white">Hat ${hatNum}</span>
+                                            <span class="text-[10px] text-slate-400 block -mt-0.5">Ekstrüder</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        ${screwAnim}
+                                        ${statusBadge}
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-2.5 mb-2.5">
+                                    <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-0.5">Basılan Profil</div>
+                                    <div class="text-xs font-black text-white truncate" title="${mainProdName}">${mainProdName}</div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+                                    <div class="bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/40">
+                                        <div class="text-[10px] text-slate-400">Üretim</div>
+                                        <div class="font-black text-white">${prodKg.toLocaleString('tr-TR')} <span class="text-[9px] text-slate-400">kg</span></div>
+                                    </div>
+                                    <div class="bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/40">
+                                        <div class="text-[10px] text-slate-400">Fire</div>
+                                        <div class="font-black ${fireRatio > 8 ? 'text-rose-400' : 'text-emerald-400'}">%${fireRatio.toFixed(1)}</div>
+                                    </div>
+                                    <div class="bg-slate-950/50 rounded-lg p-1.5 border border-slate-800/40">
+                                        <div class="text-[10px] text-slate-400">Hız</div>
+                                        <div class="font-black text-sky-400">${kgPerHour.toFixed(0)} <span class="text-[9px] text-slate-400">kg/sa</span></div>
+                                    </div>
+                                </div>
+
+                                ${downtimeNotice}
+                            </div>
+
+                            <div class="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-[10px] text-slate-400">
+                                <span>Detay ve Vardiya Satırları</span>
+                                <span class="text-emerald-400 font-bold flex items-center gap-0.5">İncele →</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                extGrid.innerHTML = html;
+            }
+
+            // Levha 201 Kartı Render
+            const levContainer = document.getElementById('factory-levha-card-container');
+            if (levContainer) {
+                const levData = (dayObj.machines || []).find(m => (m.hat || '').trim() === '201' || m.type === 'levha');
+                const levProdKg = levData ? (levData.prod_kg || 0) : 0;
+                const levFireKg = levData ? (levData.fire_kg || 0) : 0;
+                const levFireRatio = levData ? (levData.fire_ratio || 0) : 0;
+                const levHours = levData ? (levData.hours || 0) : 0;
+
+                const levDts = hatDowntimes['201'] || [];
+                const hasLevDowntime = levDts.length > 0;
+                const isLevRunning = levProdKg > 0;
+                if (isLevRunning) activeLevCount = 1;
+
+                const levSummary = dayObj.levha_summary || {};
+                const totalPlakaQty = levSummary.total_qty || (levData && levData.products_detail ? levData.products_detail.reduce((s, p) => s + (p.qty || 0), 0) : 0);
+                const totalM2 = levSummary.total_m2 || 0;
+
+                let levBorder = 'border-slate-800 bg-slate-900/90';
+                let levStatusBadge = '';
+                if (isLevRunning && !hasLevDowntime) {
+                    levBorder = 'border-amber-500/60 bg-slate-900/95 glow-amber';
+                    levStatusBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black uppercase tracking-wider flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> LEVHA ÇIKIYOR</span>';
+                } else if (hasLevDowntime) {
+                    levBorder = 'border-rose-500/70 bg-slate-900/95 glow-down';
+                    levStatusBadge = '<span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40 text-xs font-black uppercase tracking-wider flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span> LEVHA DURUŞTA</span>';
+                } else {
+                    levStatusBadge = '<span class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-black uppercase tracking-wider">BOŞTA</span>';
+                }
+
+                const doorStats = dayObj.door_stats || {};
+                const completableDoors = doorStats.completable_doors || 0;
+                const levDoorEq = (doorStats.details && doorStats.details.levha) ? (doorStats.details.levha.door_eq || 0) : 0;
+                const isLevBottleneck = (doorStats.details && levDoorEq <= completableDoors && completableDoors > 0);
+
+                levContainer.innerHTML = `
+                    <div onclick="openFactoryMachineModal('lev_201')" class="border ${levBorder} rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:scale-[1.01] cursor-pointer shadow-2xl relative overflow-hidden">
+                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center font-black text-xl shadow-lg">
+                                    201
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-base sm:text-lg font-black text-white">Hat 201 — Levha & Kalıplama Ünitesi</h3>
+                                        <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-bold">Kapı Kalbi</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400">93 x 208 cm Levha Plaka Çıkışı • Kalıp Çıkış Eni: 108 cm</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                ${levStatusBadge}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mt-4 text-xs">
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Plaka Adedi</div>
+                                <div class="text-lg font-black text-amber-300 mt-0.5">${totalPlakaQty.toLocaleString('tr-TR')} <span class="text-xs text-slate-400">plaka</span></div>
+                            </div>
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Toplam Tonaj</div>
+                                <div class="text-lg font-black text-white mt-0.5">${levProdKg.toLocaleString('tr-TR')} <span class="text-xs text-slate-400">kg</span></div>
+                            </div>
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Toplam Alan</div>
+                                <div class="text-lg font-black text-sky-300 mt-0.5">${totalM2.toFixed(1)} <span class="text-xs text-slate-400">m²</span></div>
+                            </div>
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Fire Oranı</div>
+                                <div class="text-lg font-black ${levFireRatio > 6 ? 'text-rose-400' : 'text-emerald-400'} mt-0.5">%${levFireRatio.toFixed(1)} <span class="text-[10px] text-slate-400">(${levFireKg.toFixed(0)} kg)</span></div>
+                            </div>
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Çalışma Saati</div>
+                                <div class="text-lg font-black text-white mt-0.5">${levHours.toFixed(1)} <span class="text-xs text-slate-400">saat</span></div>
+                            </div>
+                            <div class="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
+                                <div class="text-[10px] text-slate-400 font-bold uppercase">Kapı Eşdeğeri</div>
+                                <div class="text-lg font-black ${isLevBottleneck ? 'text-rose-400' : 'text-emerald-400'} mt-0.5">${Math.floor(totalPlakaQty / 2)} <span class="text-xs text-slate-400">kapı</span></div>
+                            </div>
+                        </div>
+
+                        ${isLevBottleneck ? `
+                            <div class="mt-3.5 p-3 rounded-xl bg-amber-950/40 border border-amber-800/50 flex items-center justify-between text-xs text-amber-200">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                                    <span><b>Dikkat Darboğaz Uyarısı:</b> Levha 201 hattının ürettiği plaka sayısı (${totalPlakaQty} plaka), diğer hatlardaki profil üretimlerine göre kapı montajında sınırlandırıcı etmendir.</span>
+                                </div>
+                                <span class="text-[11px] font-bold text-amber-400 underline cursor-pointer shrink-0">Detay Gör</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // 3. HUD KPI Sayaçları Güncelle
+            const totalActiveLines = activeExtCount + activeLevCount;
+            const elActiveLines = document.getElementById('factory-stat-active-lines');
+            if (elActiveLines) elActiveLines.textContent = `${totalActiveLines} / 10`;
+            const elExtActive = document.getElementById('factory-stat-ext-active');
+            if (elExtActive) elExtActive.textContent = `${activeExtCount}/9`;
+            const elLevActive = document.getElementById('factory-stat-lev-active');
+            if (elLevActive) elLevActive.textContent = `${activeLevCount}/1`;
+
+            const elTotalProd = document.getElementById('factory-stat-total-prod');
+            if (elTotalProd) elTotalProd.textContent = (dayObj.prod_kg || 0).toLocaleString('tr-TR');
+
+            const prodGunduz = (dayObj.shifts && dayObj.shifts.gunduz) ? (dayObj.shifts.gunduz.prod_kg || 0) : 0;
+            const prodGece = (dayObj.shifts && dayObj.shifts.gece) ? (dayObj.shifts.gece.prod_kg || 0) : 0;
+            const elProdG = document.getElementById('factory-stat-prod-gunduz');
+            const elProdN = document.getElementById('factory-stat-prod-gece');
+            if (elProdG) elProdG.textContent = `${prodGunduz.toLocaleString('tr-TR')} kg`;
+            if (elProdN) elProdN.textContent = `${prodGece.toLocaleString('tr-TR')} kg`;
+
+            const elDoors = document.getElementById('factory-stat-doors');
+            const doorStats = dayObj.door_stats || {};
+            const compDoors = doorStats.completable_doors || 0;
+            if (elDoors) elDoors.textContent = compDoors.toLocaleString('tr-TR');
+
+            const dailyTarget = (dashboardData.monthly_target_daily || 450);
+            const targetPct = dailyTarget > 0 ? Math.round((compDoors / dailyTarget) * 100) : 0;
+            const elTargetPct = document.getElementById('factory-stat-target-pct');
+            if (elTargetPct) elTargetPct.textContent = `%${targetPct}`;
+
+            let minCat = '-';
+            let minEq = 999999;
+            const cats = ['pervaz', 'kasa', 'seren', 'levha'];
+            if (doorStats.details) {
+                cats.forEach(c => {
+                    const de = doorStats.details[c] ? doorStats.details[c].door_eq : 0;
+                    if (de < minEq) {
+                        minEq = de;
+                        minCat = c.toUpperCase();
+                    }
+                });
+            }
+            const elBottleneck = document.getElementById('factory-stat-bottleneck');
+            if (elBottleneck) elBottleneck.textContent = `Darboğaz: ${minCat}`;
+
+            const elFireRatio = document.getElementById('factory-stat-fire-ratio');
+            if (elFireRatio) elFireRatio.textContent = `%${(dayObj.fire_ratio || 0).toFixed(1)}`;
+            const elFireKg = document.getElementById('factory-stat-fire-kg');
+            if (elFireKg) elFireKg.textContent = `(${(dayObj.fire_kg || 0).toLocaleString('tr-TR')} kg)`;
+
+            const elDowntime = document.getElementById('factory-stat-downtime');
+            if (elDowntime) elDowntime.textContent = `${(dayObj.downtime_min || 0)} dk`;
+            const elSpeed = document.getElementById('factory-stat-speed-val');
+            if (elSpeed) elSpeed.textContent = `${(dayObj.kg_per_hour || 0).toFixed(0)} kg/sa`;
+
+            // 4. Hammadde Hazırlık
+            renderFactoryPrep(dayObj);
+
+            // 5. Kapı Montaj Terazisi
+            renderFactoryDoorBalance(dayObj);
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Hammadde Hazırlık Render
+        function renderFactoryPrep(dayObj) {
+            const rawMixer = dayObj.mixer || [];
+            const rawKirim = dayObj.kirim || [];
+            const rawMikronize = dayObj.mikronize || [];
+
+            let totalPrepKg = 0;
+
+            // Mikserler (1-3)
+            const mxListEl = document.getElementById('factory-prep-mixer-list');
+            const mxSumEl = document.getElementById('factory-prep-mixer-summary');
+            let totalMxSarj = 0;
+            let totalMxKg = 0;
+
+            if (mxListEl) {
+                if (rawMixer.length === 0) {
+                    mxListEl.innerHTML = '<div class="text-slate-500 text-center py-2">Bu gün mikser şarj kaydı yok</div>';
+                } else {
+                    let mxHtml = '';
+                    rawMixer.forEach(mx => {
+                        const mName = mx.makine || 'Mikser';
+                        const rec = mx.recipe || 'Standart';
+                        const gSarj = parseInt(mx.gunduz_sarj) || 0;
+                        const nSarj = parseInt(mx.gece_sarj) || 0;
+                        const sarj = gSarj + nSarj;
+                        const bKg = parseFloat(mx.batch_kg) || 0;
+                        const tKg = parseFloat(mx.toplam_kg) || (sarj * bKg);
+                        totalMxSarj += sarj;
+                        totalMxKg += tKg;
+                        totalPrepKg += tKg;
+
+                        mxHtml += `
+                            <div class="bg-slate-900 border border-slate-800 rounded-lg p-2.5 flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-white flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                        ${mName} <span class="text-[10px] text-emerald-400 font-semibold">(${rec})</span>
+                                    </div>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">☀ ${gSarj} Şarj • 🌙 ${nSarj} Şarj</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-black text-white">${sarj} Şarj</div>
+                                    <div class="text-[10px] text-slate-400">${tKg.toLocaleString('tr-TR')} kg</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    mxListEl.innerHTML = mxHtml;
+                }
+            }
+            if (mxSumEl) mxSumEl.textContent = `${totalMxSarj} Şarj (${totalMxKg.toLocaleString('tr-TR')} kg)`;
+
+            // Kırım (1-4)
+            const kListEl = document.getElementById('factory-prep-kirim-list');
+            const kSumEl = document.getElementById('factory-prep-kirim-summary');
+            let totalKKg = 0;
+
+            if (kListEl) {
+                if (rawKirim.length === 0) {
+                    kListEl.innerHTML = '<div class="text-slate-500 text-center py-2">Bu gün kırım verisi yok</div>';
+                } else {
+                    let kHtml = '';
+                    rawKirim.forEach(ke => {
+                        const hat = ke.hat || 'Kırım';
+                        const g = parseFloat(ke.gunduz) || 0;
+                        const n = parseFloat(ke.gece) || 0;
+                        const t = g + n;
+                        const status = ke.status || 'normal';
+                        totalKKg += t;
+                        totalPrepKg += t;
+
+                        const isArizali = (status === 'arizali');
+                        kHtml += `
+                            <div class="bg-slate-900 border ${isArizali ? 'border-rose-700/60 bg-rose-950/20' : 'border-slate-800'} rounded-lg p-2 flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-white flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full ${isArizali ? 'bg-rose-400' : 'bg-amber-400'}"></span>
+                                        ${hat}
+                                        ${isArizali ? '<span class="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300">Arıza</span>' : ''}
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">☀ ${g.toFixed(0)} kg • 🌙 ${n.toFixed(0)} kg</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-black text-amber-300">${t.toLocaleString('tr-TR')} kg</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    kListEl.innerHTML = kHtml;
+                }
+            }
+            if (kSumEl) kSumEl.textContent = `${totalKKg.toLocaleString('tr-TR')} kg`;
+
+            // Mikronize (1-6)
+            const mListEl = document.getElementById('factory-prep-mikronize-list');
+            const mSumEl = document.getElementById('factory-prep-mikronize-summary');
+            let totalMKg = 0;
+
+            if (mListEl) {
+                if (rawMikronize.length === 0) {
+                    mListEl.innerHTML = '<div class="text-slate-500 text-center py-2">Bu gün mikronize verisi yok</div>';
+                } else {
+                    let mHtml = '';
+                    rawMikronize.forEach(me => {
+                        const hat = me.hat || 'Mikronize';
+                        const g = parseFloat(me.gunduz) || 0;
+                        const n = parseFloat(me.gece) || 0;
+                        const t = g + n;
+                        const status = me.status || 'normal';
+                        totalMKg += t;
+                        totalPrepKg += t;
+
+                        let badge = '';
+                        if (status === 'arizali') badge = '<span class="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300">Arıza</span>';
+                        else if (status.includes('personel')) badge = '<span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300">Personel Yok</span>';
+
+                        mHtml += `
+                            <div class="bg-slate-900 border ${badge ? 'border-amber-700/60' : 'border-slate-800'} rounded-lg p-2 flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-white flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full ${status === 'arizali' ? 'bg-rose-400' : 'bg-sky-400'}"></span>
+                                        ${hat} ${badge}
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">☀ ${g.toFixed(0)} kg • 🌙 ${n.toFixed(0)} kg</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-black text-sky-300">${t.toLocaleString('tr-TR')} kg</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    mListEl.innerHTML = mHtml;
+                }
+            }
+            if (mSumEl) mSumEl.textContent = `${totalMKg.toLocaleString('tr-TR')} kg`;
+
+            const prepTotEl = document.getElementById('factory-prep-total-kg');
+            if (prepTotEl) prepTotEl.textContent = `${totalPrepKg.toLocaleString('tr-TR')} kg`;
+        }
+
+        // Kapı Montaj & Denge Terazisi Render
+        function renderFactoryDoorBalance(dayObj) {
+            const gridEl = document.getElementById('factory-balance-grid');
+            const totalDoorsEl = document.getElementById('factory-balance-doors');
+            if (!gridEl) return;
+
+            const doorStats = dayObj.door_stats || {};
+            const compDoors = doorStats.completable_doors || 0;
+            if (totalDoorsEl) totalDoorsEl.textContent = `${compDoors.toLocaleString('tr-TR')} Kapı`;
+
+            const catsInfo = [
+                { key: 'pervaz', label: 'Pervaz Profili', unit: 'Adet', icon: 'ruler', color: 'emerald' },
+                { key: 'kasa', label: 'Kasa Profili', unit: 'Adet', icon: 'box', color: 'sky' },
+                { key: 'seren', label: 'Seren Çıtası', unit: 'Adet', icon: 'align-justify', color: 'violet' },
+                { key: 'levha', label: 'Levha Plaka', unit: 'Plaka', icon: 'square', color: 'amber' }
+            ];
+
+            const details = doorStats.details || {};
+            let html = '';
+
+            catsInfo.forEach(c => {
+                const det = details[c.key] || {};
+                const produced = det.produced || 0;
+                const reqPerDoor = det.req_per_door || (c.key === 'pervaz' ? 5.0 : c.key === 'kasa' ? 2.5 : c.key === 'seren' ? 3.5 : 2.0);
+                const doorEq = det.door_eq || (reqPerDoor > 0 ? (produced / reqPerDoor) : 0);
+                const carryover = det.carryover || 0;
+
+                const pct = compDoors > 0 ? Math.min(100, Math.round((doorEq / compDoors) * 100)) : 0;
+                const isBottleneck = (doorEq <= compDoors && compDoors > 0);
+
+                html += `
+                    <div class="bg-slate-950 border ${isBottleneck ? 'border-rose-500/60 glow-down' : 'border-slate-800'} rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black text-white uppercase flex items-center gap-1.5">
+                                <i data-lucide="${c.icon}" class="w-4 h-4 text-${c.color}-400"></i> ${c.label}
+                            </span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${isBottleneck ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold' : 'bg-slate-800 text-slate-400'}">
+                                ${isBottleneck ? '⚠ Darboğaz' : '1 Kapı = ' + reqPerDoor + ' ' + c.unit}
+                            </span>
+                        </div>
+
+                        <div>
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-xl font-black text-white">${Math.floor(doorEq)}</span>
+                                <span class="text-xs font-bold text-slate-400">Kapı Eşdeğeri</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">
+                                Üretilen: <b class="text-white">${produced.toLocaleString('tr-TR')}</b> ${c.unit}
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                                <div class="h-full bg-gradient-to-r ${isBottleneck ? 'from-rose-500 to-amber-500' : 'from-emerald-500 to-teal-500'}" style="width: ${Math.min(100, pct)}%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-400">
+                                <span>Devir Fazlası: <b class="text-emerald-400">${carryover.toFixed(1)}</b></span>
+                                <span>Kapasite: %${pct}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            gridEl.innerHTML = html;
+        }
+
+        // Makine Detay Modalı
+        function openFactoryMachineModal(hatKey) {
+            if (!dashboardData || !dashboardData.daily_chart) return;
+            const dayObj = dashboardData.daily_chart.find(d => d.key === factorySelectedDayKey) || dashboardData.daily_chart[dashboardData.daily_chart.length - 1];
+            if (!dayObj) return;
+
+            const modal = document.getElementById('modal-factory-machine');
+            const titleEl = document.getElementById('modal-fm-title');
+            const subEl = document.getElementById('modal-fm-subtitle');
+            const contentEl = document.getElementById('modal-fm-content');
+            if (!modal || !contentEl) return;
+
+            const isLevha = hatKey.startsWith('lev_') || hatKey === '201';
+            const hatNum = hatKey.replace('ext_', '').replace('lev_', '');
+
+            if (titleEl) titleEl.textContent = isLevha ? `Hat 201 — Levha & Kalıplama Detayı` : `Hat ${hatNum} — Ekstrüder Detayı`;
+            if (subEl) subEl.textContent = `${dayObj.date || dayObj.key} Üretim, Duruş ve Vardiya Kırılımı`;
+
+            let rowsHtml = '';
+            let totalProd = 0;
+            let totalFire = 0;
+
+            if (isLevha) {
+                ['gunduz', 'gece'].forEach(shift => {
+                    const shiftData = dayObj.shifts && dayObj.shifts[shift] ? dayObj.shifts[shift] : {};
+                    const op = shiftData.operator || '-';
+                    const levLines = (shiftData.levha || []).filter(l => (l.hat || '').trim() === '201');
+
+                    if (levLines.length > 0) {
+                        rowsHtml += `
+                            <div class="border border-slate-800 rounded-xl p-3 bg-slate-950/60">
+                                <div class="flex items-center justify-between font-bold text-white mb-2 pb-1.5 border-b border-slate-800">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="text-amber-400">${shift === 'gunduz' ? '☀ Gündüz Vardiyası' : '🌙 Gece Vardiyası'}</span>
+                                        <span class="text-slate-400 font-normal">(${op})</span>
+                                    </span>
+                                </div>
+                                <div class="space-y-1.5">
+                        `;
+                        levLines.forEach(l => {
+                            const pKg = parseFloat(l.total_kg) || 0;
+                            const qty = parseInt(l.qty) || 0;
+                            const col = l.color || 'Standart';
+                            totalProd += pKg;
+                            rowsHtml += `
+                                <div class="flex items-center justify-between text-slate-300">
+                                    <span>${col} (93x208cm) • <b>${qty} plaka</b></span>
+                                    <span class="font-mono font-bold text-white">${pKg.toLocaleString('tr-TR')} kg</span>
+                                </div>
+                            `;
+                        });
+                        rowsHtml += `</div></div>`;
+                    }
+                });
+            } else {
+                ['gunduz', 'gece'].forEach(shift => {
+                    const shiftData = dayObj.shifts && dayObj.shifts[shift] ? dayObj.shifts[shift] : {};
+                    const op = shiftData.operator || '-';
+                    const extLines = (shiftData.extruders || []).filter(e => (e.hat || '').trim().replace(/^0+/, '') === hatNum);
+
+                    if (extLines.length > 0) {
+                        rowsHtml += `
+                            <div class="border border-slate-800 rounded-xl p-3 bg-slate-950/60">
+                                <div class="flex items-center justify-between font-bold text-white mb-2 pb-1.5 border-b border-slate-800">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="text-amber-400">${shift === 'gunduz' ? '☀ Gündüz Vardiyası' : '🌙 Gece Vardiyası'}</span>
+                                        <span class="text-slate-400 font-normal">(${op})</span>
+                                    </span>
+                                </div>
+                                <div class="space-y-1.5">
+                        `;
+                        extLines.forEach(e => {
+                            const pKg = parseFloat(e.prod_kg) || 0;
+                            const fKg = parseFloat(e.fire_kg) || 0;
+                            const qty = parseInt(e.qty) || 0;
+                            const pName = e.product || 'Profil';
+                            const len = e.length || 0;
+                            const speed = e.speed || 0;
+                            totalProd += pKg;
+                            totalFire += fKg;
+
+                            rowsHtml += `
+                                <div class="flex items-center justify-between text-slate-300">
+                                    <div>
+                                        <span class="font-bold text-white">${pName}</span>
+                                        <span class="text-[10px] text-slate-400 ml-1">(${len}m • ${qty} ad • ${speed} m/dk)</span>
+                                    </div>
+                                    <div class="text-right font-mono">
+                                        <span class="text-white font-bold">${pKg.toLocaleString('tr-TR')} kg</span>
+                                        ${fKg > 0 ? `<span class="text-rose-400 text-[10px] block">Fire: ${fKg} kg</span>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        rowsHtml += `</div></div>`;
+                    }
+                });
+            }
+
+            const dts = (dayObj.downtimes || []).filter(d => (d.hat || '').trim().replace(/^0+/, '') === hatNum);
+            let dtHtml = '';
+            if (dts.length > 0) {
+                dtHtml = `
+                    <div class="bg-rose-950/30 border border-rose-800/40 rounded-xl p-3 space-y-2">
+                        <div class="font-bold text-rose-300 flex items-center gap-1.5">
+                            <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-400"></i> Bu Hatta Ait Duruş Kayıtları
+                        </div>
+                        <div class="space-y-1 text-[11px]">
+                `;
+                dts.forEach(d => {
+                    dtHtml += `
+                        <div class="flex items-center justify-between text-rose-200 border-b border-rose-900/40 pb-1">
+                            <span>${d.down_reason || d.fire_reason || 'Duruş'} ${d.desc ? '(' + d.desc + ')' : ''}</span>
+                            <span class="font-bold font-mono">${d.down_min || 0} dk • ${d.fire_kg || 0} kg fire</span>
+                        </div>
+                    `;
+                });
+                dtHtml += `</div></div>`;
+            }
+
+            contentEl.innerHTML = `
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase font-bold">Toplam Üretim</span>
+                        <div class="text-lg font-black text-white mt-0.5">${totalProd.toLocaleString('tr-TR')} kg</div>
+                    </div>
+                    <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase font-bold">Toplam Fire</span>
+                        <div class="text-lg font-black text-rose-400 mt-0.5">${totalFire.toLocaleString('tr-TR')} kg</div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mt-3">
+                    <div class="font-bold text-white uppercase tracking-wider text-[11px]">Vardiya Üretim Detayları</div>
+                    ${rowsHtml || '<div class="text-slate-500 text-center py-4 bg-slate-950 rounded-xl">Bu gün için kayıtlı satır bulunamadı.</div>'}
+                </div>
+
+                ${dtHtml}
+            `;
+
+            modal.classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeFactoryMachineModal() {
+            const modal = document.getElementById('modal-factory-machine');
+            if (modal) modal.classList.add('hidden');
         }
     </script>
 </body>

@@ -9174,7 +9174,7 @@
           "fire_kg": 0.0,
           "down_reason": "Soğutma su arızası.",
           "down_min": 120.0,
-          "desc": ""
+          "desc": "Hattın soğutma suyu kesildi.(06:00)"
         },
         {
           "shift": "Gece",
@@ -9183,7 +9183,7 @@
           "fire_kg": 0.0,
           "down_reason": "Soğutma su arızası.",
           "down_min": 120.0,
-          "desc": ""
+          "desc": "Hattın soğutma suyu kesildi.(06:00)"
         }
       ],
       "kirim": [

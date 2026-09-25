@@ -1019,6 +1019,13 @@
       "category": "diger",
       "door_ratio": 1.0,
       "description": ""
+    },
+    {
+      "id": "p_132",
+      "name": "U KAPAMA",
+      "category": "diger",
+      "door_ratio": 1.0,
+      "description": ""
     }
   ],
   "mixer_recipes": [

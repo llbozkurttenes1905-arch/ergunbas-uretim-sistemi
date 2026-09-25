@@ -13364,7 +13364,7 @@
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -13501,6 +13501,7 @@
             "sets": 67.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 23.0
           },
           {
@@ -13519,6 +13520,7 @@
             "sets": 37.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
@@ -13537,6 +13539,7 @@
             "sets": 157.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           }
         ]
@@ -13544,7 +13547,7 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -13562,7 +13565,7 @@
           {
             "row": 0,
             "hat": "102",
-            "product": "DP130-99x42-ANT",
+            "product": "U KAPAMA",
             "length": 2.15,
             "speed": 0.0,
             "heads": 1.0,
@@ -13681,6 +13684,7 @@
             "sets": 262.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           }
         ]
@@ -13689,94 +13693,64 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "personel_yok"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 4171.0,
-          "gece": 0.0,
-          "gunduz_kg": 4171.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 4171.0,
+          "gunduz": 4171,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 7026.0,
-          "gece": 0.0,
-          "gunduz_kg": 7026.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 7026.0,
+          "gunduz": 7026,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 2280.0,
-          "gece": 3330.0,
-          "gunduz_kg": 2280.0,
-          "gece_kg": 3330.0,
-          "toplam_kg": 5610.0,
+          "gunduz": 2280,
+          "gece": 3330,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 6934.0,
-          "gece": 0.0,
-          "gunduz_kg": 6934.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 6934.0,
+          "gunduz": 6934,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1098.0,
-          "gece": 1135.0,
-          "gunduz_kg": 1098.0,
-          "gece_kg": 1135.0,
-          "toplam_kg": 2233.0,
+          "gunduz": 1098,
+          "gece": 1135,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 1153.0,
-          "gece": 1590.0,
-          "gunduz_kg": 1153.0,
-          "gece_kg": 1590.0,
-          "toplam_kg": 2743.0,
+          "gunduz": 1153,
+          "gece": 1590,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 1343.0,
-          "gece": 1460.0,
-          "gunduz_kg": 1343.0,
-          "gece_kg": 1460.0,
-          "toplam_kg": 2803.0,
+          "gunduz": 1343,
+          "gece": 1460,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0.0,
-          "gece": 0.0,
-          "gunduz_kg": 0.0,
-          "gece_kg": 0.0,
-          "toplam_kg": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         }
       ],
@@ -13787,21 +13761,19 @@
           "batch_kg": 275.65,
           "gunduz_sarj": 52,
           "gece_sarj": 0,
-          "toplam_sarj": 52,
           "gunduz_kg": 14333.8,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 14333.8
         },
         {
           "makine": "Mixer 2",
-          "recipe": "Levha Renkli",
+          "recipe": "Levha Renkli (Takoz)",
           "batch_kg": 334.3,
           "gunduz_sarj": 6,
           "gece_sarj": 0,
-          "toplam_sarj": 6,
-          "gunduz_kg": 2005.8,
-          "gece_kg": 0.0,
-          "toplam_kg": 2005.8
+          "gunduz_kg": 2005.8000000000002,
+          "gece_kg": 0,
+          "toplam_kg": 2005.8000000000002
         }
       ],
       "mixer_emp_gunduz": 12,

@@ -3981,7 +3981,7 @@
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -4118,6 +4118,7 @@
             "sets": 0.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 15.0
           }
         ]
@@ -4125,7 +4126,7 @@
       "gece": {
         "employees": 9,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -4262,12 +4263,13 @@
             "sets": 16.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 14.0
           },
           {
             "row": 0,
             "hat": "201",
-            "color": "ANTRASİT",
+            "color": "AY GRİ",
             "width": 90.0,
             "length": 215.0,
             "m2_one": 1.935,
@@ -4280,6 +4282,7 @@
             "sets": 170.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
+            "hours": null,
             "en_firesi_cm": 18.0
           }
         ]
@@ -4325,64 +4328,64 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 1280.0,
-          "gece": 1377.0,
+          "gunduz": 1280,
+          "gece": 1377,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 967.0,
-          "gece": 2425.0,
+          "gunduz": 967,
+          "gece": 2425,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1385.0,
-          "gece": 2300.0,
+          "gunduz": 1385,
+          "gece": 2300,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 1000.0,
-          "gece": 0.0,
+          "gunduz": 1000,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 690.0,
-          "gece": 0.0,
+          "gunduz": 690,
+          "gece": 0,
           "status": "normal"
         }
       ],
@@ -4394,7 +4397,7 @@
           "gunduz_sarj": 36,
           "gece_sarj": 0,
           "gunduz_kg": 9923.4,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 9923.4
         }
       ],

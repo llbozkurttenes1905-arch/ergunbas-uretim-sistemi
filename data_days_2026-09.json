@@ -9625,7 +9625,35 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik kesintisi.",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp kalibre bakımı yapıldı.",
+          "down_min": 420.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp bakımı yapıldı.",
+          "down_min": 180.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",
@@ -9722,8 +9750,8 @@
           "toplam_kg": 6017.400000000001
         }
       ],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer_emp_gunduz": 10,
+      "mixer_emp_gece": 1
     }
   }
 }

@@ -9675,9 +9675,9 @@
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0,
+          "gunduz": 3200,
           "gece": 0,
-          "status": "personel_yok"
+          "status": "normal"
         }
       ],
       "mikronize": [

@@ -3219,7 +3219,7 @@
       "gunduz": {
         "employees": 13,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -3383,7 +3383,7 @@
       "gece": {
         "employees": 8,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
@@ -3526,7 +3526,7 @@
           {
             "row": 0,
             "hat": "201",
-            "color": "ANTRASİT",
+            "color": "AY GRİ",
             "width": 80.0,
             "length": 217.0,
             "m2_one": 1.736,
@@ -3567,64 +3567,64 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 4404.0,
-          "gece": 0.0,
+          "gunduz": 4404,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 7687.0,
-          "gece": 0.0,
+          "gunduz": 7687,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "arizali"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 2254.0,
-          "gece": 1230.0,
+          "gunduz": 2254,
+          "gece": 1230,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 2091.0,
-          "gece": 0.0,
+          "gunduz": 2091,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1956.0,
-          "gece": 1120.0,
+          "gunduz": 1956,
+          "gece": 1120,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 2165.0,
-          "gece": 0.0,
+          "gunduz": 2165,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 575.0,
-          "gece": 0.0,
+          "gunduz": 575,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 1224.0,
-          "gece": 0.0,
+          "gunduz": 1224,
+          "gece": 0,
           "status": "normal"
         }
       ],
@@ -3636,7 +3636,7 @@
           "gunduz_sarj": 64,
           "gece_sarj": 0,
           "gunduz_kg": 17641.6,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 17641.6
         }
       ],

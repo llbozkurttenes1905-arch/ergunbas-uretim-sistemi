@@ -1449,14 +1449,6 @@
   },
   "raw_materials_stock": [
     {
-      "material": "KALSİT 5K",
-      "current_stock_kg": 60000.0,
-      "min_stock_kg": 12000.0,
-      "silo_capacity_kg": 50000.0,
-      "lead_time_days": 3,
-      "unit": "kg"
-    },
-    {
       "material": "40 AMBAR",
       "current_stock_kg": 65000.0,
       "min_stock_kg": 25000.0,
@@ -1481,14 +1473,6 @@
       "unit": "kg"
     },
     {
-      "material": "PE WAX",
-      "current_stock_kg": 4000.0,
-      "min_stock_kg": 400.0,
-      "silo_capacity_kg": 2500.0,
-      "lead_time_days": 3,
-      "unit": "kg"
-    },
-    {
       "material": "TALAŞ",
       "current_stock_kg": 14000.0,
       "min_stock_kg": 5000.0,
@@ -1497,8 +1481,8 @@
       "unit": "kg"
     },
     {
-      "material": "KALSİT 1K",
-      "current_stock_kg": 45000.0,
+      "material": "KALSİT 5K",
+      "current_stock_kg": 60000.0,
       "min_stock_kg": 12000.0,
       "silo_capacity_kg": 50000.0,
       "lead_time_days": 3,
@@ -1506,7 +1490,7 @@
     },
     {
       "material": "PVC",
-      "current_stock_kg": 28000.0,
+      "current_stock_kg": 10000.0,
       "min_stock_kg": 15000.0,
       "silo_capacity_kg": 60000.0,
       "lead_time_days": 3,
@@ -1521,10 +1505,26 @@
       "unit": "kg"
     },
     {
+      "material": "KALSİT 1K",
+      "current_stock_kg": 45000.0,
+      "min_stock_kg": 12000.0,
+      "silo_capacity_kg": 50000.0,
+      "lead_time_days": 3,
+      "unit": "kg"
+    },
+    {
       "material": "CPE",
       "current_stock_kg": 3000.0,
       "min_stock_kg": 800.0,
       "silo_capacity_kg": 5000.0,
+      "lead_time_days": 3,
+      "unit": "kg"
+    },
+    {
+      "material": "PE WAX",
+      "current_stock_kg": 4000.0,
+      "min_stock_kg": 400.0,
+      "silo_capacity_kg": 2500.0,
       "lead_time_days": 3,
       "unit": "kg"
     }

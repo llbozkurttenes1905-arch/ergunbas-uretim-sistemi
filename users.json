@@ -48,6 +48,13 @@
       "password": "123456",
       "role": "viewer",
       "name": "MUHAMMED  VAZZE"
+    },
+    {
+      "id": "u11_Fer",
+      "username": "Ferhat ERGÜNBAŞ",
+      "password": "34ER3100",
+      "role": "admin",
+      "name": "Ferhat ERGÜNBAŞ"
     }
   ]
 }

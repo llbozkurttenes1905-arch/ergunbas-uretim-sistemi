@@ -10946,9 +10946,9 @@
             "hat": "109",
             "product": "50X80 PERVAZ",
             "length": 2.2,
-            "speed": 1.3,
-            "heads": 1.0,
-            "hours": 12.0,
+            "speed": 1.43,
+            "heads": 2.0,
+            "hours": 10.0,
             "prod_kg": 1190.0,
             "fire_kg": 0.0,
             "qty": 810,
@@ -10988,12 +10988,21 @@
           "desc": ""
         },
         {
-          "shift": "Gündüz",
-          "hat": "1",
-          "fire_reason": "",
+          "shift": "Gece",
+          "hat": "GENEL",
+          "fire_reason": "ELEKTRİK ŞEBEKE DALGALANMASI",
           "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp temizliği.",
+          "down_min": 120.0,
           "desc": ""
         }
       ],
@@ -11006,13 +11015,13 @@
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 3539,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 3309,
           "gece": 0,
           "status": "normal"
         },
@@ -11026,44 +11035,65 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 3034,
+          "gece": 3275,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
+          "gunduz": 1945,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1650,
+          "gece": 2547,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
+          "gunduz": 1499,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 595,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 1225,
           "gece": 0,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 46,
+          "gece_sarj": 0,
+          "gunduz_kg": 12679.9,
+          "gece_kg": 0,
+          "toplam_kg": 12679.9
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Levha Renkli (Takoz)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 20,
+          "gece_sarj": 0,
+          "gunduz_kg": 6686,
+          "gece_kg": 0,
+          "toplam_kg": 6686
+        }
+      ],
+      "mixer_emp_gunduz": 11,
+      "mixer_emp_gece": 1
     }
   }
 }

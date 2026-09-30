@@ -3649,7 +3649,7 @@
       "gunduz": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "Mehmet SAĞLAM",
+        "operator": "Aykut YALÇIN",
         "extruders": [
           {
             "row": 0,
@@ -3661,8 +3661,8 @@
             "hours": 8.5,
             "prod_kg": 748.0,
             "fire_kg": 0.0,
-            "qty": 440,
-            "sets": 88.0
+            "qty": 0,
+            "sets": 0.0
           },
           {
             "row": 0,
@@ -3673,9 +3673,9 @@
             "heads": 2.0,
             "hours": 7.0,
             "prod_kg": 648.0,
-            "fire_kg": 328.88,
-            "qty": 199,
-            "sets": 56.9
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0.0
           },
           {
             "row": 0,
@@ -3755,7 +3755,7 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "Aykut YALÇIN",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,

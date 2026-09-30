@@ -7046,9 +7046,9 @@
             "heads": 2.0,
             "hours": 10.0,
             "prod_kg": 903.0,
-            "fire_kg": 219.53,
-            "qty": 285,
-            "sets": 81.4
+            "fire_kg": 0.0,
+            "qty": 450,
+            "sets": 128.6
           },
           {
             "row": 0,
@@ -7059,9 +7059,9 @@
             "heads": 2.0,
             "hours": 10.0,
             "prod_kg": 687.0,
-            "fire_kg": 496.35,
-            "qty": 190,
-            "sets": 54.3
+            "fire_kg": 0.0,
+            "qty": 400,
+            "sets": 114.3
           },
           {
             "row": 0,
@@ -7325,64 +7325,64 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0.0,
-          "gece": 0.0,
+          "gunduz": 0,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 4146.0,
-          "gece": 0.0,
+          "gunduz": 4146,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 4545.0,
-          "gece": 0.0,
+          "gunduz": 4545,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 850.0,
-          "gece": 0.0,
+          "gunduz": 850,
+          "gece": 0,
           "status": "normal"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 2305.0,
-          "gece": 2765.0,
+          "gunduz": 2305,
+          "gece": 2765,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 1606.0,
-          "gece": 0.0,
+          "gunduz": 1606,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1895.0,
-          "gece": 2271.0,
+          "gunduz": 1895,
+          "gece": 2271,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 1195.0,
-          "gece": 0.0,
+          "gunduz": 1195,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 1053.0,
-          "gece": 0.0,
+          "gunduz": 1053,
+          "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 612.0,
-          "gece": 0.0,
+          "gunduz": 612,
+          "gece": 0,
           "status": "normal"
         }
       ],
@@ -7394,7 +7394,7 @@
           "gunduz_sarj": 39,
           "gece_sarj": 0,
           "gunduz_kg": 10750.349999999999,
-          "gece_kg": 0.0,
+          "gece_kg": 0,
           "toplam_kg": 10750.349999999999
         }
       ],

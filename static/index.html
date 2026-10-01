@@ -3023,18 +3023,26 @@
                     footEl.innerHTML = '';
                     return;
                 }
-                bodyEl.innerHTML = summary.machines.map(m => `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="p-2.5 font-bold text-white">Hat ${m.hat}</td>
-                        <td class="p-2.5 text-slate-300">${m.products}</td>
-                        <td class="p-2.5 text-right ${m.hours > 0 ? 'text-slate-300' : 'text-slate-600'}">${m.hours > 0 ? m.hours + ' sa' : '—'}</td>
-                        <td class="p-2.5 text-right font-semibold text-white">${m.prod_kg.toLocaleString('tr-TR')}</td>
-                        <td class="p-2.5 text-right font-semibold text-amber-400">${m.fire_kg.toLocaleString('tr-TR')}</td>
-                        <td class="p-2.5 text-right font-semibold ${m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400')}">%${m.fire_ratio}</td>
+                bodyEl.innerHTML = summary.machines.map(m => {
+                    const isIdle = (m.prod_kg === 0 && m.hours === 0);
+                    const prodDisplay = isIdle
+                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-red-950/60 text-red-400 border border-red-800/40">Çalışmadı / Boşta</span>'
+                        : m.products;
+                    return `
+                    <tr class="hover:bg-slate-800/40 transition ${isIdle ? 'opacity-70' : ''}">
+                        <td class="p-2.5 font-bold text-white flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full ${isIdle ? 'bg-red-500' : 'bg-emerald-500'}"></span>
+                            Hat ${m.hat}
+                        </td>
+                        <td class="p-2.5 text-slate-300">${prodDisplay}</td>
+                        <td class="p-2.5 text-right ${m.hours > 0 ? 'text-slate-300 font-medium' : 'text-slate-600'}">${m.hours > 0 ? m.hours + ' sa' : '—'}</td>
+                        <td class="p-2.5 text-right font-semibold ${isIdle ? 'text-slate-600' : 'text-white'}">${m.prod_kg > 0 ? m.prod_kg.toLocaleString('tr-TR') : '0'}</td>
+                        <td class="p-2.5 text-right font-semibold ${m.fire_kg > 0 ? 'text-amber-400' : 'text-slate-600'}">${m.fire_kg > 0 ? m.fire_kg.toLocaleString('tr-TR') : '0'}</td>
+                        <td class="p-2.5 text-right font-semibold ${isIdle ? 'text-slate-600' : (m.fire_ratio > 15 ? 'text-red-400' : (m.fire_ratio > 8 ? 'text-orange-400' : 'text-emerald-400'))}">%${m.fire_ratio}</td>
                         <td class="p-2.5 text-right font-bold ${m.kg_per_hour > 0 ? 'text-emerald-400' : 'text-slate-600'}">${m.kg_per_hour > 0 ? m.kg_per_hour.toLocaleString('tr-TR') : '—'}</td>
                         <td class="p-2.5 text-right font-bold ${m.kg_per_hour_gross > 0 ? 'text-sky-400' : 'text-slate-600'}">${m.kg_per_hour_gross > 0 ? m.kg_per_hour_gross.toLocaleString('tr-TR') : '—'}</td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
 
                 footEl.innerHTML = `
                     <tr class="bg-slate-950/80 border-t-2 ${colorClass} font-black">

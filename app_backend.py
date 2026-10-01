@@ -3769,7 +3769,197 @@ def export_daily_pdf(date: Optional[str] = None):
     door_stats = target_day.get("door_stats", {})
     completable_doors = door_stats.get("completable_doors", 0)
 
-    # Ekstrüder ve Levha Hat Detaylarını Topla
+    # Duruş kayıtlarını hat bazında indeksle
+    dt_by_hat = {}
+    for dt in day_obj.get("downtimes", []):
+        h = str(dt.get("hat", "")).strip()
+        reason = dt.get("down_reason") or dt.get("fire_reason") or dt.get("desc") or "Duruş"
+        d_min = int(float(dt.get("down_min", 0) or 0))
+        text = f"{reason} ({d_min} dk)" if d_min > 0 else reason
+        dt_by_hat.setdefault(h, []).append(text)
+
+    # Kayıtlı ve gün verisinde yer alan tüm hatları tespit et
+    reg_machines = data.get("machines", [])
+    known_ext_hats = [str(m.get("name") or m.get("hat")) for m in reg_machines if m.get("type") == "extruder"]
+    for s_name in ["gunduz", "gece"]:
+        for e in day_obj.get(s_name, {}).get("extruders", []):
+            h_str = str(e.get("hat", "")).strip()
+            if h_str and h_str not in known_ext_hats:
+                known_ext_hats.append(h_str)
+    if not known_ext_hats:
+        known_ext_hats = ["101", "102", "103", "104", "105", "106", "107", "108", "109"]
+    known_ext_hats = sorted(list(set(known_ext_hats)), key=lambda x: int(x) if x.isdigit() else 999)
+
+    known_lev_hats = [str(m.get("name") or m.get("hat")) for m in reg_machines if m.get("type") == "levha"]
+    for s_name in ["gunduz", "gece"]:
+        for lev in day_obj.get(s_name, {}).get("levha", []):
+            h_str = str(lev.get("hat", "")).strip()
+            if h_str and h_str not in known_lev_hats:
+                known_lev_hats.append(h_str)
+    if not known_lev_hats:
+        known_lev_hats = ["201"]
+    known_lev_hats = sorted(list(set(known_lev_hats)), key=lambda x: int(x) if x.isdigit() else 999)
+
+    # ---- 1) MAKİNE & HAT OPERASYONEL ÇALIŞMA DURUMU MATRİSİ (ÇALIŞAN & ÇALIŞMAYAN HATLAR) ----
+    mach_status_rows = []
+    active_hat_count = 0
+    idle_hat_count = 0
+    idle_hat_names = []
+    total_mach_hours = 0.0
+    total_mach_prod_kg = 0.0
+
+    # Ekstrüder Hatları Durum Analizi
+    for h in known_ext_hats:
+        g_exts = [e for e in day_obj.get("gunduz", {}).get("extruders", []) if str(e.get("hat", "")).strip() == h]
+        n_exts = [e for e in day_obj.get("gece", {}).get("extruders", []) if str(e.get("hat", "")).strip() == h]
+
+        g_p = sum(float(e.get("prod_kg", 0) or 0) for e in g_exts)
+        g_h = sum(float(e.get("hours", 0) or 0) for e in g_exts)
+        g_prods = [e.get("product") for e in g_exts if e.get("product")]
+        g_working = (g_p > 0 or g_h > 0 or len(g_prods) > 0)
+
+        n_p = sum(float(e.get("prod_kg", 0) or 0) for e in n_exts)
+        n_h = sum(float(e.get("hours", 0) or 0) for e in n_exts)
+        n_prods = [e.get("product") for e in n_exts if e.get("product")]
+        n_working = (n_p > 0 or n_h > 0 or len(n_prods) > 0)
+
+        tot_p = g_p + n_p
+        tot_h = g_h + n_h
+        total_mach_hours += tot_h
+        total_mach_prod_kg += tot_p
+        line_working = (g_working or n_working)
+
+        if line_working:
+            active_hat_count += 1
+        else:
+            idle_hat_count += 1
+            idle_hat_names.append(f"Hat {h}")
+
+        if g_working:
+            prod_str = ", ".join(g_prods) if g_prods else "Üretim Var"
+            g_cell = f"<font color='#16A34A'><b>✓ ÇALIŞTI</b></font><br/><font size=6 color='#475569'>{prod_str} ({g_p:,.0f} kg · {g_h:.1f} sa)</font>"
+        else:
+            g_cell = "<font color='#DC2626'><b>✗ ÇALIŞMADI</b></font><br/><font size=6 color='#94A3B8'>Boşta / Üretim Yok</font>"
+
+        if n_working:
+            prod_str = ", ".join(n_prods) if n_prods else "Üretim Var"
+            n_cell = f"<font color='#16A34A'><b>✓ ÇALIŞTI</b></font><br/><font size=6 color='#475569'>{prod_str} ({n_p:,.0f} kg · {n_h:.1f} sa)</font>"
+        else:
+            n_cell = "<font color='#DC2626'><b>✗ ÇALIŞMADI</b></font><br/><font size=6 color='#94A3B8'>Boşta / Üretim Yok</font>"
+
+        d_reasons = dt_by_hat.get(h, [])
+        if g_working and n_working:
+            if d_reasons or tot_h < 23.5:
+                status_cell = "<font color='#D97706'><b>KISMİ ÇALIŞMA</b></font>"
+            else:
+                status_cell = "<font color='#16A34A'><b>TAM GÜN AKTİF</b></font>"
+        elif g_working or n_working:
+            status_cell = "<font color='#0284C7'><b>TEK VARDİYA</b></font>"
+        else:
+            status_cell = "<font color='#DC2626'><b>ÇALIŞMADI</b></font>"
+
+        if d_reasons:
+            note_cell = f"<font color='#D97706'>{', '.join(d_reasons)}</font>"
+        elif not line_working:
+            note_cell = "<font color='#94A3B8'>Planlı Duruş / Üretim Yok</font>"
+        else:
+            note_cell = "<font color='#16A34A'>Normal Çalışma</font>"
+
+        mach_status_rows.append([
+            f"Hat {h}",
+            "Ekstrüder",
+            g_cell,
+            n_cell,
+            f"{tot_h:.1f} sa",
+            f"{tot_p:,.1f} kg",
+            status_cell,
+            note_cell
+        ])
+
+    # Levha Hatları Durum Analizi
+    for h in known_lev_hats:
+        g_levs = [e for e in day_obj.get("gunduz", {}).get("levha", []) if str(e.get("hat", "")).strip() == h]
+        n_levs = [e for e in day_obj.get("gece", {}).get("levha", []) if str(e.get("hat", "")).strip() == h]
+
+        g_p = sum(float(e.get("total_kg", 0) or 0) for e in g_levs)
+        g_h = sum(float(e.get("hours", 0) or 0) for e in g_levs)
+        g_colors = [e.get("color") for e in g_levs if e.get("color")]
+        g_working = (g_p > 0 or g_h > 0 or len(g_colors) > 0)
+
+        n_p = sum(float(e.get("total_kg", 0) or 0) for e in n_levs)
+        n_h = sum(float(e.get("hours", 0) or 0) for e in n_levs)
+        n_colors = [e.get("color") for e in n_levs if e.get("color")]
+        n_working = (n_p > 0 or n_h > 0 or len(n_colors) > 0)
+
+        tot_p = g_p + n_p
+        tot_h = g_h + n_h
+        total_mach_hours += tot_h
+        total_mach_prod_kg += tot_p
+        line_working = (g_working or n_working)
+
+        if line_working:
+            active_hat_count += 1
+        else:
+            idle_hat_count += 1
+            idle_hat_names.append(f"Levha {h}")
+
+        if g_working:
+            col_str = ", ".join(g_colors) if g_colors else "Levha"
+            g_cell = f"<font color='#16A34A'><b>✓ ÇALIŞTI</b></font><br/><font size=6 color='#475569'>{col_str} ({g_p:,.0f} kg · {g_h:.1f} sa)</font>"
+        else:
+            g_cell = "<font color='#DC2626'><b>✗ ÇALIŞMADI</b></font><br/><font size=6 color='#94A3B8'>Boşta / Üretim Yok</font>"
+
+        if n_working:
+            col_str = ", ".join(n_colors) if n_colors else "Levha"
+            n_cell = f"<font color='#16A34A'><b>✓ ÇALIŞTI</b></font><br/><font size=6 color='#475569'>{col_str} ({n_p:,.0f} kg · {n_h:.1f} sa)</font>"
+        else:
+            n_cell = "<font color='#DC2626'><b>✗ ÇALIŞMADI</b></font><br/><font size=6 color='#94A3B8'>Boşta / Üretim Yok</font>"
+
+        d_reasons = dt_by_hat.get(h, [])
+        if g_working and n_working:
+            if d_reasons or tot_h < 23.5:
+                status_cell = "<font color='#D97706'><b>KISMİ ÇALIŞMA</b></font>"
+            else:
+                status_cell = "<font color='#16A34A'><b>TAM GÜN AKTİF</b></font>"
+        elif g_working or n_working:
+            status_cell = "<font color='#0284C7'><b>TEK VARDİYA</b></font>"
+        else:
+            status_cell = "<font color='#DC2626'><b>ÇALIŞMADI</b></font>"
+
+        if d_reasons:
+            note_cell = f"<font color='#D97706'>{', '.join(d_reasons)}</font>"
+        elif not line_working:
+            note_cell = "<font color='#94A3B8'>Planlı Duruş / Üretim Yok</font>"
+        else:
+            note_cell = "<font color='#16A34A'>Normal Çalışma</font>"
+
+        mach_status_rows.append([
+            f"Levha {h}",
+            "Levha",
+            g_cell,
+            n_cell,
+            f"{tot_h:.1f} sa",
+            f"{tot_p:,.1f} kg",
+            status_cell,
+            note_cell
+        ])
+
+    tot_hats = len(known_ext_hats) + len(known_lev_hats)
+    hat_utilization = (active_hat_count / tot_hats * 100.0) if tot_hats > 0 else 0.0
+    idle_hat_names_str = ", ".join(idle_hat_names) if idle_hat_names else "Yok"
+
+    mach_status_rows.append([
+        "TOPLAM",
+        f"{tot_hats} Hat",
+        f"<font color='#16A34A'><b>{active_hat_count} Çalışan</b></font>",
+        f"<font color='#DC2626'><b>{idle_hat_count} Çalışmayan</b></font>",
+        f"{total_mach_hours:.1f} sa",
+        f"{total_mach_prod_kg:,.1f} kg",
+        f"%{hat_utilization:.1f} Verim",
+        f"{idle_hat_count} Hat Boşta" if idle_hat_count > 0 else "Tüm Hatlar Aktif"
+    ])
+
+    # ---- 2) EKSTRÜDER VE LEVHA DETAYLI ÜRETİM TABLOLARI (ÇALIŞMAYANLAR DAHİL) ----
     ext_rows = []
     lev_rows = []
     ext_total_qty = 0
@@ -3777,39 +3967,78 @@ def export_daily_pdf(date: Optional[str] = None):
 
     for shift_name, shift_lbl in [("gunduz", "Gündüz"), ("gece", "Gece")]:
         s_data = day_obj.get(shift_name, {})
+        shift_ext_map = {}
         for ext in s_data.get("extruders", []):
-            p_kg = float(ext.get("prod_kg", 0) or 0)
-            f_kg = float(ext.get("fire_kg", 0) or 0)
-            qty = int(float(ext.get("qty", 0) or 0))
-            if p_kg > 0 or f_kg > 0 or ext.get("product"):
-                try:
-                    h_val = int(float(ext.get("heads", 1) or 1))
-                except Exception:
-                    h_val = 1
-                ext_total_qty += qty
+            h_str = str(ext.get("hat", "")).strip()
+            shift_ext_map.setdefault(h_str, []).append(ext)
+
+        for h in known_ext_hats:
+            ext_list = shift_ext_map.get(h, [])
+            active_exts = [e for e in ext_list if float(e.get("prod_kg", 0) or 0) > 0 or float(e.get("fire_kg", 0) or 0) > 0 or e.get("product")]
+            if active_exts:
+                for ext in active_exts:
+                    p_kg = float(ext.get("prod_kg", 0) or 0)
+                    f_kg = float(ext.get("fire_kg", 0) or 0)
+                    qty = int(float(ext.get("qty", 0) or 0))
+                    try:
+                        h_val = int(float(ext.get("heads", 1) or 1))
+                    except Exception:
+                        h_val = 1
+                    ext_total_qty += qty
+                    ext_rows.append([
+                        shift_lbl,
+                        f"Hat {h}",
+                        f"{h_val} Kafa",
+                        ext.get("product", "") or "—",
+                        f"{qty:,} ad",
+                        f"{p_kg:,.1f} kg",
+                        f"{f_kg:,.1f} kg"
+                    ])
+            else:
+                d_reasons = dt_by_hat.get(h, [])
+                d_txt = f"({', '.join(d_reasons)})" if d_reasons else "(Boşta / Üretim Yok)"
                 ext_rows.append([
                     shift_lbl,
-                    str(ext.get("hat", "")),
-                    f"{h_val} Kafa",
-                    ext.get("product", "") or "—",
-                    f"{qty:,} ad",
-                    f"{p_kg:,.1f} kg",
-                    f"{f_kg:,.1f} kg"
+                    f"Hat {h}",
+                    "—",
+                    f"<font color='#DC2626'><b>ÇALIŞMADI / BOŞTA</b></font> <font size=6 color='#64748B'>{d_txt}</font>",
+                    "0 ad",
+                    "0.0 kg",
+                    "0.0 kg"
                 ])
 
+        shift_lev_map = {}
         for lev in s_data.get("levha", []):
-            p_kg = float(lev.get("total_kg", 0) or 0)
-            f_kg = float(lev.get("dead_fire_kg", 0) or 0)
-            qty = int(float(lev.get("qty", 0) or 0))
-            if p_kg > 0 or f_kg > 0 or lev.get("color"):
-                lev_total_qty += qty
+            h_str = str(lev.get("hat", "")).strip()
+            shift_lev_map.setdefault(h_str, []).append(lev)
+
+        for h in known_lev_hats:
+            lev_list = shift_lev_map.get(h, [])
+            active_levs = [e for e in lev_list if float(e.get("total_kg", 0) or 0) > 0 or float(e.get("dead_fire_kg", 0) or 0) > 0 or e.get("color")]
+            if active_levs:
+                for lev in active_levs:
+                    p_kg = float(lev.get("total_kg", 0) or 0)
+                    f_kg = float(lev.get("dead_fire_kg", 0) or 0)
+                    qty = int(float(lev.get("qty", 0) or 0))
+                    lev_total_qty += qty
+                    lev_rows.append([
+                        shift_lbl,
+                        f"Hat {h}",
+                        f"Levha ({lev.get('color', '')})" if lev.get("color") else "Levha",
+                        f"{qty:,} plk",
+                        f"{p_kg:,.1f} kg",
+                        f"{f_kg:,.1f} kg"
+                    ])
+            else:
+                d_reasons = dt_by_hat.get(h, [])
+                d_txt = f"({', '.join(d_reasons)})" if d_reasons else "(Boşta / Üretim Yok)"
                 lev_rows.append([
                     shift_lbl,
-                    str(lev.get("hat", "")),
-                    f"Levha ({lev.get('color', '')})" if lev.get("color") else "Levha",
-                    f"{qty:,} plk",
-                    f"{p_kg:,.1f} kg",
-                    f"{f_kg:,.1f} kg"
+                    f"Hat {h}",
+                    f"<font color='#DC2626'><b>ÇALIŞMADI / BOŞTA</b></font> <font size=6 color='#64748B'>{d_txt}</font>",
+                    "0 plk",
+                    "0.0 kg",
+                    "0.0 kg"
                 ])
 
     buf = BytesIO()
@@ -3965,6 +4194,28 @@ def export_daily_pdf(date: Optional[str] = None):
     v_rows.append(["GENEL TOPLAM", f"{tot_emp} kişi", f"{tot_prod_kg:,.1f} kg", f"{tot_fire_kg:,.1f} kg", f"%{fire_ratio:.2f}", f"{kg_per_emp:.1f} kg", f"{kg_per_hour:.1f} kg/sa"])
     t_v = make_table(v_head, v_rows, col_widths=[3.8 * cm, 2.2 * cm, 2.7 * cm, 2.7 * cm, 2.2 * cm, 2.5 * cm, 2.5 * cm], align_cols=['L', 'R', 'R', 'R', 'R', 'R', 'R'])
     story.append(t_v)
+    story.append(Spacer(1, 4))
+
+    # ---- FABRİKA HATLARININ ÇALIŞMA VE OPERASYONEL DURUMU (ÇALIŞAN & ÇALIŞMAYAN HATLAR) ----
+    story.append(Paragraph("Fabrika Hatları Operasyonel Durumu (Çalışan & Çalışmayan Hatlar)", h2_style))
+    summary_text = (
+        f"<b>Operasyonel Özet:</b> Toplam <b>{tot_hats}</b> Hat · "
+        f"<b><font color='#16A34A'>{active_hat_count} Hat Çalıştı (Aktif)</font></b> · "
+        f"<b><font color='#DC2626'>{idle_hat_count} Hat Çalışmadı</font></b> "
+        f"{f'(<b><font color=\"#DC2626\">{idle_hat_names_str}</font></b>)' if idle_hat_count > 0 else ''} · "
+        f"Hat Çalışma Oranı: <b>%{hat_utilization:.1f}</b>"
+    )
+    story.append(Paragraph(summary_text, subtitle_style))
+    story.append(Spacer(1, 3))
+
+    mach_head = ["Hat / Makine", "Tür", "Gündüz Vardiyası", "Gece Vardiyası", "Net Süre", "Net Üretim", "Genel Durum", "Duruş / Not"]
+    t_mach = make_table(
+        mach_head,
+        mach_status_rows,
+        col_widths=[1.7 * cm, 1.5 * cm, 3.8 * cm, 3.8 * cm, 1.4 * cm, 2.0 * cm, 2.1 * cm, 2.3 * cm],
+        align_cols=['C', 'C', 'L', 'L', 'R', 'R', 'C', 'L']
+    )
+    story.append(t_mach)
     story.append(Spacer(1, 4))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----

@@ -11989,23 +11989,42 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "Soğutma suyu arızası.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Helezon arızası.",
+          "down_min": 120.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 3192,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 4988,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 6189,
           "gece": 0,
           "status": "normal"
         },
@@ -12019,44 +12038,65 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 3139,
+          "gece": 3920,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
+          "gunduz": 1829,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1817,
+          "gece": 2395,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
+          "gunduz": 2067,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 1400,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 1907,
           "gece": 0,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 45,
+          "gece_sarj": 0,
+          "gunduz_kg": 12404.249999999998,
+          "gece_kg": 0,
+          "toplam_kg": 12404.249999999998
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli (Takoz)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 16,
+          "gece_sarj": 0,
+          "gunduz_kg": 5348.8,
+          "gece_kg": 0,
+          "toplam_kg": 5348.8
+        }
+      ],
+      "mixer_emp_gunduz": 11,
+      "mixer_emp_gece": 1
     }
   }
 }

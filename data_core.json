@@ -1436,8 +1436,8 @@
   ],
   "monthly_targets": {
     "2026-09": {
-      "target_doors": 12600,
-      "work_days": 28,
+      "target_doors": 13050,
+      "work_days": 29,
       "daily_target": 450
     },
     "2026-08": {

@@ -229,6 +229,27 @@ def github_put_file(path, data_dict, message):
         return False
 
 
+def github_delete_file(path, message):
+    """Bir dosyayı GitHub reposundan siler (DELETE Contents API).
+    Başarılıysa True döner. Asla exception fırlatmaz."""
+    if not _github_enabled():
+        return False
+    try:
+        _, sha = github_get_file(path)
+        if not sha:
+            return True
+        url = f"{GITHUB_API_BASE}/repos/{GITHUB_REPO}/contents/{path}"
+        payload = {"message": message, "sha": sha, "branch": GITHUB_BRANCH}
+        result, status = _github_request("DELETE", url, payload)
+        if status not in (200, 204):
+            print(f"[github_delete_file] '{path}' silinemedi (HTTP {status}): {result}")
+            return False
+        return True
+    except Exception as e:
+        print(f"[github_delete_file] '{path}' silinirken hata: {e}")
+        return False
+
+
 def load_users():
     global _users_cache
     if _users_cache is not None:
@@ -381,6 +402,31 @@ def load_data():
             return _data_cache
 
     # GitHub devre dışı/tamamen başarısızsa yerel dosyaya düş
+    core_path = os.path.join(APP_DIR, CORE_FILE_NAME)
+    index_path = os.path.join(APP_DIR, INDEX_FILE_NAME)
+    if os.path.exists(core_path):
+        with open(core_path, "r", encoding="utf-8") as f:
+            core = json.load(f)
+        month_keys = []
+        if os.path.exists(index_path):
+            with open(index_path, "r", encoding="utf-8") as f:
+                month_keys = json.load(f).get("months", [])
+        daily_data = {}
+        for mk in month_keys:
+            df = os.path.join(APP_DIR, _days_filename(mk))
+            if os.path.exists(df):
+                with open(df, "r", encoding="utf-8") as f:
+                    daily_data.update(json.load(f).get("days", {}))
+        _data_cache = {
+            "machines": core.get("machines", []),
+            "products": core.get("products", []),
+            "mixer_recipes": core.get("mixer_recipes", []),
+            "monthly_targets": core.get("monthly_targets", {}),
+            "raw_materials_stock": core.get("raw_materials_stock", []),
+            "daily_data": daily_data
+        }
+        return _data_cache
+
     if not os.path.exists(DATA_FILE):
         _data_cache = {"machines": [], "products": [], "mixer_recipes": [], "monthly_targets": {}, "raw_materials_stock": [], "daily_data": {}}
         return _data_cache
@@ -424,6 +470,20 @@ def save_data(data):
     month_key_list = sorted(by_month.keys())
     with open(os.path.join(APP_DIR, INDEX_FILE_NAME), "w", encoding="utf-8") as f:
         json.dump({"months": month_key_list}, f, ensure_ascii=False, indent=2)
+
+    # 5) Boş kalan veya silinmiş eski ay dosyalarını yerelden ve GitHub'dan temizle
+    for fn in os.listdir(APP_DIR):
+        if fn.startswith("data_days_") and fn.endswith(".json") and fn != INDEX_FILE_NAME:
+            old_mk = fn.replace("data_days_", "").replace(".json", "")
+            if old_mk not in by_month:
+                try:
+                    os.remove(os.path.join(APP_DIR, fn))
+                except Exception:
+                    pass
+                if _github_enabled():
+                    github_delete_file(fn, f"{old_mk} ayı verisi silindi (otomatik)")
+                if old_mk in _last_synced_hashes:
+                    del _last_synced_hashes[old_mk]
 
     if not _github_enabled():
         return
@@ -538,6 +598,9 @@ class DailyDataUpdate(BaseModel):
 
 class AddDateRequest(BaseModel):
     date_str: str
+
+class ChangeDateRequest(BaseModel):
+    new_date_str: str
 
 class MonthlyTargetUpdate(BaseModel):
     month_key: str
@@ -3292,6 +3355,19 @@ def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
     data = load_data()
     date_str = req.date_str.strip()
 
+    # Format kontrolü: DD.MM.YYYY
+    parts = date_str.split(".")
+    if len(parts) != 3 or not all(p.isdigit() for p in parts):
+        raise HTTPException(status_code=400, detail="Geçersiz tarih formatı (GG.AA.YYYY bekleniyor).")
+    try:
+        dt = datetime(int(parts[2]), int(parts[1]), int(parts[0])).date()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Geçersiz takvim tarihi.")
+
+    today = datetime.now().date()
+    if (dt - today).days > 1:
+        raise HTTPException(status_code=400, detail=f"Gelecek bir tarih ({date_str}) eklenemez! Bugün: {today.strftime('%d.%m.%Y')}. Lütfen tarihi kontrol edin.")
+
     # Aynı tarih zaten kayıtlıysa mevcut kaydı döndür (tekrar eklemeyi önle)
     existing_key = None
     for k, v in data["daily_data"].items():
@@ -3319,6 +3395,49 @@ def add_new_date(req: AddDateRequest, x_username: Optional[str] = Header(None)):
         save_data(data)
 
     return {"status": "success", "key": key, "date": date_str}
+
+
+@app.post("/api/daily/{date_key}/change_date")
+def change_date(date_key: str, req: ChangeDateRequest, x_username: Optional[str] = Header(None)):
+    require_daily_operator(x_username)
+    data = load_data()
+    if date_key not in data["daily_data"]:
+        raise HTTPException(status_code=404, detail="Gün bulunamadı.")
+
+    new_date = req.new_date_str.strip()
+    parts = new_date.split(".")
+    if len(parts) != 3 or not all(p.isdigit() for p in parts):
+        raise HTTPException(status_code=400, detail="Geçersiz tarih formatı (GG.AA.YYYY bekleniyor).")
+    try:
+        dt = datetime(int(parts[2]), int(parts[1]), int(parts[0])).date()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Geçersiz takvim tarihi.")
+
+    today = datetime.now().date()
+    if (dt - today).days > 1:
+        raise HTTPException(status_code=400, detail=f"Gelecek bir tarih ({new_date}) seçilemez! Bugün: {today.strftime('%d.%m.%Y')}.")
+
+    for k, v in data["daily_data"].items():
+        if k != date_key and v.get("date") == new_date:
+            raise HTTPException(status_code=400, detail=f"Bu tarih ({new_date}) zaten Gün {k} olarak kayıtlı!")
+
+    old_date = data["daily_data"][date_key].get("date", "")
+    data["daily_data"][date_key]["date"] = new_date
+    save_data(data)
+    return {"status": "success", "key": date_key, "old_date": old_date, "new_date": new_date}
+
+
+@app.delete("/api/daily/{date_key}")
+def delete_day(date_key: str, x_username: Optional[str] = Header(None)):
+    require_daily_operator(x_username)
+    data = load_data()
+    if date_key not in data["daily_data"]:
+        raise HTTPException(status_code=404, detail="Silinmek istenen gün bulunamadı.")
+
+    deleted_date = data["daily_data"][date_key].get("date", date_key)
+    del data["daily_data"][date_key]
+    save_data(data)
+    return {"status": "success", "deleted_key": date_key, "deleted_date": deleted_date}
 
 @app.post("/api/daily/{date_key}")
 def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Optional[str] = Header(None)):

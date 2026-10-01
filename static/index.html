@@ -183,6 +183,27 @@
         </div>
     </div>
 
+    <!-- MODAL: Tarihi Düzelt / Değiştir -->
+    <div id="modal-change-date" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="calendar-clock" class="w-5 h-5 text-amber-400"></i> Seçili Günün Tarihini Düzelt
+            </h3>
+            <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs space-y-1">
+                <div class="text-slate-400">Mevcut Kayıtlı Tarih: <span id="modal-change-date-current" class="font-bold text-amber-300">--</span></div>
+                <div class="text-slate-500">Makineler, üretimler ve duruşlar aynen korunur; sadece takvim tarihi ve ay grubu taşınır.</div>
+            </div>
+            <div>
+                <label class="text-xs text-slate-400 font-medium mb-1.5 block">Yeni Tarihi Seçin</label>
+                <input type="date" id="modal-change-date-input" class="w-full bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+            <div class="flex gap-3 pt-1">
+                <button onclick="closeChangeDateModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm rounded-xl transition border border-slate-700">İptal</button>
+                <button onclick="confirmChangeDateModal()" class="flex-1 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-black text-sm rounded-xl transition shadow-lg shadow-amber-600/30">Tarihi Güncelle</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Genel Onay (Sil vb.) -->
     <div id="modal-confirm" class="hidden fixed inset-0 z-[9998] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
@@ -1024,6 +1045,12 @@
                     <select id="select-day" onchange="loadDayData()" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-ergunbas-500 focus:outline-none"></select>
                     <button onclick="promptAddNewDate()" class="edit-action daily-edit-action px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-ergunbas-500"></i> Yeni Tarih / Gün Ekle
+                    </button>
+                    <button onclick="openChangeDateModal()" title="Seçili günün tarihini düzelt" class="edit-action daily-edit-action px-3.5 py-2 bg-slate-800 hover:bg-amber-950/60 text-amber-300 hover:text-amber-200 text-xs font-bold rounded-xl transition border border-amber-800/60 flex items-center gap-1.5">
+                        <i data-lucide="calendar-clock" class="w-4 h-4 text-amber-400"></i> Tarihi Düzelt
+                    </button>
+                    <button onclick="deleteCurrentDay()" title="Seçili günü ve verilerini sil" class="edit-action daily-edit-action px-3 py-2 bg-slate-800 hover:bg-red-950/60 text-red-400 hover:text-red-300 text-xs font-bold rounded-xl transition border border-red-800/60 flex items-center gap-1.5">
+                        <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i> Günü Sil
                     </button>
                 </div>
 
@@ -2512,9 +2539,29 @@
 
         function openAddDateModal() {
             const input = document.getElementById('modal-add-date-input');
-            // Varsayılan olarak bugünün tarihini öner (YYYY-MM-DD formatında, <input type="date"> için gerekli)
-            const today = new Date();
-            input.value = today.toISOString().slice(0, 10);
+            // Bugünden 1 gün sonrasını max olarak sınırla (kazara gelecek aylara geçişi engeller)
+            const tomorrow = new Date(Date.now() + 86400000);
+            input.max = tomorrow.toISOString().slice(0, 10);
+
+            // Akıllı varsayılan tarih: En son kayıtlı günün bir sonraki gününü öner (varsa)
+            let suggestedIso = new Date().toISOString().slice(0, 10);
+            if (dashboardData && dashboardData.available_dates && dashboardData.available_dates.length > 0) {
+                try {
+                    const lastEntry = dashboardData.available_dates[dashboardData.available_dates.length - 1];
+                    const [ld, lm, ly] = lastEntry.date.split('.');
+                    const lastDateObj = new Date(parseInt(ly), parseInt(lm) - 1, parseInt(ld));
+                    const nextDateObj = new Date(lastDateObj.getTime() + 86400000);
+                    const todayObj = new Date();
+                    todayObj.setHours(23, 59, 59, 999);
+                    if (nextDateObj <= todayObj) {
+                        const ny = nextDateObj.getFullYear();
+                        const nm = String(nextDateObj.getMonth() + 1).padStart(2, '0');
+                        const nd = String(nextDateObj.getDate()).padStart(2, '0');
+                        suggestedIso = `${ny}-${nm}-${nd}`;
+                    }
+                } catch(e) {}
+            }
+            input.value = suggestedIso;
             document.getElementById('modal-add-date').classList.remove('hidden');
         }
 
@@ -2530,6 +2577,13 @@
                 return;
             }
             const [y, m, d] = rawVal.split('-');
+            const selDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            if (selDate > today) {
+                alert(`Hata: Gelecek bir tarih (${d}.${m}.${y}) için üretim günü açılamaz!\nBugün: ${new Date().toLocaleDateString('tr-TR')}.\nLütfen girdiğiniz ayı ve günü kontrol edin.`);
+                return;
+            }
             const dateStr = `${d}.${m}.${y}`; // DD.MM.YYYY - backend'in beklediği format
 
             try {
@@ -2554,6 +2608,112 @@
                 console.error(networkErr);
                 alert('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.');
             }
+        }
+
+        // ============ GÜNÜN TARİHİNİ DÜZELTME & SİLME ============
+
+        function openChangeDateModal() {
+            const select = document.getElementById('select-day');
+            if (!select || !select.value) {
+                alert('Lütfen önce düzeltmek istediğiniz günü seçin.');
+                return;
+            }
+            const dateLabel = select.options[select.selectedIndex]?.text || '';
+            document.getElementById('modal-change-date-current').textContent = dateLabel;
+
+            const input = document.getElementById('modal-change-date-input');
+            const tomorrow = new Date(Date.now() + 86400000);
+            input.max = tomorrow.toISOString().slice(0, 10);
+            if (dateLabel && dateLabel.includes('.')) {
+                try {
+                    const [d, m, y] = dateLabel.split('.');
+                    input.value = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                } catch(e) {
+                    input.value = new Date().toISOString().slice(0, 10);
+                }
+            } else {
+                input.value = new Date().toISOString().slice(0, 10);
+            }
+            document.getElementById('modal-change-date').classList.remove('hidden');
+        }
+
+        function closeChangeDateModal() {
+            document.getElementById('modal-change-date').classList.add('hidden');
+        }
+
+        async function confirmChangeDateModal() {
+            const select = document.getElementById('select-day');
+            if (!select || !select.value) return;
+            const key = select.value;
+            const input = document.getElementById('modal-change-date-input');
+            const rawVal = input.value;
+            if (!rawVal) {
+                alert('Lütfen yeni bir tarih seçin.');
+                return;
+            }
+            const [y, m, d] = rawVal.split('-');
+            const selDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+            if (selDate > today) {
+                alert(`Hata: Gelecek bir tarih (${d}.${m}.${y}) seçilemez! Lütfen ayı ve günü kontrol edin.`);
+                return;
+            }
+            const newDateStr = `${d}.${m}.${y}`;
+
+            try {
+                const res = await fetch(`/api/daily/${key}/change_date`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser?.username || '' },
+                    body: JSON.stringify({ new_date_str: newDateStr })
+                });
+                if (res.ok) {
+                    closeChangeDateModal();
+                    showToast(`Tarih başarıyla ${newDateStr} olarak düzeltildi!`);
+                    await fetchDashboardAndDates();
+                    document.getElementById('select-day').value = key;
+                    loadDayData();
+                } else {
+                    let msg = 'Tarih düzeltilemedi!';
+                    try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                    alert(msg);
+                }
+            } catch(e) {
+                console.error(e);
+                alert('Sunucuya bağlanılamadı.');
+            }
+        }
+
+        async function deleteCurrentDay() {
+            const select = document.getElementById('select-day');
+            if (!select || !select.value) return;
+            const key = select.value;
+            const dateLabel = select.options[select.selectedIndex]?.text || key;
+
+            openConfirmModal(
+                'Günü Sistemden Sil',
+                `"${dateLabel}" (Gün ${key}) kaydını ve bu güne ait tüm üretim verilerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
+                async () => {
+                    try {
+                        const res = await fetch(`/api/daily/${key}`, {
+                            method: 'DELETE',
+                            headers: { 'X-Username': currentUser?.username || '' }
+                        });
+                        if (res.ok) {
+                            showToast(`${dateLabel} kaydı silindi.`);
+                            await fetchDashboardAndDates();
+                            loadDayData();
+                        } else {
+                            let msg = 'Gün silinemedi!';
+                            try { const err = await res.json(); msg = err.detail || msg; } catch(e) {}
+                            alert(msg);
+                        }
+                    } catch(e) {
+                        console.error(e);
+                        alert('Sunucu hatası.');
+                    }
+                }
+            );
         }
 
         // Genel onay modalı (silme işlemleri için)

@@ -1,0 +1,21 @@
+{
+  "days": {
+    "61": {
+      "day": "61",
+      "date": "30.10.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
+    }
+  }
+}

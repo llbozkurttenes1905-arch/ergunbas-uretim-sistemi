@@ -3014,20 +3014,22 @@
         let dtIsPointerDown = false;
         let dtPointerDownPos = { x: 0, y: 0 };
 
-        // 3D Fabrika Sahası Dünya Koordinatları (2 Paralel Sıra)
+        // 3D Fabrika Sahası Dünya Koordinatları (Image 2 Düzeni: Paralel & Kademeli Hatlar)
         const DT_3D_POSITIONS = {
-            // Ön Sıra (Ekstrüder Hatları)
-            '101': { x: -36, z: 12, name: 'Hat 101', type: 'ext', heads: 1 },
-            '102': { x: -18, z: 12, name: 'Hat 102', type: 'ext', heads: 2 },
-            '103': { x: 0,   z: 12, name: 'Hat 103', type: 'ext', heads: 2 },
-            '104': { x: 18,  z: 12, name: 'Hat 104', type: 'ext', heads: 2 },
-            '105': { x: 36,  z: 12, name: 'Hat 105', type: 'ext', heads: 2 },
-            // Arka Sıra (Ekstrüder Hatları + Levha Hattı)
-            '106': { x: -36, z: -16, name: 'Hat 106', type: 'ext', heads: 1 },
-            '107': { x: -18, z: -16, name: 'Hat 107', type: 'ext', heads: 1 },
-            '108': { x: 0,   z: -16, name: 'Hat 108', type: 'ext', heads: 1 },
-            '109': { x: 18,  z: -16, name: 'Hat 109', type: 'ext', heads: 2 },
-            '201': { x: 36,  z: -16, name: 'Levha 201', type: 'levha', heads: 1 }
+            // Ön Hatlar (Kademeli Düzen)
+            '101': { x: -14, z: 24, name: 'Hat 101', type: 'ext', heads: 1 },
+            '102': { x: 12,  z: 24, name: 'Hat 102', type: 'ext', heads: 2 },
+            // Orta Ön Hatlar
+            '103': { x: -26, z: 8,  name: 'Hat 103', type: 'ext', heads: 2 },
+            '104': { x: -1,  z: 8,  name: 'Hat 104', type: 'ext', heads: 2 },
+            '105': { x: 24,  z: 8,  name: 'Hat 105', type: 'ext', heads: 2 },
+            // Orta Arka Hatlar
+            '106': { x: -26, z: -9, name: 'Hat 106', type: 'ext', heads: 1 },
+            '107': { x: -1,  z: -9, name: 'Hat 107', type: 'ext', heads: 1 },
+            '108': { x: 24,  z: -9, name: 'Hat 108', type: 'ext', heads: 1 },
+            // Arka Hatlar
+            '109': { x: -14, z: -25, name: 'Hat 109', type: 'ext', heads: 2 },
+            '201': { x: 12,  z: -25, name: 'Levha 201', type: 'levha', heads: 1 }
         };
 
         async function loadDigitalTwin() {
@@ -3209,9 +3211,9 @@
             dtScene.background = new THREE.Color(0x060913); // Koyu lacivert/siyah fabrika ortamı
             dtScene.fog = new THREE.FogExp2(0x060913, 0.009);
 
-            // 2. Kamera (Camera)
-            dtCamera = new THREE.PerspectiveCamera(40, width / height, 0.1, 400);
-            dtCamera.position.set(52, 44, 62); // Klasik izometrik SCADA açısı
+            // 2. Kamera (Camera - Image 2 İzometrik Açısı)
+            dtCamera = new THREE.PerspectiveCamera(38, width / height, 0.1, 400);
+            dtCamera.position.set(32, 40, 48);
 
             // 3. Renderer (WebGL)
             dtRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
@@ -3220,26 +3222,26 @@
             dtRenderer.shadowMap.enabled = true;
             dtRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
             dtRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-            dtRenderer.toneMappingExposure = 1.15;
+            dtRenderer.toneMappingExposure = 1.2;
 
             // 4. Orbit Kontrolleri (OrbitControls)
             if (typeof THREE.OrbitControls !== 'undefined') {
                 dtControls = new THREE.OrbitControls(dtCamera, canvas);
                 dtControls.enableDamping = true;
                 dtControls.dampingFactor = 0.05;
-                dtControls.maxPolarAngle = Math.PI / 2.08; // Zeminin altına inmeyi engeller
-                dtControls.minDistance = 15;
-                dtControls.maxDistance = 150;
-                dtControls.target.set(0, 0, -2);
+                dtControls.maxPolarAngle = Math.PI / 2.08;
+                dtControls.minDistance = 12;
+                dtControls.maxDistance = 140;
+                dtControls.target.set(0, 1.2, 0);
                 dtControls.update();
             }
 
-            // 5. Işıklandırma (Industrial Lighting)
-            const ambientLight = new THREE.AmbientLight(0x334155, 1.4);
+            // 5. Işıklandırma (Image 2 Tarzı Yumuşak & Parlak Endüstriyel Stüdyo Işığı)
+            const ambientLight = new THREE.AmbientLight(0x94a3b8, 1.2);
             dtScene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xffffff, 2.2);
-            sunLight.position.set(45, 65, 35);
+            const sunLight = new THREE.DirectionalLight(0xffffff, 2.4);
+            sunLight.position.set(35, 60, 45);
             sunLight.castShadow = true;
             sunLight.shadow.mapSize.width = 2048;
             sunLight.shadow.mapSize.height = 2048;
@@ -3250,16 +3252,16 @@
             sunLight.shadow.camera.right = d;
             sunLight.shadow.camera.top = d;
             sunLight.shadow.camera.bottom = -d;
-            sunLight.shadow.bias = -0.0005;
+            sunLight.shadow.bias = -0.0004;
             dtScene.add(sunLight);
 
             // Mavi/Turkuaz yüksek tavan SCADA projektörü
-            const pointCyan = new THREE.PointLight(0x38bdf8, 2.0, 70);
+            const pointCyan = new THREE.PointLight(0x38bdf8, 1.6, 60);
             pointCyan.position.set(0, 22, 10);
             dtScene.add(pointCyan);
 
-            const pointAmber = new THREE.PointLight(0xf59e0b, 1.2, 60);
-            pointAmber.position.set(-25, 18, -12);
+            const pointAmber = new THREE.PointLight(0xf59e0b, 1.0, 50);
+            pointAmber.position.set(-20, 18, -10);
             dtScene.add(pointAmber);
 
             // 6. Fabrika Zemini & Çevre Mimarisi
@@ -3305,72 +3307,69 @@
         }
 
         /* --------------------------------------------------------
-           ZEMİN, GÜVENLİK YOLLARI VE FABRİKA KOLONLARI
+           ZEMİN, GÜVENLİK YOLLARI VE ENDÜSTRİYEL AYDINLATMA (Image 2 Stili)
         -------------------------------------------------------- */
         function buildFactoryFloorAndArchitecture() {
-            // Ana Beton/Epoksi Zemin
-            const floorGeo = new THREE.PlaneGeometry(125, 90);
+            // Pürüzsüz Koyu Antrasit Sanayi Epoksi Zemini (Image 2'deki gibi)
+            const floorGeo = new THREE.PlaneGeometry(140, 100);
             const floorMat = new THREE.MeshStandardMaterial({
-                color: 0x0c1322,
-                roughness: 0.65,
-                metalness: 0.35
+                color: 0x1a222f, // Koyu antrasit / arduvaz gri
+                roughness: 0.55,
+                metalness: 0.22
             });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             floor.receiveShadow = true;
             dtScene.add(floor);
 
-            // Zemin Izgara Çizgileri
-            const grid = new THREE.GridHelper(120, 60, 0x1e293b, 0x0f172a);
+            // Çok Fevkalade Hafif Zemin Izgara Çizgisi (Gözü yormayan)
+            const grid = new THREE.GridHelper(130, 65, 0x273549, 0x1e2736);
             grid.position.y = 0.01;
             dtScene.add(grid);
 
-            // Sarı Güvenlik Yürüme Yolları (Safety Lines)
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0xeab308 });
+            // Temiz Sarı Güvenlik Sınır Çizgileri (Image 2'deki gibi)
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             
-            // Ön koridor çizgisi
-            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(105, 0.4), lineMat);
+            // Hat Başları Güvenlik Şeridi (Kafaların hemen önünden geçer)
+            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
             lineFront.rotation.x = -Math.PI / 2;
-            lineFront.position.set(0, 0.02, 28);
+            lineFront.position.set(0, 0.02, 34);
             dtScene.add(lineFront);
 
-            // Orta hat servis koridoru
-            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(105, 0.35), lineMat);
+            // Orta hat koridoru
+            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
             lineMid.rotation.x = -Math.PI / 2;
-            lineMid.position.set(0, 0.02, -1);
+            lineMid.position.set(0, 0.02, 0);
             dtScene.add(lineMid);
 
-            // Arka duvar çizgisi
-            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(105, 0.35), lineMat);
+            // Arka koridor çizgisi
+            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
             lineBack.rotation.x = -Math.PI / 2;
-            lineBack.position.set(0, 0.02, -29);
+            lineBack.position.set(0, 0.02, -34);
             dtScene.add(lineBack);
 
-            // Fabrika Arka Duvarı & Taşıyıcı Kolonlar
-            const wallGeo = new THREE.BoxGeometry(115, 18, 1);
-            const wallMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8, metalness: 0.2 });
+            // Fabrika Arka Duvarı & Taşıyıcı Çelik Kolonlar
+            const wallGeo = new THREE.BoxGeometry(130, 20, 1.2);
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85, metalness: 0.15 });
             const wall = new THREE.Mesh(wallGeo, wallMat);
-            wall.position.set(0, 9, -36);
+            wall.position.set(0, 10, -42);
             wall.receiveShadow = true;
             dtScene.add(wall);
 
-            // Taşıyıcı Çelik Kolonlar
-            const colGeo = new THREE.BoxGeometry(2, 18, 2);
-            const colMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.5 });
-            [-45, -20, 5, 30, 50].forEach(cx => {
-                const col = new THREE.Mesh(colGeo, colMat);
-                col.position.set(cx, 9, -35);
+            [-50, -25, 0, 25, 50].forEach(cx => {
+                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, 20, 2.2), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.4 }));
+                col.position.set(cx, 10, -41);
                 col.castShadow = true;
                 dtScene.add(col);
             });
 
             // Seçim Aurası Halkası (Cyan Targeting Reticle)
-            const selGeo = new THREE.RingGeometry(2.4, 2.7, 36);
+            const selGeo = new THREE.RingGeometry(2.1, 2.45, 36);
             const selMat = new THREE.MeshBasicMaterial({
                 color: 0x38bdf8,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.85
+                opacity: 0.9
             });
             dtSelectionRing = new THREE.Mesh(selGeo, selMat);
             dtSelectionRing.rotation.x = -Math.PI / 2;
@@ -3379,7 +3378,7 @@
         }
 
         /* --------------------------------------------------------
-           PROSEDÜREL 3D EKSTRÜDER VE LEVHA MAKİNE MODELLERİ
+           PROSEDÜREL 3D EKSTRÜDER VE LEVHA MAKİNE MODELLERİ (IMAGE 2 BİREBİR)
         -------------------------------------------------------- */
         function buildAll3DMachines() {
             dtMachineGroups = {};
@@ -3398,8 +3397,8 @@
                 dtScene.add(group);
                 dtMachineGroups[id] = group;
 
-                // Zemin 3D Neon Durum Halkası
-                const ringGeo = new THREE.RingGeometry(1.9, 2.25, 36);
+                // Zemin 3D Neon Durum Halkası (Image 2'deki gibi kaide tabanında parlar!)
+                const ringGeo = new THREE.RingGeometry(1.6, 2.0, 36);
                 const ringMat = new THREE.MeshBasicMaterial({
                     color: 0x22c55e,
                     side: THREE.DoubleSide,
@@ -3408,199 +3407,268 @@
                 });
                 const ring = new THREE.Mesh(ringGeo, ringMat);
                 ring.rotation.x = -Math.PI / 2;
-                ring.position.set(cfg.x, 0.03, cfg.z + 4.8);
+                ring.position.set(cfg.x - 9.5, 0.04, cfg.z);
                 dtScene.add(ring);
                 dtFloorRings[id] = ring;
             });
         }
 
-        // PVC Profil Ekstrüzyon Hattı (Hat 101 - 109)
+        // PVC Profil Ekstrüzyon Hattı (Image 2'deki Gerçekçi Endüstriyel Model)
         function create3DProfileExtruderModel(id, name, heads) {
             const group = new THREE.Group();
 
-            // Malzemeler
-            const chassisMat = new THREE.MeshStandardMaterial({ color: 0x1e3a5f, roughness: 0.45, metalness: 0.55 }); // Sanayi mavisi şasi
-            const metalMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.25, metalness: 0.85 });   // Parlak kovan çeliği
-            const heaterMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35, metalness: 0.75 });  // Pirinç/bakır rezistans
-            const hopperMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.2, metalness: 0.9 });    // Paslanmaz huni
-            const tankMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.65 });    // Soğutma havuzu
-            const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65, roughness: 0.1 });
-            const pullerMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5, metalness: 0.5 });
-            const sawMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4, metalness: 0.6 });       // Sarı emniyetli testere
+            // Image 2 Malzeme Paleti:
+            const whiteCabMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.35, metalness: 0.15 }); // Açık gri/beyaz kabin
+            const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4, metalness: 0.55 }); // Sanayi mavisi şasi
+            const darkBlueMat = new THREE.MeshStandardMaterial({ color: 0x075985, roughness: 0.5, metalness: 0.5 });   // Alt kapak panelleri
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.12, metalness: 0.95 });   // Ayna parlaklığında krom
+            const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });       // Paslanmaz çelik kapaklar
+            const brassGaugeMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.25, metalness: 0.85 }); // Gösterge pirinç halka
+            const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.75 }); // Havuz suyu
+            const pvcProfileMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.05 }); // Hattan çıkan beyaz profil
+            const hazardYellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
 
-            // 1. Ana Şasi ve Kumanda Panosu (Base Cabinet)
-            const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.85, 2.0), chassisMat);
-            chassis.position.set(0, 0.42, 0);
-            chassis.castShadow = true;
-            chassis.receiveShadow = true;
-            group.add(chassis);
+            // ==========================================
+            // 1. SOL UÇ: KAİDE SEHPASI & DİE HEAD & KARE HUNİ (Image 2 Sol Kafa)
+            // ==========================================
+            // Beyaz kaide sehpası
+            const headPedestal = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.9, 1.8), whiteCabMat);
+            headPedestal.position.set(-9.5, 0.45, 0);
+            headPedestal.castShadow = true;
+            headPedestal.receiveShadow = true;
+            group.add(headPedestal);
 
-            // Motor ve Redüktör
-            const motor = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.1, 1.3), chassisMat);
-            motor.position.set(0, 1.0, -0.2);
-            motor.castShadow = true;
-            group.add(motor);
+            // Kaide pabuçları
+            [-0.8, 0.8].forEach(fx => {
+                [-0.7, 0.7].forEach(fz => {
+                    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.1, 16), steelMat);
+                    foot.position.set(-9.5 + fx, 0.05, fz);
+                    group.add(foot);
+                });
+            });
 
-            // 2. Kovan (Extruder Barrel)
-            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 4.4, 28), metalMat);
-            barrel.rotation.x = Math.PI / 2;
-            barrel.position.set(0, 1.15, 2.4);
+            // Kaide üstü kalıp taşıyıcı kütüğü
+            const headSupport = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.55, 0.5, 24), steelMat);
+            headSupport.position.set(-9.5, 1.05, 0);
+            headSupport.castShadow = true;
+            group.add(headSupport);
+
+            // Yatay Silindirik Kalıp Kafası (Die Cylinder)
+            const dieCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.6, 28), chromeMat);
+            dieCylinder.rotation.z = Math.PI / 2;
+            dieCylinder.position.set(-9.2, 1.45, 0);
+            dieCylinder.castShadow = true;
+            group.add(dieCylinder);
+
+            // Kalıp flanş bilezikleri
+            [-9.7, -8.7].forEach(flangeX => {
+                const flange = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.06, 12, 28), steelMat);
+                flange.rotation.y = Math.PI / 2;
+                flange.position.set(flangeX, 1.45, 0);
+                group.add(flange);
+            });
+
+            // Kafa üstü Ko-Ekstrüzyon Kare Hunisi (Image 2'deki kare huni)
+            const coexHopper = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.85, 0.85), chromeMat);
+            coexHopper.position.set(-9.5, 2.2, 0);
+            coexHopper.castShadow = true;
+            group.add(coexHopper);
+
+            // ==========================================
+            // 2. ORTA SOL: VAKUM KALİBRASYON & SU HAVUZU (Image 2 Mavi Gövde)
+            // ==========================================
+            const tankLength = 8.5;
+            const tankX = -3.8;
+            const tankFrame = new THREE.Mesh(new THREE.BoxGeometry(tankLength, 0.95, 1.6), blueFrameMat);
+            tankFrame.position.set(tankX, 0.7, 0);
+            tankFrame.castShadow = true;
+            tankFrame.receiveShadow = true;
+            group.add(tankFrame);
+
+            // Alt kapak panelleri (Koyu mavi)
+            for (let p = 0; p < 4; p++) {
+                const panel = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.65, 1.62), darkBlueMat);
+                panel.position.set(tankX - 3.0 + (p * 2.0), 0.65, 0);
+                group.add(panel);
+            }
+
+            // Taşıyıcı çelik boru ayaklar
+            [-7.5, -4.0, -0.5].forEach(lx => {
+                [-0.65, 0.65].forEach(lz => {
+                    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.5, 16), steelMat);
+                    leg.position.set(lx, 0.25, lz);
+                    leg.castShadow = true;
+                    group.add(leg);
+                });
+            });
+
+            // 5 Adet Paslanmaz Çelik Arşlı Kalibrasyon Kapağı & Göstergeler (Image 2 Parlak Kapaklar)
+            const lidWidth = 1.0;
+            const lidStartX = -7.3;
+            for (let c = 0; c < 5; c++) {
+                const lidX = lidStartX + (c * 1.15);
+                const lid = new THREE.Mesh(new THREE.BoxGeometry(lidWidth, 0.35, 1.45), steelMat);
+                lid.position.set(lidX, 1.3, 0);
+                lid.castShadow = true;
+                group.add(lid);
+
+                const handle = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.08, 0.08), chromeMat);
+                handle.position.set(lidX, 1.52, 0);
+                group.add(handle);
+
+                const gauge = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.05, 16), brassGaugeMat);
+                gauge.position.set(lidX - 0.25, 1.52, 0.45);
+                group.add(gauge);
+            }
+
+            // 2 Adet Açık Su Banyosu / Daldırma Havuzu (Image 2 Mavi Su Dolu Tanklar)
+            const bathStartX = -1.2;
+            for (let b = 0; b < 2; b++) {
+                const bathX = bathStartX + (b * 1.45);
+                const bathWall = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.6, 1.45), steelMat);
+                bathWall.position.set(bathX, 1.35, 0);
+                bathWall.castShadow = true;
+                group.add(bathWall);
+
+                const waterSurface = new THREE.Mesh(new THREE.PlaneGeometry(1.18, 1.3), waterMat);
+                waterSurface.rotation.x = -Math.PI / 2;
+                waterSurface.position.set(bathX, 1.55, 0);
+                group.add(waterSurface);
+            }
+
+            // ==========================================
+            // 3. SAĞ ORTA: ANA EKSTRÜDER GÖVDESİ & ANA BUNKER (Image 2 Motor Ünitesi)
+            // ==========================================
+            const extX = 3.6;
+            // Beyaz ana elektrik & sürücü kabini
+            const extCabinet = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.5, 2.2), whiteCabMat);
+            extCabinet.position.set(extX, 0.75, 0);
+            extCabinet.castShadow = true;
+            extCabinet.receiveShadow = true;
+            group.add(extCabinet);
+
+            // Sarı Tehlike Uyarı Levhası (⚠️)
+            const hazardPlate = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 2.23), hazardYellowMat);
+            hazardPlate.position.set(extX + 0.6, 0.9, 0);
+            group.add(hazardPlate);
+
+            // Üst Sanayi Mavisi Redüktör & Motor Bloğu (Image 2 Mavi Motor)
+            const motorBox = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 1.5), blueFrameMat);
+            motorBox.position.set(extX + 0.6, 1.8, 0);
+            motorBox.castShadow = true;
+            group.add(motorBox);
+
+            // Kovan Silindiri
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 2.4, 24), chromeMat);
+            barrel.rotation.z = Math.PI / 2;
+            barrel.position.set(extX - 1.2, 1.7, 0);
             barrel.castShadow = true;
             group.add(barrel);
 
-            // Kovan Üzeri Isıtıcı Rezistans Bilezikleri (5 Bölge)
-            for (let i = 0; i < 5; i++) {
-                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.31, 0.05, 12, 24), heaterMat);
-                ring.position.set(0, 1.15, 1.1 + (i * 0.75));
-                group.add(ring);
-            }
+            // BÜYÜK ANA BUNKER (Image 2'deki Parlak Silindirik Huni)
+            const mainHopper = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.3, 1.4, 32), chromeMat);
+            mainHopper.position.set(extX - 0.7, 2.9, 0);
+            mainHopper.castShadow = true;
+            group.add(mainHopper);
 
-            // 3. Paslanmaz Besleme Hunisi (Bunker / Hopper)
-            const hopper = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.22, 1.1, 24), hopperMat);
-            hopper.position.set(0, 2.3, 0.8);
-            hopper.castShadow = true;
-            group.add(hopper);
+            // ==========================================
+            // 4. SAĞ UÇ: ÇEKİCİ, TESTERE & PROFİL MASASI (Image 2 Çıkış Ünitesi)
+            // ==========================================
+            const exitX = 8.5;
+            // Çekici Kabini (Mavi ve beyaz gövde)
+            const pullerCab = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.6, 1.7), blueFrameMat);
+            pullerCab.position.set(exitX, 0.8, 0);
+            pullerCab.castShadow = true;
+            group.add(pullerCab);
 
-            // 4. Kalıp Kafası & Nozul (Die Head)
-            const dieHead = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.6), metalMat);
-            dieHead.position.set(0, 1.15, 4.8);
-            dieHead.castShadow = true;
-            group.add(dieHead);
+            const pullerTop = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.3, 1.6), whiteCabMat);
+            pullerTop.position.set(exitX, 1.65, 0);
+            group.add(pullerTop);
 
-            if (heads === 2) {
-                // Çift kafa çıkış boruları
-                const n1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.4, 16), metalMat);
-                n1.rotation.x = Math.PI / 2;
-                n1.position.set(-0.14, 1.15, 5.2);
-                const n2 = n1.clone();
-                n2.position.x = 0.14;
-                group.add(n1);
-                group.add(n2);
-            }
+            // Devirme Sehpası / Profil Çıkış Masası
+            const exitTable = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.15, 1.2), steelMat);
+            exitTable.position.set(exitX + 3.0, 0.85, 0);
+            exitTable.castShadow = true;
+            group.add(exitTable);
 
-            // 5. Vakum Su Soğutma Havuzu (Vacuum Cooling Tank)
-            const tank = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.75, 5.5), tankMat);
-            tank.position.set(0, 0.75, 8.2);
-            tank.castShadow = true;
-            tank.receiveShadow = true;
-            group.add(tank);
-
-            // Havuz İçi Su Yüzeyi
-            const water = new THREE.Mesh(new THREE.PlaneGeometry(0.85, 5.3), waterMat);
-            water.rotation.x = -Math.PI / 2;
-            water.position.set(0, 1.13, 8.2);
-            group.add(water);
-
-            // Havuz Ayakları
-            [-2.2, 0, 2.2].forEach(tz => {
-                const leg = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.38, 0.15), chassisMat);
-                leg.position.set(0, 0.19, 8.2 + tz);
+            [exitX + 1.6, exitX + 4.6].forEach(tx => {
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.8, 1.1), blueFrameMat);
+                leg.position.set(tx, 0.4, 0);
                 group.add(leg);
             });
 
-            // 6. Paletli Çekici (Caterpillar Puller)
-            const puller = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.45, 1.8), pullerMat);
-            puller.position.set(0, 0.85, 12.4);
-            puller.castShadow = true;
-            group.add(puller);
-
-            // Çekici Camlı Gözetleme Penceresi
-            const pullerWin = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.4, 0.9), metalMat);
-            pullerWin.position.set(0, 0.95, 12.4);
-            group.add(pullerWin);
-
-            // 7. Uçar Testere Kesici (Flying Cut-off Saw)
-            const saw = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.25, 0.9), sawMat);
-            saw.position.set(0, 0.75, 14.1);
-            saw.castShadow = true;
-            group.add(saw);
-
-            // 8. Rulolu Profil Devirme Masası (Tilt Table / Stacking Conveyor)
-            const table = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.1, 4.5), chassisMat);
-            table.position.set(0, 0.75, 17.0);
-            table.castShadow = true;
-            group.add(table);
-
-            // Masanın Ruloları
-            for (let r = 0; r < 7; r++) {
-                const roller = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.65, 16), metalMat);
-                roller.rotation.z = Math.PI / 2;
-                roller.position.set(0, 0.85, 15.2 + (r * 0.6));
-                group.add(roller);
-            }
+            // Masadan Çıkan GERÇEK 3D PVC BEYAZ PROFİL (Image 2'deki gibi)
+            const profileBeam = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.25, 0.45), pvcProfileMat);
+            profileBeam.position.set(exitX + 3.0, 1.0, 0);
+            profileBeam.castShadow = true;
+            group.add(profileBeam);
 
             return group;
         }
 
-        // PVC Levha Ekstrüzyon Hattı (Levha 201)
+        // PVC Levha Ekstrüzyon Hattı (Levha 201 - Image 2 Sağ Alttaki Model)
         function create3DSheetExtruderModel(id, name) {
             const group = new THREE.Group();
 
-            const chassisMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 });
-            const metalMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.2, metalness: 0.9 });
-            const calenderChromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 }); // Ayna polisajlı vals
-            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.4, metalness: 0.2 });          // Beyaz/bej plastik levha
+            const whiteCabMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.35, metalness: 0.15 });
+            const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4, metalness: 0.55 });
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 }); // Ayna polisajlı vals
+            const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });
+            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35, metalness: 0.1 });   // Beyaz plastik levha
 
-            // 1. Ekstrüder Ana Gövdesi (Ağır Sanayi Şasi)
-            const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.8, 1.0, 2.2), chassisMat);
-            chassis.position.set(0, 0.5, 0);
+            // 1. Ekstrüder Ana Gövdesi
+            const chassis = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.1, 2.4), whiteCabMat);
+            chassis.position.set(-6.5, 0.55, 0);
             chassis.castShadow = true;
             group.add(chassis);
 
-            const motor = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.3, 1.6), chassisMat);
-            motor.position.set(0, 1.15, -0.3);
+            const motor = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 1.8), blueFrameMat);
+            motor.position.set(-6.5, 1.5, 0);
+            motor.castShadow = true;
             group.add(motor);
 
-            // Kovan
-            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 4.8, 28), metalMat);
-            barrel.rotation.x = Math.PI / 2;
-            barrel.position.set(0, 1.25, 2.6);
-            barrel.castShadow = true;
-            group.add(barrel);
-
-            // Büyük Levha Hunisi
-            const hopper = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.28, 1.4, 24), metalMat);
-            hopper.position.set(0, 2.5, 0.9);
+            // Büyük Bunker
+            const hopper = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 0.4, 1.8, 32), chromeMat);
+            hopper.position.set(-6.5, 2.8, 0);
+            hopper.castShadow = true;
             group.add(hopper);
 
-            // 2. Geniş Askı Tipi Levha Kalıbı (Coat-hanger Sheet Die)
-            const tDie = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.4, 0.75), metalMat);
-            tDie.position.set(0, 1.25, 5.3);
+            // Kovan & Geniş Askı Tipi Levha T-Kalıbı
+            const tDie = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.4, 4.2), steelMat);
+            tDie.position.set(-3.5, 1.4, 0);
             tDie.castShadow = true;
             group.add(tDie);
 
-            // 3. 3-Valsli Parlatma Kalenderi (3-Roll Calender Unit)
-            const calenderStand = new THREE.Mesh(new THREE.BoxGeometry(4.0, 2.2, 0.8), chassisMat);
-            calenderStand.position.set(0, 1.1, 6.4);
+            // 2. 3-Valsli Parlatma Kalenderi (Image 2 Sağ Alttaki Krom Valsler)
+            const calenderStand = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.6, 4.4), blueFrameMat);
+            calenderStand.position.set(-1.8, 1.3, 0);
             calenderStand.castShadow = true;
             group.add(calenderStand);
 
-            // 3 Adet Yatay Dikey İstifli Krom Silindir Vals
-            [0.6, 1.15, 1.7].forEach(vy => {
-                const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 3.4, 32), calenderChromeMat);
-                roll.rotation.z = Math.PI / 2;
-                roll.position.set(0, vy, 6.4);
+            // 3 Adet Yatay Krom Parlatma Valsi (Ayna Gibi Parlayan)
+            [0.65, 1.3, 1.95].forEach(vy => {
+                const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 3.8, 32), chromeMat);
+                roll.position.set(-1.8, vy, 0);
                 roll.castShadow = true;
                 group.add(roll);
             });
 
-            // 4. Geniş Soğutma Konveyörü Masası
-            const table = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.6, 8.5), chassisMat);
-            table.position.set(0, 0.5, 11.5);
+            // 3. Geniş Soğutma Konveyörü Masası
+            const table = new THREE.Mesh(new THREE.BoxGeometry(9.0, 0.7, 4.2), steelMat);
+            table.position.set(4.0, 0.6, 0);
             table.castShadow = true;
             group.add(table);
 
-            // 5. Valslerden Çıkan Gerçek 3D PVC Levha Plakası
-            const sheet = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 7.8), sheetMat);
+            // 4. Valslerin Arasından Çıkan GERÇEK 3D PVC LEVHA PLAKASI
+            const sheet = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 3.6), sheetMat);
             sheet.rotation.x = -Math.PI / 2;
-            sheet.position.set(0, 0.83, 11.3);
+            sheet.position.set(4.0, 0.96, 0);
             sheet.castShadow = true;
-            sheet.receiveShadow = true;
             group.add(sheet);
 
-            // 6. Giyotin & İstif Ünitesi
-            const cutter = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.5, 1.2), chassisMat);
-            cutter.position.set(0, 0.9, 16.5);
+            // 5. Giyotin Kesim & İstif Ünitesi
+            const cutter = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.8, 4.4), blueFrameMat);
+            cutter.position.set(9.2, 1.0, 0);
             cutter.castShadow = true;
             group.add(cutter);
 
@@ -3632,7 +3700,7 @@
             if (!dtSelectionRing) return;
             const targetPos = DT_3D_POSITIONS[dtSelectedMachineId];
             if (targetPos) {
-                dtSelectionRing.position.set(targetPos.x, 0.05, targetPos.z + 4.8);
+                dtSelectionRing.position.set(targetPos.x - 9.5, 0.05, targetPos.z);
             }
         }
 
@@ -3680,17 +3748,15 @@
             Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
                 const m = dtMachinesData.find(x => x.id === id) || { name: cfg.name, product: '—', hours: 0, status: 'idle' };
                 
-                // Makine başlığı üzerindeki 3D nokta
-                const p3d = new THREE.Vector3(cfg.x, 3.2, cfg.z + 4.8);
+                // Makine gövdesi üzerindeki 3D koordinat
+                const p3d = new THREE.Vector3(cfg.x - 3.5, 2.6, cfg.z);
                 p3d.project(dtCamera);
 
-                // Ekran arkasındaysa gösterme
                 if (p3d.z > 1.0) return;
 
                 const sx = (p3d.x * 0.5 + 0.5) * width;
                 const sy = (-(p3d.y * 0.5) + 0.5) * height;
 
-                // Ekran sınırları dışındaysa atla
                 if (sx < 20 || sx > width - 20 || sy < 20 || sy > height - 20) return;
 
                 const isSelected = (id === dtSelectedMachineId);
@@ -3708,22 +3774,19 @@
                     statusLabel = '0s';
                 }
 
+                // Image 2'deki şık yuvarlak hap (Pill) rozet tasarımı
                 const pinBorder = isSelected 
-                    ? 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/50 scale-110 bg-slate-900 border-cyan-400' 
-                    : 'bg-slate-950/85 border-slate-700/80';
+                    ? 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/60 bg-slate-900 border-cyan-400 scale-105' 
+                    : 'bg-slate-900/90 border-slate-700/80 hover:border-slate-500';
 
                 html += `
-                    <div style="transform: translate(-50%, -100%) translate(${sx}px, ${sy}px);" 
+                    <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
                          class="absolute pointer-events-auto cursor-pointer transition-transform group">
-                        <div onclick="selectDigitalTwinMachine('${id}')" class="px-2.5 py-1 rounded-lg border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} hover:scale-105">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full ${dot} ${m.status === 'active' ? 'animate-pulse' : ''}"></span>
-                                <span class="text-[11px] font-black text-white whitespace-nowrap tracking-wide">${m.name}</span>
-                                <span class="text-[9px] font-black px-1 py-0.2 rounded border ${badgeClass}">${statusLabel}</span>
-                            </div>
-                            <div class="text-[8.5px] font-semibold text-slate-400 truncate max-w-[85px] mt-0.5">${m.product || '—'}</div>
+                        <div onclick="selectDigitalTwinMachine('${id}')" class="px-3 py-1 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} flex items-center gap-1.5 hover:scale-105">
+                            <span class="w-2 h-2 rounded-full ${dot} ${m.status === 'active' ? 'animate-pulse' : ''}"></span>
+                            <span class="text-xs font-black text-cyan-300 whitespace-nowrap tracking-wide">${m.name}</span>
+                            <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border ${badgeClass}">${statusLabel}</span>
                         </div>
-                        <div class="w-0.5 h-3.5 bg-gradient-to-b from-cyan-400/80 to-transparent mx-auto"></div>
                     </div>
                 `;
             });
@@ -3749,7 +3812,6 @@
             const intersects = dtRaycaster.intersectObjects(meshes, true);
 
             if (intersects.length > 0) {
-                // En üstteki makine grubunu bul
                 let obj = intersects[0].object;
                 while (obj.parent && !obj.userData?.id && obj.parent !== dtScene) {
                     obj = obj.parent;
@@ -3763,8 +3825,8 @@
 
         function reset3DCameraView() {
             if (!dtCamera || !dtControls) return;
-            dtControls.target.set(0, 0, -2);
-            dtCamera.position.set(52, 44, 62);
+            dtControls.target.set(0, 1.2, 0);
+            dtCamera.position.set(32, 40, 48);
             dtControls.update();
         }
 
@@ -3773,8 +3835,8 @@
             const targetPos = DT_3D_POSITIONS[dtSelectedMachineId];
             if (!targetPos) return;
 
-            dtControls.target.set(targetPos.x, 1.2, targetPos.z + 4);
-            dtCamera.position.set(targetPos.x + 18, 14, targetPos.z + 24);
+            dtControls.target.set(targetPos.x, 1.2, targetPos.z);
+            dtCamera.position.set(targetPos.x + 12, 14, targetPos.z + 18);
             dtControls.update();
         }
 

@@ -1157,18 +1157,23 @@
                         <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
                         <!-- 3D Sahne Bilgi & Kamera Kılavuzu -->
-                        <div class="absolute top-3 left-3 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-lg z-10">
-                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                            <span class="font-bold text-white">Three.js 3D WebGL</span>
-                            <span class="text-slate-500">|</span>
-                            <span class="text-cyan-300 font-bold" id="dt-workers-stat">👥 18 Operatör • 2 Kalite Kontrol</span>
-                            <span class="text-slate-500">|</span>
-                            <span class="text-amber-400 font-semibold">📏 65m × 42m (2,730 m²)</span>
+                        <div class="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-xl z-10">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="font-black text-cyan-300 flex items-center gap-1">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> WebGL 2.0 • GPU Donanım Hızlandırma (60 FPS)
+                            </span>
+                            <span class="text-slate-600">|</span>
+                            <span class="text-white font-bold" id="dt-workers-stat">👥 18 Operatör • 1 Kalite Kontrol</span>
+                            <span class="text-slate-600">|</span>
+                            <span class="text-amber-400 font-semibold" id="dt-factory-dim-stat">📏 65m × 42m (2,730 m²)</span>
                         </div>
 
                         <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
                         <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-10">
-                            <button onclick="toggle3DDimensions()" id="btn-dt-dimensions" title="Saha Ölçülerini ve Hat Boşluklarını Göster/Gizle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/20">
+                            <button onclick="open3DFactoryConfigModal()" id="btn-dt-factory-config" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30">
+                                <i data-lucide="sliders" class="w-3 h-3 text-white"></i> <span>Ölçü & Personel</span>
+                            </button>
+                            <button onclick="toggle3DDimensions()" id="btn-dt-dimensions" title="Saha Ölçü Çizgilerini Göster/Gizle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/20">
                                 <i data-lucide="ruler" class="w-3 h-3 text-white"></i> <span>Ölçüler</span>
                             </button>
                             <button onclick="toggle3DLayoutEditMode()" id="btn-dt-layout-edit" title="Makinelerin Yerini Değiştir / Düzenle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30">
@@ -1223,9 +1228,9 @@
 
                     <!-- Alt Tesis Bilgi Çubuğu -->
                     <div class="mt-3 pt-2.5 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
-                        <div>Fabrika Alanı: <b class="text-white">65m × 42m (2,730 m²)</b></div>
-                        <div>Hatlar Arası Emniyet Boşluğu: <b class="text-emerald-400">6.2 m (İş Güvenliği Standart)</b></div>
-                        <div>Aktif Personel: <b class="text-cyan-400" id="dt-total-operators-val">18 Operatör • 2 Kalite Kontrol</b></div>
+                        <div>Fabrika Alanı: <b class="text-white" id="dt-footer-area">65m × 42m (2,730 m²)</b></div>
+                        <div>Hatlar Arası Emniyet Boşluğu: <b class="text-emerald-400" id="dt-footer-clearance">6.2 m (İş Güvenliği Standart)</b></div>
+                        <div>Aktif Personel: <b class="text-cyan-400" id="dt-total-operators-val">18 Operatör • 1 Kalite Kontrol</b></div>
                         <div>Tesis KKO: <b id="dt-stat-kko" class="text-emerald-400">%92.4</b></div>
                     </div>
                 </div>
@@ -2638,6 +2643,99 @@
                     </table>
                 </div>
             </div>
+        <!-- 3D DİJİTAL İKİZ: SAHA & MAKİNE ÖLÇÜLERİ VE PERSONEL KONFİGÜRASYONU MODALI -->
+        <div id="modal-dt-factory-config" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
+                            <i data-lucide="sliders" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-white">Saha & Makine Ölçüleri ve Personel Konfigürasyonu</h3>
+                            <p class="text-xs text-slate-400">Fabrika bina ölçülerini, hat mesafelerini ve makinelerde çalışan kişi sayılarını belirleyin</p>
+                        </div>
+                    </div>
+                    <button onclick="close3DFactoryConfigModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- BÖLÜM 1: SAHA VE BİNA ÖLÇÜLERİ -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="building" class="w-4 h-4"></i> 1. Fabrika Sahası (Bina Boyutları)
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Uzunluğu (m)</label>
+                            <input type="number" id="cfg-saha-uzunluk" step="0.5" min="20" max="250" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">X Ekseni (Örn: 65 m)</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Derinliği / Eni (m)</label>
+                            <input type="number" id="cfg-saha-derinlik" step="0.5" min="15" max="200" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">Z Ekseni (Örn: 42 m)</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Tavan / Kolon Yüksekliği (m)</label>
+                            <input type="number" id="cfg-tavan-yukseklik" step="0.5" min="6" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">Y Ekseni (Örn: 12 m)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BÖLÜM 2: MAKİNE & HAT ÖLÇÜLERİ VE AÇIKLIKLAR -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="ruler" class="w-4 h-4"></i> 2. Makine Boyutları ve Koridor Açıklıkları
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Hatlar Arası Boşluk (m)</label>
+                            <input type="number" id="cfg-hat-boslugu" step="0.1" min="2" max="20" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-amber-300 font-black text-sm focus:ring-2 focus:ring-amber-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">İSG Emniyet Açıklığı (Örn: 6.2 m)</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Ana Taşıma Koridoru (m)</label>
+                            <input type="number" id="cfg-koridor-genislik" step="0.1" min="2" max="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-emerald-300 font-black text-sm focus:ring-2 focus:ring-emerald-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">Forklift & Koridor (Örn: 4.5 m)</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Profil Ekstrüder Boyu (m)</label>
+                            <input type="number" id="cfg-makine-boyu" step="0.5" min="8" max="40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                            <span class="text-[10px] text-slate-500 block mt-1">Hat Gövde Boyu (Örn: 18.0 m)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BÖLÜM 3: MAKİNE BAŞINA ÇALIŞAN KİŞİ SAYILARI -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4"></i> 3. Makine Başına Çalışan Kişi Sayıları
+                        </h4>
+                        <span class="text-[10px] text-slate-400">3D sahnedeki işçi modelleri bu sayılara göre güncellenir</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5" id="cfg-operators-grid">
+                        <!-- JS ile Hat 101..109, Levha 201 ve Kalite Masası için doldurulacak -->
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
+                    <button onclick="resetFactoryConfigToDefaults()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Varsayılanlara Dön
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="close3DFactoryConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                            Vazgeç
+                        </button>
+                        <button onclick="saveAndApplyFactoryConfig()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-black text-xs rounded-xl transition shadow-lg shadow-cyan-600/30 flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="check" class="w-4 h-4"></i> Ayarları Kaydet ve Uygula
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -3043,6 +3141,7 @@
         let dtSelectionRing = null;
         let dtRaycaster = null;
         let dtMouse = null;
+        let dtHoveredMachineId = null;
         let dtAnimFrameId = null;
         let dtIsPointerDown = false;
         let dtPointerDownPos = { x: 0, y: 0 };
@@ -3055,10 +3154,35 @@
         let dtDragOffset = null;
         let dtPlaneIntersect = null;
         let dtDimensionsGroup = null;
-        let dtShowDimensions = true;
+        let dtArchitectureGroup = null;
+        let dtShowDimensions = false; // Kullanıcı isteği: Varsayılan temiz sahne
         const DT_STORAGE_KEY = 'ergunbas_dt_3d_positions_v2';
 
-        // 3D Fabrika Sahası Dünya Koordinatları (Görseldeki İki Paralel Blok & Kalite Kontrol Masaları)
+        // 3D Saha & Makine Ölçüleri Konfigürasyonu
+        const DT_DEFAULT_FACTORY_CONFIG = {
+            sahaUzunluk: 65,     // Metre
+            sahaDerinlik: 42,    // Metre
+            tavanYukseklik: 12,  // Metre
+            hatBoslugu: 6.2,     // Metre
+            koridorGenislik: 4.5,// Metre
+            makineBoyu: 18.0,    // Metre
+            makineEni: 2.2,      // Metre
+            levhaBoyu: 22.0      // Metre
+        };
+        let dtFactoryConfig = Object.assign({}, DT_DEFAULT_FACTORY_CONFIG);
+        try {
+            const savedCfg = localStorage.getItem('ergunbas_dt_factory_config');
+            if (savedCfg) dtFactoryConfig = Object.assign(dtFactoryConfig, JSON.parse(savedCfg));
+        } catch(e) {}
+
+        // Kullanıcının her makine için belirlediği operatör sayıları
+        let dtCustomOperatorCounts = {};
+        try {
+            const savedOps = localStorage.getItem('ergunbas_dt_operator_counts');
+            if (savedOps) dtCustomOperatorCounts = JSON.parse(savedOps);
+        } catch(e) {}
+
+        // 3D Fabrika Sahası Dünya Koordinatları (Görseldeki İki Paralel Blok & 1 Kalite Kontrol Masası)
         const DT_3D_DEFAULT_POSITIONS = {
             // Sol Hat Bloğu (Görseldeki paralel diziliş)
             '101': { x: -22, z: 24, name: 'Hat 101', type: 'ext', heads: 1, rotY: 0 },
@@ -3074,9 +3198,8 @@
             '109': { x: 10,  z: -12, name: 'Hat 109', type: 'ext', heads: 2, rotY: 0 },
             '201': { x: 10,  z: -24, name: 'Levha 201', type: 'levha', heads: 1, rotY: 0 },
 
-            // Kalite Kontrol Masaları (Hassas Ölçüm İstasyonları)
-            'qc1': { x: -6,  z: 32, name: 'Kalite Masası #1', type: 'qc', rotY: 0 },
-            'qc2': { x: 26,  z: -14, name: 'Kalite Masası #2', type: 'qc', rotY: 0 }
+            // 1 Adet Kalite Kontrol Masası (Kullanıcı İsteği)
+            'qc1': { x: -6,  z: 32, name: 'Kalite Masası', type: 'qc', rotY: 0 }
         };
         let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
@@ -3171,10 +3294,15 @@
 
                 const gOp = dtDayData.gunduz?.operator || 'Ali K.';
                 const geOp = dtDayData.gece?.operator || 'Mehmet D.';
-                const opCount = hours > 0 ? (hours >= 24 ? 2 : 1) : 0;
-                const opText = opCount === 2 
-                    ? `2 Operatör (${gOp} & ${geOp})`
-                    : (hours > 0 ? `1 Operatör (${gOp})` : 'Boşta / Personel Yok');
+                
+                // Operatör sayısı: Kullanıcı özel belirlediyse onu al, yoksa çalışma saatine göre hesapla
+                let opCount = (dtCustomOperatorCounts[hat] !== undefined)
+                    ? parseInt(dtCustomOperatorCounts[hat])
+                    : (hours > 0 ? (hours >= 24 ? 2 : 1) : 0);
+
+                const opText = opCount > 0 
+                    ? `${opCount} Operatör (${gOp} / ${geOp})`
+                    : 'Boşta / Personel Yok';
 
                 dtMachinesData.push({
                     id: hat,
@@ -3192,7 +3320,7 @@
                     operator: `${gOp} / ${geOp}`,
                     operatorCount: opCount,
                     operatorDetail: opText,
-                    spacing: '6.2 m (İş Güvenliği Uygun)',
+                    spacing: `${dtFactoryConfig.hatBoslugu || 6.2} m (İş Güvenliği Standart)`,
                     downtime: downtimeText
                 });
             });
@@ -3215,6 +3343,10 @@
             if (levHours >= 24) levStatus = 'active';
             else if (levHours > 0) levStatus = 'warning';
 
+            let levOpCount = (dtCustomOperatorCounts['201'] !== undefined)
+                ? parseInt(dtCustomOperatorCounts['201'])
+                : (levHours > 0 ? (levHours >= 24 ? 2 : 1) : 0);
+
             dtMachinesData.push({
                 id: '201',
                 name: 'Levha 201',
@@ -3229,30 +3361,34 @@
                 rpm: levHours > 0 ? (19 + (levSpeed * 1.5)).toFixed(1) : '0.0',
                 temps: (levStatus === 'active') ? [185, 192, 196, 202, 206, 212] : ((levStatus === 'warning') ? [170, 175, 180, 185, 190, 195] : [25, 25, 25, 25, 25, 25]),
                 operator: `${dtDayData.gunduz?.operator || 'Gündüz'} / ${dtDayData.gece?.operator || 'Gece'}`,
-                operatorCount: levHours > 0 ? (levHours >= 24 ? 2 : 1) : 0,
-                operatorDetail: levHours > 0 ? '2 Operatör (Levha Ekibi)' : 'Boşta',
+                operatorCount: levOpCount,
+                operatorDetail: levOpCount > 0 ? `${levOpCount} Operatör (Levha Ekibi)` : 'Boşta / Personel Yok',
                 spacing: '7.5 m (Geniş Hat Açıklığı)',
                 downtime: levDowntimeText
             });
 
-            // Kalite Kontrol İstasyonları (Masa #1 & Masa #2)
+            // 1 Adet Kalite Kontrol İstasyonu (Masa #1)
+            let qcOpCount = (dtCustomOperatorCounts['qc1'] !== undefined)
+                ? parseInt(dtCustomOperatorCounts['qc1'])
+                : 1;
+
             dtMachinesData.push({
                 id: 'qc1',
-                name: 'Kalite Masası #1',
-                fullName: 'Profil Kalite Kontrol Masası #1',
+                name: 'Kalite Masası',
+                fullName: 'Merkezi Kalite Kontrol İstasyonu',
                 type: 'Kalite Kontrol',
                 heads: 1,
                 status: 'active',
                 hours: 24,
                 prodKg: 0,
                 fireKg: 0,
-                product: 'Profil Hatları Boyutsal Muayene & Tolerans',
+                product: 'Profil & Levha Hatları Hassas Boyutsal Muayene',
                 speed: 0,
                 rpm: '0.0',
                 temps: [22, 22, 22, 22, 22, 22],
-                operator: '1 Kalite Teknisyeni (Ali K.)',
-                operatorCount: 1,
-                operatorDetail: '1 Kalite Teknisyeni (Hassas Kumpas & Pleyt)',
+                operator: 'Kalite Teknisyeni (Ali K.)',
+                operatorCount: qcOpCount,
+                operatorDetail: `${qcOpCount} Kalite Uzmanı (Mitutoyo Pleyt & Komparatör)`,
                 spacing: 'Merkezi Muayene İstasyonu',
                 downtime: 'Sürekli Aktif Kalite Güvence',
                 isQC: true,
@@ -3261,49 +3397,12 @@
                     etKalinligi: '2.40 mm (Ölçülen)',
                     yuzeyParlaklik: '98.5 GU (A+ Sınıfı)',
                     darbeTesti: 'ISO 179-1: UYGUN',
-                    cihazlar: 'Mitutoyo Dijital Komparatör, Ölçüm Pleyti, Çekme Testi'
+                    cihazlar: 'Mitutoyo Dijital Komparatör, Granit Ölçüm Pleyti, Dijital Kumpas'
                 }
             });
 
-            dtMachinesData.push({
-                id: 'qc2',
-                name: 'Kalite Masası #2',
-                fullName: 'Levha Kalite Kontrol Masası #2',
-                type: 'Kalite Kontrol',
-                heads: 1,
-                status: 'active',
-                hours: 24,
-                prodKg: 0,
-                fireKg: 0,
-                product: 'Levha Hattı Kalınlık & Genişlik Homojenliği',
-                speed: 0,
-                rpm: '0.0',
-                temps: [22, 22, 22, 22, 22, 22],
-                operator: '1 Kalite Teknisyeni (Zeynep B.)',
-                operatorCount: 1,
-                operatorDetail: '1 Kalite Teknisyeni (Ultrasonik Ölçüm)',
-                spacing: 'Levha Yanı İstasyon',
-                downtime: 'Sürekli Aktif Kalite Güvence',
-                isQC: true,
-                qcReport: {
-                    tolerans: '±0.04 mm (Nominal İçi)',
-                    etKalinligi: '3.00 mm (Ölçülen)',
-                    yuzeyParlaklik: 'Pürüzsüz Ekstrüzyon',
-                    darbeTesti: 'TS EN 514: UYGUN',
-                    cihazlar: 'Ultrasonik Kalınlık Ölçer, Mikrometre Standı'
-                }
-            });
-
-            // Personel İstatistikleri
-            const totalOps = dtMachinesData.filter(m => !m.isQC).reduce((acc, m) => acc + (m.operatorCount || 0), 0);
-            const workersStatElem = document.getElementById('dt-workers-stat');
-            if (workersStatElem) {
-                workersStatElem.textContent = `👥 ${totalOps} Operatör • 2 Kalite Kontrol`;
-            }
-            const totalOpValElem = document.getElementById('dt-total-operators-val');
-            if (totalOpValElem) {
-                totalOpValElem.textContent = `${totalOps} Operatör + 2 Kalite Kontrol`;
-            }
+            // Personel İstatistikleri (1 Kalite Kontrol)
+            updateOperatorTotalStats();
 
             // Üst sayaçlar
             const machineOnly = dtMachinesData.filter(m => !m.isQC);
@@ -3325,6 +3424,33 @@
                 const kko = totalPossible > 0 ? ((actualTotalHours / totalPossible) * 100).toFixed(1) : '0.0';
                 elKko.textContent = `%${kko}`;
             }
+        }
+
+        function updateOperatorTotalStats() {
+            const totalOps = dtMachinesData.filter(m => !m.isQC).reduce((acc, m) => acc + (m.operatorCount || 0), 0);
+            const qcOps = dtMachinesData.filter(m => m.isQC).reduce((acc, m) => acc + (m.operatorCount || 0), 0);
+
+            const workersStatElem = document.getElementById('dt-workers-stat');
+            if (workersStatElem) {
+                workersStatElem.textContent = `👥 ${totalOps} Operatör • ${qcOps} Kalite Kontrol`;
+            }
+            const totalOpValElem = document.getElementById('dt-total-operators-val');
+            if (totalOpValElem) {
+                totalOpValElem.textContent = `${totalOps} Operatör • ${qcOps} Kalite Kontrol`;
+            }
+
+            const L = dtFactoryConfig.sahaUzunluk;
+            const D = dtFactoryConfig.sahaDerinlik;
+            const areaM2 = Math.round(L * D).toLocaleString('tr-TR');
+
+            const factoryDimStat = document.getElementById('dt-factory-dim-stat');
+            if (factoryDimStat) factoryDimStat.textContent = `📏 ${L}m × ${D}m (${areaM2} m²)`;
+
+            const footerArea = document.getElementById('dt-footer-area');
+            if (footerArea) footerArea.textContent = `${L}m × ${D}m (${areaM2} m²)`;
+
+            const footerClearance = document.getElementById('dt-footer-clearance');
+            if (footerClearance) footerClearance.textContent = `${dtFactoryConfig.hatBoslugu} m (İş Güvenliği Standart)`;
         }
 
         /* --------------------------------------------------------
@@ -3434,11 +3560,20 @@
         }
 
         /* --------------------------------------------------------
-           ZEMİN, DUVARLAR VE ENDÜSTRİYEL MİMARİ (Görsel 2 Birebir)
+           ZEMİN, DUVARLAR VE ENDÜSTRİYEL MİMARİ (Kullanıcı Ölçülerine Göre)
         -------------------------------------------------------- */
         function buildFactoryFloorAndArchitecture() {
+            if (dtArchitectureGroup) {
+                dtScene.remove(dtArchitectureGroup);
+            }
+            dtArchitectureGroup = new THREE.Group();
+
+            const L = dtFactoryConfig.sahaUzunluk || 65;
+            const D = dtFactoryConfig.sahaDerinlik || 42;
+            const H = dtFactoryConfig.tavanYukseklik || 12;
+
             // Pürüzsüz Temiz Endüstriyel Sanayi Grisi Epoksi Zemin (Izgarasız)
-            const floorGeo = new THREE.PlaneGeometry(160, 120);
+            const floorGeo = new THREE.PlaneGeometry(L + 50, D + 50);
             const floorMat = new THREE.MeshStandardMaterial({
                 color: 0x3d4756, // Modern pürüzsüz sanayi grisi
                 roughness: 0.65,
@@ -3447,76 +3582,82 @@
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             floor.receiveShadow = true;
-            dtScene.add(floor);
+            dtArchitectureGroup.add(floor);
 
             // Temiz Sarı Güvenlik Sınır Çizgileri
             const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             
             // Hat Başları Ön Güvenlik Şeridi
-            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
+            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
             lineFront.rotation.x = -Math.PI / 2;
-            lineFront.position.set(0, 0.02, 36);
-            dtScene.add(lineFront);
+            lineFront.position.set(0, 0.02, D / 2 - 2);
+            dtArchitectureGroup.add(lineFront);
 
             // Orta hat koridoru
-            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
+            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
             lineMid.rotation.x = -Math.PI / 2;
             lineMid.position.set(0, 0.02, 6);
-            dtScene.add(lineMid);
+            dtArchitectureGroup.add(lineMid);
 
             // Arka koridor çizgisi
-            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
+            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
             lineBack.rotation.x = -Math.PI / 2;
-            lineBack.position.set(0, 0.02, -36);
-            dtScene.add(lineBack);
+            lineBack.position.set(0, 0.02, -(D / 2 - 2));
+            dtArchitectureGroup.add(lineBack);
 
             // Sol Taraf Boyuna Güvenlik Çizgisi
-            const lineLeftAisle = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 80), lineMat);
+            const lineLeftAisle = new THREE.Mesh(new THREE.PlaneGeometry(0.35, D + 10), lineMat);
             lineLeftAisle.rotation.x = -Math.PI / 2;
-            lineLeftAisle.position.set(-36, 0.02, 0);
-            dtScene.add(lineLeftAisle);
+            lineLeftAisle.position.set(-(L / 2 - 2), 0.02, 0);
+            dtArchitectureGroup.add(lineLeftAisle);
 
             // Fabrika Arka Duvarı & Taşıyıcı Çelik Kolonlar
-            const wallGeo = new THREE.BoxGeometry(150, 22, 1.2);
+            const wallGeo = new THREE.BoxGeometry(L + 30, H * 1.6, 1.2);
             const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.85, metalness: 0.15 });
             const wall = new THREE.Mesh(wallGeo, wallMat);
-            wall.position.set(0, 11, -48);
+            wall.position.set(0, (H * 1.6) / 2, -(D / 2 + 8));
             wall.receiveShadow = true;
-            dtScene.add(wall);
+            dtArchitectureGroup.add(wall);
 
-            // Sol Fabrika Yan Duvarı (Görseldeki sol duvar panelleri)
-            const sideWallGeo = new THREE.BoxGeometry(1.2, 22, 110);
+            // Sol Fabrika Yan Duvarı
+            const sideWallGeo = new THREE.BoxGeometry(1.2, H * 1.6, D + 30);
             const sideWall = new THREE.Mesh(sideWallGeo, wallMat);
-            sideWall.position.set(-48, 11, 0);
+            sideWall.position.set(-(L / 2 + 8), (H * 1.6) / 2, 0);
             sideWall.receiveShadow = true;
-            dtScene.add(sideWall);
+            dtArchitectureGroup.add(sideWall);
 
-            [-50, -25, 0, 25, 50].forEach(cx => {
-                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, 22, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
-                col.position.set(cx, 11, -47);
+            // Taşıyıcı Kolonlar
+            const colSpacing = Math.max(15, L / 5);
+            for (let cx = -(L / 2); cx <= (L / 2); cx += colSpacing) {
+                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
+                col.position.set(cx, (H * 1.6) / 2, -(D / 2 + 7));
                 col.castShadow = true;
-                dtScene.add(col);
-            });
+                dtArchitectureGroup.add(col);
+            }
 
-            [-35, -10, 15, 40].forEach(cz => {
-                const sideCol = new THREE.Mesh(new THREE.BoxGeometry(2.2, 22, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
-                sideCol.position.set(-47, 11, cz);
+            for (let cz = -(D / 2); cz <= (D / 2); cz += 20) {
+                const sideCol = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
+                sideCol.position.set(-(L / 2 + 7), (H * 1.6) / 2, cz);
                 sideCol.castShadow = true;
-                dtScene.add(sideCol);
-            });
+                dtArchitectureGroup.add(sideCol);
+            }
 
             // Seçim Aurası Halkası (Cyan Targeting Reticle)
-            const selGeo = new THREE.RingGeometry(2.1, 2.5, 36);
-            const selMat = new THREE.MeshBasicMaterial({
-                color: 0x38bdf8,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.9
-            });
-            dtSelectionRing = new THREE.Mesh(selGeo, selMat);
-            dtSelectionRing.rotation.x = -Math.PI / 2;
-            dtSelectionRing.position.set(0, 0.05, 0);
-            dtScene.add(dtSelectionRing);
+            if (!dtSelectionRing) {
+                const selGeo = new THREE.RingGeometry(2.1, 2.5, 36);
+                const selMat = new THREE.MeshBasicMaterial({
+                    color: 0x38bdf8,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                dtSelectionRing = new THREE.Mesh(selGeo, selMat);
+                dtSelectionRing.rotation.x = -Math.PI / 2;
+                dtSelectionRing.position.set(0, 0.05, 0);
+                dtScene.add(dtSelectionRing);
+            }
+
+            dtScene.add(dtArchitectureGroup);
 
             // Saha Ölçüleri ve Hat Boşluğu Kılavuzları
             buildFactoryDimensionsAndClearances();
@@ -3531,38 +3672,40 @@
             }
             dtDimensionsGroup = new THREE.Group();
 
+            const L = dtFactoryConfig.sahaUzunluk || 65;
+            const D = dtFactoryConfig.sahaDerinlik || 42;
+
             const dimMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 });
             const dimCyanMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
 
-            // 1. Zemin Çevre Ölçü Çizgileri (Saha Ölçüsü: 65m x 42m)
-            // Ön sınır ölçü oku (X Ekseni: 65 Metre)
-            const frontDimLine = new THREE.Mesh(new THREE.PlaneGeometry(70, 0.12), dimMat);
+            // 1. Zemin Çevre Ölçü Çizgileri
+            // Ön sınır ölçü oku (X Ekseni: L Metre)
+            const frontDimLine = new THREE.Mesh(new THREE.PlaneGeometry(L, 0.12), dimMat);
             frontDimLine.rotation.x = -Math.PI / 2;
-            frontDimLine.position.set(0, 0.03, 42);
+            frontDimLine.position.set(0, 0.03, D / 2 + 2);
             dtDimensionsGroup.add(frontDimLine);
 
-            [-35, 35].forEach(tx => {
+            [-(L / 2), (L / 2)].forEach(tx => {
                 const tick = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 2.5), dimMat);
                 tick.rotation.x = -Math.PI / 2;
-                tick.position.set(tx, 0.03, 42);
+                tick.position.set(tx, 0.03, D / 2 + 2);
                 dtDimensionsGroup.add(tick);
             });
 
-            // Yan sınır ölçü oku (Z Ekseni: 42 Metre)
-            const sideDimLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 55), dimMat);
+            // Yan sınır ölçü oku (Z Ekseni: D Metre)
+            const sideDimLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, D), dimMat);
             sideDimLine.rotation.x = -Math.PI / 2;
-            sideDimLine.position.set(-42, 0.03, 0);
+            sideDimLine.position.set(-(L / 2 + 2), 0.03, 0);
             dtDimensionsGroup.add(sideDimLine);
 
-            [-27.5, 27.5].forEach(tz => {
+            [-(D / 2), (D / 2)].forEach(tz => {
                 const tick = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.12), dimMat);
                 tick.rotation.x = -Math.PI / 2;
-                tick.position.set(-42, 0.03, tz);
+                tick.position.set(-(L / 2 + 2), 0.03, tz);
                 dtDimensionsGroup.add(tick);
             });
 
-            // 2. Hatlar Arası Güvenlik Boşluğu Çizgileri (↔ 6.2 m Hat Boşluğu)
-            // Sol Blok hat aralıkları
+            // 2. Hatlar Arası Güvenlik Boşluğu Çizgileri
             [18, 6, -6, -18].forEach(gapZ => {
                 const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
                 gapLine.rotation.x = -Math.PI / 2;
@@ -3570,7 +3713,6 @@
                 dtDimensionsGroup.add(gapLine);
             });
 
-            // Sağ Blok hat aralıkları
             [18, 6, -6, -18].forEach(gapZ => {
                 const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
                 gapLine.rotation.x = -Math.PI / 2;
@@ -3591,9 +3733,8 @@
                     ? 'px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/30'
                     : 'px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1';
             }
-            updateProjected3DLabels();
             if (typeof showToast === 'function') {
-                showToast(dtShowDimensions ? 'Saha ölçüleri ve hat aralıkları görünür yapıldı.' : 'Saha ölçüleri gizlendi.', 'info');
+                showToast(dtShowDimensions ? 'Saha CAD ölçü çizgileri görünür yapıldı.' : 'Saha ölçü çizgileri gizlendi.', 'info');
             }
         }
 
@@ -3773,11 +3914,9 @@
             tableLight.position.set(-0.3, 2.1, 0);
             group.add(tableLight);
 
-            // Masanın Başında Kalite Kontrol Teknisyeni
-            const qcInspector = create3DWorkerModel('qc', 0x0284c7);
-            qcInspector.position.set(0.2, 0, 1.3);
-            qcInspector.rotation.y = Math.PI; // Masaya dönük
-            group.add(qcInspector);
+            // Dinamik Çalışan Ekibi Grubu (Kullanıcı Sayısına Göre)
+            const workersGroup = new THREE.Group();
+            group.add(workersGroup);
 
             // Zemin Durum Halkası (Cyan Parlayan Halka)
             const ringGeo = new THREE.RingGeometry(1.8, 2.2, 36);
@@ -3788,8 +3927,265 @@
             group.add(ring);
             dtFloorRings[id] = ring;
 
-            group.userData = { id: id, name: name, type: 'qc' };
+            group.userData = { id: id, name: name, type: 'qc', workersGroup: workersGroup };
             return group;
+        }
+
+        /* --------------------------------------------------------
+           DİNAMİK 3D PERSONEL (OPERATÖR) YÖNETİMİ & SAHA KONFİGÜRASYONU
+        -------------------------------------------------------- */
+        function rebuildMachineWorkers3D(id, count) {
+            const group = dtMachineGroups[id];
+            if (!group || !group.userData || !group.userData.workersGroup) return;
+
+            const workersGroup = group.userData.workersGroup;
+            while (workersGroup.children.length > 0) {
+                workersGroup.remove(workersGroup.children[0]);
+            }
+
+            const opCount = Math.max(0, parseInt(count) || 0);
+            if (opCount === 0) return;
+
+            const type = group.userData.type;
+
+            if (type === 'qc') {
+                // Kalite Masası etrafındaki pozisyonlar
+                const qcPositions = [
+                    { x: 0.2, z: 1.3, rotY: Math.PI },
+                    { x: -1.3, z: 0.2, rotY: Math.PI / 2 },
+                    { x: 1.3, z: 0.2, rotY: -Math.PI / 2 },
+                    { x: 0.0, z: -1.2, rotY: 0 }
+                ];
+                for (let i = 0; i < opCount; i++) {
+                    const pos = qcPositions[i % qcPositions.length];
+                    const w = create3DWorkerModel('qc', 0x0284c7);
+                    w.position.set(pos.x + (i >= 4 ? ((i - 3) * 0.4) : 0), 0, pos.z);
+                    w.rotation.y = pos.rotY;
+                    workersGroup.add(w);
+                }
+            } else if (type === 'levha') {
+                // Levha Hattı boyunca pozisyonlar
+                const levPositions = [
+                    { x: 3.5, z: 2.6, rotY: -0.3, color: 0x0284c7 }, // Soğutma & Kalite Çıkış
+                    { x: -4.5, z: 2.4, rotY: -0.2, color: 0xf59e0b }, // Bunker & Hammadde
+                    { x: -1.8, z: 2.6, rotY: -0.1, color: 0x10b981 }, // Kalender Valsleri
+                    { x: 8.5, z: 2.5, rotY: -0.4, color: 0x8b5cf6 },  // Giyotin Kesim
+                    { x: -4.5, z: -2.4, rotY: 0.2, color: 0xec4899 }  // Arka Hat
+                ];
+                for (let i = 0; i < opCount; i++) {
+                    const p = levPositions[i % levPositions.length];
+                    const w = create3DWorkerModel('operator', p.color);
+                    w.position.set(p.x + (i >= 5 ? ((i - 4) * 0.4) : 0), 0, p.z);
+                    w.rotation.y = p.rotY;
+                    workersGroup.add(w);
+                }
+            } else {
+                // Profil Ekstrüzyon Hattı (18 m hat boyunca operatörler)
+                const extPositions = [
+                    { x: -8.0, z: 1.5, rotY: -0.5, color: 0xf59e0b }, // Bunker & Motor Takip
+                    { x: 0.5, z: 1.4, rotY: -0.4, color: 0x10b981 },  // Vakum Soğutma Tankı
+                    { x: 9.2, z: 1.4, rotY: -0.5, color: 0x0284c7 },  // Testere & Çıkış Masası
+                    { x: -3.5, z: 1.5, rotY: -0.3, color: 0x8b5cf6 }, // Kafa & Kalıp Girişi
+                    { x: 4.5, z: -1.5, rotY: 2.6, color: 0xec4899 },  // Arka Emniyet & Bakım
+                    { x: 10.5, z: -1.3, rotY: 2.4, color: 0x14b8a6 }  // Paketleme Masası
+                ];
+                for (let i = 0; i < opCount; i++) {
+                    const p = extPositions[i % extPositions.length];
+                    const w = create3DWorkerModel('operator', p.color);
+                    w.position.set(p.x + (i >= 6 ? ((i - 5) * 0.5) : 0), 0, p.z);
+                    w.rotation.y = p.rotY;
+                    workersGroup.add(w);
+                }
+            }
+        }
+
+        function changeMachineOperatorCount(id, delta) {
+            let current = dtCustomOperatorCounts[id];
+            if (current === undefined) {
+                const m = dtMachinesData.find(x => x.id === id);
+                current = (m && m.operatorCount !== undefined) ? m.operatorCount : 1;
+            }
+            const next = Math.max(0, Math.min(10, (parseInt(current) || 0) + delta));
+            setMachineOperatorCount(id, next);
+        }
+
+        function setMachineOperatorCount(id, count) {
+            const next = Math.max(0, Math.min(10, parseInt(count) || 0));
+            dtCustomOperatorCounts[id] = next;
+            try {
+                localStorage.setItem('ergunbas_dt_operator_counts', JSON.stringify(dtCustomOperatorCounts));
+            } catch(e) {}
+
+            const m = dtMachinesData.find(x => x.id === id);
+            if (m) {
+                m.operatorCount = next;
+                if (m.isQC) {
+                    m.operatorDetail = `${next} Kalite Uzmanı (Mitutoyo Pleyt & Komparatör)`;
+                } else {
+                    m.operatorDetail = next > 0 ? `${next} Operatör` : 'Boşta / Personel Yok';
+                }
+            }
+
+            rebuildMachineWorkers3D(id, next);
+            updateOperatorTotalStats();
+            renderDigitalTwinQuickBar();
+            renderDigitalTwinHUD();
+            updateProjected3DLabels();
+        }
+
+        function open3DFactoryConfigModal() {
+            const modal = document.getElementById('modal-dt-factory-config');
+            if (!modal) return;
+
+            // Ölçü Değerlerini Doldur
+            const elL = document.getElementById('cfg-saha-uzunluk');
+            const elD = document.getElementById('cfg-saha-derinlik');
+            const elH = document.getElementById('cfg-tavan-yukseklik');
+            const elHB = document.getElementById('cfg-hat-boslugu');
+            const elKG = document.getElementById('cfg-koridor-genislik');
+            const elMB = document.getElementById('cfg-makine-boyu');
+
+            if (elL) elL.value = dtFactoryConfig.sahaUzunluk;
+            if (elD) elD.value = dtFactoryConfig.sahaDerinlik;
+            if (elH) elH.value = dtFactoryConfig.tavanYukseklik;
+            if (elHB) elHB.value = dtFactoryConfig.hatBoslugu;
+            if (elKG) elKG.value = dtFactoryConfig.koridorGenislik;
+            if (elMB) elMB.value = dtFactoryConfig.makineBoyu;
+
+            // Operatör Sayıları Grid'ini Doldur
+            const grid = document.getElementById('cfg-operators-grid');
+            if (grid) {
+                grid.innerHTML = Object.entries(DT_3D_POSITIONS).map(([id, cfg]) => {
+                    const m = dtMachinesData.find(x => x.id === id);
+                    const currentCount = (dtCustomOperatorCounts[id] !== undefined)
+                        ? dtCustomOperatorCounts[id]
+                        : (m ? (m.operatorCount || 0) : (cfg.type === 'qc' ? 1 : 2));
+
+                    const badge = cfg.type === 'qc' 
+                        ? '<span class="text-[9.5px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40">Kalite</span>'
+                        : (cfg.type === 'levha' 
+                            ? '<span class="text-[9.5px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">Levha</span>'
+                            : '<span class="text-[9.5px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">Ekstrüder</span>');
+
+                    return `
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-black text-white">${cfg.name}</span>
+                                    ${badge}
+                                </div>
+                                <span class="text-[10px] text-slate-400">Çalışan Kişi</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="adjustCfgModalOp('${id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center transition border border-slate-700 hover:border-slate-500 cursor-pointer">-</button>
+                                <input type="number" id="cfg-op-${id}" min="0" max="10" value="${currentCount}" class="w-10 bg-slate-900 border border-slate-700 rounded text-center text-xs font-black text-cyan-400 py-0.5 focus:ring-1 focus:ring-cyan-500">
+                                <button type="button" onclick="adjustCfgModalOp('${id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center transition border border-slate-700 hover:border-slate-500 cursor-pointer">+</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            modal.classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function adjustCfgModalOp(id, delta) {
+            const input = document.getElementById(`cfg-op-${id}`);
+            if (input) {
+                let v = parseInt(input.value) || 0;
+                v = Math.max(0, Math.min(10, v + delta));
+                input.value = v;
+            }
+        }
+
+        function close3DFactoryConfigModal() {
+            const modal = document.getElementById('modal-dt-factory-config');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveAndApplyFactoryConfig() {
+            // Ölçüleri Al
+            const elL = document.getElementById('cfg-saha-uzunluk');
+            const elD = document.getElementById('cfg-saha-derinlik');
+            const elH = document.getElementById('cfg-tavan-yukseklik');
+            const elHB = document.getElementById('cfg-hat-boslugu');
+            const elKG = document.getElementById('cfg-koridor-genislik');
+            const elMB = document.getElementById('cfg-makine-boyu');
+
+            if (elL && parseFloat(elL.value)) dtFactoryConfig.sahaUzunluk = parseFloat(elL.value);
+            if (elD && parseFloat(elD.value)) dtFactoryConfig.sahaDerinlik = parseFloat(elD.value);
+            if (elH && parseFloat(elH.value)) dtFactoryConfig.tavanYukseklik = parseFloat(elH.value);
+            if (elHB && parseFloat(elHB.value)) dtFactoryConfig.hatBoslugu = parseFloat(elHB.value);
+            if (elKG && parseFloat(elKG.value)) dtFactoryConfig.koridorGenislik = parseFloat(elKG.value);
+            if (elMB && parseFloat(elMB.value)) dtFactoryConfig.makineBoyu = parseFloat(elMB.value);
+
+            try {
+                localStorage.setItem('ergunbas_dt_factory_config', JSON.stringify(dtFactoryConfig));
+            } catch(e) {}
+
+            // Operatör Sayılarını Al
+            Object.keys(DT_3D_POSITIONS).forEach(id => {
+                const input = document.getElementById(`cfg-op-${id}`);
+                if (input) {
+                    const count = Math.max(0, Math.min(10, parseInt(input.value) || 0));
+                    dtCustomOperatorCounts[id] = count;
+                    const m = dtMachinesData.find(x => x.id === id);
+                    if (m) {
+                        m.operatorCount = count;
+                        if (m.isQC) {
+                            m.operatorDetail = `${count} Kalite Uzmanı`;
+                        } else {
+                            m.operatorDetail = count > 0 ? `${count} Operatör` : 'Boşta / Personel Yok';
+                        }
+                    }
+                    rebuildMachineWorkers3D(id, count);
+                }
+            });
+
+            try {
+                localStorage.setItem('ergunbas_dt_operator_counts', JSON.stringify(dtCustomOperatorCounts));
+            } catch(e) {}
+
+            // Mimariyi ve Zemin Ölçülerini Yeniden İnşa Et
+            if (dtScene && typeof buildFactoryFloorAndArchitecture === 'function') {
+                buildFactoryFloorAndArchitecture();
+            }
+
+            updateOperatorTotalStats();
+            renderDigitalTwinQuickBar();
+            renderDigitalTwinHUD();
+            updateProjected3DLabels();
+            close3DFactoryConfigModal();
+
+            if (typeof showToast === 'function') {
+                showToast('Saha ölçüleri, hat boşlukları ve personel sayıları güncellendi.', 'success');
+            }
+        }
+
+        function resetFactoryConfigToDefaults() {
+            if (!confirm('Saha ve makine ölçüleri ile personel sayıları varsayılan fabrika ayarlarına sıfırlansın mı?')) return;
+            localStorage.removeItem('ergunbas_dt_factory_config');
+            localStorage.removeItem('ergunbas_dt_operator_counts');
+            dtFactoryConfig = Object.assign({}, DT_DEFAULT_FACTORY_CONFIG);
+            dtCustomOperatorCounts = {};
+
+            // Güncelle ve yeniden yükle
+            processDigitalTwinData();
+            buildFactoryFloorAndArchitecture();
+            Object.keys(DT_3D_POSITIONS).forEach(id => {
+                const m = dtMachinesData.find(x => x.id === id);
+                rebuildMachineWorkers3D(id, m ? m.operatorCount : 1);
+            });
+            open3DFactoryConfigModal();
+            updateOperatorTotalStats();
+            renderDigitalTwinQuickBar();
+            renderDigitalTwinHUD();
+            updateProjected3DLabels();
+
+            if (typeof showToast === 'function') {
+                showToast('Fabrika ölçüleri ve personel sayıları varsayılanlara sıfırlandı.', 'info');
+            }
         }
 
         /* --------------------------------------------------------
@@ -3811,9 +4207,14 @@
 
                 group.position.set(cfg.x, 0, cfg.z);
                 if (typeof cfg.rotY === 'number') group.rotation.y = cfg.rotY;
-                group.userData = { id: id, name: cfg.name, type: cfg.type };
                 dtScene.add(group);
                 dtMachineGroups[id] = group;
+
+                const m = dtMachinesData.find(x => x.id === id);
+                const opCount = (m && m.operatorCount !== undefined) 
+                    ? m.operatorCount 
+                    : (dtCustomOperatorCounts[id] !== undefined ? dtCustomOperatorCounts[id] : (cfg.type === 'qc' ? 1 : 2));
+                rebuildMachineWorkers3D(id, opCount);
             });
         }
 
@@ -3980,6 +4381,13 @@
             motorBox.castShadow = true;
             group.add(motorBox);
 
+            // Motor Arkası Havalandırma Fanı & Kasnak (Dönen WebGL 3D Parça)
+            const motorPulley = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.12, 16), hazardYellowMat);
+            motorPulley.rotation.z = Math.PI / 2;
+            motorPulley.position.set(extX + 1.42, 1.8, 0);
+            motorPulley.castShadow = true;
+            group.add(motorPulley);
+
             const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 2.4, 24), chromeMat);
             barrel.rotation.z = Math.PI / 2;
             barrel.position.set(extX - 1.2, 1.7, 0);
@@ -4000,6 +4408,17 @@
             pullerCab.position.set(exitX, 0.8, 0);
             pullerCab.castShadow = true;
             group.add(pullerCab);
+
+            // Çekici Palet Silindirleri (WebGL Gerçek Zamanlı Dönen 3D Parçalar)
+            const pullerRollers = [];
+            [0.55, 1.1].forEach(ry => {
+                const pr = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.9, 16), chromeMat);
+                pr.rotation.x = Math.PI / 2;
+                pr.position.set(exitX, ry, 0);
+                pr.castShadow = true;
+                group.add(pr);
+                pullerRollers.push(pr);
+            });
 
             const pullerTop = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.3, 1.6), whiteCabMat);
             pullerTop.position.set(exitX, 1.65, 0);
@@ -4023,17 +4442,10 @@
             group.add(profileBeam);
 
             // ==========================================
-            // 5. HER MAKİNEDE ÇALIŞAN 3D ELEMANLAR (Operatörler)
+            // 5. HER MAKİNEDE ÇALIŞAN 3D ELEMANLAR (Dinamik Operatör Grubu)
             // ==========================================
-            const op1 = create3DWorkerModel('operator', 0xf59e0b);
-            op1.position.set(extX - 0.4, 0, 1.5);
-            op1.rotation.y = -0.5;
-            group.add(op1);
-
-            const op2 = create3DWorkerModel('operator', 0x10b981);
-            op2.position.set(tankX + 1.2, 0, 1.4);
-            op2.rotation.y = -0.4;
-            group.add(op2);
+            const workersGroup = new THREE.Group();
+            group.add(workersGroup);
 
             // ==========================================
             // 6. ZEMİN 3D ÇİFT KATMANLI NEON DURUM HALKASI (Görsel 2)
@@ -4064,6 +4476,7 @@
             ringOuter.position.set(-9.5, 0.041, 0);
             group.add(ringOuter);
 
+            group.userData = { id: id, name: name, type: 'ext', heads: heads, workersGroup: workersGroup, pullerRollers: pullerRollers, motorPulley: motorPulley };
             return group;
         }
 
@@ -4100,17 +4513,20 @@
             tDie.castShadow = true;
             group.add(tDie);
 
-            // 2. 3-Valsli Parlatma Kalenderi
+            // 2. 3-Valsli Parlatma Kalenderi (WebGL Gerçek Zamanlı Dönen Krom Valsler)
             const calenderStand = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.6, 4.4), blueFrameMat);
             calenderStand.position.set(-1.8, 1.3, 0);
             calenderStand.castShadow = true;
             group.add(calenderStand);
 
+            const animatedRolls = [];
             [0.65, 1.3, 1.95].forEach(vy => {
                 const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 3.8, 32), chromeMat);
+                roll.rotation.x = Math.PI / 2;
                 roll.position.set(-1.8, vy, 0);
                 roll.castShadow = true;
                 group.add(roll);
+                animatedRolls.push(roll);
             });
 
             // 3. Geniş Soğutma Konveyörü Masası
@@ -4132,16 +4548,9 @@
             cutter.castShadow = true;
             group.add(cutter);
 
-            // 6. Levha 201 Operatörleri
-            const levOp1 = create3DWorkerModel('operator', 0x0284c7);
-            levOp1.position.set(3.5, 0, 2.6);
-            levOp1.rotation.y = -0.3;
-            group.add(levOp1);
-
-            const levOp2 = create3DWorkerModel('operator', 0xf59e0b);
-            levOp2.position.set(-4.5, 0, 2.4);
-            levOp2.rotation.y = -0.2;
-            group.add(levOp2);
+            // 6. Levha 201 Dinamik Operatör Grubu
+            const workersGroup = new THREE.Group();
+            group.add(workersGroup);
 
             // Zemin Durum Halkası
             const ringGeo = new THREE.RingGeometry(1.6, 2.1, 40);
@@ -4157,6 +4566,7 @@
             group.add(ring);
             dtFloorRings[id] = ring;
 
+            group.userData = { id: id, name: name, type: 'levha', workersGroup: workersGroup, animatedRolls: animatedRolls };
             return group;
         }
 
@@ -4220,6 +4630,35 @@
                 dtSelectionRing.rotation.z += 0.015;
             }
 
+            // WebGL Gerçek Zamanlı GPU Animasyonları: Dönen Valsler, Çekici Merdaneleri & Motor Kasnakları
+            if (dtMachineGroups && dtMachinesData) {
+                Object.values(dtMachineGroups).forEach(group => {
+                    if (!group || !group.userData) return;
+                    const m = dtMachinesData.find(x => x.id === group.userData.id);
+                    const isRunning = m && (m.status === 'active' || m.status === 'warning');
+                    const speedMult = isRunning ? (m.status === 'active' ? 1.0 : 0.45) : 0;
+
+                    if (speedMult > 0) {
+                        // Levha 201 Kalender Valsleri Dönüşü (Z ekseni etrafında)
+                        if (group.userData.animatedRolls) {
+                            group.userData.animatedRolls.forEach((roll, idx) => {
+                                roll.rotation.z += (idx % 2 === 0 ? 0.05 : -0.05) * speedMult;
+                            });
+                        }
+                        // Profil Ekstrüder Çekici Merdaneleri (Z ekseni etrafında)
+                        if (group.userData.pullerRollers) {
+                            group.userData.pullerRollers.forEach((pr, idx) => {
+                                pr.rotation.z += (idx === 0 ? 0.06 : -0.06) * speedMult;
+                            });
+                        }
+                        // Motor Havalandırma Kasnağı (X ekseni etrafında hızlı dönüş)
+                        if (group.userData.motorPulley) {
+                            group.userData.motorPulley.rotation.x += 0.16 * speedMult;
+                        }
+                    }
+                });
+            }
+
             // 3D Dünya Koordinatlarından 2D Ekran Etiketlerini Hesapla
             updateProjected3DLabels();
 
@@ -4238,8 +4677,11 @@
 
             let html = '';
 
-            // 1. Makine & İstasyon Rozetleri
-            Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
+            // SADECE seçili olan veya fare ile üzerine gelinen makinenin etiketini göster (Kullanıcı İsteği: Yazılar gözükmesin, üstüne tıklayınca gelsin)
+            const activeTargetId = dtHoveredMachineId || dtSelectedMachineId;
+            if (activeTargetId && DT_3D_POSITIONS[activeTargetId]) {
+                const id = activeTargetId;
+                const cfg = DT_3D_POSITIONS[id];
                 const m = dtMachinesData.find(x => x.id === id) || { name: cfg.name, product: '—', hours: 0, status: 'idle', operatorCount: 0 };
                 const group = dtMachineGroups[id];
                 const gx = group ? group.position.x : cfg.x;
@@ -4250,77 +4692,64 @@
                 const p3d = new THREE.Vector3(gx - (isQC ? 0 : 3.2), isQC ? 2.3 : 2.7, gz);
                 p3d.project(dtCamera);
 
-                if (p3d.z > 1.0) return;
+                if (p3d.z <= 1.0) {
+                    const sx = (p3d.x * 0.5 + 0.5) * width;
+                    const sy = (-(p3d.y * 0.5) + 0.5) * height;
 
-                const sx = (p3d.x * 0.5 + 0.5) * width;
-                const sy = (-(p3d.y * 0.5) + 0.5) * height;
+                    if (sx >= 20 && sx <= width - 20 && sy >= 20 && sy <= height - 20) {
+                        if (isQC) {
+                            html += `
+                                <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
+                                     class="absolute pointer-events-auto cursor-pointer transition-all duration-200">
+                                    <div onclick="selectDigitalTwinMachine('${id}')" class="px-3.5 py-1.5 rounded-full border-2 border-purple-400 bg-slate-900/95 shadow-2xl shadow-purple-500/50 flex items-center gap-2 scale-105">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-purple-400 animate-pulse"></span>
+                                        <span class="text-xs font-black text-purple-300 whitespace-nowrap tracking-wide">🔬 ${m.name}</span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/40">👤 ${m.operatorCount || 1} Kalite Uzmanı</span>
+                                        <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">±0.03mm</span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            let dot = 'bg-emerald-400';
+                            let badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+                            let statusLabel = '24s';
 
-                if (sx < 25 || sx > width - 25 || sy < 25 || sy > height - 25) return;
+                            if (m.status === 'warning') {
+                                dot = 'bg-amber-400';
+                                badgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+                                statusLabel = `${m.hours}s`;
+                            } else if (m.status === 'idle') {
+                                dot = 'bg-red-500';
+                                badgeClass = 'bg-red-500/20 text-red-300 border-red-500/40';
+                                statusLabel = '0s';
+                            }
 
-                const isSelected = (id === dtSelectedMachineId);
-
-                if (isQC) {
-                    const pinBorder = isSelected 
-                        ? 'ring-2 ring-purple-400 shadow-xl shadow-purple-500/60 bg-slate-900 border-purple-400 scale-105' 
-                        : 'bg-slate-900/90 border-purple-700/60 hover:border-purple-400';
-
-                    html += `
-                        <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
-                             class="absolute pointer-events-auto cursor-pointer transition-transform group">
-                            <div onclick="selectDigitalTwinMachine('${id}')" class="px-3 py-1 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} flex items-center gap-1.5 hover:scale-105">
-                                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-                                <span class="text-xs font-black text-purple-300 whitespace-nowrap tracking-wide">🔬 ${m.name}</span>
-                                <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border bg-purple-500/20 text-purple-300 border-purple-500/40">👤 1 QC</span>
-                                <span class="text-[9px] font-mono font-bold px-1 py-0.2 rounded border bg-cyan-500/20 text-cyan-300 border-cyan-500/40">±0.03mm</span>
-                            </div>
-                        </div>
-                    `;
-                    return;
+                            html += `
+                                <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
+                                     class="absolute pointer-events-auto cursor-pointer transition-all duration-200">
+                                    <div onclick="selectDigitalTwinMachine('${id}')" class="px-3.5 py-1.5 rounded-full border-2 border-cyan-400 bg-slate-900/95 shadow-2xl shadow-cyan-500/50 flex items-center gap-2 scale-105">
+                                        <span class="w-2.5 h-2.5 rounded-full ${dot} ${m.status === 'active' ? 'animate-pulse' : ''}"></span>
+                                        <span class="text-xs font-black text-cyan-300 whitespace-nowrap tracking-wide">${m.name}</span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 border border-blue-500/40">👤 ${m.operatorCount || 0} Operatör</span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded ${badgeClass}">${statusLabel}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
                 }
+            }
 
-                let dot = 'bg-emerald-400';
-                let badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
-                let statusLabel = '24s';
-
-                if (m.status === 'warning') {
-                    dot = 'bg-amber-400';
-                    badgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
-                    statusLabel = `${m.hours}s`;
-                } else if (m.status === 'idle') {
-                    dot = 'bg-red-500';
-                    badgeClass = 'bg-red-500/20 text-red-300 border-red-500/40';
-                    statusLabel = '0s';
-                }
-
-                const pinBorder = isSelected 
-                    ? 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/60 bg-slate-900 border-cyan-400 scale-105' 
-                    : 'bg-slate-900/90 border-slate-700/80 hover:border-slate-500';
-
-                const opBadgeClass = m.operatorCount > 0 
-                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/40' 
-                    : 'bg-slate-800 text-slate-400 border-slate-700';
-
-                html += `
-                    <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
-                         class="absolute pointer-events-auto cursor-pointer transition-transform group">
-                        <div onclick="selectDigitalTwinMachine('${id}')" class="px-3 py-1 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} flex items-center gap-1.5 hover:scale-105">
-                            <span class="w-2 h-2 rounded-full ${dot} ${m.status === 'active' ? 'animate-pulse' : ''}"></span>
-                            <span class="text-xs font-black text-cyan-300 whitespace-nowrap tracking-wide">${m.name}</span>
-                            <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border ${opBadgeClass}">👤 ${m.operatorCount || 0} Op.</span>
-                            <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border ${badgeClass}">${statusLabel}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // 2. Saha Ölçüsü ve Hat Boşluğu Göstergeleri (dtShowDimensions aktifse)
+            // 2. Saha Ölçüsü ve Hat Boşluğu Göstergeleri (Sadece Kullanıcı dtShowDimensions Aktif Ettiğinde)
             if (dtShowDimensions) {
+                const L = dtFactoryConfig.sahaUzunluk || 65;
+                const D = dtFactoryConfig.sahaDerinlik || 42;
+                const clearance = dtFactoryConfig.hatBoslugu || 6.2;
                 const annotations = [
-                    { x: 0, y: 0.3, z: 42, text: '📏 Saha Boyutu: 65.0 m', color: 'bg-amber-500/90 text-slate-950 border-amber-400' },
-                    { x: -42, y: 0.3, z: 0, text: '📏 Saha Derinliği: 42.0 m', color: 'bg-amber-500/90 text-slate-950 border-amber-400' },
-                    { x: -22, y: 0.3, z: 6, text: '↔ 6.2 m Hat Boşluğu (İSG Standart)', color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' },
-                    { x: 10, y: 0.3, z: 6, text: '↔ 6.2 m Hat Boşluğu (İSG Standart)', color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' },
-                    { x: -6, y: 0.3, z: 0, text: '🚶 4.5 m Ana Taşıma Koridoru', color: 'bg-emerald-950/90 text-emerald-300 border-emerald-500/60' }
+                    { x: 0, y: 0.3, z: (D / 2), text: `📏 Saha Uzunluğu: ${L}.0 m`, color: 'bg-amber-500/95 text-slate-950 border-amber-400' },
+                    { x: -(L / 2), y: 0.3, z: 0, text: `📏 Saha Derinliği: ${D}.0 m`, color: 'bg-amber-500/95 text-slate-950 border-amber-400' },
+                    { x: -22, y: 0.3, z: 6, text: `↔ ${clearance} m Hat Boşluğu`, color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' },
+                    { x: 10, y: 0.3, z: 6, text: `↔ ${clearance} m Hat Boşluğu`, color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' }
                 ];
 
                 annotations.forEach(ann => {
@@ -4413,6 +4842,26 @@
                     targetZ = Math.max(-36, Math.min(36, targetZ));
 
                     setMachine3DPosition(dtDraggedMachineId, targetX, targetZ);
+                }
+            } else if (!dtIsDraggingMachine) {
+                // Hover (Üzerine Gelme) Tespiti - Tıklanabilir makine üzerinde imleci değiştir ve etiketi göster
+                const meshes = Object.values(dtMachineGroups);
+                const intersects = dtRaycaster.intersectObjects(meshes, true);
+                if (intersects.length > 0) {
+                    let obj = intersects[0].object;
+                    while (obj.parent && !obj.userData?.id && obj.parent !== dtScene) {
+                        obj = obj.parent;
+                    }
+                    if (obj.userData?.id) {
+                        dtHoveredMachineId = obj.userData.id;
+                        canvas.style.cursor = dtEditMode ? 'crosshair' : 'pointer';
+                    } else {
+                        dtHoveredMachineId = null;
+                        canvas.style.cursor = dtEditMode ? 'crosshair' : 'grab';
+                    }
+                } else {
+                    dtHoveredMachineId = null;
+                    canvas.style.cursor = dtEditMode ? 'crosshair' : 'grab';
                 }
             }
         }
@@ -4761,8 +5210,16 @@
                         <!-- Personel ve Konum Bilgisi -->
                         <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
                             <div class="flex items-center justify-between text-slate-400">
-                                <span class="flex items-center gap-1.5"><i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-400"></i> Sorumlu QC Uzmanı:</span>
-                                <span class="font-bold text-white">${m.operator}</span>
+                                <span class="flex items-center gap-1.5"><i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-400"></i> Kalite Masası Personeli:</span>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-purple-500 transition cursor-pointer" title="Personel Azalt">-</button>
+                                    <span class="font-bold text-white px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono">${m.operatorCount || 1} Uzman</span>
+                                    <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-purple-500 transition cursor-pointer" title="Personel Artır">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Nöbetçi Uzman:</span>
+                                <span class="font-bold text-slate-300">${m.operator}</span>
                             </div>
                             <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i> Konum & Açıklık:</span>
@@ -4902,14 +5359,19 @@
                     <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
                         <div class="flex items-center justify-between text-slate-400">
                             <span class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3 text-cyan-400"></i> Çalışan Eleman Sayısı:</span>
-                            <span class="font-bold text-white flex items-center gap-1">
-                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono">${m.operatorCount || 0} Operatör</span>
-                                <span class="text-[11px] text-slate-400">(${m.operator})</span>
-                            </span>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-cyan-500 transition cursor-pointer" title="Personel Azalt">-</button>
+                                <span class="font-bold text-white px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono">${m.operatorCount || 0} Operatör</span>
+                                <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-cyan-500 transition cursor-pointer" title="Personel Artır">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                            <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3 text-slate-500"></i> Nöbetçi Ekip:</span>
+                            <span class="font-bold text-slate-300">${m.operator}</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                             <span class="flex items-center gap-1.5"><i data-lucide="move-horizontal" class="w-3 h-3 text-amber-400"></i> Makineler Arası Boşluk:</span>
-                            <span class="font-bold text-amber-300 font-mono">${m.spacing || '6.2 m Hat Açıklığı'}</span>
+                            <span class="font-bold text-amber-300 font-mono">${dtFactoryConfig.hatBoslugu || 6.2} m Hat Açıklığı</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                             <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-slate-500"></i> Hat Durum Notu:</span>

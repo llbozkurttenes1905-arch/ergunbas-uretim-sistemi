@@ -3293,7 +3293,10 @@
             '201': { x: 10,  z: -24, name: 'Levha 201', type: 'levha', heads: 1, rotY: 0 },
 
             // 1 Adet Kalite Kontrol Masası (Kullanıcı İsteği)
-            'qc1': { x: -6,  z: 32, name: 'Kalite Masası', type: 'qc', rotY: 0 }
+            'qc1': { x: -6,  z: 32, name: 'Kalite Masası', type: 'qc', rotY: 0 },
+
+            // 4 Hücreli Mamul Depolama & Sevkiyat Sahası (Kullanıcı İsteği: Taşınabilir)
+            'warehouse': { x: 26, z: 0, name: 'Mamul Stok & Sevkiyat Sahası', type: 'storage', rotY: 0 }
         };
         let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
@@ -3309,7 +3312,7 @@
                 if (dtSelect && dashboardData.available_dates) {
                     const curVal = dtSelect.value;
                     dtSelect.innerHTML = dashboardData.available_dates.map(d => 
-                        `<option value="${d.key}">${d.display}</option>`
+                        `<option value="${d.key}">${d.date || d.display || d.key}</option>`
                     ).join('');
 
                     if (curVal && dashboardData.available_dates.some(d => d.key === curVal)) {
@@ -3633,11 +3636,11 @@
             dtDragOffset = new THREE.Vector3();
             dtPlaneIntersect = new THREE.Vector3();
 
-            // 6. Fabrika Zemini (Pürüzsüz Gri Sanayi Zemini, Izgarasız) & Mimari
-            buildFactoryFloorAndArchitecture();
-
-            // 7. Kayıtlı Özel Yerleşimi Yükle ve Modelleri İnşa Et
+            // 6. Kayıtlı Özel Yerleşimi Yükle
             loadSaved3DPositions();
+
+            // 7. Fabrika Zemini (Pürüzsüz Gri Sanayi Zemini, Izgarasız) & Mimari
+            buildFactoryFloorAndArchitecture();
             buildAll3DMachines();
             applyFactoryLayoutFromConfig();
             init3DForklift();
@@ -4581,11 +4584,13 @@
             const colorSpec = resolveProductColorAndSpec(hatId, productStr);
             const p = (productStr || '').toUpperCase();
 
-            // Antrasit veya Günün Rengine Göre Profil Materyali
+            // Antrasit (RAL 7016) veya Günün Rengine Göre Canlı Profil Materyali
             const pvcMat = new THREE.MeshStandardMaterial({ 
                 color: colorSpec.colorHex, 
-                roughness: 0.32, 
-                metalness: 0.12 
+                roughness: 0.28, 
+                metalness: 0.18,
+                emissive: new THREE.Color(colorSpec.colorHex),
+                emissiveIntensity: 0.16
             });
             const sealBlackMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.95, metalness: 0.05 });
 
@@ -4921,11 +4926,25 @@
            (Pervaz, Kasa, Seren, Levha Paletleri İçin Ayrılmış Hücreler)
         -------------------------------------------------------- */
         let dtWarehousePalletsGroup = null;
+        let dtWarehouseGroup = null;
         const dtWarehouseStacks = { pervaz: 0, kasa: 0, seren: 0, levha: 0 };
 
         function buildWarehouseStorageZone() {
+            if (dtWarehouseGroup && dtScene) {
+                dtScene.remove(dtWarehouseGroup);
+            }
+
             const whGroup = new THREE.Group();
             whGroup.name = 'dtWarehouseStorageZone';
+            whGroup.userData = {
+                id: 'warehouse',
+                name: 'Mamul Stok & Sevkiyat Sahası',
+                type: 'storage'
+            };
+
+            const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0, rotY: 0 };
+            whGroup.position.set(whPos.x, 0, whPos.z);
+            if (typeof whPos.rotY === 'number') whGroup.rotation.y = whPos.rotY;
 
             // 4 Ayrı Depolama Sahası Bölümü (Pervaz, Kasa, Seren, Levha)
             const bays = [
@@ -4939,10 +4958,10 @@
             const darkFloorCellMat = new THREE.MeshStandardMaterial({ color: 0x1a2332, roughness: 0.5, metalness: 0.2 });
 
             bays.forEach(bay => {
-                // 1. Zemin Palet Hücresi (7.0m x 8.0m)
+                // 1. Zemin Palet Hücresi (6.5m x 7.8m) - whGroup lokal merkezine göre
                 const cell = new THREE.Mesh(new THREE.PlaneGeometry(6.5, 7.8), darkFloorCellMat);
                 cell.rotation.x = -Math.PI / 2;
-                cell.position.set(24.5, 0.02, bay.z);
+                cell.position.set(0, 0.02, bay.z);
                 cell.receiveShadow = true;
                 whGroup.add(cell);
 
@@ -4950,18 +4969,18 @@
                 const border = new THREE.Mesh(new THREE.RingGeometry(3.6, 3.8, 4), yellowLineMat);
                 border.rotation.x = -Math.PI / 2;
                 border.rotation.z = Math.PI / 4;
-                border.position.set(24.5, 0.025, bay.z);
+                border.position.set(0, 0.025, bay.z);
                 whGroup.add(border);
 
                 // 3. Bölüm Tanımlayıcı 3D Tabela Postu (Direk + Levha)
                 const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.0, 12), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8 }));
-                pole.position.set(27.8, 1.5, bay.z - 3.2);
+                pole.position.set(3.3, 1.5, bay.z - 3.2);
                 pole.castShadow = true;
                 whGroup.add(pole);
 
                 const signMat = new THREE.MeshStandardMaterial({ color: bay.color, roughness: 0.3 });
                 const board = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.65, 2.6), signMat);
-                board.position.set(27.8, 2.7, bay.z - 3.2);
+                board.position.set(3.3, 2.7, bay.z - 3.2);
                 whGroup.add(board);
             });
 
@@ -4972,7 +4991,9 @@
             // Başlangıç hazır stok paletleri
             createInitialWarehouseStock();
 
-            dtArchitectureGroup.add(whGroup);
+            dtWarehouseGroup = whGroup;
+            dtMachineGroups['warehouse'] = whGroup;
+            if (dtScene) dtScene.add(whGroup);
         }
 
         function createInitialWarehouseStock() {
@@ -5006,12 +5027,12 @@
             const count = dtWarehouseStacks[type] || 0;
             dtWarehouseStacks[type] = count + 1;
 
-            // Depo içi grid koordinatı (2 sütun x 3 sıra)
+            // Depo içi grid koordinatı (2 sütun x 3 sıra) - whGroup lokal koordinatları
             const col = count % 2;
             const row = Math.floor(count / 2) % 3;
             const stackHeight = Math.floor(count / 6) * 0.8;
 
-            const px = 23.0 + (col * 2.8);
+            const px = -1.5 + (col * 2.8);
             const pz = (targetZ - 1.8) + (row * 1.8);
             const py = 0.05 + stackHeight;
 
@@ -5155,6 +5176,39 @@
             if (dtScene) dtScene.add(dtForklift);
         }
 
+        function steerAndMoveForklift(targetX, targetZ, speed, deltaSec) {
+            if (!dtForklift) return true;
+            const dx = targetX - dtForklift.position.x;
+            const dz = targetZ - dtForklift.position.z;
+            const dist = Math.hypot(dx, dz);
+            if (dist < 0.25) {
+                return true; // Hedefe varıldı
+            }
+
+            const step = Math.min(speed, dist);
+            const dirX = dx / dist;
+            const dirZ = dz / dist;
+
+            dtForklift.position.x += dirX * step;
+            dtForklift.position.z += dirZ * step;
+
+            // Forkliftin ön tarafı modelde +X eksenindedir.
+            // (dirX, dirZ) hareket yönüne bakması için Math.atan2(-dirZ, dirX) kullanılır:
+            const targetAngle = Math.atan2(-dirZ, dirX);
+            let diff = targetAngle - dtForklift.rotation.y;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            dtForklift.rotation.y += diff * Math.min(1.0, deltaSec * 10);
+
+            // Tekerlekleri yuvarla (Tekerlek ekseni Z, dönüş Y)
+            if (dtForklift.userData && dtForklift.userData.wheels) {
+                dtForklift.userData.wheels.forEach(w => {
+                    w.rotation.y += step * 3.5;
+                });
+            }
+            return false;
+        }
+
         function updateForkliftLogic(deltaSec = 0.016) {
             if (!dtForklift || !dtScene) return;
 
@@ -5169,6 +5223,7 @@
                 if (dtForkliftJobQueue.length > 0) {
                     dtForkliftCurrentJob = dtForkliftJobQueue.shift();
                     dtForklift.userData.state = 'DRIVING_TO_LINE';
+                    dtForklift.userData.subStep = 1;
                     dtForklift.userData.subStateTime = 0;
 
                     const ticker = document.getElementById('sim-event-ticker');
@@ -5194,27 +5249,26 @@
             const lineZ = targetLineGroup ? targetLineGroup.position.z : 0;
             const lineExitX = (targetLineGroup ? targetLineGroup.position.x : 0) + 11.2;
 
+            // Taşınabilir Depo Koordinatları (Kullanıcının belirlediği yerleşim)
+            const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0 };
             const bayZMap = { pervaz: -14.0, kasa: -4.5, seren: 5.0, levha: 14.5 };
-            const whTargetZ = bayZMap[job.productType] !== undefined ? bayZMap[job.productType] : 0;
-            const whBayX = 24.5;
+            const whTargetZ = whPos.z + (bayZMap[job.productType] !== undefined ? bayZMap[job.productType] : 0);
+            const whBayX = whPos.x;
+            const corridorX = 18.0;
 
-            // 1. DRIVING_TO_LINE: Koridordan ilgili makinenin Z hizasına git ve hatta dön
+            // 1. DRIVING_TO_LINE: Önce koridordan makinenin Z seviyesine, sonra hatta dönüp sehpaya yanaş
             if (state === 'DRIVING_TO_LINE') {
-                const dz = lineZ - dtForklift.position.z;
-                if (Math.abs(dz) > 0.25) {
-                    dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
-                    dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
-                    rotateForkliftWheels(speed);
-                } else {
-                    const targetApproachX = lineExitX + 1.4;
-                    const dx = targetApproachX - dtForklift.position.x;
-                    if (Math.abs(dx) > 0.25) {
-                        dtForklift.position.x += Math.sign(dx) * Math.min(speed, Math.abs(dx));
-                        dtForklift.rotation.y = -Math.PI / 2; // Batıya bak
-                        rotateForkliftWheels(speed);
-                    } else {
+                if (dtForklift.userData.subStep === 1) {
+                    const reachedZ = steerAndMoveForklift(corridorX, lineZ, speed, deltaSec);
+                    if (reachedZ) {
+                        dtForklift.userData.subStep = 2;
+                    }
+                } else if (dtForklift.userData.subStep === 2) {
+                    const reachedLine = steerAndMoveForklift(lineExitX + 1.4, lineZ, speed, deltaSec);
+                    if (reachedLine) {
                         dtForklift.userData.state = 'LIFTING';
                         dtForklift.userData.subStateTime = 0;
+                        dtForklift.userData.subStep = 1;
                     }
                 }
             }
@@ -5243,34 +5297,31 @@
                         }
                     }
 
-                    if (dtForklift.userData.subStateTime > 1.0) {
+                    if (dtForklift.userData.subStateTime > 0.8) {
                         dtForklift.userData.state = 'DRIVING_TO_WAREHOUSE';
                         dtForklift.userData.subStateTime = 0;
+                        dtForklift.userData.subStep = 1;
                     }
                 }
             }
-            // 3. DRIVING_TO_WAREHOUSE: Koridora geri dön ve ilgili depo hücresine sür
+            // 3. DRIVING_TO_WAREHOUSE: Koridora geri çık, deponun Z hizasına git ve hücreye yanaş
             else if (state === 'DRIVING_TO_WAREHOUSE') {
-                if (dtForklift.position.x < 17.8) {
-                    dtForklift.position.x += speed;
-                    dtForklift.rotation.y = Math.PI / 2; // Doğuya bak
-                    rotateForkliftWheels(speed);
-                } else {
-                    const dz = whTargetZ - dtForklift.position.z;
-                    if (Math.abs(dz) > 0.25) {
-                        dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
-                        dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
-                        rotateForkliftWheels(speed);
-                    } else {
-                        const dx = (whBayX - 1.2) - dtForklift.position.x;
-                        if (Math.abs(dx) > 0.25) {
-                            dtForklift.position.x += Math.sign(dx) * Math.min(speed, Math.abs(dx));
-                            dtForklift.rotation.y = Math.PI / 2;
-                            rotateForkliftWheels(speed);
-                        } else {
-                            dtForklift.userData.state = 'PLACING';
-                            dtForklift.userData.subStateTime = 0;
-                        }
+                if (dtForklift.userData.subStep === 1) {
+                    const reachedCorridor = steerAndMoveForklift(corridorX, lineZ, speed, deltaSec);
+                    if (reachedCorridor) {
+                        dtForklift.userData.subStep = 2;
+                    }
+                } else if (dtForklift.userData.subStep === 2) {
+                    const reachedBayZ = steerAndMoveForklift(corridorX, whTargetZ, speed, deltaSec);
+                    if (reachedBayZ) {
+                        dtForklift.userData.subStep = 3;
+                    }
+                } else if (dtForklift.userData.subStep === 3) {
+                    const reachedBay = steerAndMoveForklift(whBayX - 1.2, whTargetZ, speed, deltaSec);
+                    if (reachedBay) {
+                        dtForklift.userData.state = 'PLACING';
+                        dtForklift.userData.subStateTime = 0;
+                        dtForklift.userData.subStep = 1;
                     }
                 }
             }
@@ -5290,29 +5341,28 @@
                         ticker.textContent = `[${getSimTimeString()}] ✓ 🚜 Forklift: ${job.label} (${job.colorName}) paletini ${job.productType.toUpperCase()} deposuna güvenle yerleştirdi.`;
                     }
 
-                    if (dtForklift.userData.subStateTime > 1.0) {
+                    if (dtForklift.userData.subStateTime > 0.8) {
                         dtForklift.userData.state = 'RETURNING';
                         dtForklift.userData.subStateTime = 0;
+                        dtForklift.userData.subStep = 1;
                     }
                 }
             }
-            // 5. RETURNING: Koridora dön ve park noktasına (X: 18, Z: 0) geç
+            // 5. RETURNING: Depodan koridora çık ve ana bekleme/park noktasına dön
             else if (state === 'RETURNING') {
-                if (dtForklift.position.x > 18.2) {
-                    dtForklift.position.x -= speed;
-                    dtForklift.rotation.y = -Math.PI / 2;
-                    rotateForkliftWheels(speed);
-                } else {
-                    const dz = 0 - dtForklift.position.z;
-                    if (Math.abs(dz) > 0.25) {
-                        dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
-                        dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
-                        rotateForkliftWheels(speed);
-                    } else {
-                        dtForklift.position.set(18.0, 0, 0);
+                if (dtForklift.userData.subStep === 1) {
+                    const reachedCorridor = steerAndMoveForklift(corridorX, whTargetZ, speed, deltaSec);
+                    if (reachedCorridor) {
+                        dtForklift.userData.subStep = 2;
+                    }
+                } else if (dtForklift.userData.subStep === 2) {
+                    const reachedPark = steerAndMoveForklift(corridorX, 0, speed, deltaSec);
+                    if (reachedPark) {
+                        dtForklift.position.set(corridorX, 0, 0);
                         dtForklift.rotation.y = 0;
                         dtForklift.userData.state = 'IDLE';
                         dtForkliftCurrentJob = null;
+                        dtForklift.userData.subStep = 1;
                     }
                 }
             }
@@ -5746,6 +5796,25 @@
             const prodKg = mData ? mData.prodKg : 1200;
             const fireKg = mData ? mData.fireKg : 250;
 
+            // Kalıp Kafasından (Die) Çıkıp Havuzun ve Çekicinin İçinden Geçen Sürekli Profil Akışı (Pencerelerden Görünür)
+            const pColorSpec = resolveProductColorAndSpec(id, productStr);
+            const continuousMat = new THREE.MeshStandardMaterial({
+                color: pColorSpec.colorHex,
+                roughness: 0.28,
+                metalness: 0.18,
+                emissive: new THREE.Color(pColorSpec.colorHex),
+                emissiveIntensity: 0.15
+            });
+            const continuousProfileMesh = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.16, 0.42), continuousMat);
+            continuousProfileMesh.position.set(0.6, 0.95, 0);
+            continuousProfileMesh.castShadow = true;
+            group.add(continuousProfileMesh);
+
+            // Çıkış Masası Üzerinde Canlı LED Muayene Aydınlatması (Ürün Rengini & Saten Parlaklığı Net Gösterir)
+            const inspectionLight = new THREE.PointLight(0xffffff, 1.4, 8);
+            inspectionLight.position.set(8.5, 2.8, 0.5);
+            group.add(inspectionLight);
+
             const profileBeamGroup = createRealisticProfileMesh(id, productStr);
             profileBeamGroup.position.set(8.5, 0.95, 0);
             group.add(profileBeamGroup);
@@ -5818,8 +5887,15 @@
             const ral7035GreyMat = new THREE.MeshStandardMaterial({ color: 0xdde3ea, roughness: 0.40, metalness: 0.25 });
             const darkChassisMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.50 });
             const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.20, metalness: 0.88 });
-            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 });
-            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.10 });
+            const mLevData = dtMachinesData ? dtMachinesData.find(x => x.id === id) : null;
+            const sheetSpec = resolveSheetColorAndSpec(mLevData ? mLevData.product : '');
+            const sheetMat = new THREE.MeshStandardMaterial({ 
+                color: sheetSpec.colorHex, 
+                roughness: 0.25, 
+                metalness: 0.15,
+                emissive: new THREE.Color(sheetSpec.colorHex),
+                emissiveIntensity: 0.18
+            });
             const rollGearMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 });
             const rollStripeMat = new THREE.MeshBasicMaterial({ color: 0x0b63a7 });
 
@@ -5900,6 +5976,11 @@
             sheet.position.set(4.0, 0.96, 0);
             sheet.castShadow = true;
             group.add(sheet);
+
+            // Canlı LED Muayene Aydınlatması
+            const sheetLight = new THREE.PointLight(0xffffff, 1.5, 10);
+            sheetLight.position.set(4.0, 3.2, 0);
+            group.add(sheetLight);
 
             // 5. Giyotin Kesim Ünitesi
             const cutter = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.8, 4.4), siemensBlueMat);
@@ -6774,7 +6855,7 @@
             const bar = document.getElementById('dt-machine-quick-bar');
             if (!bar) return;
 
-            bar.innerHTML = dtMachinesData.map(m => {
+            const buttonsHtml = dtMachinesData.map(m => {
                 const isSelected = (m.id === dtSelectedMachineId);
                 const isQC = !!m.isQC;
 
@@ -6807,6 +6888,20 @@
                     </button>
                 `;
             }).join('');
+
+            // Mamul Depolama Alanı Hızlı Seçim Butonu
+            const isWhSelected = (dtSelectedMachineId === 'warehouse');
+            const whBtnClass = isWhSelected
+                ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30 border-amber-400 scale-[1.02]'
+                : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-amber-800/60';
+            const whBtn = `
+                <button onclick="selectDigitalTwinMachine('warehouse')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${whBtnClass}">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    <span>📦 Mamul Deposu</span>
+                </button>
+            `;
+
+            bar.innerHTML = buttonsHtml + whBtn;
         }
 
         function selectDigitalTwinMachine(id) {
@@ -6820,6 +6915,76 @@
         function renderDigitalTwinHUD() {
             const container = document.getElementById('dt-telemetry-hud');
             if (!container) return;
+
+            // Mamul Depolama Alanı Seçildiğinde Gösterilecek Özel Lojistik Kartı
+            if (dtSelectedMachineId === 'warehouse') {
+                const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0 };
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between border-b border-cyan-900/50 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-2xl font-black text-white tracking-wide">📦 Mamul Depolama & Sevkiyat</h3>
+                                    <span class="text-[11px] text-cyan-300 font-semibold bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-800">
+                                        4 Lojistik Hücresi
+                                    </span>
+                                </div>
+                                <p class="text-xs font-bold text-cyan-400 mt-1 flex items-center gap-1">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Konum: X: ${whPos.x.toFixed(1)}m, Z: ${whPos.z.toFixed(1)}m
+                                </p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> OTONOM FORKLİFT AKTİF
+                            </span>
+                        </div>
+
+                        <!-- 4 Bölüm Stok Sayacı -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-sky-500/30 shadow-inner">
+                                <span class="text-[10px] text-sky-400 font-bold block">PERVAZ DEPOSU (50x80)</span>
+                                <div class="text-lg font-black text-white mt-1">${dtWarehouseStacks.pervaz || 0} <span class="text-xs text-slate-400 font-normal">Palet</span></div>
+                                <span class="text-[9px] text-slate-500">Z: ${(whPos.z - 14.0).toFixed(1)}m Bölümü</span>
+                            </div>
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-emerald-500/30 shadow-inner">
+                                <span class="text-[10px] text-emerald-400 font-bold block">KASA DEPOSU (100-200)</span>
+                                <div class="text-lg font-black text-white mt-1">${dtWarehouseStacks.kasa || 0} <span class="text-xs text-slate-400 font-normal">Palet</span></div>
+                                <span class="text-[9px] text-slate-500">Z: ${(whPos.z - 4.5).toFixed(1)}m Bölümü</span>
+                            </div>
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-purple-500/30 shadow-inner">
+                                <span class="text-[10px] text-purple-400 font-bold block">SEREN DEPOSU</span>
+                                <div class="text-lg font-black text-white mt-1">${dtWarehouseStacks.seren || 0} <span class="text-xs text-slate-400 font-normal">Palet</span></div>
+                                <span class="text-[9px] text-slate-500">Z: ${(whPos.z + 5.0).toFixed(1)}m Bölümü</span>
+                            </div>
+                            <div class="bg-slate-950/90 p-3 rounded-xl border border-amber-500/30 shadow-inner">
+                                <span class="text-[10px] text-amber-400 font-bold block">LEVHA 201 DEPOSU</span>
+                                <div class="text-lg font-black text-white mt-1">${dtWarehouseStacks.levha || 0} <span class="text-xs text-slate-400 font-normal">Palet</span></div>
+                                <span class="text-[9px] text-slate-500">Z: ${(whPos.z + 14.5).toFixed(1)}m Bölümü</span>
+                            </div>
+                        </div>
+
+                        <!-- Taşıma ve Konumlandırma İpucu -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+                            <div class="flex items-center gap-1.5 font-bold text-amber-300">
+                                <i data-lucide="move" class="w-4 h-4"></i> Taşınabilir Depolama Sahası
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">
+                                Bu alanı fabrikanın istediğiniz yerine taşımak için üstteki <strong class="text-white">"Yerleşimi Düzenle"</strong> modunu açıp fareyle serbestçe sürükleyebilirsiniz. Forklift robotu yeni konumu otomatik algılayıp paletleri oraya taşır.
+                            </p>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="triggerForkliftManualDispatch()" class="flex-1 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i data-lucide="truck" class="w-4 h-4"></i> Forklift ile Palet Taşı
+                            </button>
+                            <button onclick="focusOnSelectedMachine3D()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> Odaklan
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
 
             const m = dtMachinesData.find(x => x.id === dtSelectedMachineId) || dtMachinesData[0];
             if (!m) return;
@@ -7060,15 +7225,15 @@
                         </div>
                     </div>
 
-                    <!-- Profil 3D Kesit Önizlemesi (Teknik Çizim Kartı) -->
-                    <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                                <i data-lucide="scan" class="w-3.5 h-3.5 text-cyan-400"></i> Profil Odacıklı Kesit Çizimi
+                    <!-- Profil 3D Kesit Önizlemesi (Teknik Çizim & Orijinal Mamul Kesiti) -->
+                    <div class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 shadow-xl space-y-2">
+                        <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                            <span class="text-xs font-black uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                                <i data-lucide="scan" class="w-4 h-4 text-cyan-400"></i> Orijinal Profil & Odacık Kesiti
                             </span>
-                            <span class="text-[9.5px] font-bold text-cyan-400">${m.product}</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-mono">${m.product}</span>
                         </div>
-                        <div class="h-20 w-full bg-slate-900/90 rounded-lg border border-slate-800/80 p-2 flex items-center justify-center">
+                        <div class="w-full bg-slate-900/95 rounded-xl border border-slate-800/90 p-2.5">
                             ${profileGraphic}
                         </div>
                     </div>
@@ -7132,44 +7297,280 @@
         function getProfileCrossSectionSvg(productName) {
             const p = (productName || '').toUpperCase();
             if (p.includes('KASA') || p.includes('140') || p.includes('200') || p.includes('100')) {
+                const widthLabel = p.includes('140') ? '140 mm' : (p.includes('100') ? '100 mm' : '200 mm');
                 return `
-                    <svg class="h-full w-auto text-cyan-400" viewBox="0 0 160 60" fill="none">
-                        <rect x="10" y="8" width="140" height="44" rx="3" stroke="#38bdf8" stroke-width="2" fill="rgba(56,189,248,0.1)"/>
-                        <rect x="20" y="16" width="30" height="28" rx="2" stroke="#38bdf8" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <rect x="58" y="16" width="44" height="28" rx="2" stroke="#38bdf8" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <rect x="110" y="16" width="30" height="28" rx="2" stroke="#38bdf8" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <line x1="80" y1="16" x2="80" y2="44" stroke="#38bdf8" stroke-dasharray="2,2"/>
-                        <text x="80" y="32" fill="#94a3b8" font-size="8" font-family="monospace" text-anchor="middle">KASA ÇOK ODACIKLI</text>
-                    </svg>
+                    <div class="space-y-2 w-full">
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold px-1">
+                            <span class="text-cyan-300 font-mono flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400"></span> ${widthLabel} ÇOK ODACIKLI KASA PROFİLİ
+                            </span>
+                            <span class="text-emerald-400 font-mono">5 YALITIM ODACIĞI · EPDM CONTA</span>
+                        </div>
+                        <div class="w-full bg-slate-950 p-2 rounded-xl border border-cyan-500/40 shadow-inner">
+                            <svg viewBox="0 0 460 170" class="w-full h-auto drop-shadow-lg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <linearGradient id="anthraciteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stop-color="#475569"/>
+                                  <stop offset="50%" stop-color="#334155"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                                <linearGradient id="chamberGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stop-color="#0f172a"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                                <linearGradient id="steelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                  <stop offset="0%" stop-color="#94a3b8"/>
+                                  <stop offset="50%" stop-color="#cbd5e1"/>
+                                  <stop offset="100%" stop-color="#64748b"/>
+                                </linearGradient>
+                              </defs>
+
+                              <!-- Dış Kasa Gövdesi (Antrasit RAL 7016 Et Kalınlığı 2.8 mm) -->
+                              <path d="M 25 35 L 435 35 Q 442 35 442 42 L 442 120 Q 442 126 435 126 L 380 126 L 380 142 L 350 142 L 350 126 L 110 126 L 110 142 L 80 142 L 80 126 L 25 126 Q 18 126 18 120 L 18 42 Q 18 35 25 35 Z" fill="url(#anthraciteGrad)" stroke="#38bdf8" stroke-width="2"/>
+
+                              <!-- 5 Adet İzolasyon Odacığı -->
+                              <!-- Odacık 1 (Dış Yalıtım) -->
+                              <rect x="28" y="44" width="60" height="72" rx="4" fill="url(#chamberGrad)" stroke="#0284c7" stroke-width="1.5"/>
+                              <text x="58" y="83" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">ODACIK 1</text>
+                              <text x="58" y="95" fill="#64748b" font-size="7" font-family="sans-serif" text-anchor="middle">Hava Yalıtımı</text>
+
+                              <!-- Odacık 2 (Destek Sacı / Rijitlik Yuvası) -->
+                              <rect x="96" y="44" width="75" height="72" rx="4" fill="url(#chamberGrad)" stroke="#0284c7" stroke-width="1.5"/>
+                              <rect x="104" y="52" width="59" height="56" rx="2" fill="none" stroke="url(#steelGrad)" stroke-width="2.5" stroke-dasharray="4,2"/>
+                              <text x="133" y="83" fill="#cbd5e1" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">DESTEK SACI</text>
+                              <text x="133" y="95" fill="#94a3b8" font-size="7" font-family="sans-serif" text-anchor="middle">Galvaniz Sac Yuvası</text>
+
+                              <!-- Odacık 3 (Orta Termal Bariyer) -->
+                              <rect x="179" y="44" width="85" height="72" rx="4" fill="url(#chamberGrad)" stroke="#0284c7" stroke-width="1.5"/>
+                              <line x1="221" y1="44" x2="221" y2="116" stroke="#0369a1" stroke-width="1.5" stroke-dasharray="2,2"/>
+                              <text x="221" y="83" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">ANA ODACIK</text>
+                              <text x="221" y="95" fill="#64748b" font-size="7" font-family="sans-serif" text-anchor="middle">Termal Akış Bariyeri</text>
+
+                              <!-- Odacık 4 (Vida Bağlantı Yuvası) -->
+                              <rect x="272" y="44" width="75" height="72" rx="4" fill="url(#chamberGrad)" stroke="#0284c7" stroke-width="1.5"/>
+                              <circle cx="309" cy="80" r="10" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+                              <text x="309" y="83" fill="#f59e0b" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">+</text>
+                              <text x="309" y="102" fill="#94a3b8" font-size="7" font-family="sans-serif" text-anchor="middle">Montaj Vida Kanalı</text>
+
+                              <!-- Odacık 5 (Pervaz Tırnak & Conta Yuvası) -->
+                              <rect x="355" y="44" width="77" height="72" rx="4" fill="url(#chamberGrad)" stroke="#0284c7" stroke-width="1.5"/>
+                              <!-- EPDM Conta Kesiti -->
+                              <path d="M 415 44 C 425 44 432 50 432 58 C 432 64 425 68 415 68 Z" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+                              <text x="393" y="83" fill="#10b981" font-size="8.5" font-family="monospace" font-weight="bold" text-anchor="middle">EPDM CONTA</text>
+                              <text x="393" y="95" fill="#64748b" font-size="7" font-family="sans-serif" text-anchor="middle">Geçme Fitil Yuvası</text>
+
+                              <!-- CAD Ölçü Okları ve Çizgileri -->
+                              <line x1="18" y1="18" x2="442" y2="18" stroke="#38bdf8" stroke-width="1.2"/>
+                              <line x1="18" y1="12" x2="18" y2="24" stroke="#38bdf8" stroke-width="1.2"/>
+                              <line x1="442" y1="12" x2="442" y2="24" stroke="#38bdf8" stroke-width="1.2"/>
+                              <polygon points="26,18 20,15 20,21" fill="#38bdf8"/>
+                              <polygon points="434,18 440,15 440,21" fill="#38bdf8"/>
+                              <rect x="195" y="8" width="70" height="18" rx="3" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+                              <text x="230" y="21" fill="#38bdf8" font-size="10" font-family="monospace" font-weight="black" text-anchor="middle">${widthLabel}</text>
+
+                              <!-- Yükseklik Çizgisi: 45 mm -->
+                              <line x1="450" y1="35" x2="450" y2="126" stroke="#10b981" stroke-width="1.2"/>
+                              <line x1="446" y1="35" x2="454" y2="35" stroke="#10b981" stroke-width="1.2"/>
+                              <line x1="446" y1="126" x2="454" y2="126" stroke="#10b981" stroke-width="1.2"/>
+                              <polygon points="450,43 447,37 453,37" fill="#10b981"/>
+                              <polygon points="450,118 447,124 453,124" fill="#10b981"/>
+                              <text x="452" y="83" fill="#10b981" font-size="9" font-family="monospace" font-weight="bold" transform="rotate(90,452,83)" text-anchor="middle">45 mm</text>
+
+                              <!-- Et Kalınlığı Bilgisi -->
+                              <text x="35" y="158" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Et Kalınlığı: <tspan fill="#38bdf8" font-weight="bold">2.8 mm</tspan> (TS EN 12608 Class A)</text>
+                              <text x="280" y="158" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Renk: <tspan fill="#f59e0b" font-weight="bold">RAL 7016 Antrasit Gri Saten</tspan></text>
+                            </svg>
+                        </div>
+                    </div>
                 `;
             } else if (p.includes('PERVAZ') || p.includes('50X80') || p.includes('P-201')) {
                 return `
-                    <svg class="h-full w-auto text-emerald-400" viewBox="0 0 160 60" fill="none">
-                        <path d="M15 15 L125 15 Q145 15 145 35 Q145 45 130 45 L15 45 Z" stroke="#34d399" stroke-width="2" fill="rgba(52,211,153,0.1)"/>
-                        <rect x="25" y="22" width="40" height="16" rx="2" stroke="#34d399" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <rect x="75" y="22" width="45" height="16" rx="2" stroke="#34d399" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <text x="80" y="32" fill="#94a3b8" font-size="8" font-family="monospace" text-anchor="middle">PERVAZ KESİTİ</text>
-                    </svg>
+                    <div class="space-y-2 w-full">
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold px-1">
+                            <span class="text-emerald-400 font-mono flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 50X80 AYARLI TELESKOPİK L-PERVAZ
+                            </span>
+                            <span class="text-cyan-300 font-mono">TIRNAKLI GEÇME · ÇİFT ODACIKLI</span>
+                        </div>
+                        <div class="w-full bg-slate-950 p-2 rounded-xl border border-emerald-500/40 shadow-inner">
+                            <svg viewBox="0 0 440 170" class="w-full h-auto drop-shadow-lg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <linearGradient id="pervazGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stop-color="#475569"/>
+                                  <stop offset="50%" stop-color="#334155"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                                <linearGradient id="pHollowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stop-color="#0f172a"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                              </defs>
+
+                              <!-- L-Kesitli Ayarlı Pervaz Gövdesi (80 mm Ön Kanat + 50 mm Ayar Tırnağı) -->
+                              <path d="M 25 35 L 340 35 Q 360 35 360 55 L 360 85 L 130 85 L 130 145 L 85 145 L 85 85 L 25 85 Q 18 85 18 78 L 18 42 Q 18 35 25 35 Z" fill="url(#pervazGrad)" stroke="#34d399" stroke-width="2"/>
+
+                              <!-- Tırnak Üzerindeki Tutucu Tırtıklar -->
+                              <line x1="82" y1="100" x2="88" y2="100" stroke="#34d399" stroke-width="2"/>
+                              <line x1="82" y1="115" x2="88" y2="115" stroke="#34d399" stroke-width="2"/>
+                              <line x1="82" y1="130" x2="88" y2="130" stroke="#34d399" stroke-width="2"/>
+                              <line x1="127" y1="100" x2="133" y2="100" stroke="#34d399" stroke-width="2"/>
+                              <line x1="127" y1="115" x2="133" y2="115" stroke="#34d399" stroke-width="2"/>
+                              <line x1="127" y1="130" x2="133" y2="130" stroke="#34d399" stroke-width="2"/>
+
+                              <!-- İç Hafifletme & Anti-Dönme Hava Odacıkları -->
+                              <rect x="28" y="44" width="70" height="32" rx="3" fill="url(#pHollowGrad)" stroke="#10b981" stroke-width="1.2"/>
+                              <text x="63" y="64" fill="#34d399" font-size="8.5" font-family="monospace" font-weight="bold" text-anchor="middle">ODACIK A</text>
+
+                              <rect x="110" y="44" width="95" height="32" rx="3" fill="url(#pHollowGrad)" stroke="#10b981" stroke-width="1.2"/>
+                              <text x="157" y="64" fill="#34d399" font-size="8.5" font-family="monospace" font-weight="bold" text-anchor="middle">ANA ODACIK</text>
+
+                              <rect x="217" y="44" width="125" height="32" rx="3" fill="url(#pHollowGrad)" stroke="#10b981" stroke-width="1.2"/>
+                              <text x="279" y="64" fill="#34d399" font-size="8.5" font-family="monospace" font-weight="bold" text-anchor="middle">ESTETİK KANAT</text>
+
+                              <!-- Tırnak İçi Odacık -->
+                              <rect x="94" y="92" width="27" height="45" rx="2" fill="url(#pHollowGrad)" stroke="#10b981" stroke-width="1.2"/>
+                              <text x="107" y="118" fill="#10b981" font-size="7.5" font-family="monospace" font-weight="bold" transform="rotate(90,107,118)" text-anchor="middle">TIRNAK</text>
+
+                              <!-- Ölçü Çizgileri: 80 mm Genişlik -->
+                              <line x1="18" y1="18" x2="360" y2="18" stroke="#34d399" stroke-width="1.2"/>
+                              <line x1="18" y1="12" x2="18" y2="24" stroke="#34d399" stroke-width="1.2"/>
+                              <line x1="360" y1="12" x2="360" y2="24" stroke="#34d399" stroke-width="1.2"/>
+                              <polygon points="26,18 20,15 20,21" fill="#34d399"/>
+                              <polygon points="352,18 358,15 358,21" fill="#34d399"/>
+                              <rect x="160" y="8" width="60" height="18" rx="3" fill="#0f172a" stroke="#34d399" stroke-width="1"/>
+                              <text x="190" y="21" fill="#34d399" font-size="10" font-family="monospace" font-weight="black" text-anchor="middle">80 mm</text>
+
+                              <!-- 50 mm Tırnak Boyu -->
+                              <line x1="60" y1="85" x2="60" y2="145" stroke="#38bdf8" stroke-width="1.2"/>
+                              <line x1="56" y1="85" x2="64" y2="85" stroke="#38bdf8" stroke-width="1.2"/>
+                              <line x1="56" y1="145" x2="64" y2="145" stroke="#38bdf8" stroke-width="1.2"/>
+                              <polygon points="60,93 57,87 63,87" fill="#38bdf8"/>
+                              <polygon points="60,137 57,143 63,143" fill="#38bdf8"/>
+                              <text x="45" y="118" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold" transform="rotate(-90,45,118)" text-anchor="middle">50 mm</text>
+
+                              <text x="25" y="162" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Profil Tipi: <tspan fill="#34d399" font-weight="bold">50X80 Ayarlı Geçme L-Pervaz</tspan></text>
+                              <text x="250" y="162" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Yüzey: <tspan fill="#f59e0b" font-weight="bold">RAL 7016 Antrasit Saten</tspan></text>
+                            </svg>
+                        </div>
+                    </div>
                 `;
             } else if (p.includes('LEVHA')) {
                 return `
-                    <svg class="h-full w-auto text-amber-400" viewBox="0 0 160 60" fill="none">
-                        <rect x="10" y="20" width="140" height="20" rx="3" stroke="#fbbf24" stroke-width="2" fill="rgba(251,191,36,0.1)"/>
-                        <line x1="30" y1="20" x2="30" y2="40" stroke="#fbbf24" stroke-width="1"/>
-                        <line x1="60" y1="20" x2="60" y2="40" stroke="#fbbf24" stroke-width="1"/>
-                        <line x1="90" y1="20" x2="90" y2="40" stroke="#fbbf24" stroke-width="1"/>
-                        <line x1="120" y1="20" x2="120" y2="40" stroke="#fbbf24" stroke-width="1"/>
-                        <text x="75" y="32" fill="#fde68a" font-size="8" font-family="monospace" text-anchor="middle">LEVHA GENİŞ HAT</text>
-                    </svg>
+                    <div class="space-y-2 w-full">
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold px-1">
+                            <span class="text-amber-400 font-mono flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span> 94x207 cm ÇOK KATMANLI KAPI LEVHASI
+                            </span>
+                            <span class="text-cyan-300 font-mono">3-VALS KALENDER · KO-EKSTRÜZYON</span>
+                        </div>
+                        <div class="w-full bg-slate-950 p-2 rounded-xl border border-amber-500/40 shadow-inner">
+                            <svg viewBox="0 0 460 170" class="w-full h-auto drop-shadow-lg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                  <stop offset="0%" stop-color="#e2d9cc"/>
+                                  <stop offset="30%" stop-color="#f5efe6"/>
+                                  <stop offset="70%" stop-color="#d4c7b5"/>
+                                  <stop offset="100%" stop-color="#e2d9cc"/>
+                                </linearGradient>
+                                <linearGradient id="coreGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stop-color="#334155"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                              </defs>
+
+                              <!-- Katman 1: Üst Dekoratif Desen Katmanı -->
+                              <rect x="25" y="42" width="280" height="14" rx="2" fill="url(#woodGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+                              <text x="165" y="52" fill="#78350f" font-size="7.5" font-family="sans-serif" font-weight="black" text-anchor="middle">ÜST DEKORATİF DİŞBUDAK / ANTRASİT KO-EX KATMANI (0.3 mm)</text>
+
+                              <!-- Katman 2: Orta Mukavemetli PVC Çekirdek -->
+                              <rect x="25" y="58" width="280" height="38" rx="2" fill="url(#coreGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+                              <text x="165" y="80" fill="#38bdf8" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">MİKRO-HÜCRESEL WPC ÇEKİRDEK</text>
+                              <text x="165" y="90" fill="#94a3b8" font-size="7.5" font-family="sans-serif" text-anchor="middle">Darbe Emici ve Nem Bariyeri (2.0 mm)</text>
+
+                              <!-- Katman 3: Alt Tutkal Yapışma Yüzeyi -->
+                              <rect x="25" y="98" width="280" height="12" rx="2" fill="#475569" stroke="#10b981" stroke-width="1.2"/>
+                              <text x="165" y="107" fill="#cbd5e1" font-size="7" font-family="sans-serif" text-anchor="middle">Poliüretan Tutkal Tutucu Taban (0.2 mm)</text>
+
+                              <!-- Sağ Panel: 94 x 207 cm Kapı Levha Orantısı -->
+                              <rect x="330" y="25" width="105" height="125" rx="5" fill="url(#woodGrad)" stroke="#f59e0b" stroke-width="2"/>
+                              <rect x="338" y="33" width="89" height="109" rx="3" fill="none" stroke="#b45309" stroke-width="1" stroke-dasharray="3,3"/>
+                              <text x="382.5" y="80" fill="#78350f" font-size="9" font-family="monospace" font-weight="black" text-anchor="middle">94 x 207 cm</text>
+                              <text x="382.5" y="92" fill="#78350f" font-size="7.5" font-family="sans-serif" text-anchor="middle">STANDART LEVHA</text>
+
+                              <!-- Ölçü Okları -->
+                              <line x1="25" y1="28" x2="305" y2="28" stroke="#f59e0b" stroke-width="1.2"/>
+                              <polygon points="33,28 27,25 27,31" fill="#f59e0b"/>
+                              <polygon points="297,28 303,25 303,31" fill="#f59e0b"/>
+                              <text x="165" y="24" fill="#f59e0b" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">Toplam Kalınlık: 2.5 mm ± 0.1 mm</text>
+
+                              <text x="25" y="145" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Levha Ebadı: <tspan fill="#f59e0b" font-weight="bold">940 mm x 2070 mm</tspan></text>
+                              <text x="25" y="160" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Üretim Tipi: <tspan fill="#38bdf8" font-weight="bold">3-Valsli Kalender Döküm & Giyotin Kesim</tspan></text>
+                            </svg>
+                        </div>
+                    </div>
                 `;
             } else {
                 return `
-                    <svg class="h-full w-auto text-violet-400" viewBox="0 0 160 60" fill="none">
-                        <rect x="20" y="10" width="120" height="40" rx="3" stroke="#a78bfa" stroke-width="2" fill="rgba(167,139,250,0.1)"/>
-                        <rect x="35" y="18" width="40" height="24" rx="2" stroke="#a78bfa" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <rect x="85" y="18" width="40" height="24" rx="2" stroke="#a78bfa" stroke-width="1.5" fill="rgba(15,23,42,0.6)"/>
-                        <text x="80" y="32" fill="#94a3b8" font-size="8" font-family="monospace" text-anchor="middle">SEREN PROFİL</text>
-                    </svg>
+                    <div class="space-y-2 w-full">
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold px-1">
+                            <span class="text-purple-300 font-mono flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span> 42x42 mm MASİF KAPI SERENİ PROFİLİ
+                            </span>
+                            <span class="text-cyan-300 font-mono">ÇİFT DESTEK ODACIKLI · YÜKSEK VİDA TUTMA</span>
+                        </div>
+                        <div class="w-full bg-slate-950 p-2 rounded-xl border border-purple-500/40 shadow-inner">
+                            <svg viewBox="0 0 380 170" class="w-full h-auto drop-shadow-lg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <linearGradient id="serenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                  <stop offset="0%" stop-color="#475569"/>
+                                  <stop offset="50%" stop-color="#334155"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                                <linearGradient id="sHollowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                  <stop offset="0%" stop-color="#0f172a"/>
+                                  <stop offset="100%" stop-color="#1e293b"/>
+                                </linearGradient>
+                              </defs>
+
+                              <!-- Masif Kare Profil Gövdesi (42x42 mm) -->
+                              <rect x="70" y="35" width="105" height="105" rx="6" fill="url(#serenGrad)" stroke="#a78bfa" stroke-width="2"/>
+
+                              <!-- İç Çapraz & Çift Kutu Rijitlik Kaburgaları -->
+                              <rect x="80" y="45" width="38" height="38" rx="3" fill="url(#sHollowGrad)" stroke="#8b5cf6" stroke-width="1.5"/>
+                              <rect x="127" y="45" width="38" height="38" rx="3" fill="url(#sHollowGrad)" stroke="#8b5cf6" stroke-width="1.5"/>
+                              <rect x="80" y="92" width="38" height="38" rx="3" fill="url(#sHollowGrad)" stroke="#8b5cf6" stroke-width="1.5"/>
+                              <rect x="127" y="92" width="38" height="38" rx="3" fill="url(#sHollowGrad)" stroke="#8b5cf6" stroke-width="1.5"/>
+
+                              <!-- Merkez Takviye Çekirdeği -->
+                              <circle cx="122.5" cy="87.5" r="4" fill="#a78bfa"/>
+
+                              <!-- Ölçü Çizgileri -->
+                              <line x1="70" y1="18" x2="175" y2="18" stroke="#a78bfa" stroke-width="1.2"/>
+                              <line x1="70" y1="12" x2="70" y2="24" stroke="#a78bfa" stroke-width="1.2"/>
+                              <line x1="175" y1="12" x2="175" y2="24" stroke="#a78bfa" stroke-width="1.2"/>
+                              <polygon points="78,18 72,15 72,21" fill="#a78bfa"/>
+                              <polygon points="167,18 173,15 173,21" fill="#a78bfa"/>
+                              <text x="122.5" y="14" fill="#a78bfa" font-size="10" font-family="monospace" font-weight="black" text-anchor="middle">42 mm</text>
+
+                              <line x1="45" y1="35" x2="45" y2="140" stroke="#a78bfa" stroke-width="1.2"/>
+                              <line x1="40" y1="35" x2="50" y2="35" stroke="#a78bfa" stroke-width="1.2"/>
+                              <line x1="40" y1="140" x2="50" y2="140" stroke="#a78bfa" stroke-width="1.2"/>
+                              <polygon points="45,43 42,37 48,37" fill="#a78bfa"/>
+                              <polygon points="45,132 42,138 48,138" fill="#a78bfa"/>
+                              <text x="32" y="92" fill="#a78bfa" font-size="10" font-family="monospace" font-weight="black" transform="rotate(-90,32,92)" text-anchor="middle">42 mm</text>
+
+                              <!-- Sağ Panel: Teknik Bilgi ve İskelet Konumu -->
+                              <rect x="200" y="35" width="165" height="105" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+                              <text x="212" y="55" fill="#a78bfa" font-size="10" font-family="monospace" font-weight="bold">KAPI SERENİ TEKNİK</text>
+                              <text x="212" y="73" fill="#cbd5e1" font-size="8.5">• WPC Kompozit Masif Gövde</text>
+                              <text x="212" y="90" fill="#cbd5e1" font-size="8.5">• Dönme & Eğilme Direnci: Max</text>
+                              <text x="212" y="107" fill="#cbd5e1" font-size="8.5">• Vida Tutma: 240 kg/cm²</text>
+                              <text x="212" y="125" fill="#38bdf8" font-size="8.5">• İç Kapı Karkas İskelet Elemanı</text>
+
+                              <text x="70" y="160" fill="#94a3b8" font-size="8.5" font-family="sans-serif">Ölçü: <tspan fill="#a78bfa" font-weight="bold">42 x 42 mm Masif Seren</tspan></text>
+                            </svg>
+                        </div>
+                    </div>
                 `;
             }
         }

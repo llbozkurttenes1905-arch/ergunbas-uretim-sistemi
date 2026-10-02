@@ -1157,15 +1157,20 @@
                         <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
                         <!-- 3D Sahne Bilgi & Kamera Kılavuzu -->
-                        <div class="absolute top-3 left-3 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-lg">
+                        <div class="absolute top-3 left-3 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-lg z-10">
                             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                            <span class="font-bold text-white">Three.js 3D WebGL Motoru</span>
+                            <span class="font-bold text-white">Three.js 3D WebGL</span>
                             <span class="text-slate-500">|</span>
-                            <span class="text-slate-400">10 Hat Birebir 3D Modellenmiştir</span>
+                            <span class="text-cyan-300 font-bold" id="dt-workers-stat">👥 18 Operatör • 2 Kalite Kontrol</span>
+                            <span class="text-slate-500">|</span>
+                            <span class="text-amber-400 font-semibold">📏 65m × 42m (2,730 m²)</span>
                         </div>
 
                         <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
                         <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-10">
+                            <button onclick="toggle3DDimensions()" id="btn-dt-dimensions" title="Saha Ölçülerini ve Hat Boşluklarını Göster/Gizle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/20">
+                                <i data-lucide="ruler" class="w-3 h-3 text-white"></i> <span>Ölçüler</span>
+                            </button>
                             <button onclick="toggle3DLayoutEditMode()" id="btn-dt-layout-edit" title="Makinelerin Yerini Değiştir / Düzenle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30">
                                 <i data-lucide="move" class="w-3 h-3 text-white"></i> <span id="dt-layout-edit-text">Yerleşimi Düzenle</span>
                             </button>
@@ -1218,9 +1223,10 @@
 
                     <!-- Alt Tesis Bilgi Çubuğu -->
                     <div class="mt-3 pt-2.5 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
-                        <div>Toplam Kurulu Hat Gücü: <b class="text-white">1,450 kW</b></div>
-                        <div>Hammadde Besleme: <b class="text-emerald-400">Silo 1 & Silo 2 Devrede</b></div>
-                        <div>Tesis Genel KKO: <b id="dt-stat-kko" class="text-emerald-400">%92.4</b></div>
+                        <div>Fabrika Alanı: <b class="text-white">65m × 42m (2,730 m²)</b></div>
+                        <div>Hatlar Arası Emniyet Boşluğu: <b class="text-emerald-400">6.2 m (İş Güvenliği Standart)</b></div>
+                        <div>Aktif Personel: <b class="text-cyan-400" id="dt-total-operators-val">18 Operatör • 2 Kalite Kontrol</b></div>
+                        <div>Tesis KKO: <b id="dt-stat-kko" class="text-emerald-400">%92.4</b></div>
                     </div>
                 </div>
 
@@ -3048,24 +3054,29 @@
         let dtFloorPlane = null;
         let dtDragOffset = null;
         let dtPlaneIntersect = null;
-        const DT_STORAGE_KEY = 'ergunbas_dt_3d_positions_v1';
+        let dtDimensionsGroup = null;
+        let dtShowDimensions = true;
+        const DT_STORAGE_KEY = 'ergunbas_dt_3d_positions_v2';
 
-        // 3D Fabrika Sahası Dünya Koordinatları (Varsayılan Yerleşim)
+        // 3D Fabrika Sahası Dünya Koordinatları (Görseldeki İki Paralel Blok & Kalite Kontrol Masaları)
         const DT_3D_DEFAULT_POSITIONS = {
-            // Ön Hatlar (Kademeli Düzen)
-            '101': { x: -14, z: 24, name: 'Hat 101', type: 'ext', heads: 1, rotY: 0 },
-            '102': { x: 12,  z: 24, name: 'Hat 102', type: 'ext', heads: 2, rotY: 0 },
-            // Orta Ön Hatlar
-            '103': { x: -26, z: 8,  name: 'Hat 103', type: 'ext', heads: 2, rotY: 0 },
-            '104': { x: -1,  z: 8,  name: 'Hat 104', type: 'ext', heads: 2, rotY: 0 },
-            '105': { x: 24,  z: 8,  name: 'Hat 105', type: 'ext', heads: 2, rotY: 0 },
-            // Orta Arka Hatlar
-            '106': { x: -26, z: -9, name: 'Hat 106', type: 'ext', heads: 1, rotY: 0 },
-            '107': { x: -1,  z: -9, name: 'Hat 107', type: 'ext', heads: 1, rotY: 0 },
-            '108': { x: 24,  z: -9, name: 'Hat 108', type: 'ext', heads: 1, rotY: 0 },
-            // Arka Hatlar
-            '109': { x: -14, z: -25, name: 'Hat 109', type: 'ext', heads: 2, rotY: 0 },
-            '201': { x: 12,  z: -25, name: 'Levha 201', type: 'levha', heads: 1, rotY: 0 }
+            // Sol Hat Bloğu (Görseldeki paralel diziliş)
+            '101': { x: -22, z: 24, name: 'Hat 101', type: 'ext', heads: 1, rotY: 0 },
+            '102': { x: -22, z: 12, name: 'Hat 102', type: 'ext', heads: 2, rotY: 0 },
+            '103': { x: -22, z: 0,  name: 'Hat 103', type: 'ext', heads: 2, rotY: 0 },
+            '104': { x: -22, z: -12, name: 'Hat 104', type: 'ext', heads: 2, rotY: 0 },
+            '106': { x: -22, z: -24, name: 'Hat 106', type: 'ext', heads: 1, rotY: 0 },
+
+            // Sağ Hat Bloğu (Paralel diziliş & Levha 201)
+            '105': { x: 10,  z: 24, name: 'Hat 105', type: 'ext', heads: 2, rotY: 0 },
+            '107': { x: 10,  z: 12, name: 'Hat 107', type: 'ext', heads: 1, rotY: 0 },
+            '108': { x: 10,  z: 0,  name: 'Hat 108', type: 'ext', heads: 1, rotY: 0 },
+            '109': { x: 10,  z: -12, name: 'Hat 109', type: 'ext', heads: 2, rotY: 0 },
+            '201': { x: 10,  z: -24, name: 'Levha 201', type: 'levha', heads: 1, rotY: 0 },
+
+            // Kalite Kontrol Masaları (Hassas Ölçüm İstasyonları)
+            'qc1': { x: -6,  z: 32, name: 'Kalite Masası #1', type: 'qc', rotY: 0 },
+            'qc2': { x: 26,  z: -14, name: 'Kalite Masası #2', type: 'qc', rotY: 0 }
         };
         let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
@@ -3158,6 +3169,13 @@
                     ? [178, 185, 188, 192, 196, 200]
                     : ((status === 'warning') ? [160, 168, 174, 180, 184, 186] : [25, 25, 25, 25, 25, 25]);
 
+                const gOp = dtDayData.gunduz?.operator || 'Ali K.';
+                const geOp = dtDayData.gece?.operator || 'Mehmet D.';
+                const opCount = hours > 0 ? (hours >= 24 ? 2 : 1) : 0;
+                const opText = opCount === 2 
+                    ? `2 Operatör (${gOp} & ${geOp})`
+                    : (hours > 0 ? `1 Operatör (${gOp})` : 'Boşta / Personel Yok');
+
                 dtMachinesData.push({
                     id: hat,
                     name: `Hat ${hat}`,
@@ -3171,7 +3189,10 @@
                     speed: speed,
                     rpm: rpm,
                     temps: temps,
-                    operator: `${dtDayData.gunduz?.operator || 'Gündüz'} / ${dtDayData.gece?.operator || 'Gece'}`,
+                    operator: `${gOp} / ${geOp}`,
+                    operatorCount: opCount,
+                    operatorDetail: opText,
+                    spacing: '6.2 m (İş Güvenliği Uygun)',
                     downtime: downtimeText
                 });
             });
@@ -3208,13 +3229,87 @@
                 rpm: levHours > 0 ? (19 + (levSpeed * 1.5)).toFixed(1) : '0.0',
                 temps: (levStatus === 'active') ? [185, 192, 196, 202, 206, 212] : ((levStatus === 'warning') ? [170, 175, 180, 185, 190, 195] : [25, 25, 25, 25, 25, 25]),
                 operator: `${dtDayData.gunduz?.operator || 'Gündüz'} / ${dtDayData.gece?.operator || 'Gece'}`,
+                operatorCount: levHours > 0 ? (levHours >= 24 ? 2 : 1) : 0,
+                operatorDetail: levHours > 0 ? '2 Operatör (Levha Ekibi)' : 'Boşta',
+                spacing: '7.5 m (Geniş Hat Açıklığı)',
                 downtime: levDowntimeText
             });
 
+            // Kalite Kontrol İstasyonları (Masa #1 & Masa #2)
+            dtMachinesData.push({
+                id: 'qc1',
+                name: 'Kalite Masası #1',
+                fullName: 'Profil Kalite Kontrol Masası #1',
+                type: 'Kalite Kontrol',
+                heads: 1,
+                status: 'active',
+                hours: 24,
+                prodKg: 0,
+                fireKg: 0,
+                product: 'Profil Hatları Boyutsal Muayene & Tolerans',
+                speed: 0,
+                rpm: '0.0',
+                temps: [22, 22, 22, 22, 22, 22],
+                operator: '1 Kalite Teknisyeni (Ali K.)',
+                operatorCount: 1,
+                operatorDetail: '1 Kalite Teknisyeni (Hassas Kumpas & Pleyt)',
+                spacing: 'Merkezi Muayene İstasyonu',
+                downtime: 'Sürekli Aktif Kalite Güvence',
+                isQC: true,
+                qcReport: {
+                    tolerans: '±0.03 mm (Nominal İçi)',
+                    etKalinligi: '2.40 mm (Ölçülen)',
+                    yuzeyParlaklik: '98.5 GU (A+ Sınıfı)',
+                    darbeTesti: 'ISO 179-1: UYGUN',
+                    cihazlar: 'Mitutoyo Dijital Komparatör, Ölçüm Pleyti, Çekme Testi'
+                }
+            });
+
+            dtMachinesData.push({
+                id: 'qc2',
+                name: 'Kalite Masası #2',
+                fullName: 'Levha Kalite Kontrol Masası #2',
+                type: 'Kalite Kontrol',
+                heads: 1,
+                status: 'active',
+                hours: 24,
+                prodKg: 0,
+                fireKg: 0,
+                product: 'Levha Hattı Kalınlık & Genişlik Homojenliği',
+                speed: 0,
+                rpm: '0.0',
+                temps: [22, 22, 22, 22, 22, 22],
+                operator: '1 Kalite Teknisyeni (Zeynep B.)',
+                operatorCount: 1,
+                operatorDetail: '1 Kalite Teknisyeni (Ultrasonik Ölçüm)',
+                spacing: 'Levha Yanı İstasyon',
+                downtime: 'Sürekli Aktif Kalite Güvence',
+                isQC: true,
+                qcReport: {
+                    tolerans: '±0.04 mm (Nominal İçi)',
+                    etKalinligi: '3.00 mm (Ölçülen)',
+                    yuzeyParlaklik: 'Pürüzsüz Ekstrüzyon',
+                    darbeTesti: 'TS EN 514: UYGUN',
+                    cihazlar: 'Ultrasonik Kalınlık Ölçer, Mikrometre Standı'
+                }
+            });
+
+            // Personel İstatistikleri
+            const totalOps = dtMachinesData.filter(m => !m.isQC).reduce((acc, m) => acc + (m.operatorCount || 0), 0);
+            const workersStatElem = document.getElementById('dt-workers-stat');
+            if (workersStatElem) {
+                workersStatElem.textContent = `👥 ${totalOps} Operatör • 2 Kalite Kontrol`;
+            }
+            const totalOpValElem = document.getElementById('dt-total-operators-val');
+            if (totalOpValElem) {
+                totalOpValElem.textContent = `${totalOps} Operatör + 2 Kalite Kontrol`;
+            }
+
             // Üst sayaçlar
-            const activeCount = dtMachinesData.filter(m => m.status === 'active').length;
-            const warningCount = dtMachinesData.filter(m => m.status === 'warning').length;
-            const idleCount = dtMachinesData.filter(m => m.status === 'idle').length;
+            const machineOnly = dtMachinesData.filter(m => !m.isQC);
+            const activeCount = machineOnly.filter(m => m.status === 'active').length;
+            const warningCount = machineOnly.filter(m => m.status === 'warning').length;
+            const idleCount = machineOnly.filter(m => m.status === 'idle').length;
 
             const elActive = document.getElementById('dt-stat-active');
             const elWarn = document.getElementById('dt-stat-warning');
@@ -3339,10 +3434,10 @@
         }
 
         /* --------------------------------------------------------
-           ZEMİN, GÜVENLİK YOLLARI VE ENDÜSTRİYEL AYDINLATMA (Izgarasız Gri Zemin)
+           ZEMİN, DUVARLAR VE ENDÜSTRİYEL MİMARİ (Görsel 2 Birebir)
         -------------------------------------------------------- */
         function buildFactoryFloorAndArchitecture() {
-            // Pürüzsüz Temiz Endüstriyel Sanayi Grisi Epoksi/Beton Zemin (Izgarasız)
+            // Pürüzsüz Temiz Endüstriyel Sanayi Grisi Epoksi Zemin (Izgarasız)
             const floorGeo = new THREE.PlaneGeometry(160, 120);
             const floorMat = new THREE.MeshStandardMaterial({
                 color: 0x3d4756, // Modern pürüzsüz sanayi grisi
@@ -3354,46 +3449,64 @@
             floor.receiveShadow = true;
             dtScene.add(floor);
 
-            // Zemin ızgarası kaldırıldı (Kullanıcı talebi doğrultusunda temiz pürüzsüz sanayi zemini)
-
             // Temiz Sarı Güvenlik Sınır Çizgileri
             const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             
-            // Hat Başları Güvenlik Şeridi (Kafaların hemen önünden geçer)
-            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
+            // Hat Başları Ön Güvenlik Şeridi
+            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
             lineFront.rotation.x = -Math.PI / 2;
-            lineFront.position.set(0, 0.02, 34);
+            lineFront.position.set(0, 0.02, 36);
             dtScene.add(lineFront);
 
             // Orta hat koridoru
-            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
+            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
             lineMid.rotation.x = -Math.PI / 2;
-            lineMid.position.set(0, 0.02, 0);
+            lineMid.position.set(0, 0.02, 6);
             dtScene.add(lineMid);
 
             // Arka koridor çizgisi
-            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
+            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(140, 0.35), lineMat);
             lineBack.rotation.x = -Math.PI / 2;
-            lineBack.position.set(0, 0.02, -34);
+            lineBack.position.set(0, 0.02, -36);
             dtScene.add(lineBack);
 
+            // Sol Taraf Boyuna Güvenlik Çizgisi
+            const lineLeftAisle = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 80), lineMat);
+            lineLeftAisle.rotation.x = -Math.PI / 2;
+            lineLeftAisle.position.set(-36, 0.02, 0);
+            dtScene.add(lineLeftAisle);
+
             // Fabrika Arka Duvarı & Taşıyıcı Çelik Kolonlar
-            const wallGeo = new THREE.BoxGeometry(140, 22, 1.2);
+            const wallGeo = new THREE.BoxGeometry(150, 22, 1.2);
             const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.85, metalness: 0.15 });
             const wall = new THREE.Mesh(wallGeo, wallMat);
-            wall.position.set(0, 11, -44);
+            wall.position.set(0, 11, -48);
             wall.receiveShadow = true;
             dtScene.add(wall);
 
-            [-55, -28, 0, 28, 55].forEach(cx => {
+            // Sol Fabrika Yan Duvarı (Görseldeki sol duvar panelleri)
+            const sideWallGeo = new THREE.BoxGeometry(1.2, 22, 110);
+            const sideWall = new THREE.Mesh(sideWallGeo, wallMat);
+            sideWall.position.set(-48, 11, 0);
+            sideWall.receiveShadow = true;
+            dtScene.add(sideWall);
+
+            [-50, -25, 0, 25, 50].forEach(cx => {
                 const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, 22, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
-                col.position.set(cx, 11, -43);
+                col.position.set(cx, 11, -47);
                 col.castShadow = true;
                 dtScene.add(col);
             });
 
+            [-35, -10, 15, 40].forEach(cz => {
+                const sideCol = new THREE.Mesh(new THREE.BoxGeometry(2.2, 22, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
+                sideCol.position.set(-47, 11, cz);
+                sideCol.castShadow = true;
+                dtScene.add(sideCol);
+            });
+
             // Seçim Aurası Halkası (Cyan Targeting Reticle)
-            const selGeo = new THREE.RingGeometry(2.1, 2.45, 36);
+            const selGeo = new THREE.RingGeometry(2.1, 2.5, 36);
             const selMat = new THREE.MeshBasicMaterial({
                 color: 0x38bdf8,
                 side: THREE.DoubleSide,
@@ -3404,6 +3517,279 @@
             dtSelectionRing.rotation.x = -Math.PI / 2;
             dtSelectionRing.position.set(0, 0.05, 0);
             dtScene.add(dtSelectionRing);
+
+            // Saha Ölçüleri ve Hat Boşluğu Kılavuzları
+            buildFactoryDimensionsAndClearances();
+        }
+
+        /* --------------------------------------------------------
+           SAHA ÖLÇÜLERİ VE MAKİNELER ARASI GÜVENLİK BOŞLUKLARI
+        -------------------------------------------------------- */
+        function buildFactoryDimensionsAndClearances() {
+            if (dtDimensionsGroup) {
+                dtScene.remove(dtDimensionsGroup);
+            }
+            dtDimensionsGroup = new THREE.Group();
+
+            const dimMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 });
+            const dimCyanMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+
+            // 1. Zemin Çevre Ölçü Çizgileri (Saha Ölçüsü: 65m x 42m)
+            // Ön sınır ölçü oku (X Ekseni: 65 Metre)
+            const frontDimLine = new THREE.Mesh(new THREE.PlaneGeometry(70, 0.12), dimMat);
+            frontDimLine.rotation.x = -Math.PI / 2;
+            frontDimLine.position.set(0, 0.03, 42);
+            dtDimensionsGroup.add(frontDimLine);
+
+            [-35, 35].forEach(tx => {
+                const tick = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 2.5), dimMat);
+                tick.rotation.x = -Math.PI / 2;
+                tick.position.set(tx, 0.03, 42);
+                dtDimensionsGroup.add(tick);
+            });
+
+            // Yan sınır ölçü oku (Z Ekseni: 42 Metre)
+            const sideDimLine = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 55), dimMat);
+            sideDimLine.rotation.x = -Math.PI / 2;
+            sideDimLine.position.set(-42, 0.03, 0);
+            dtDimensionsGroup.add(sideDimLine);
+
+            [-27.5, 27.5].forEach(tz => {
+                const tick = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 0.12), dimMat);
+                tick.rotation.x = -Math.PI / 2;
+                tick.position.set(-42, 0.03, tz);
+                dtDimensionsGroup.add(tick);
+            });
+
+            // 2. Hatlar Arası Güvenlik Boşluğu Çizgileri (↔ 6.2 m Hat Boşluğu)
+            // Sol Blok hat aralıkları
+            [18, 6, -6, -18].forEach(gapZ => {
+                const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
+                gapLine.rotation.x = -Math.PI / 2;
+                gapLine.position.set(-22, 0.025, gapZ);
+                dtDimensionsGroup.add(gapLine);
+            });
+
+            // Sağ Blok hat aralıkları
+            [18, 6, -6, -18].forEach(gapZ => {
+                const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
+                gapLine.rotation.x = -Math.PI / 2;
+                gapLine.position.set(10, 0.025, gapZ);
+                dtDimensionsGroup.add(gapLine);
+            });
+
+            dtScene.add(dtDimensionsGroup);
+            dtDimensionsGroup.visible = dtShowDimensions;
+        }
+
+        function toggle3DDimensions() {
+            dtShowDimensions = !dtShowDimensions;
+            if (dtDimensionsGroup) dtDimensionsGroup.visible = dtShowDimensions;
+            const btn = document.getElementById('btn-dt-dimensions');
+            if (btn) {
+                btn.className = dtShowDimensions
+                    ? 'px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/30'
+                    : 'px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1';
+            }
+            updateProjected3DLabels();
+            if (typeof showToast === 'function') {
+                showToast(dtShowDimensions ? 'Saha ölçüleri ve hat aralıkları görünür yapıldı.' : 'Saha ölçüleri gizlendi.', 'info');
+            }
+        }
+
+        /* --------------------------------------------------------
+           PROSEDÜREL 3D İNSAN OPERATÖR & TEKNİSYEN MODELİ
+        -------------------------------------------------------- */
+        function create3DWorkerModel(role = 'operator', vestColor = 0xf59e0b) {
+            const worker = new THREE.Group();
+
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.6 });
+            const vestMat = new THREE.MeshStandardMaterial({ color: vestColor, roughness: 0.4, metalness: 0.1 });
+            const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+            const bootsMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
+            const helmetColor = (role === 'qc' ? 0xffffff : 0xfacc15); // Kalite kontrol baret beyaz, işçi sarı
+            const helmetMat = new THREE.MeshStandardMaterial({ color: helmetColor, roughness: 0.3, metalness: 0.2 });
+
+            // İki Bacak
+            [-0.14, 0.14].forEach(legX => {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.8, 12), pantsMat);
+                leg.position.set(legX, 0.45, 0);
+                leg.castShadow = true;
+                worker.add(leg);
+
+                const boot = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.28), bootsMat);
+                boot.position.set(legX, 0.06, 0.05);
+                boot.castShadow = true;
+                worker.add(boot);
+            });
+
+            // Gövde (Reflektif İşçi Yeleği)
+            const torso = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.65, 0.28), vestMat);
+            torso.position.set(0, 1.15, 0);
+            torso.castShadow = true;
+            worker.add(torso);
+
+            const stripeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.49, 0.08, 0.29), stripeMat);
+            stripe.position.set(0, 1.15, 0);
+            worker.add(stripe);
+
+            // Kollar ve Eller
+            [-0.30, 0.30].forEach(armX => {
+                const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.55, 12), vestMat);
+                arm.position.set(armX, 1.15, 0);
+                arm.rotation.z = armX > 0 ? -0.15 : 0.15;
+                arm.castShadow = true;
+                worker.add(arm);
+
+                const hand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), skinMat);
+                hand.position.set(armX, 0.82, 0);
+                worker.add(hand);
+            });
+
+            // Kafa
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), skinMat);
+            head.position.set(0, 1.62, 0);
+            head.castShadow = true;
+            worker.add(head);
+
+            // Güvenlik Bareti
+            const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.55), helmetMat);
+            helmet.position.set(0, 1.67, 0);
+            helmet.castShadow = true;
+            worker.add(helmet);
+
+            const helmetBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.20, 0.03, 16), helmetMat);
+            helmetBrim.position.set(0, 1.66, 0.02);
+            worker.add(helmetBrim);
+
+            // Kalite Kontrol Teknisyeni için Muayene Panosu (Clipboard)
+            if (role === 'qc') {
+                const clipMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.5 });
+                const paperMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const clipboard = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.32, 0.02), clipMat);
+                clipboard.position.set(0.15, 1.05, 0.22);
+                clipboard.rotation.set(-0.3, 0.2, 0);
+                worker.add(clipboard);
+
+                const paper = new THREE.Mesh(new THREE.PlaneGeometry(0.20, 0.26), paperMat);
+                paper.position.set(0.15, 1.06, 0.23);
+                paper.rotation.set(-0.3, 0.2, 0);
+                worker.add(paper);
+            }
+
+            return worker;
+        }
+
+        /* --------------------------------------------------------
+           PROSEDÜREL 3D KALİTE KONTROL MASASI VE MUAYENE İSTASYONU
+        -------------------------------------------------------- */
+        function create3DQualityControlTable(id, name) {
+            const group = new THREE.Group();
+
+            const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });
+            const darkFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.5 });
+            const graniteMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.2, metalness: 0.3 }); // Hassas granit pleyt
+            const screenMat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+            const lampMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3 });
+            const whitePlasticMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 });
+
+            // Masa tablası
+            const tableTop = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.16, 2.0), graniteMat);
+            tableTop.position.set(0, 0.95, 0);
+            tableTop.castShadow = true;
+            tableTop.receiveShadow = true;
+            group.add(tableTop);
+
+            // Çelik ayaklar
+            [-1.8, 1.8].forEach(lx => {
+                [-0.85, 0.85].forEach(lz => {
+                    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.95, 16), steelMat);
+                    leg.position.set(lx, 0.475, lz);
+                    leg.castShadow = true;
+                    group.add(leg);
+                });
+            });
+
+            // Alt takım çekmecesi
+            const cabinet = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.55, 1.6), darkFrameMat);
+            cabinet.position.set(-1.1, 0.55, 0);
+            cabinet.castShadow = true;
+            group.add(cabinet);
+
+            // Bilgisayar / SCADA Ölçüm Ekranı
+            const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.5, 12), steelMat);
+            stand.position.set(1.4, 1.25, -0.5);
+            group.add(stand);
+
+            const monitor = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.05), darkFrameMat);
+            monitor.position.set(1.4, 1.55, -0.5);
+            monitor.rotation.y = -0.3;
+            group.add(monitor);
+
+            const display = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.42), screenMat);
+            display.position.set(1.4, 1.55, -0.47);
+            display.rotation.y = -0.3;
+            group.add(display);
+
+            // Dijital Yükseklik Komparatörü / Mikrometre Sehpası
+            const micStand = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.7, 16), steelMat);
+            micStand.position.set(-0.6, 1.35, -0.4);
+            group.add(micStand);
+
+            const micArm = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.4, 12), steelMat);
+            micArm.rotation.z = Math.PI / 2;
+            micArm.position.set(-0.45, 1.6, -0.4);
+            group.add(micArm);
+
+            const micDial = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.04, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            micDial.rotation.x = Math.PI / 2;
+            micDial.position.set(-0.25, 1.6, -0.38);
+            group.add(micDial);
+
+            // Masada incelenen PVC Profil Numuneleri
+            const sample1 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.1, 0.25), whitePlasticMat);
+            sample1.position.set(-0.3, 1.08, 0.15);
+            sample1.rotation.y = 0.2;
+            group.add(sample1);
+
+            const sample2 = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.0, 20), whitePlasticMat);
+            sample2.rotation.z = Math.PI / 2;
+            sample2.position.set(0.4, 1.1, -0.2);
+            group.add(sample2);
+
+            // Masa Lambası
+            const lampArm = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.75, 12), lampMat);
+            lampArm.position.set(-1.6, 1.35, -0.6);
+            group.add(lampArm);
+
+            const lampHead = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.24, 16), lampMat);
+            lampHead.position.set(-1.45, 1.75, -0.4);
+            lampHead.rotation.z = -Math.PI / 3;
+            group.add(lampHead);
+
+            // Küçük spot ışık
+            const tableLight = new THREE.PointLight(0xfffbeb, 1.4, 8);
+            tableLight.position.set(-0.3, 2.1, 0);
+            group.add(tableLight);
+
+            // Masanın Başında Kalite Kontrol Teknisyeni
+            const qcInspector = create3DWorkerModel('qc', 0x0284c7);
+            qcInspector.position.set(0.2, 0, 1.3);
+            qcInspector.rotation.y = Math.PI; // Masaya dönük
+            group.add(qcInspector);
+
+            // Zemin Durum Halkası (Cyan Parlayan Halka)
+            const ringGeo = new THREE.RingGeometry(1.8, 2.2, 36);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.set(0, 0.04, 0);
+            group.add(ring);
+            dtFloorRings[id] = ring;
+
+            group.userData = { id: id, name: name, type: 'qc' };
+            return group;
         }
 
         /* --------------------------------------------------------
@@ -3415,7 +3801,9 @@
 
             Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
                 let group;
-                if (cfg.type === 'levha') {
+                if (cfg.type === 'qc') {
+                    group = create3DQualityControlTable(id, cfg.name);
+                } else if (cfg.type === 'levha') {
                     group = create3DSheetExtruderModel(id, cfg.name);
                 } else {
                     group = create3DProfileExtruderModel(id, cfg.name, cfg.heads);
@@ -3426,42 +3814,42 @@
                 group.userData = { id: id, name: cfg.name, type: cfg.type };
                 dtScene.add(group);
                 dtMachineGroups[id] = group;
-
-                // Zemin 3D Neon Durum Halkası (Makine grubuna eklenir, makineyle birlikte hareket eder)
-                const ringGeo = new THREE.RingGeometry(1.6, 2.0, 36);
-                const ringMat = new THREE.MeshBasicMaterial({
-                    color: 0x22c55e,
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.95
-                });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.rotation.x = -Math.PI / 2;
-                ring.position.set(-9.5, 0.04, 0);
-                group.add(ring);
-                dtFloorRings[id] = ring;
             });
         }
 
-        // PVC Profil Ekstrüzyon Hattı (Image 2'deki Gerçekçi Endüstriyel Model)
+        // PVC Profil Ekstrüzyon Hattı (Görsel 2'deki Gerçekçi Model)
         function create3DProfileExtruderModel(id, name, heads) {
             const group = new THREE.Group();
 
-            // Image 2 Malzeme Paleti:
-            const whiteCabMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.35, metalness: 0.15 }); // Açık gri/beyaz kabin
-            const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4, metalness: 0.55 }); // Sanayi mavisi şasi
-            const darkBlueMat = new THREE.MeshStandardMaterial({ color: 0x075985, roughness: 0.5, metalness: 0.5 });   // Alt kapak panelleri
-            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.12, metalness: 0.95 });   // Ayna parlaklığında krom
-            const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });       // Paslanmaz çelik kapaklar
-            const brassGaugeMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.25, metalness: 0.85 }); // Gösterge pirinç halka
-            const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.75 }); // Havuz suyu
-            const pvcProfileMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.05 }); // Hattan çıkan beyaz profil
+            // Görsel 2 Malzeme Paleti:
+            const whiteCabMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.35, metalness: 0.15 });
+            const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4, metalness: 0.55 });
+            const darkBlueMat = new THREE.MeshStandardMaterial({ color: 0x075985, roughness: 0.5, metalness: 0.5 });
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.10, metalness: 0.95 });
+            const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });
+            const brassGaugeMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.25, metalness: 0.85 });
+            const waterMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.75 });
+            const pvcProfileMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.05 });
             const hazardYellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
 
+            // Görseldeki Hatlara Özel Gerçekçi Motor Gövdesi Renk Paleti (Görsel 2)
+            const motorColors = {
+                '101': 0xd9383a, // Görseldeki Hat 101 Canlı Kırmızı Motor
+                '102': 0x0284c7, // Hat 102 Mavi Motor
+                '103': 0x16a34a, // Görseldeki Hat 103 Canlı Yeşil Motor
+                '104': 0xea580c, // Hat 104 Turuncu Motor
+                '105': 0x1d4ed8, // Görseldeki Hat 105 Kobalt Mavi Motor
+                '106': 0x475569, // Hat 106 Koyu Çelik Gri Motor
+                '107': 0x0ea5e9, // Görseldeki Hat 107 Açık Mavi Motor
+                '108': 0xd97706, // Hat 108 Kehribar/Sarı Motor
+                '109': 0x1e3a8a  // Hat 109 Koyu Lacivert Motor
+            };
+            const motorColor = motorColors[id] || 0x0284c7;
+            const motorMat = new THREE.MeshStandardMaterial({ color: motorColor, roughness: 0.35, metalness: 0.45 });
+
             // ==========================================
-            // 1. SOL UÇ: KAİDE SEHPASI & DİE HEAD & KARE HUNİ (Image 2 Sol Kafa)
+            // 1. SOL UÇ: KAİDE SEHPASI & DİE HEAD & KARE/PİRAMİT HUNİ (Görsel Sol Kafa)
             // ==========================================
-            // Beyaz kaide sehpası
             const headPedestal = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.9, 1.8), whiteCabMat);
             headPedestal.position.set(-9.5, 0.45, 0);
             headPedestal.castShadow = true;
@@ -3483,7 +3871,7 @@
             headSupport.castShadow = true;
             group.add(headSupport);
 
-            // Yatay Silindirik Kalıp Kafası (Die Cylinder)
+            // Yatay Silindirik Kalıp Kafası
             const dieCylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.6, 28), chromeMat);
             dieCylinder.rotation.z = Math.PI / 2;
             dieCylinder.position.set(-9.2, 1.45, 0);
@@ -3498,14 +3886,22 @@
                 group.add(flange);
             });
 
-            // Kafa üstü Ko-Ekstrüzyon Kare Hunisi (Image 2'deki kare huni)
-            const coexHopper = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.85, 0.85), chromeMat);
-            coexHopper.position.set(-9.5, 2.2, 0);
+            // Kafa üstü Ko-Ekstrüzyon Huni (Görseldeki kafa üstü huniler)
+            const coexGeo = (id === '103' || id === '105' || id === '107')
+                ? new THREE.ConeGeometry(0.65, 0.9, 4)
+                : new THREE.BoxGeometry(0.85, 0.85, 0.85);
+            const coexHopper = new THREE.Mesh(coexGeo, chromeMat);
+            if (id === '103' || id === '105' || id === '107') {
+                coexHopper.rotation.y = Math.PI / 4;
+                coexHopper.position.set(-9.5, 2.3, 0);
+            } else {
+                coexHopper.position.set(-9.5, 2.2, 0);
+            }
             coexHopper.castShadow = true;
             group.add(coexHopper);
 
             // ==========================================
-            // 2. ORTA SOL: VAKUM KALİBRASYON & SU HAVUZU (Image 2 Mavi Gövde)
+            // 2. ORTA SOL: VAKUM KALİBRASYON & SU HAVUZU
             // ==========================================
             const tankLength = 8.5;
             const tankX = -3.8;
@@ -3515,14 +3911,12 @@
             tankFrame.receiveShadow = true;
             group.add(tankFrame);
 
-            // Alt kapak panelleri (Koyu mavi)
             for (let p = 0; p < 4; p++) {
                 const panel = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.65, 1.62), darkBlueMat);
                 panel.position.set(tankX - 3.0 + (p * 2.0), 0.65, 0);
                 group.add(panel);
             }
 
-            // Taşıyıcı çelik boru ayaklar
             [-7.5, -4.0, -0.5].forEach(lx => {
                 [-0.65, 0.65].forEach(lz => {
                     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.5, 16), steelMat);
@@ -3532,7 +3926,7 @@
                 });
             });
 
-            // 5 Adet Paslanmaz Çelik Arşlı Kalibrasyon Kapağı & Göstergeler (Image 2 Parlak Kapaklar)
+            // 5 Adet Paslanmaz Çelik Kalibrasyon Kapağı & Göstergeler
             const lidWidth = 1.0;
             const lidStartX = -7.3;
             for (let c = 0; c < 5; c++) {
@@ -3551,7 +3945,7 @@
                 group.add(gauge);
             }
 
-            // 2 Adet Açık Su Banyosu / Daldırma Havuzu (Image 2 Mavi Su Dolu Tanklar)
+            // 2 Adet Açık Su Banyosu / Daldırma Havuzu
             const bathStartX = -1.2;
             for (let b = 0; b < 2; b++) {
                 const bathX = bathStartX + (b * 1.45);
@@ -3567,45 +3961,41 @@
             }
 
             // ==========================================
-            // 3. SAĞ ORTA: ANA EKSTRÜDER GÖVDESİ & ANA BUNKER (Image 2 Motor Ünitesi)
+            // 3. SAĞ ORTA: ANA EKSTRÜDER GÖVDESİ & ANA BUNKER
             // ==========================================
             const extX = 3.6;
-            // Beyaz ana elektrik & sürücü kabini
             const extCabinet = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.5, 2.2), whiteCabMat);
             extCabinet.position.set(extX, 0.75, 0);
             extCabinet.castShadow = true;
             extCabinet.receiveShadow = true;
             group.add(extCabinet);
 
-            // Sarı Tehlike Uyarı Levhası (⚠️)
             const hazardPlate = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 2.23), hazardYellowMat);
             hazardPlate.position.set(extX + 0.6, 0.9, 0);
             group.add(hazardPlate);
 
-            // Üst Sanayi Mavisi Redüktör & Motor Bloğu (Image 2 Mavi Motor)
-            const motorBox = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 1.5), blueFrameMat);
+            // Renkli Redüktör & Motor Bloğu (Görseldeki canlı renkler)
+            const motorBox = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 1.5), motorMat);
             motorBox.position.set(extX + 0.6, 1.8, 0);
             motorBox.castShadow = true;
             group.add(motorBox);
 
-            // Kovan Silindiri
             const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 2.4, 24), chromeMat);
             barrel.rotation.z = Math.PI / 2;
             barrel.position.set(extX - 1.2, 1.7, 0);
             barrel.castShadow = true;
             group.add(barrel);
 
-            // BÜYÜK ANA BUNKER (Image 2'deki Parlak Silindirik Huni)
+            // BÜYÜK ANA BUNKER (Aynalı Parlak Silindirik Huni)
             const mainHopper = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.3, 1.4, 32), chromeMat);
             mainHopper.position.set(extX - 0.7, 2.9, 0);
             mainHopper.castShadow = true;
             group.add(mainHopper);
 
             // ==========================================
-            // 4. SAĞ UÇ: ÇEKİCİ, TESTERE & PROFİL MASASI (Image 2 Çıkış Ünitesi)
+            // 4. SAĞ UÇ: ÇEKİCİ, TESTERE & PROFİL MASASI
             // ==========================================
             const exitX = 8.5;
-            // Çekici Kabini (Mavi ve beyaz gövde)
             const pullerCab = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.6, 1.7), blueFrameMat);
             pullerCab.position.set(exitX, 0.8, 0);
             pullerCab.castShadow = true;
@@ -3615,7 +4005,6 @@
             pullerTop.position.set(exitX, 1.65, 0);
             group.add(pullerTop);
 
-            // Devirme Sehpası / Profil Çıkış Masası
             const exitTable = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.15, 1.2), steelMat);
             exitTable.position.set(exitX + 3.0, 0.85, 0);
             exitTable.castShadow = true;
@@ -3627,24 +4016,66 @@
                 group.add(leg);
             });
 
-            // Masadan Çıkan GERÇEK 3D PVC BEYAZ PROFİL (Image 2'deki gibi)
+            // Masadan Çıkan GERÇEK 3D PVC BEYAZ PROFİL
             const profileBeam = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.25, 0.45), pvcProfileMat);
             profileBeam.position.set(exitX + 3.0, 1.0, 0);
             profileBeam.castShadow = true;
             group.add(profileBeam);
 
+            // ==========================================
+            // 5. HER MAKİNEDE ÇALIŞAN 3D ELEMANLAR (Operatörler)
+            // ==========================================
+            const op1 = create3DWorkerModel('operator', 0xf59e0b);
+            op1.position.set(extX - 0.4, 0, 1.5);
+            op1.rotation.y = -0.5;
+            group.add(op1);
+
+            const op2 = create3DWorkerModel('operator', 0x10b981);
+            op2.position.set(tankX + 1.2, 0, 1.4);
+            op2.rotation.y = -0.4;
+            group.add(op2);
+
+            // ==========================================
+            // 6. ZEMİN 3D ÇİFT KATMANLI NEON DURUM HALKASI (Görsel 2)
+            // ==========================================
+            const ringGeo = new THREE.RingGeometry(1.6, 2.1, 40);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: (id === '101' ? 0xef4444 : (id === '105' ? 0xf59e0b : 0x22c55e)),
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.95
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.set(-9.5, 0.04, 0);
+            group.add(ring);
+            dtFloorRings[id] = ring;
+
+            const ringOuter = new THREE.Mesh(
+                new THREE.RingGeometry(2.1, 2.3, 40),
+                new THREE.MeshBasicMaterial({
+                    color: (id === '101' ? 0xef4444 : (id === '105' ? 0xf59e0b : 0x22c55e)),
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.45
+                })
+            );
+            ringOuter.rotation.x = -Math.PI / 2;
+            ringOuter.position.set(-9.5, 0.041, 0);
+            group.add(ringOuter);
+
             return group;
         }
 
-        // PVC Levha Ekstrüzyon Hattı (Levha 201 - Image 2 Sağ Alttaki Model)
+        // PVC Levha Ekstrüzyon Hattı (Levha 201 - Görsel 2 Sağ Alttaki Model)
         function create3DSheetExtruderModel(id, name) {
             const group = new THREE.Group();
 
             const whiteCabMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.35, metalness: 0.15 });
             const blueFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.4, metalness: 0.55 });
-            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 }); // Ayna polisajlı vals
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 });
             const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });
-            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35, metalness: 0.1 });   // Beyaz plastik levha
+            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35, metalness: 0.1 });
 
             // 1. Ekstrüder Ana Gövdesi
             const chassis = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.1, 2.4), whiteCabMat);
@@ -3669,13 +4100,12 @@
             tDie.castShadow = true;
             group.add(tDie);
 
-            // 2. 3-Valsli Parlatma Kalenderi (Image 2 Sağ Alttaki Krom Valsler)
+            // 2. 3-Valsli Parlatma Kalenderi
             const calenderStand = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.6, 4.4), blueFrameMat);
             calenderStand.position.set(-1.8, 1.3, 0);
             calenderStand.castShadow = true;
             group.add(calenderStand);
 
-            // 3 Adet Yatay Krom Parlatma Valsi (Ayna Gibi Parlayan)
             [0.65, 1.3, 1.95].forEach(vy => {
                 const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 3.8, 32), chromeMat);
                 roll.position.set(-1.8, vy, 0);
@@ -3696,11 +4126,36 @@
             sheet.castShadow = true;
             group.add(sheet);
 
-            // 5. Giyotin Kesim & İstif Ünitesi
+            // 5. Giyotin Kesim Ünitesi
             const cutter = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.8, 4.4), blueFrameMat);
             cutter.position.set(9.2, 1.0, 0);
             cutter.castShadow = true;
             group.add(cutter);
+
+            // 6. Levha 201 Operatörleri
+            const levOp1 = create3DWorkerModel('operator', 0x0284c7);
+            levOp1.position.set(3.5, 0, 2.6);
+            levOp1.rotation.y = -0.3;
+            group.add(levOp1);
+
+            const levOp2 = create3DWorkerModel('operator', 0xf59e0b);
+            levOp2.position.set(-4.5, 0, 2.4);
+            levOp2.rotation.y = -0.2;
+            group.add(levOp2);
+
+            // Zemin Durum Halkası
+            const ringGeo = new THREE.RingGeometry(1.6, 2.1, 40);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0x22c55e,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.95
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.set(-6.5, 0.04, 0);
+            group.add(ring);
+            dtFloorRings[id] = ring;
 
             return group;
         }
@@ -3783,14 +4238,16 @@
 
             let html = '';
 
+            // 1. Makine & İstasyon Rozetleri
             Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
-                const m = dtMachinesData.find(x => x.id === id) || { name: cfg.name, product: '—', hours: 0, status: 'idle' };
+                const m = dtMachinesData.find(x => x.id === id) || { name: cfg.name, product: '—', hours: 0, status: 'idle', operatorCount: 0 };
                 const group = dtMachineGroups[id];
                 const gx = group ? group.position.x : cfg.x;
                 const gz = group ? group.position.z : cfg.z;
+                const isQC = !!m.isQC;
                 
-                // Makine gövdesi üzerindeki 3D koordinat
-                const p3d = new THREE.Vector3(gx - 3.5, 2.6, gz);
+                // 3D etiket yüksekliği
+                const p3d = new THREE.Vector3(gx - (isQC ? 0 : 3.2), isQC ? 2.3 : 2.7, gz);
                 p3d.project(dtCamera);
 
                 if (p3d.z > 1.0) return;
@@ -3798,9 +4255,29 @@
                 const sx = (p3d.x * 0.5 + 0.5) * width;
                 const sy = (-(p3d.y * 0.5) + 0.5) * height;
 
-                if (sx < 20 || sx > width - 20 || sy < 20 || sy > height - 20) return;
+                if (sx < 25 || sx > width - 25 || sy < 25 || sy > height - 25) return;
 
                 const isSelected = (id === dtSelectedMachineId);
+
+                if (isQC) {
+                    const pinBorder = isSelected 
+                        ? 'ring-2 ring-purple-400 shadow-xl shadow-purple-500/60 bg-slate-900 border-purple-400 scale-105' 
+                        : 'bg-slate-900/90 border-purple-700/60 hover:border-purple-400';
+
+                    html += `
+                        <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
+                             class="absolute pointer-events-auto cursor-pointer transition-transform group">
+                            <div onclick="selectDigitalTwinMachine('${id}')" class="px-3 py-1 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} flex items-center gap-1.5 hover:scale-105">
+                                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                                <span class="text-xs font-black text-purple-300 whitespace-nowrap tracking-wide">🔬 ${m.name}</span>
+                                <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border bg-purple-500/20 text-purple-300 border-purple-500/40">👤 1 QC</span>
+                                <span class="text-[9px] font-mono font-bold px-1 py-0.2 rounded border bg-cyan-500/20 text-cyan-300 border-cyan-500/40">±0.03mm</span>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
                 let dot = 'bg-emerald-400';
                 let badgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
                 let statusLabel = '24s';
@@ -3815,10 +4292,13 @@
                     statusLabel = '0s';
                 }
 
-                // Şık yuvarlak hap (Pill) rozet tasarımı
                 const pinBorder = isSelected 
                     ? 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/60 bg-slate-900 border-cyan-400 scale-105' 
                     : 'bg-slate-900/90 border-slate-700/80 hover:border-slate-500';
+
+                const opBadgeClass = m.operatorCount > 0 
+                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/40' 
+                    : 'bg-slate-800 text-slate-400 border-slate-700';
 
                 html += `
                     <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
@@ -3826,11 +4306,43 @@
                         <div onclick="selectDigitalTwinMachine('${id}')" class="px-3 py-1 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-200 ${pinBorder} flex items-center gap-1.5 hover:scale-105">
                             <span class="w-2 h-2 rounded-full ${dot} ${m.status === 'active' ? 'animate-pulse' : ''}"></span>
                             <span class="text-xs font-black text-cyan-300 whitespace-nowrap tracking-wide">${m.name}</span>
+                            <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border ${opBadgeClass}">👤 ${m.operatorCount || 0} Op.</span>
                             <span class="text-[9.5px] font-bold px-1.5 py-0.2 rounded border ${badgeClass}">${statusLabel}</span>
                         </div>
                     </div>
                 `;
             });
+
+            // 2. Saha Ölçüsü ve Hat Boşluğu Göstergeleri (dtShowDimensions aktifse)
+            if (dtShowDimensions) {
+                const annotations = [
+                    { x: 0, y: 0.3, z: 42, text: '📏 Saha Boyutu: 65.0 m', color: 'bg-amber-500/90 text-slate-950 border-amber-400' },
+                    { x: -42, y: 0.3, z: 0, text: '📏 Saha Derinliği: 42.0 m', color: 'bg-amber-500/90 text-slate-950 border-amber-400' },
+                    { x: -22, y: 0.3, z: 6, text: '↔ 6.2 m Hat Boşluğu (İSG Standart)', color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' },
+                    { x: 10, y: 0.3, z: 6, text: '↔ 6.2 m Hat Boşluğu (İSG Standart)', color: 'bg-cyan-950/90 text-cyan-300 border-cyan-500/60' },
+                    { x: -6, y: 0.3, z: 0, text: '🚶 4.5 m Ana Taşıma Koridoru', color: 'bg-emerald-950/90 text-emerald-300 border-emerald-500/60' }
+                ];
+
+                annotations.forEach(ann => {
+                    const p3d = new THREE.Vector3(ann.x, ann.y, ann.z);
+                    p3d.project(dtCamera);
+                    if (p3d.z > 1.0) return;
+
+                    const sx = (p3d.x * 0.5 + 0.5) * width;
+                    const sy = (-(p3d.y * 0.5) + 0.5) * height;
+
+                    if (sx < 20 || sx > width - 20 || sy < 20 || sy > height - 20) return;
+
+                    html += `
+                        <div style="transform: translate(-50%, -50%) translate(${sx}px, ${sy}px);" 
+                             class="absolute pointer-events-none transition-opacity">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border shadow-lg backdrop-blur-sm ${ann.color}">
+                                ${ann.text}
+                            </span>
+                        </div>
+                    `;
+                });
+            }
 
             labelsLayer.innerHTML = html;
         }
@@ -4115,6 +4627,21 @@
 
             bar.innerHTML = dtMachinesData.map(m => {
                 const isSelected = (m.id === dtSelectedMachineId);
+                const isQC = !!m.isQC;
+
+                if (isQC) {
+                    const btnClass = isSelected
+                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30 border-purple-400 scale-[1.02]'
+                        : 'bg-slate-900 hover:bg-slate-800 text-purple-300 border-purple-800/60';
+                    return `
+                        <button onclick="selectDigitalTwinMachine('${m.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${btnClass}">
+                            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                            <span>🔬 ${m.name}</span>
+                            <span class="text-[10px] opacity-80">(QC)</span>
+                        </button>
+                    `;
+                }
+
                 let dot = 'bg-emerald-400';
                 if (m.status === 'warning') dot = 'bg-amber-400';
                 else if (m.status === 'idle') dot = 'bg-red-500';
@@ -4127,7 +4654,7 @@
                     <button onclick="selectDigitalTwinMachine('${m.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${btnClass}">
                         <span class="w-2 h-2 rounded-full ${dot}"></span>
                         <span>${m.name}</span>
-                        <span class="text-[10px] opacity-80">(${m.hours}s)</span>
+                        <span class="text-[10px] opacity-80">(${m.hours}s · 👤${m.operatorCount || 0} Op.)</span>
                     </button>
                 `;
             }).join('');
@@ -4148,6 +4675,120 @@
             const m = dtMachinesData.find(x => x.id === dtSelectedMachineId) || dtMachinesData[0];
             if (!m) return;
 
+            // 1. Kalite Kontrol İstasyonları İçin Özel HUD Kartı
+            if (m.isQC) {
+                const qr = m.qcReport || {
+                    tolerans: '±0.03 mm',
+                    etKalinligi: '2.40 mm',
+                    yuzeyParlaklik: '98.5 GU',
+                    darbeTesti: 'ISO 179-1: UYGUN',
+                    cihazlar: 'Mitutoyo Dijital Komparatör, Mikrometre Standı, Dijital Kumpas'
+                };
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- QC Başlık & Durum Rozeti -->
+                        <div class="flex items-start justify-between border-b border-purple-900/50 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-2xl font-black text-white tracking-wide">🔬 ${m.name}</h3>
+                                    <span class="text-[11px] text-purple-300 font-semibold bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">
+                                        Kalite Muayene Masası
+                                    </span>
+                                </div>
+                                <p class="text-xs font-bold text-purple-300 mt-1 flex items-center gap-1">
+                                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i> ${m.product}
+                                </p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span> SÜREKLİ AKTİF
+                            </span>
+                        </div>
+
+                        <!-- Kalite Kontrol Hassas Metrikleri -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-purple-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="target" class="w-3 h-3 text-cyan-400"></i> Boyutsal Tolerans
+                                </span>
+                                <div class="text-lg font-mono font-black text-cyan-300 mt-1">
+                                    ${qr.tolerans}
+                                </div>
+                                <span class="text-[9.5px] text-emerald-400 font-bold block mt-0.5">✓ İzin Verilen: ±0.15 mm</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-purple-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="ruler" class="w-3 h-3 text-purple-400"></i> Et Kalınlığı
+                                </span>
+                                <div class="text-lg font-mono font-black text-white mt-1">
+                                    ${qr.etKalinligi}
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 font-medium block mt-0.5">Nominal: 2.40 mm</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-purple-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i> Yüzey Parlaklığı
+                                </span>
+                                <div class="text-lg font-black text-amber-300 mt-1">
+                                    ${qr.yuzeyParlaklik}
+                                </div>
+                                <span class="text-[9.5px] text-emerald-400 font-bold block mt-0.5">✓ A+ Sınıf Homojenlik</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-purple-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i> Darbe / Çekme Testi
+                                </span>
+                                <div class="text-sm font-black text-emerald-400 mt-1">
+                                    ${qr.darbeTesti}
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 font-medium block mt-0.5">TS EN 514 / ISO 179-1</span>
+                            </div>
+                        </div>
+
+                        <!-- Masada Bulunan Ölçüm Cihazları -->
+                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5 text-cyan-400"></i> Kalibrasyonlu Masabaşı Ekipmanları
+                            </span>
+                            <div class="text-xs text-slate-300 bg-slate-900/80 p-2 rounded-lg border border-slate-800 leading-relaxed font-mono">
+                                ${qr.cihazlar}
+                            </div>
+                        </div>
+
+                        <!-- Personel ve Konum Bilgisi -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-400"></i> Sorumlu QC Uzmanı:</span>
+                                <span class="font-bold text-white">${m.operator}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i> Konum & Açıklık:</span>
+                                <span class="font-bold text-cyan-400">${m.spacing}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-400"></i> Son Numune Testi:</span>
+                                <span class="font-bold text-emerald-400">12 dk önce (ONAYLANDI)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="focusOnSelectedMachine3D()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> 3D Masaya Yakınlaş
+                        </button>
+                        <button onclick="if (typeof showToast === 'function') showToast('Kalite Kontrol sertifikası ve ölçüm logları doğrulandı.', 'success')" class="flex-[2] py-2.5 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-xs rounded-xl shadow-lg shadow-purple-600/20 transition flex items-center justify-center gap-2">
+                            <i data-lucide="clipboard-check" class="w-4 h-4"></i> Kalite Raporu Doğrula
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // 2. Standart Ekstrüzyon Hatları İçin HUD
             let statusBadge = '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 24 SAAT TAM FAAL</span>';
             if (m.status === 'warning') {
                 statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> ${m.hours} SAAT KESİNTİLİ</span>`;
@@ -4257,11 +4898,18 @@
                         </div>
                     </div>
 
-                    <!-- Operatör & Duruş Bilgi Kutusu -->
-                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1.5 text-xs">
+                    <!-- Çalışan Eleman Sayısı & Emniyet Boşluğu & Duruş Bilgi Kutusu -->
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
                         <div class="flex items-center justify-between text-slate-400">
-                            <span class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3 text-slate-500"></i> Görevli Operatörler:</span>
-                            <span class="font-bold text-white truncate max-w-[170px]">${m.operator}</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3 text-cyan-400"></i> Çalışan Eleman Sayısı:</span>
+                            <span class="font-bold text-white flex items-center gap-1">
+                                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono">${m.operatorCount || 0} Operatör</span>
+                                <span class="text-[11px] text-slate-400">(${m.operator})</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                            <span class="flex items-center gap-1.5"><i data-lucide="move-horizontal" class="w-3 h-3 text-amber-400"></i> Makineler Arası Boşluk:</span>
+                            <span class="font-bold text-amber-300 font-mono">${m.spacing || '6.2 m Hat Açıklığı'}</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                             <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-slate-500"></i> Hat Durum Notu:</span>

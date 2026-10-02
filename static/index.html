@@ -3026,12 +3026,12 @@
                 bodyEl.innerHTML = summary.machines.map(m => {
                     const isIdle = (m.prod_kg === 0 && m.hours === 0);
                     const prodDisplay = isIdle
-                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-red-950/60 text-red-400 border border-red-800/40">Çalışmadı / Boşta</span>'
+                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-400 border border-slate-700">Planlı Devre Dışı (Üretim Yok)</span>'
                         : m.products;
                     return `
-                    <tr class="hover:bg-slate-800/40 transition ${isIdle ? 'opacity-70' : ''}">
+                    <tr class="hover:bg-slate-800/40 transition ${isIdle ? 'opacity-60 bg-slate-900/30' : ''}">
                         <td class="p-2.5 font-bold text-white flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full ${isIdle ? 'bg-red-500' : 'bg-emerald-500'}"></span>
+                            <span class="w-2 h-2 rounded-full ${isIdle ? 'bg-slate-500' : 'bg-emerald-500'}"></span>
                             Hat ${m.hat}
                         </td>
                         <td class="p-2.5 text-slate-300">${prodDisplay}</td>

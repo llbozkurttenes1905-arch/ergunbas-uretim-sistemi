@@ -1235,6 +1235,9 @@
                                         <button onclick="setSimSpeed(20)" id="btn-speed-20" class="px-1.5 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white">20x</button>
                                         <button onclick="setSimSpeed(60)" id="btn-speed-60" class="px-1.5 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white">60x</button>
                                     </div>
+                                    <button onclick="triggerForkliftManualDispatch()" title="Forklift ile Paleti Depoya Taşı" class="px-2 py-1 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1 shadow-lg cursor-pointer">
+                                        <i data-lucide="truck" class="w-3.5 h-3.5"></i> <span>🚜 Forklift Gönder</span>
+                                    </button>
                                     <button onclick="resetSimToStart()" title="Başa Al (08:00)" class="p-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                     </button>
@@ -3336,6 +3339,11 @@
                     update3DFactoryStatuses();
                 }
 
+                // Seçilen günün verilerini otomatik olarak canlı simülasyona aktar
+                if (typeof syncSimulationWithCurrentDay === 'function') {
+                    syncSimulationWithCurrentDay();
+                }
+
                 lucide.createIcons();
             } catch(e) {
                 console.error('3D Dijital ikiz yüklenirken hata:', e);
@@ -3343,7 +3351,11 @@
         }
 
         function changeDigitalTwinDay() {
-            loadDigitalTwin();
+            loadDigitalTwin().then(() => {
+                if (dtSimulation.active && typeof resetSimToStart === 'function') {
+                    resetSimToStart();
+                }
+            });
         }
 
         function processDigitalTwinData() {
@@ -3628,6 +3640,7 @@
             loadSaved3DPositions();
             buildAll3DMachines();
             applyFactoryLayoutFromConfig();
+            init3DForklift();
 
             // 8. Tıklama & Sürükleme Dinleyicileri
             canvas.addEventListener('pointerdown', on3DPointerDown);
@@ -3749,6 +3762,9 @@
                 dtSelectionRing.position.set(0, 0.05, 0);
                 dtScene.add(dtSelectionRing);
             }
+
+            // 7. Fabrika Mamul Depolama Sahası (Pervaz, Kasa, Seren, Levha Palet Deposu)
+            buildWarehouseStorageZone();
 
             dtScene.add(dtArchitectureGroup);
 
@@ -4465,15 +4481,116 @@
             return { sawGroup: sawGroup, sawBlade: sawBlade };
         }
 
+        /* --------------------------------------------------------
+           RENK, ÖLÇÜ VE TEKNİK ŞARTNAME ÇÖZÜMLEME MOTORU
+           (Kullanıcı İsteği: Seren, Pervaz, Kasa Antrasit Renginde;
+            Levha 201 O Gün Hangi Veri/Renk Varsa O Renkte)
+        -------------------------------------------------------- */
+        function resolveProductColorAndSpec(hatId, productStr = '') {
+            const p = (productStr || '').toUpperCase();
+            
+            // Varsayılan: Kullanıcının özel olarak istediği ANTRASİT GRİ (RAL 7016)
+            let colorHex = 0x334155; 
+            let colorName = 'Antrasit (RAL 7016)';
+            let isAntrasit = true;
+
+            if (p.includes('BEYAZ') || p.includes('WHITE')) {
+                colorHex = 0xf8fafc;
+                colorName = 'Saf Beyaz';
+                isAntrasit = false;
+            } else if (p.includes('ALTINMEŞE') || p.includes('ALTIN MESE') || p.includes('MEŞE')) {
+                colorHex = 0xc2884a;
+                colorName = 'Altınmeşe Ahşap';
+                isAntrasit = false;
+            } else if (p.includes('CEVİZ') || p.includes('CEVIZ')) {
+                colorHex = 0x5c3a21;
+                colorName = 'Koyu Ceviz';
+                isAntrasit = false;
+            } else if (p.includes('GRİ') || p.includes('GRI') || p.includes('7035')) {
+                colorHex = 0x94a3b8;
+                colorName = 'Açık Gri (RAL 7035)';
+                isAntrasit = false;
+            }
+
+            return { colorHex, colorName, isAntrasit };
+        }
+
+        function resolveSheetColorAndSpec(productStr = '') {
+            const p = (productStr || '').toUpperCase();
+            let colorHex = 0xe2d9cc; // Varsayılan Dişbudak Ahşap Hareli
+            let colorName = 'Dişbudak Kaplama (94x207 cm)';
+
+            if (p.includes('ANTRASİT') || p.includes('7016')) {
+                colorHex = 0x334155;
+                colorName = 'Antrasit Gri (94x207 cm)';
+            } else if (p.includes('BEYAZ')) {
+                colorHex = 0xf8fafc;
+                colorName = 'Saf Beyaz (94x207 cm)';
+            } else if (p.includes('CEVİZ') || p.includes('CEVIZ')) {
+                colorHex = 0x5c3a21;
+                colorName = 'Ceviz Ahşap (94x207 cm)';
+            } else if (p.includes('MEŞE') || p.includes('MESE') || p.includes('ALTINMEŞE')) {
+                colorHex = 0xc2884a;
+                colorName = 'Altınmeşe Ahşap (94x207 cm)';
+            } else if (p.includes('TİK') || p.includes('TIK')) {
+                colorHex = 0x8a552e;
+                colorName = 'Doğal Tik Ahşap (94x207 cm)';
+            } else if (p.includes('GRİ') || p.includes('GRI')) {
+                colorHex = 0x94a3b8;
+                colorName = 'Açık Gri (94x207 cm)';
+            }
+
+            return { colorHex, colorName };
+        }
+
+        // Havada Süzülen 3D Teknik Ölçü & Kesit Bilgi Levhası (Blueprint Badge)
+        function create3DBlueprintBadge(title, dimensions, colorName, badgeColor = 0x0284c7) {
+            const badgeGroup = new THREE.Group();
+
+            // Arka Çerçeve Plakası
+            const plateMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.8 });
+            const plate = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.55, 0.04), plateMat);
+            badgeGroup.add(plate);
+
+            // Renkli Üst Başlık Şeridi
+            const headerMat = new THREE.MeshBasicMaterial({ color: badgeColor });
+            const header = new THREE.Mesh(new THREE.BoxGeometry(2.36, 0.12, 0.045), headerMat);
+            header.position.set(0, 0.19, 0.005);
+            badgeGroup.add(header);
+
+            // Ürün Rengini Gösteren Canlı 3D Renk Numunesi / Swatch
+            const swatchMat = new THREE.MeshStandardMaterial({ color: badgeColor, roughness: 0.25, metalness: 0.2 });
+            const swatch = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.32, 0.05), swatchMat);
+            swatch.position.set(-0.95, -0.06, 0.01);
+            badgeGroup.add(swatch);
+
+            // İnce Çelik Montaj Ayağı
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.6, 8), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+            stem.position.set(0, -0.45, 0);
+            badgeGroup.add(stem);
+
+            badgeGroup.position.set(0, 1.75, 0);
+            return badgeGroup;
+        }
+
+        /* --------------------------------------------------------
+           GERÇEKÇİ ÜRÜN GEOMETRİLERİ (Pervaz, Kasa, Seren, Levha)
+        -------------------------------------------------------- */
         function createRealisticProfileMesh(hatId, productStr = '') {
             const pGroup = new THREE.Group();
-            const pvcWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.05 });
-            const sealBlackMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, metalness: 0.1 });
+            const colorSpec = resolveProductColorAndSpec(hatId, productStr);
             const p = (productStr || '').toUpperCase();
+
+            // Antrasit veya Günün Rengine Göre Profil Materyali
+            const pvcMat = new THREE.MeshStandardMaterial({ 
+                color: colorSpec.colorHex, 
+                roughness: 0.32, 
+                metalness: 0.12 
+            });
+            const sealBlackMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.95, metalness: 0.05 });
 
             // 1. Hat 101 Duruş / Bakım Durumu
             if (hatId === '101' || p.includes('DURUŞ') || p.includes('ARIZA')) {
-                // Sarı-Siyah Bakım Bariyeri
                 const barMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.4 });
                 const stripeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
                 const barrier = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.65, 0.08), barMat);
@@ -4486,7 +4603,6 @@
                     pGroup.add(st);
                 });
 
-                // İkaz Dubaları
                 [-1.1, 1.1].forEach(cx => {
                     const cone = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0xea580c }));
                     cone.position.set(cx, 0.3, 0.7);
@@ -4497,84 +4613,116 @@
                 return pGroup;
             }
 
-            // 2. PERVAZ (50X80 PERVAZ - Hat 103, Hat 109)
+            // 2. PERVAZ (50X80 mm PERVAZ - Hat 103, Hat 109)
             if (p.includes('PERVAZ') || hatId === '103' || hatId === '109') {
-                // L-Kesitli 3D Pervaz Profili (Taban Kanadı + Dik Yanak + Estetik Pah)
-                const baseFlange = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.06, 0.62), pvcWhiteMat);
-                baseFlange.position.set(0, 0.03, 0.10);
+                // L-Kesitli 3D Pervaz Profili: 80 mm Taban Kanadı + 50 mm Dik Yanak + Estetik Pah
+                const baseFlange = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.07, 0.80), pvcMat);
+                baseFlange.position.set(0, 0.035, 0.15);
                 baseFlange.castShadow = true;
                 pGroup.add(baseFlange);
 
-                const vertLip = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.28, 0.10), pvcWhiteMat);
-                vertLip.position.set(0, 0.16, -0.16);
+                const vertLip = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.50, 0.12), pvcMat);
+                vertLip.position.set(0, 0.25, -0.20);
                 vertLip.castShadow = true;
                 pGroup.add(vertLip);
 
-                const rebateEdge = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 0.08), pvcWhiteMat);
-                rebateEdge.position.set(0, 0.26, -0.19);
+                const rebateEdge = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.10, 0.10), pvcMat);
+                rebateEdge.position.set(0, 0.46, -0.22);
                 pGroup.add(rebateEdge);
 
-                pGroup.userData = { type: 'pervaz', label: '50X80 PERVAZ' };
+                // 3D Teknik Ölçü Levhası (Floating Blueprint Badge)
+                const badge = create3DBlueprintBadge('50X80 PERVAZ', '80mm x 50mm', colorSpec.colorName, colorSpec.colorHex);
+                pGroup.add(badge);
+
+                pGroup.userData = { 
+                    type: 'pervaz', 
+                    label: '50X80 PERVAZ', 
+                    colorName: colorSpec.colorName,
+                    colorHex: colorSpec.colorHex,
+                    dims: '50 x 80 mm L-Kesit' 
+                };
             }
             // 3. KASA PROFİLLERİ (100mm, 140mm, 200mm KASA - Hat 102, 106, 107, 108)
             else if (p.includes('KASA') || ['102', '106', '107', '108'].includes(hatId)) {
-                let frameWidth = 0.75;
+                let frameWidth = 1.00;
                 let frameLabel = '100 mm KASA';
                 if (p.includes('140') || hatId === '106') {
-                    frameWidth = 1.05;
+                    frameWidth = 1.40;
                     frameLabel = '140 mm KASA';
                 } else if (p.includes('200') || hatId === '107') {
-                    frameWidth = 1.50;
+                    frameWidth = 2.00;
                     frameLabel = '200 mm KASA';
                 }
 
-                // Odacıklı Çift Cidarlı Kalın Profil
-                const mainFrame = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.32, frameWidth), pvcWhiteMat);
-                mainFrame.position.set(0, 0.16, 0);
+                // Odacıklı Çift Cidarlı Kalın Gövde
+                const mainFrame = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.38, frameWidth), pvcMat);
+                mainFrame.position.set(0, 0.19, 0);
                 mainFrame.castShadow = true;
                 pGroup.add(mainFrame);
 
-                // Conta Fitil Kanalı
-                const sealLine = new THREE.Mesh(new THREE.BoxGeometry(4.82, 0.05, 0.06), sealBlackMat);
-                sealLine.position.set(0, 0.32, frameWidth / 2 - 0.08);
+                // Conta Fitil Kanalı (Siyah EPDM Fitil)
+                const sealLine = new THREE.Mesh(new THREE.BoxGeometry(4.82, 0.06, 0.08), sealBlackMat);
+                sealLine.position.set(0, 0.38, frameWidth / 2 - 0.10);
                 pGroup.add(sealLine);
 
-                // İç Destek Basamağı
-                const stepRebate = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.12, frameWidth * 0.45), pvcWhiteMat);
-                stepRebate.position.set(0, 0.38, -frameWidth * 0.22);
+                // İç Destek Basamağı / Lambri Bini Kanalı
+                const stepRebate = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.14, frameWidth * 0.45), pvcMat);
+                stepRebate.position.set(0, 0.45, -frameWidth * 0.22);
                 pGroup.add(stepRebate);
 
-                pGroup.userData = { type: 'kasa', label: frameLabel, width: frameWidth };
+                // 3D Teknik Ölçü Levhası
+                const badge = create3DBlueprintBadge(frameLabel, `${frameWidth * 100}mm Genişlik`, colorSpec.colorName, colorSpec.colorHex);
+                pGroup.add(badge);
+
+                pGroup.userData = { 
+                    type: 'kasa', 
+                    label: frameLabel, 
+                    colorName: colorSpec.colorName,
+                    colorHex: colorSpec.colorHex,
+                    dims: `${frameLabel} Odacıklı` 
+                };
             }
             // 4. SEREN PROFİLİ (Hat 104, Hat 105)
             else {
-                const serenBody = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.28, 0.65), pvcWhiteMat);
-                serenBody.position.set(0, 0.14, 0);
+                const serenBody = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.30, 0.65), pvcMat);
+                serenBody.position.set(0, 0.15, 0);
                 serenBody.castShadow = true;
                 pGroup.add(serenBody);
 
                 [-0.26, 0.26].forEach(sz => {
-                    const grv = new THREE.Mesh(new THREE.BoxGeometry(4.82, 0.05, 0.05), sealBlackMat);
-                    grv.position.set(0, 0.14, sz);
+                    const grv = new THREE.Mesh(new THREE.BoxGeometry(4.82, 0.06, 0.06), sealBlackMat);
+                    grv.position.set(0, 0.15, sz);
                     pGroup.add(grv);
                 });
 
-                pGroup.userData = { type: 'seren', label: 'SEREN PROFİLİ' };
+                // 3D Teknik Ölçü Levhası
+                const badge = create3DBlueprintBadge('SEREN PROFİLİ', '65mm Seren', colorSpec.colorName, colorSpec.colorHex);
+                pGroup.add(badge);
+
+                pGroup.userData = { 
+                    type: 'seren', 
+                    label: 'SEREN PROFİLİ', 
+                    colorName: colorSpec.colorName,
+                    colorHex: colorSpec.colorHex,
+                    dims: '65 mm Seren Gövdesi' 
+                };
             }
 
             return pGroup;
         }
 
-        // DÜZGÜN ÜRÜN İSTİF SEHPASI (Sağlam Profil Paleti)
-        function createFinishedGoodsTrolley(prodKg = 1200) {
+        // DÜZGÜN ÜRÜN İSTİF SEHPASI (Sağlam Profil Paleti - Ürün Rengine & Ölçüsüne Göre)
+        function createFinishedGoodsTrolley(prodKg = 1200, productStr = '', hatId = '') {
             const stackGroup = new THREE.Group();
-            const blueSteelMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.35, metalness: 0.6 });
-            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 });
-            const woodMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.8 });
-            const foilMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.2, metalness: 0.15 });
+            const colorSpec = resolveProductColorAndSpec(hatId, productStr);
+
+            const blueSteelMat = new THREE.MeshStandardMaterial({ color: 0x0b63a7, roughness: 0.35, metalness: 0.5 });
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.92 });
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.85 });
+            const bundleMat = new THREE.MeshStandardMaterial({ color: colorSpec.colorHex, roughness: 0.30, metalness: 0.12 });
             const greenStrapMat = new THREE.MeshBasicMaterial({ color: 0x16a34a });
 
-            // 1. Ağır Hizmet Tipi Mavi Çelik İstif Arabası / Sehpa Şasesi
+            // 1. Ağır Hizmet Tipi Çelik İstif Arabası / Sehpa Şasesi
             const chassis = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.20, 1.3), blueSteelMat);
             chassis.position.set(0, 0.35, 0);
             chassis.castShadow = true;
@@ -4607,7 +4755,7 @@
                 stackGroup.add(wood);
             });
 
-            // 2. Düzgün Ambalajlanmış 6m Profil Paketleri İstifi
+            // 2. Düzgün Ambalajlanmış Profil Paketleri İstifi (Ürünün Kendi Renginde)
             const bundlesContainer = new THREE.Group();
             stackGroup.add(bundlesContainer);
 
@@ -4615,7 +4763,7 @@
             for (let lay = 0; lay < layers; lay++) {
                 const py = 0.55 + (lay * 0.16);
                 [-0.32, 0.32].forEach(pz => {
-                    const bundle = new THREE.Mesh(new THREE.BoxGeometry(3.9, 0.13, 0.58), foilMat);
+                    const bundle = new THREE.Mesh(new THREE.BoxGeometry(3.9, 0.13, 0.58), bundleMat);
                     bundle.position.set(0, py, pz);
                     bundle.castShadow = true;
                     bundlesContainer.add(bundle);
@@ -4628,15 +4776,21 @@
                 });
             }
 
-            // 3. Tabela Rozeti: [ ✓ SAĞLAM MAMUL İSTİFİ ]
+            // 3. Tabela Rozeti: [ ✓ SAĞLAM: RENK VE ÜRÜN ]
             const badgePlate = new THREE.Mesh(
-                new THREE.BoxGeometry(1.6, 0.35, 0.05),
+                new THREE.BoxGeometry(2.0, 0.35, 0.05),
                 new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.3 })
             );
             badgePlate.position.set(0, 1.35, 0.68);
             stackGroup.add(badgePlate);
 
-            stackGroup.userData = { bundlesContainer: bundlesContainer, layers: layers, foilMat: foilMat, greenStrapMat: greenStrapMat };
+            stackGroup.userData = { 
+                bundlesContainer: bundlesContainer, 
+                layers: layers, 
+                colorSpec: colorSpec, 
+                productStr: productStr,
+                hatId: hatId
+            };
             return stackGroup;
         }
 
@@ -4646,9 +4800,8 @@
             const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.5 });
             const chevronMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             const blackStripeMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
-            const pvcWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.3 });
+            const pvcWhiteMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 }); // Antrasit ve Beyaz Kırma
 
-            // 1. Metal Kırma Haznesi Sandığı
             const bin = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.75, 1.1), darkMetalMat);
             bin.position.set(0, 0.38, 0);
             bin.castShadow = true;
@@ -4665,14 +4818,17 @@
                 binGroup.add(blk);
             });
 
-            // 2. Kasa İçinde Biriken Fire Parçaları
+            // Fire Parçaları
             const scrapPiecesGroup = new THREE.Group();
             binGroup.add(scrapPiecesGroup);
 
             const pieceCount = Math.max(2, Math.min(14, Math.round(fireKg / 60)));
             for (let i = 0; i < pieceCount; i++) {
                 const pLen = 0.35 + (i % 3) * 0.15;
-                const scrap = new THREE.Mesh(new THREE.BoxGeometry(pLen, 0.12, 0.18), pvcWhiteMat);
+                const scrapMat = (i % 2 === 0) 
+                    ? new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.3 }) // Antrasit fire
+                    : new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.3 }); // Beyaz fire
+                const scrap = new THREE.Mesh(new THREE.BoxGeometry(pLen, 0.12, 0.18), scrapMat);
                 const rx = ((i % 4) - 1.5) * 0.25;
                 const rz = (((i * 2) % 5) - 2) * 0.18;
                 const ry = 0.45 + (Math.floor(i / 4) * 0.12);
@@ -4683,7 +4839,6 @@
                 scrapPiecesGroup.add(scrap);
             }
 
-            // 3. Tabela Rozeti: [ ♻ FİRE / KIRMA ]
             const labelPlate = new THREE.Mesh(
                 new THREE.BoxGeometry(1.2, 0.28, 0.04),
                 new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.3 })
@@ -4691,15 +4846,21 @@
             labelPlate.position.set(0, 0.85, 0.58);
             binGroup.add(labelPlate);
 
-            binGroup.userData = { scrapPiecesGroup: scrapPiecesGroup, pieceCount: pieceCount, pvcWhiteMat: pvcWhiteMat };
+            binGroup.userData = { scrapPiecesGroup: scrapPiecesGroup, pieceCount: pieceCount };
             return binGroup;
         }
 
-        // LEVHA 201 SAĞLAM İSTİF PALETİ
-        function createLevhaFinishedGoodsPallet(totalKg = 2455) {
+        // LEVHA 201 SAĞLAM İSTİF PALETİ (Günün Rengine Göre)
+        function createLevhaFinishedGoodsPallet(totalKg = 2455, productStr = '') {
             const palGroup = new THREE.Group();
+            const sheetSpec = resolveSheetColorAndSpec(productStr);
+
             const woodMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.85 });
-            const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.25, metalness: 0.1 });
+            const sheetMat = new THREE.MeshStandardMaterial({ 
+                color: sheetSpec.colorHex, 
+                roughness: 0.25, 
+                metalness: 0.12 
+            });
 
             // Ahşap Euro Palet
             const pallet = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.18, 1.4), woodMat);
@@ -4707,17 +4868,25 @@
             pallet.castShadow = true;
             palGroup.add(pallet);
 
-            // İstiflenmiş Parlak Dişbudak PVC Levhalar (94x207 cm)
+            // İstiflenmiş Levhalar (Günün Seçili Renginde)
             const sheetStack = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.65, 1.2), sheetMat);
             sheetStack.position.set(0, 0.50, 0);
             sheetStack.castShadow = true;
             palGroup.add(sheetStack);
 
-            const badge = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.28, 0.04), new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.3 }));
+            const badge = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.32, 0.04), new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 0.3 }));
             badge.position.set(0, 0.95, 0.65);
             palGroup.add(badge);
 
-            palGroup.userData = { sheetStack: sheetStack };
+            // 3D Teknik Ölçü Levhası
+            const techBadge = create3DBlueprintBadge('LEVHA 201', '94 x 207 cm Levha', sheetSpec.colorName, sheetSpec.colorHex);
+            palGroup.add(techBadge);
+
+            palGroup.userData = { 
+                sheetStack: sheetStack, 
+                colorSpec: sheetSpec,
+                productStr: productStr 
+            };
             return palGroup;
         }
 
@@ -4725,14 +4894,13 @@
         function createLevhaEdgeScrapBin(deadFireKg = 365) {
             const binGroup = new THREE.Group();
             const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.5 });
-            const ribbonMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.4 });
+            const ribbonMat = new THREE.MeshStandardMaterial({ color: 0xe2d9cc, roughness: 0.4 });
 
             const bin = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.85, 1.3), darkMetalMat);
             bin.position.set(0, 0.42, 0);
             bin.castShadow = true;
             binGroup.add(bin);
 
-            // Kıvrılmış 14 cm En Firesi Şeritleri
             for (let i = 0; i < 8; i++) {
                 const ribbon = new THREE.Mesh(new THREE.TorusGeometry(0.25 + (i * 0.04), 0.05, 8, 16, Math.PI * 1.5), ribbonMat);
                 ribbon.rotation.x = Math.PI / 2;
@@ -4746,6 +4914,512 @@
             binGroup.add(badge);
 
             return binGroup;
+        }
+
+        /* --------------------------------------------------------
+           FABRİKA MAMUL DEPOLAMA & SEVKİYAT ALANI (Warehouse Bay)
+           (Pervaz, Kasa, Seren, Levha Paletleri İçin Ayrılmış Hücreler)
+        -------------------------------------------------------- */
+        let dtWarehousePalletsGroup = null;
+        const dtWarehouseStacks = { pervaz: 0, kasa: 0, seren: 0, levha: 0 };
+
+        function buildWarehouseStorageZone() {
+            const whGroup = new THREE.Group();
+            whGroup.name = 'dtWarehouseStorageZone';
+
+            // 4 Ayrı Depolama Sahası Bölümü (Pervaz, Kasa, Seren, Levha)
+            const bays = [
+                { id: 'pervaz', title: 'PERVAZ DEPOSU (50x80 mm)', z: -14.0, color: 0x0284c7 },
+                { id: 'kasa',   title: 'KASA DEPOSU (100-200 mm)', z: -4.5,  color: 0x10b981 },
+                { id: 'seren',  title: 'SEREN DEPOSU',             z: 5.0,   color: 0x8b5cf6 },
+                { id: 'levha',  title: 'LEVHA 201 DEPOSU (94x207 cm)', z: 14.5, color: 0xf59e0b }
+            ];
+
+            const yellowLineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+            const darkFloorCellMat = new THREE.MeshStandardMaterial({ color: 0x1a2332, roughness: 0.5, metalness: 0.2 });
+
+            bays.forEach(bay => {
+                // 1. Zemin Palet Hücresi (7.0m x 8.0m)
+                const cell = new THREE.Mesh(new THREE.PlaneGeometry(6.5, 7.8), darkFloorCellMat);
+                cell.rotation.x = -Math.PI / 2;
+                cell.position.set(24.5, 0.02, bay.z);
+                cell.receiveShadow = true;
+                whGroup.add(cell);
+
+                // 2. Sarı Güvenlik Sınır Bordürü
+                const border = new THREE.Mesh(new THREE.RingGeometry(3.6, 3.8, 4), yellowLineMat);
+                border.rotation.x = -Math.PI / 2;
+                border.rotation.z = Math.PI / 4;
+                border.position.set(24.5, 0.025, bay.z);
+                whGroup.add(border);
+
+                // 3. Bölüm Tanımlayıcı 3D Tabela Postu (Direk + Levha)
+                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.0, 12), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8 }));
+                pole.position.set(27.8, 1.5, bay.z - 3.2);
+                pole.castShadow = true;
+                whGroup.add(pole);
+
+                const signMat = new THREE.MeshStandardMaterial({ color: bay.color, roughness: 0.3 });
+                const board = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.65, 2.6), signMat);
+                board.position.set(27.8, 2.7, bay.z - 3.2);
+                whGroup.add(board);
+            });
+
+            // Depo İçi Paletler Konteyneri
+            dtWarehousePalletsGroup = new THREE.Group();
+            whGroup.add(dtWarehousePalletsGroup);
+
+            // Başlangıç hazır stok paletleri
+            createInitialWarehouseStock();
+
+            dtArchitectureGroup.add(whGroup);
+        }
+
+        function createInitialWarehouseStock() {
+            if (!dtWarehousePalletsGroup) return;
+            while (dtWarehousePalletsGroup.children.length > 0) {
+                dtWarehousePalletsGroup.remove(dtWarehousePalletsGroup.children[0]);
+            }
+            dtWarehouseStacks.pervaz = 0;
+            dtWarehouseStacks.kasa = 0;
+            dtWarehouseStacks.seren = 0;
+            dtWarehouseStacks.levha = 0;
+
+            // Her bölüme 1'er adet hazır palet yerleştir
+            addPalletToWarehouseBay('pervaz', 0x334155, '50x80 Antrasit Pervaz');
+            addPalletToWarehouseBay('kasa', 0x334155, '100 mm Antrasit Kasa');
+            addPalletToWarehouseBay('seren', 0x334155, 'Antrasit Seren');
+            addPalletToWarehouseBay('levha', 0xe2d9cc, 'Dişbudak Levha 94x207 cm');
+        }
+
+        function addPalletToWarehouseBay(type, colorHex = 0x334155, label = '') {
+            if (!dtWarehousePalletsGroup) return;
+
+            const bayZMap = {
+                pervaz: -14.0,
+                kasa:   -4.5,
+                seren:   5.0,
+                levha:  14.5
+            };
+
+            const targetZ = bayZMap[type] !== undefined ? bayZMap[type] : 0;
+            const count = dtWarehouseStacks[type] || 0;
+            dtWarehouseStacks[type] = count + 1;
+
+            // Depo içi grid koordinatı (2 sütun x 3 sıra)
+            const col = count % 2;
+            const row = Math.floor(count / 2) % 3;
+            const stackHeight = Math.floor(count / 6) * 0.8;
+
+            const px = 23.0 + (col * 2.8);
+            const pz = (targetZ - 1.8) + (row * 1.8);
+            const py = 0.05 + stackHeight;
+
+            const palletMesh = (type === 'levha') 
+                ? createLevhaFinishedGoodsPallet(2400, label)
+                : createFinishedGoodsTrolley(1500, label, '103');
+
+            palletMesh.position.set(px, py, pz);
+            palletMesh.scale.set(0.9, 0.9, 0.9);
+            dtWarehousePalletsGroup.add(palletMesh);
+        }
+
+        /* --------------------------------------------------------
+           3D ENDÜSTRİYEL FORKLİFT & AKILLI LOJİSTİK AJANI
+        -------------------------------------------------------- */
+        let dtForklift = null;
+        let dtForkliftJobQueue = [];
+        let dtForkliftCurrentJob = null;
+
+        function create3DForkliftModel() {
+            const flGroup = new THREE.Group();
+            const yellowMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, metalness: 0.3 });
+            const darkFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7, metalness: 0.5 });
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.92 });
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 });
+            const beaconMat = new THREE.MeshStandardMaterial({ color: 0xea580c, emissive: 0xea580c, emissiveIntensity: 0.9 });
+
+            // 1. Gövde (Döküm Şase ve Karşı Ağırlık)
+            const body = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.85, 1.3), yellowMat);
+            body.position.set(-0.2, 0.65, 0);
+            body.castShadow = true;
+            flGroup.add(body);
+
+            // Arka Yuvarlak Karşı Ağırlık
+            const counterWeight = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 1.28, 16, 1, false, 0, Math.PI), yellowMat);
+            counterWeight.rotation.y = -Math.PI / 2;
+            counterWeight.position.set(-1.35, 0.65, 0);
+            flGroup.add(counterWeight);
+
+            // 2. Operatör Kabin Kafesi (ROPS Roll-Cage)
+            const cagePillars = [
+                [-0.65, 0.55], [-0.65, -0.55],
+                [0.55, 0.55], [0.55, -0.55]
+            ];
+            cagePillars.forEach(([cx, cz]) => {
+                const p = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 12), darkFrameMat);
+                p.position.set(cx, 1.6, cz);
+                flGroup.add(p);
+            });
+
+            const cageRoof = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.06, 1.2), darkFrameMat);
+            cageRoof.position.set(-0.05, 2.3, 0);
+            flGroup.add(cageRoof);
+
+            // Tepe Döner Turuncu Çakar Lamba
+            const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.12, 12), beaconMat);
+            beacon.position.set(-0.05, 2.4, 0);
+            flGroup.add(beacon);
+
+            // 3. Koltuk, Direksiyon ve 3D Operatör Sürücü
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.5), darkFrameMat);
+            seat.position.set(-0.1, 1.1, 0);
+            flGroup.add(seat);
+
+            const driver = create3DWorkerModel('operator', 0xf59e0b);
+            driver.scale.set(0.72, 0.72, 0.72);
+            driver.position.set(-0.1, 0.85, 0);
+            flGroup.add(driver);
+
+            // Direksiyon Kolonu
+            const steering = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.45, 8), darkFrameMat);
+            steering.position.set(0.40, 1.35, 0);
+            steering.rotation.z = -0.45;
+            flGroup.add(steering);
+
+            // 4. Dönen Lastik Tekerlekler
+            const wheels = [];
+            [
+                { x: 0.75, z: 0.68, r: 0.32 },
+                { x: 0.75, z: -0.68, r: 0.32 },
+                { x: -0.95, z: 0.58, r: 0.26 },
+                { x: -0.95, z: -0.58, r: 0.26 }
+            ].forEach(wcfg => {
+                const wMesh = new THREE.Mesh(new THREE.CylinderGeometry(wcfg.r, wcfg.r, 0.22, 16), wheelMat);
+                wMesh.rotation.x = Math.PI / 2;
+                wMesh.position.set(wcfg.x, wcfg.r, wcfg.z);
+                wMesh.castShadow = true;
+                flGroup.add(wMesh);
+                wheels.push(wMesh);
+            });
+
+            // 5. Ön Dikey Mast (Kaldırma Kulesi)
+            const mast = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.2, 0.82), darkFrameMat);
+            mast.position.set(1.10, 1.35, 0);
+            mast.castShadow = true;
+            flGroup.add(mast);
+
+            // 6. Hareketli Çatal Aksamı (Forks Group)
+            const forksGroup = new THREE.Group();
+            forksGroup.position.set(1.20, 0.12, 0);
+
+            const carriage = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.55, 0.75), darkFrameMat);
+            carriage.position.set(0, 0.28, 0);
+            forksGroup.add(carriage);
+
+            // 2 Adet Krom Çatal Bıçağı
+            [-0.24, 0.24].forEach(fz => {
+                const fork = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.045, 0.12), chromeMat);
+                fork.position.set(0.65, 0.03, fz);
+                fork.castShadow = true;
+                forksGroup.add(fork);
+            });
+
+            // Çatal Üzerine Yüklenen Palet Yuvası
+            const carriedPalletSlot = new THREE.Group();
+            carriedPalletSlot.position.set(0.65, 0.08, 0);
+            forksGroup.add(carriedPalletSlot);
+
+            flGroup.add(forksGroup);
+
+            // Başlangıç Park Pozisyonu (Koridorda X = 18, Z = 0)
+            flGroup.position.set(18.0, 0, 0);
+
+            flGroup.userData = {
+                wheels: wheels,
+                forksGroup: forksGroup,
+                carriedPalletSlot: carriedPalletSlot,
+                beacon: beacon,
+                state: 'IDLE',
+                subStateTime: 0
+            };
+
+            return flGroup;
+        }
+
+        function init3DForklift() {
+            if (dtForklift && dtScene) {
+                dtScene.remove(dtForklift);
+            }
+            dtForklift = create3DForkliftModel();
+            if (dtScene) dtScene.add(dtForklift);
+        }
+
+        function updateForkliftLogic(deltaSec = 0.016) {
+            if (!dtForklift || !dtScene) return;
+
+            const time = performance.now() * 0.005;
+            // Çakar lamba yanıp sönme
+            if (dtForklift.userData.beacon) {
+                dtForklift.userData.beacon.material.emissiveIntensity = 0.4 + 0.6 * Math.abs(Math.sin(time * 3));
+            }
+
+            // Eğer boşta ise ve sırada iş varsa işi başlat
+            if (dtForklift.userData.state === 'IDLE') {
+                if (dtForkliftJobQueue.length > 0) {
+                    dtForkliftCurrentJob = dtForkliftJobQueue.shift();
+                    dtForklift.userData.state = 'DRIVING_TO_LINE';
+                    dtForklift.userData.subStateTime = 0;
+
+                    const ticker = document.getElementById('sim-event-ticker');
+                    if (ticker) {
+                        ticker.textContent = `[${getSimTimeString()}] 🚜 Forklift yola çıktı -> ${dtForkliftCurrentJob.hatName} dolan ${dtForkliftCurrentJob.label} paletini almaya gidiyor...`;
+                    }
+                }
+                return;
+            }
+
+            const job = dtForkliftCurrentJob;
+            if (!job) {
+                dtForklift.userData.state = 'IDLE';
+                return;
+            }
+
+            dtForklift.userData.subStateTime += deltaSec;
+            const state = dtForklift.userData.state;
+            const speed = 7.5 * deltaSec; // Sürüş hızı
+
+            // Hedef Makinenin Z koordinatı ve Hat Sonu X koordinatı
+            const targetLineGroup = dtMachineGroups ? dtMachineGroups[job.hatId] : null;
+            const lineZ = targetLineGroup ? targetLineGroup.position.z : 0;
+            const lineExitX = (targetLineGroup ? targetLineGroup.position.x : 0) + 11.2;
+
+            const bayZMap = { pervaz: -14.0, kasa: -4.5, seren: 5.0, levha: 14.5 };
+            const whTargetZ = bayZMap[job.productType] !== undefined ? bayZMap[job.productType] : 0;
+            const whBayX = 24.5;
+
+            // 1. DRIVING_TO_LINE: Koridordan ilgili makinenin Z hizasına git ve hatta dön
+            if (state === 'DRIVING_TO_LINE') {
+                const dz = lineZ - dtForklift.position.z;
+                if (Math.abs(dz) > 0.25) {
+                    dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
+                    dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
+                    rotateForkliftWheels(speed);
+                } else {
+                    const targetApproachX = lineExitX + 1.4;
+                    const dx = targetApproachX - dtForklift.position.x;
+                    if (Math.abs(dx) > 0.25) {
+                        dtForklift.position.x += Math.sign(dx) * Math.min(speed, Math.abs(dx));
+                        dtForklift.rotation.y = -Math.PI / 2; // Batıya bak
+                        rotateForkliftWheels(speed);
+                    } else {
+                        dtForklift.userData.state = 'LIFTING';
+                        dtForklift.userData.subStateTime = 0;
+                    }
+                }
+            }
+            // 2. LIFTING: Çatalları paletin altına sokup kaldır
+            else if (state === 'LIFTING') {
+                const forks = dtForklift.userData.forksGroup;
+                if (forks.position.y < 0.45) {
+                    forks.position.y += deltaSec * 0.4;
+                } else {
+                    if (dtForklift.userData.carriedPalletSlot.children.length === 0) {
+                        const carried = (job.productType === 'levha')
+                            ? createLevhaFinishedGoodsPallet(2400, job.label)
+                            : createFinishedGoodsTrolley(1500, job.label, job.hatId);
+                        carried.scale.set(0.85, 0.85, 0.85);
+                        dtForklift.userData.carriedPalletSlot.add(carried);
+
+                        // Hattın üzerindeki istif sehpasını sıfırla
+                        if (targetLineGroup && targetLineGroup.userData) {
+                            if (targetLineGroup.userData.goodStack) {
+                                targetLineGroup.remove(targetLineGroup.userData.goodStack);
+                                const freshStack = createFinishedGoodsTrolley(350, job.label, job.hatId);
+                                freshStack.position.set(11.2, 0, 0);
+                                targetLineGroup.add(freshStack);
+                                targetLineGroup.userData.goodStack = freshStack;
+                            }
+                        }
+                    }
+
+                    if (dtForklift.userData.subStateTime > 1.0) {
+                        dtForklift.userData.state = 'DRIVING_TO_WAREHOUSE';
+                        dtForklift.userData.subStateTime = 0;
+                    }
+                }
+            }
+            // 3. DRIVING_TO_WAREHOUSE: Koridora geri dön ve ilgili depo hücresine sür
+            else if (state === 'DRIVING_TO_WAREHOUSE') {
+                if (dtForklift.position.x < 17.8) {
+                    dtForklift.position.x += speed;
+                    dtForklift.rotation.y = Math.PI / 2; // Doğuya bak
+                    rotateForkliftWheels(speed);
+                } else {
+                    const dz = whTargetZ - dtForklift.position.z;
+                    if (Math.abs(dz) > 0.25) {
+                        dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
+                        dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
+                        rotateForkliftWheels(speed);
+                    } else {
+                        const dx = (whBayX - 1.2) - dtForklift.position.x;
+                        if (Math.abs(dx) > 0.25) {
+                            dtForklift.position.x += Math.sign(dx) * Math.min(speed, Math.abs(dx));
+                            dtForklift.rotation.y = Math.PI / 2;
+                            rotateForkliftWheels(speed);
+                        } else {
+                            dtForklift.userData.state = 'PLACING';
+                            dtForklift.userData.subStateTime = 0;
+                        }
+                    }
+                }
+            }
+            // 4. PLACING: Çatalları indir ve depoya paleti teslim et
+            else if (state === 'PLACING') {
+                const forks = dtForklift.userData.forksGroup;
+                if (forks.position.y > 0.12) {
+                    forks.position.y -= deltaSec * 0.4;
+                } else {
+                    while (dtForklift.userData.carriedPalletSlot.children.length > 0) {
+                        dtForklift.userData.carriedPalletSlot.remove(dtForklift.userData.carriedPalletSlot.children[0]);
+                    }
+                    addPalletToWarehouseBay(job.productType, job.colorHex, job.label);
+
+                    const ticker = document.getElementById('sim-event-ticker');
+                    if (ticker) {
+                        ticker.textContent = `[${getSimTimeString()}] ✓ 🚜 Forklift: ${job.label} (${job.colorName}) paletini ${job.productType.toUpperCase()} deposuna güvenle yerleştirdi.`;
+                    }
+
+                    if (dtForklift.userData.subStateTime > 1.0) {
+                        dtForklift.userData.state = 'RETURNING';
+                        dtForklift.userData.subStateTime = 0;
+                    }
+                }
+            }
+            // 5. RETURNING: Koridora dön ve park noktasına (X: 18, Z: 0) geç
+            else if (state === 'RETURNING') {
+                if (dtForklift.position.x > 18.2) {
+                    dtForklift.position.x -= speed;
+                    dtForklift.rotation.y = -Math.PI / 2;
+                    rotateForkliftWheels(speed);
+                } else {
+                    const dz = 0 - dtForklift.position.z;
+                    if (Math.abs(dz) > 0.25) {
+                        dtForklift.position.z += Math.sign(dz) * Math.min(speed, Math.abs(dz));
+                        dtForklift.rotation.y = dz > 0 ? 0 : Math.PI;
+                        rotateForkliftWheels(speed);
+                    } else {
+                        dtForklift.position.set(18.0, 0, 0);
+                        dtForklift.rotation.y = 0;
+                        dtForklift.userData.state = 'IDLE';
+                        dtForkliftCurrentJob = null;
+                    }
+                }
+            }
+        }
+
+        function rotateForkliftWheels(speed) {
+            if (dtForklift && dtForklift.userData && dtForklift.userData.wheels) {
+                dtForklift.userData.wheels.forEach(w => {
+                    w.rotation.x += speed * 3.5;
+                });
+            }
+        }
+
+        function getSimTimeString() {
+            const curMin = Math.floor(dtSimulation.simTimeMinutes || 480);
+            const hour = Math.floor((curMin % 1440) / 60);
+            const min = curMin % 60;
+            return `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+        }
+
+        function dispatchForkliftToMachine(hatId) {
+            const m = dtMachinesData ? dtMachinesData.find(x => x.id === hatId) : null;
+            if (!m) return;
+
+            let productType = 'kasa';
+            let label = m.product || 'Profil';
+            const p = label.toUpperCase();
+
+            if (hatId === '201' || p.includes('LEVHA')) {
+                productType = 'levha';
+            } else if (p.includes('PERVAZ') || hatId === '103' || hatId === '109') {
+                productType = 'pervaz';
+            } else if (p.includes('SEREN') || hatId === '104' || hatId === '105') {
+                productType = 'seren';
+            } else {
+                productType = 'kasa';
+            }
+
+            const colorSpec = (productType === 'levha') 
+                ? resolveSheetColorAndSpec(m.product) 
+                : resolveProductColorAndSpec(hatId, m.product);
+
+            const job = {
+                hatId: hatId,
+                hatName: m.name || `Hat ${hatId}`,
+                productType: productType,
+                colorHex: colorSpec.colorHex,
+                colorName: colorSpec.colorName,
+                label: label
+            };
+
+            if (!dtForkliftJobQueue.some(j => j.hatId === hatId) && (!dtForkliftCurrentJob || dtForkliftCurrentJob.hatId !== hatId)) {
+                dtForkliftJobQueue.push(job);
+            }
+        }
+
+        function triggerForkliftManualDispatch() {
+            if (!dtSimulation || !dtSimulation.activeHats) return;
+            const candidates = dtSimulation.activeHats.filter(h => h !== '101');
+            if (candidates.length === 0) return;
+            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+            dispatchForkliftToMachine(chosen);
+            if (typeof showToast === 'function') {
+                showToast(`Hat ${chosen} için Forklift palet taşıma görevi başlatıldı!`, 'info');
+            }
+        }
+
+        // Seçilen Günün Verilerini Otomatik Olarak Simülasyona Aktarma
+        function syncSimulationWithCurrentDay() {
+            if (!dtMachinesData || dtMachinesData.length === 0) return;
+            const dtSelect = document.getElementById('select-dt-day');
+            const selectedOption = dtSelect && dtSelect.selectedOptions ? dtSelect.selectedOptions[0] : null;
+            const dateLabel = selectedOption ? selectedOption.textContent : (dtDayData.date || 'Seçili Gün');
+            const selectedKey = dtSelect ? dtSelect.value : '';
+
+            let totalNet = 0;
+            let totalFire = 0;
+            const activeHats = [];
+
+            dtMachinesData.forEach(m => {
+                if (!m.isQC) {
+                    totalNet += (m.prodKg || 0);
+                    totalFire += (m.fireKg || 0);
+                    if (m.hours > 0 || m.prodKg > 0) activeHats.push(m.id);
+                }
+            });
+
+            dtSimulation.dateKey = selectedKey;
+            dtSimulation.dateLabel = dateLabel;
+            dtSimulation.targetNetKg = totalNet > 0 ? totalNet : 12000;
+            dtSimulation.targetFireKg = totalFire > 0 ? totalFire : 2000;
+            dtSimulation.activeHats = activeHats.length > 0 ? activeHats : ['102', '103', '104', '105', '106', '107', '108', '109', '201'];
+
+            const dateBadge = document.getElementById('sim-date-badge');
+            if (dateBadge) {
+                dateBadge.textContent = `${dateLabel} Verileri (${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg Net Üretim & ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg Fire)`;
+            }
+
+            const ticker = document.getElementById('sim-event-ticker');
+            if (ticker) {
+                ticker.textContent = `[08:00] ${dateLabel} simülasyonu devrede: Toplam ${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg mamul ve ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg kırma firesi simüle ediliyor.`;
+            }
+
+            // Depo başlangıç stoklarını güncelle
+            if (typeof createInitialWarehouseStock === 'function') {
+                createInitialWarehouseStock();
+            }
         }
 
         // ========================================================
@@ -5077,7 +5751,7 @@
             group.add(profileBeamGroup);
 
             // Düzgün Sağlam Mamul İstif Sehpası (Arabalı Palet)
-            const goodStack = createFinishedGoodsTrolley(prodKg);
+            const goodStack = createFinishedGoodsTrolley(prodKg, productStr, id);
             goodStack.position.set(11.2, 0, 0);
             group.add(goodStack);
 
@@ -5238,7 +5912,7 @@
             const levTotalKg = mLevData ? mLevData.prodKg : 2455;
             const levDeadFireKg = mLevData ? mLevData.fireKg : 365;
 
-            const goodSheetStack = createLevhaFinishedGoodsPallet(levTotalKg);
+            const goodSheetStack = createLevhaFinishedGoodsPallet(levTotalKg, mLevData ? mLevData.product : '');
             goodSheetStack.position.set(12.8, 0, 0);
             group.add(goodSheetStack);
 
@@ -5303,7 +5977,7 @@
                     // İstif Sehpası Katmanlarını Güncelle
                     if (group.userData.goodStack) {
                         group.remove(group.userData.goodStack);
-                        const newStack = createFinishedGoodsTrolley(m.prodKg);
+                        const newStack = createFinishedGoodsTrolley(m.prodKg, m.product, m.id);
                         newStack.position.set(11.2, 0, 0);
                         group.add(newStack);
                         group.userData.goodStack = newStack;
@@ -5322,7 +5996,7 @@
                 else if (group.userData.type === 'levha') {
                     if (group.userData.goodSheetStack) {
                         group.remove(group.userData.goodSheetStack);
-                        const newSheetStack = createLevhaFinishedGoodsPallet(m.prodKg);
+                        const newSheetStack = createLevhaFinishedGoodsPallet(m.prodKg, m.product);
                         newSheetStack.position.set(12.8, 0, 0);
                         group.add(newSheetStack);
                         group.userData.goodSheetStack = newSheetStack;
@@ -5604,6 +6278,12 @@
                     if (fb) fb.rotation.y = 0;
                 }, 250);
             }
+
+            // Kesim sayacı ve periyodik forklift palet taşıma görevi tetikleme
+            dtSimulation.cutCount = (dtSimulation.cutCount || 0) + 1;
+            if (dtSimulation.cutCount % 4 === 0 && typeof dispatchForkliftToMachine === 'function') {
+                dispatchForkliftToMachine(hatId);
+            }
         }
 
         function animate3D() {
@@ -5669,7 +6349,12 @@
                 });
             }
 
-            // 01.10.2026 Canlı Üretim & Fire Simülasyon Motoru Güncellemesi
+            // 3D Akıllı Forklift Lojistik Motoru (Palet Taşıma & Depo İstifleme)
+            if (typeof updateForkliftLogic === 'function') {
+                updateForkliftLogic(0.016);
+            }
+
+            // Canlı Üretim & Fire Simülasyon Motoru Güncellemesi
             if (typeof updateProductionSimulation === 'function') {
                 updateProductionSimulation(0.016);
             }

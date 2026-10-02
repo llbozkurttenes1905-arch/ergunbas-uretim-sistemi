@@ -3815,6 +3815,8 @@ def export_daily_pdf(date: Optional[str] = None):
 
     # ---- 1) MAKİNE & HAT İŞLETME DURUMU MATRİSİ (KURUMSAL KAPASİTE KULLANIM ÇİZELGESİ) ----
     mach_status_rows = []
+    mach_cell_styles = []
+    row_idx = 1
     active_hat_count = 0
     idle_hat_count = 0
     idle_hat_details = []
@@ -3871,41 +3873,40 @@ def export_daily_pdf(date: Optional[str] = None):
                 uniq_entries.append(de)
         d_reasons = [de["text"] for de in uniq_entries]
 
-        has_breakdown = any(
-            any(w in de["reason"].lower() or w in de.get("desc", "").lower()
-                for w in ["arız", "bakım", "tamir", "kalıp", "hammadde", "motor", "testere", "elektrik", "eleman", "personel", "helezon", "su "])
-            for de in uniq_entries
-        )
-
-        if line_working:
+        # RENK KODLAMASI: 24 sa -> Yeşil, 0 sa -> Kırmızı, 0-24 sa -> Sarı/Turuncu
+        if tot_h >= 23.5:
+            hat_cell = f"<font color='#166534'><b>Hat {h}</b></font>"
+            status_cell = "<font color='white'><b>24 SAAT</b></font>"
+            hat_bg = colors.HexColor("#DCFCE7")      # Açık yeşil zemin
+            status_bg = colors.HexColor("#16A34A")   # Katı canlı yeşil zemin
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#166534'>Normal İşletme</font>"
             active_hat_count += 1
-            if g_working and n_working:
-                if d_reasons or tot_h < 23.5:
-                    status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
-                else:
-                    status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
-            else:
-                status_cell = "<font color='#0369A1'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
-            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#15803D'>Normal İşletme</font>"
-        else:
-            # HAT HİÇ ÇALIŞMADI
+        elif tot_h == 0:
+            hat_cell = f"<font color='#991B1B'><b>Hat {h}</b></font>"
+            status_cell = "<font color='white'><b>0 SAAT</b></font>"
+            hat_bg = colors.HexColor("#FEE2E2")      # Açık kırmızı zemin
+            status_bg = colors.HexColor("#DC2626")   # Katı canlı kırmızı zemin
             idle_hat_count += 1
             if uniq_entries:
                 rsn_str = ", ".join(d_reasons)
-                if has_breakdown:
-                    status_cell = "<font color='#DC2626'><b>Gayrifaal</b></font><br/><font size=6 color='#B91C1C'>Arıza / Duruş</font>"
-                    note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
-                else:
-                    status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#64748B'>Duruş Kayıtlı</font>"
-                    note_cell = f"<font color='#B45309'>{rsn_str}</font>"
+                note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
                 idle_hat_details.append((f"Hat {h}", rsn_str))
             else:
-                status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Boşta</font>"
                 note_cell = "<font color='#94A3B8'>Planlı Boşta (Üretim Yok)</font>"
                 idle_hat_details.append((f"Hat {h}", "Planlı Boşta (Üretim Yok)"))
+        else:
+            hat_cell = f"<font color='#9A3412'><b>Hat {h}</b></font>"
+            status_cell = f"<font color='white'><b>{tot_h:.1f} SAAT</b></font>"
+            hat_bg = colors.HexColor("#FEF3C7")      # Açık sarı/amber zemin
+            status_bg = colors.HexColor("#D97706")   # Katı canlı amber/turuncu zemin
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#B45309'>Kısmi Vardiya</font>"
+            active_hat_count += 1
+
+        mach_cell_styles.append((row_idx, hat_bg, status_bg))
+        row_idx += 1
 
         mach_status_rows.append([
-            f"Hat {h}",
+            hat_cell,
             "Ekstrüder",
             g_cell,
             n_cell,
@@ -3960,40 +3961,40 @@ def export_daily_pdf(date: Optional[str] = None):
                 uniq_entries.append(de)
         d_reasons = [de["text"] for de in uniq_entries]
 
-        has_breakdown = any(
-            any(w in de["reason"].lower() or w in de.get("desc", "").lower()
-                for w in ["arız", "bakım", "tamir", "kalıp", "hammadde", "motor", "testere", "elektrik", "eleman", "personel", "helezon", "su "])
-            for de in uniq_entries
-        )
-
-        if line_working:
+        # RENK KODLAMASI (Levha)
+        if tot_h >= 23.5:
+            hat_cell = f"<font color='#166534'><b>Levha {h}</b></font>"
+            status_cell = "<font color='white'><b>24 SAAT</b></font>"
+            hat_bg = colors.HexColor("#DCFCE7")
+            status_bg = colors.HexColor("#16A34A")
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#166534'>Normal İşletme</font>"
             active_hat_count += 1
-            if g_working and n_working:
-                if d_reasons or tot_h < 23.5:
-                    status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
-                else:
-                    status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
-            else:
-                status_cell = "<font color='#0284C7'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
-            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#15803D'>Normal İşletme</font>"
-        else:
+        elif tot_h == 0:
+            hat_cell = f"<font color='#991B1B'><b>Levha {h}</b></font>"
+            status_cell = "<font color='white'><b>0 SAAT</b></font>"
+            hat_bg = colors.HexColor("#FEE2E2")
+            status_bg = colors.HexColor("#DC2626")
             idle_hat_count += 1
             if uniq_entries:
                 rsn_str = ", ".join(d_reasons)
-                if has_breakdown:
-                    status_cell = "<font color='#DC2626'><b>Gayrifaal</b></font><br/><font size=6 color='#B91C1C'>Arıza / Duruş</font>"
-                    note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
-                else:
-                    status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#64748B'>Duruş Kayıtlı</font>"
-                    note_cell = f"<font color='#B45309'>{rsn_str}</font>"
+                note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
                 idle_hat_details.append((f"Levha {h}", rsn_str))
             else:
-                status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Boşta</font>"
                 note_cell = "<font color='#94A3B8'>Planlı Boşta (Üretim Yok)</font>"
                 idle_hat_details.append((f"Levha {h}", "Planlı Boşta (Üretim Yok)"))
+        else:
+            hat_cell = f"<font color='#9A3412'><b>Levha {h}</b></font>"
+            status_cell = f"<font color='white'><b>{tot_h:.1f} SAAT</b></font>"
+            hat_bg = colors.HexColor("#FEF3C7")
+            status_bg = colors.HexColor("#D97706")
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#B45309'>Kısmi Vardiya</font>"
+            active_hat_count += 1
+
+        mach_cell_styles.append((row_idx, hat_bg, status_bg))
+        row_idx += 1
 
         mach_status_rows.append([
-            f"Levha {h}",
+            hat_cell,
             "Levha",
             g_cell,
             n_cell,
@@ -4226,13 +4227,20 @@ def export_daily_pdf(date: Optional[str] = None):
     story.append(Paragraph(summary_text, subtitle_style))
     story.append(Spacer(1, 3))
 
-    mach_head = ["Ekipman / Hat", "Türü", "Vardiya I (Gündüz)", "Vardiya II (Gece)", "İşletme Süresi", "Net Üretim", "İşletme Statüsü", "Duruş / Not"]
+    mach_head = ["Ekipman / Hat", "Türü", "Vardiya I (Gündüz)", "Vardiya II (Gece)", "İşletme Süresi", "Net Üretim", "Durum", "Duruş / Not"]
     t_mach = make_table(
         mach_head,
         mach_status_rows,
         col_widths=[2.0 * cm, 1.6 * cm, 3.8 * cm, 3.8 * cm, 1.6 * cm, 1.8 * cm, 2.0 * cm, 2.0 * cm],
         align_cols=['C', 'C', 'L', 'L', 'R', 'R', 'C', 'L']
     )
+    # Renk kodlaması: Ekipman hücresi ve Durum hücresi boyama (24 sa yeşil, 0 sa kırmızı, 0-24 sa sarı/turuncu)
+    style_cmds = []
+    for r_i, h_bg, s_bg in mach_cell_styles:
+        style_cmds.append(("BACKGROUND", (0, r_i), (0, r_i), h_bg))
+        style_cmds.append(("BACKGROUND", (6, r_i), (6, r_i), s_bg))
+    if style_cmds:
+        t_mach.setStyle(TableStyle(style_cmds))
     story.append(t_mach)
     if idle_hat_count > 0:
         idle_items = [f"<b>{name}:</b> {rsn}" for name, rsn in idle_hat_details]

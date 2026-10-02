@@ -1119,6 +1119,9 @@
                         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> <span id="dt-stat-warning" class="font-bold text-amber-400">-- Kısmi</span></div>
                         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> <span id="dt-stat-idle" class="font-bold text-red-400">-- Devre Dışı</span></div>
                     </div>
+                    <button onclick="open3DFactoryConfigModal()" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 via-cyan-600 to-blue-600 hover:from-amber-500 hover:to-blue-500 text-white text-xs font-black rounded-xl transition shadow-lg shadow-cyan-600/30 flex items-center gap-2 border border-cyan-400/40 cursor-pointer">
+                        <i data-lucide="sliders" class="w-4 h-4 text-amber-200"></i> <span class="font-extrabold tracking-wide">📐 Saha Ölçüleri & 👥 Personel Belirle</span>
+                    </button>
                     <button onclick="toggleDigitalTwinFullscreen()" title="Tam Ekran (SCADA Kiosk Modu)" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
                         <i data-lucide="maximize" class="w-3.5 h-3.5 text-cyan-400"></i> <span class="hidden sm:inline">Tam Ekran</span>
                     </button>
@@ -3535,6 +3538,7 @@
             // 7. Kayıtlı Özel Yerleşimi Yükle ve Modelleri İnşa Et
             loadSaved3DPositions();
             buildAll3DMachines();
+            applyFactoryLayoutFromConfig();
 
             // 8. Tıklama & Sürükleme Dinleyicileri
             canvas.addEventListener('pointerdown', on3DPointerDown);
@@ -3664,6 +3668,94 @@
         }
 
         /* --------------------------------------------------------
+           SAHA & MAKİNE ÖLÇÜLERİNİ CANLI OLARAK 3D SAHNEYE UYGULAMA
+        -------------------------------------------------------- */
+        function applyFactoryLayoutFromConfig() {
+            if (!dtScene || !dtMachineGroups) return;
+
+            const L = dtFactoryConfig.sahaUzunluk || 65;
+            const D = dtFactoryConfig.sahaDerinlik || 42;
+            const hatBoslugu = dtFactoryConfig.hatBoslugu || 6.2;
+            const koridor = dtFactoryConfig.koridorGenislik || 4.5;
+            const makineBoyu = dtFactoryConfig.makineBoyu || 18.0;
+            const levhaBoyu = dtFactoryConfig.levhaBoyu || 22.0;
+
+            // Z eksenindeki hat boşluğu (metre başına Three.js birimi)
+            // 6.2 metre boşluk = 12.0 birim referans oranı
+            const spacingZ = hatBoslugu * (12.0 / 6.2);
+
+            // Koridor genişliği ve makine boyuna göre sol ve sağ blokların X konumları:
+            const solBlokX = -((makineBoyu / 2) + (koridor / 2) + 4.5);
+            const sagBlokX = (koridor / 2) + 2.5;
+
+            // 5 Sıralı Hat Düzeni (Z ekseni: +2, +1, 0, -1, -2)
+            const zOffsets = [
+                +2 * spacingZ,
+                +1 * spacingZ,
+                0,
+                -1 * spacingZ,
+                -2 * spacingZ
+            ];
+
+            const leftLines = ['101', '102', '103', '104', '106'];
+            const rightLines = ['105', '107', '108', '109', '201'];
+
+            leftLines.forEach((id, idx) => {
+                const newZ = zOffsets[idx];
+                const newX = solBlokX;
+                if (DT_3D_POSITIONS[id]) {
+                    DT_3D_POSITIONS[id].x = newX;
+                    DT_3D_POSITIONS[id].z = newZ;
+                }
+                const grp = dtMachineGroups[id];
+                if (grp) {
+                    grp.position.x = newX;
+                    grp.position.z = newZ;
+                    const scaleX = makineBoyu / 18.0;
+                    grp.scale.set(scaleX, 1, 1);
+                }
+            });
+
+            rightLines.forEach((id, idx) => {
+                const newZ = zOffsets[idx];
+                const newX = sagBlokX;
+                if (DT_3D_POSITIONS[id]) {
+                    DT_3D_POSITIONS[id].x = newX;
+                    DT_3D_POSITIONS[id].z = newZ;
+                }
+                const grp = dtMachineGroups[id];
+                if (grp) {
+                    grp.position.x = newX;
+                    grp.position.z = newZ;
+                    const scaleX = (id === '201') ? (levhaBoyu / 22.0) : (makineBoyu / 18.0);
+                    grp.scale.set(scaleX, 1, 1);
+                }
+            });
+
+            // Kalite Kontrol Masası (qc1):
+            const qcZ = (2 * spacingZ) + 7;
+            const qcX = (solBlokX + sagBlokX) / 2;
+            if (DT_3D_POSITIONS['qc1']) {
+                DT_3D_POSITIONS['qc1'].x = qcX;
+                DT_3D_POSITIONS['qc1'].z = qcZ;
+            }
+            const qcGrp = dtMachineGroups['qc1'];
+            if (qcGrp) {
+                qcGrp.position.x = qcX;
+                qcGrp.position.z = qcZ;
+            }
+
+            // Ölçü çizgilerini ve güvenlik şeritlerini güncelle
+            if (typeof buildFactoryDimensionsAndClearances === 'function') {
+                buildFactoryDimensionsAndClearances();
+            }
+
+            // Seçim halkası ve etiketleri güncelle
+            if (typeof updateSelectionReticle === 'function') updateSelectionReticle();
+            if (typeof updateProjected3DLabels === 'function') updateProjected3DLabels();
+        }
+
+        /* --------------------------------------------------------
            SAHA ÖLÇÜLERİ VE MAKİNELER ARASI GÜVENLİK BOŞLUKLARI
         -------------------------------------------------------- */
         function buildFactoryDimensionsAndClearances() {
@@ -3674,6 +3766,12 @@
 
             const L = dtFactoryConfig.sahaUzunluk || 65;
             const D = dtFactoryConfig.sahaDerinlik || 42;
+            const hatBoslugu = dtFactoryConfig.hatBoslugu || 6.2;
+            const spacingZ = hatBoslugu * (12.0 / 6.2);
+            const makineBoyu = dtFactoryConfig.makineBoyu || 18.0;
+            const koridor = dtFactoryConfig.koridorGenislik || 4.5;
+            const solBlokX = -((makineBoyu / 2) + (koridor / 2) + 4.5);
+            const sagBlokX = (koridor / 2) + 2.5;
 
             const dimMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.75 });
             const dimCyanMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
@@ -3705,19 +3803,17 @@
                 dtDimensionsGroup.add(tick);
             });
 
-            // 2. Hatlar Arası Güvenlik Boşluğu Çizgileri
-            [18, 6, -6, -18].forEach(gapZ => {
-                const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
-                gapLine.rotation.x = -Math.PI / 2;
-                gapLine.position.set(-22, 0.025, gapZ);
-                dtDimensionsGroup.add(gapLine);
-            });
+            // 2. Hatlar Arası Güvenlik Boşluğu Çizgileri (Kullanıcının belirlediği hat boşluğuna dinamik)
+            [1.5 * spacingZ, 0.5 * spacingZ, -0.5 * spacingZ, -1.5 * spacingZ].forEach(gapZ => {
+                const gapLine1 = new THREE.Mesh(new THREE.PlaneGeometry(makineBoyu + 4, 0.08), dimCyanMat);
+                gapLine1.rotation.x = -Math.PI / 2;
+                gapLine1.position.set(solBlokX, 0.025, gapZ);
+                dtDimensionsGroup.add(gapLine1);
 
-            [18, 6, -6, -18].forEach(gapZ => {
-                const gapLine = new THREE.Mesh(new THREE.PlaneGeometry(24, 0.08), dimCyanMat);
-                gapLine.rotation.x = -Math.PI / 2;
-                gapLine.position.set(10, 0.025, gapZ);
-                dtDimensionsGroup.add(gapLine);
+                const gapLine2 = new THREE.Mesh(new THREE.PlaneGeometry(makineBoyu + 4, 0.08), dimCyanMat);
+                gapLine2.rotation.x = -Math.PI / 2;
+                gapLine2.position.set(sagBlokX, 0.025, gapZ);
+                dtDimensionsGroup.add(gapLine2);
             });
 
             dtScene.add(dtDimensionsGroup);
@@ -4147,6 +4243,9 @@
                 localStorage.setItem('ergunbas_dt_operator_counts', JSON.stringify(dtCustomOperatorCounts));
             } catch(e) {}
 
+            // Saha ve Makine Yerleşimini & Hat Boşluklarını Canlı Güncelle
+            applyFactoryLayoutFromConfig();
+
             // Mimariyi ve Zemin Ölçülerini Yeniden İnşa Et
             if (dtScene && typeof buildFactoryFloorAndArchitecture === 'function') {
                 buildFactoryFloorAndArchitecture();
@@ -4172,6 +4271,7 @@
 
             // Güncelle ve yeniden yükle
             processDigitalTwinData();
+            applyFactoryLayoutFromConfig();
             buildFactoryFloorAndArchitecture();
             Object.keys(DT_3D_POSITIONS).forEach(id => {
                 const m = dtMachinesData.find(x => x.id === id);
@@ -4381,11 +4481,20 @@
             motorBox.castShadow = true;
             group.add(motorBox);
 
-            // Motor Arkası Havalandırma Fanı & Kasnak (Dönen WebGL 3D Parça)
-            const motorPulley = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.12, 16), hazardYellowMat);
-            motorPulley.rotation.z = Math.PI / 2;
-            motorPulley.position.set(extX + 1.42, 1.8, 0);
-            motorPulley.castShadow = true;
+            // Motor Arkası 4-Kanatlı Havalandırma Fanı & Kasnak (Dönen WebGL 3D Parça)
+            const motorPulley = new THREE.Group();
+            motorPulley.position.set(extX + 1.45, 1.8, 0);
+
+            const pulleyHub = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.12, 16), chromeMat);
+            pulleyHub.rotation.z = Math.PI / 2;
+            motorPulley.add(pulleyHub);
+
+            // 4 Adet Parlak Sarı Fan Kanadı (Dönüşü Gözle %100 Net Gösterir)
+            const fanMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3, metalness: 0.2 });
+            const fBlade1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.95, 0.18), fanMat);
+            const fBlade2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.95), fanMat);
+            motorPulley.add(fBlade1);
+            motorPulley.add(fBlade2);
             group.add(motorPulley);
 
             const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 2.4, 24), chromeMat);
@@ -4409,15 +4518,29 @@
             pullerCab.castShadow = true;
             group.add(pullerCab);
 
-            // Çekici Palet Silindirleri (WebGL Gerçek Zamanlı Dönen 3D Parçalar)
+            // Çekici Palet Silindirleri (Dönen WebGL Merdaneler & Kenar Dişlileri)
             const pullerRollers = [];
-            [0.55, 1.1].forEach(ry => {
-                const pr = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.9, 16), chromeMat);
+            const pGearMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 });
+            [0.55, 1.15].forEach(ry => {
+                const prGroup = new THREE.Group();
+                prGroup.position.set(exitX, ry, 0);
+
+                const pr = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.9, 16), chromeMat);
                 pr.rotation.x = Math.PI / 2;
-                pr.position.set(exitX, ry, 0);
-                pr.castShadow = true;
-                group.add(pr);
-                pullerRollers.push(pr);
+                prGroup.add(pr);
+
+                // Merdane Üzerinde Dönen Sarı Kontrast Şerit
+                const prStripe = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.46, 0.92), hazardYellowMat);
+                prGroup.add(prStripe);
+
+                // Merdane Kenarında Dönen Dişli Çark
+                const prGear = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.08, 12), pGearMat);
+                prGear.rotation.x = Math.PI / 2;
+                prGear.position.z = 0.48;
+                prGroup.add(prGear);
+
+                group.add(prGroup);
+                pullerRollers.push(prGroup);
             });
 
             const pullerTop = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.3, 1.6), whiteCabMat);
@@ -4520,13 +4643,32 @@
             group.add(calenderStand);
 
             const animatedRolls = [];
+            const rollGearMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 });
+            const rollStripeMat = new THREE.MeshBasicMaterial({ color: 0x0284c7 });
+
             [0.65, 1.3, 1.95].forEach(vy => {
+                const rollGroup = new THREE.Group();
+                rollGroup.position.set(-1.8, vy, 0);
+
                 const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 3.8, 32), chromeMat);
                 roll.rotation.x = Math.PI / 2;
-                roll.position.set(-1.8, vy, 0);
                 roll.castShadow = true;
-                group.add(roll);
-                animatedRolls.push(roll);
+                rollGroup.add(roll);
+
+                // Vals Üzerinde Dönen Mavi Çizgi (Dönüşü Gözle %100 Görünür Kılar)
+                const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.58, 3.82), rollStripeMat);
+                rollGroup.add(stripe);
+
+                // Vals Kenarlarında Dönen Tahrik Dişlileri (12 Dişli Çark)
+                [-1.92, 1.92].forEach(gz => {
+                    const gear = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.12, 12), rollGearMat);
+                    gear.rotation.x = Math.PI / 2;
+                    gear.position.z = gz;
+                    rollGroup.add(gear);
+                });
+
+                group.add(rollGroup);
+                animatedRolls.push(rollGroup);
             });
 
             // 3. Geniş Soğutma Konveyörü Masası
@@ -4630,31 +4772,35 @@
                 dtSelectionRing.rotation.z += 0.015;
             }
 
-            // WebGL Gerçek Zamanlı GPU Animasyonları: Dönen Valsler, Çekici Merdaneleri & Motor Kasnakları
-            if (dtMachineGroups && dtMachinesData) {
+            // WebGL Gerçek Zamanlı GPU Animasyonları: Dönen Valsler, Çekici Merdaneleri & Motor Kasnakları (60 FPS)
+            if (dtMachineGroups) {
                 Object.values(dtMachineGroups).forEach(group => {
                     if (!group || !group.userData) return;
-                    const m = dtMachinesData.find(x => x.id === group.userData.id);
-                    const isRunning = m && (m.status === 'active' || m.status === 'warning');
-                    const speedMult = isRunning ? (m.status === 'active' ? 1.0 : 0.45) : 0;
+                    const m = dtMachinesData ? dtMachinesData.find(x => x.id === group.userData.id) : null;
+                    
+                    // GPU 60 FPS Canlı Dönüş: Aktif hatlar (1.25x), uyarı (0.75x), rölanti/boşta bile canlı test dönüşü (0.45x)
+                    let speedMult = 1.0;
+                    if (m) {
+                        if (m.status === 'active') speedMult = 1.25;
+                        else if (m.status === 'warning') speedMult = 0.75;
+                        else speedMult = 0.45; // Canlı rölanti dönüşü
+                    }
 
-                    if (speedMult > 0) {
-                        // Levha 201 Kalender Valsleri Dönüşü (Z ekseni etrafında)
-                        if (group.userData.animatedRolls) {
-                            group.userData.animatedRolls.forEach((roll, idx) => {
-                                roll.rotation.z += (idx % 2 === 0 ? 0.05 : -0.05) * speedMult;
-                            });
-                        }
-                        // Profil Ekstrüder Çekici Merdaneleri (Z ekseni etrafında)
-                        if (group.userData.pullerRollers) {
-                            group.userData.pullerRollers.forEach((pr, idx) => {
-                                pr.rotation.z += (idx === 0 ? 0.06 : -0.06) * speedMult;
-                            });
-                        }
-                        // Motor Havalandırma Kasnağı (X ekseni etrafında hızlı dönüş)
-                        if (group.userData.motorPulley) {
-                            group.userData.motorPulley.rotation.x += 0.16 * speedMult;
-                        }
+                    // Levha 201 Kalender Valsleri Dönüşü (Z ekseni etrafında)
+                    if (group.userData.animatedRolls) {
+                        group.userData.animatedRolls.forEach((roll, idx) => {
+                            roll.rotation.z += (idx % 2 === 0 ? 0.08 : -0.08) * speedMult;
+                        });
+                    }
+                    // Profil Ekstrüder Çekici Merdaneleri (Z ekseni etrafında)
+                    if (group.userData.pullerRollers) {
+                        group.userData.pullerRollers.forEach((pr, idx) => {
+                            pr.rotation.z += (idx === 0 ? 0.10 : -0.10) * speedMult;
+                        });
+                    }
+                    // Motor Havalandırma Kasnağı (X ekseni etrafında hızlı dönüş)
+                    if (group.userData.motorPulley) {
+                        group.userData.motorPulley.rotation.x += 0.24 * speedMult;
                     }
                 });
             }
@@ -5207,17 +5353,35 @@
                             </div>
                         </div>
 
-                        <!-- Personel ve Konum Bilgisi -->
-                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                            <div class="flex items-center justify-between text-slate-400">
-                                <span class="flex items-center gap-1.5"><i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-400"></i> Kalite Masası Personeli:</span>
+                        <!-- Çalışan Personel Belirleme (Canlı 3D Model) -->
+                        <div class="bg-gradient-to-br from-slate-900 via-slate-950 to-purple-950/50 p-3.5 rounded-xl border border-purple-500/40 space-y-2.5 shadow-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+                                    <i data-lucide="users" class="w-4 h-4 text-purple-400"></i> Kalite Masası Personeli
+                                </span>
+                                <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Canlı 3D Model
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-950/90 p-2.5 rounded-xl border border-slate-800">
+                                <div>
+                                    <div class="text-xs font-black text-white">${m.operatorCount || 1} Kalite Uzmanı Sahada</div>
+                                    <div class="text-[10px] text-slate-400">Mitutoyo pleyt & ölçüm masası başında</div>
+                                </div>
                                 <div class="flex items-center gap-1.5">
-                                    <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-purple-500 transition cursor-pointer" title="Personel Azalt">-</button>
-                                    <span class="font-bold text-white px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono">${m.operatorCount || 1} Uzman</span>
-                                    <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-purple-500 transition cursor-pointer" title="Personel Artır">+</button>
+                                    <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-900/60 active:scale-95 text-white font-black text-sm flex items-center justify-center border border-slate-700 hover:border-rose-500 transition cursor-pointer" title="Personel Azalt">-</button>
+                                    <span class="w-8 text-center font-mono font-black text-purple-300 text-sm">${m.operatorCount || 1}</span>
+                                    <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-emerald-900/60 active:scale-95 text-white font-black text-sm flex items-center justify-center border border-slate-700 hover:border-emerald-500 transition cursor-pointer" title="Personel Ekle">+</button>
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                            <button onclick="open3DFactoryConfigModal()" class="w-full py-1.5 bg-slate-800/90 hover:bg-slate-700 text-purple-300 hover:text-white font-bold text-xs rounded-lg transition border border-purple-500/30 flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Tüm Saha Ölçülerini & Personeli Düzenle
+                            </button>
+                        </div>
+
+                        <!-- Konum ve Nöbetçi Bilgisi -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
                                 <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Nöbetçi Uzman:</span>
                                 <span class="font-bold text-slate-300">${m.operator}</span>
                             </div>
@@ -5355,32 +5519,49 @@
                         </div>
                     </div>
 
-                    <!-- Çalışan Eleman Sayısı & Emniyet Boşluğu & Duruş Bilgi Kutusu -->
-                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
-                        <div class="flex items-center justify-between text-slate-400">
-                            <span class="flex items-center gap-1.5"><i data-lucide="users" class="w-3 h-3 text-cyan-400"></i> Çalışan Eleman Sayısı:</span>
+                    <!-- Calisan Eleman Sayisi & Hizli Personel Belirleme (Canli 3D Model) -->
+                    <div class="bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/50 p-3.5 rounded-xl border border-cyan-500/40 space-y-2.5 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-black uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+                                <i data-lucide="users" class="w-4 h-4 text-cyan-400"></i> Bu Hatta Çalışan Personel
+                            </span>
+                            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Canlı 3D Model
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-950/90 p-2.5 rounded-xl border border-slate-800">
+                            <div>
+                                <div class="text-xs font-black text-white">${m.operatorCount > 0 ? `${m.operatorCount} Operatör Sahada` : 'Personel Yok (Boşta)'}</div>
+                                <div class="text-[10px] text-slate-400">Makine başı 3D işçi modelleri anında güncellenir</div>
+                            </div>
                             <div class="flex items-center gap-1.5">
-                                <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-cyan-500 transition cursor-pointer" title="Personel Azalt">-</button>
-                                <span class="font-bold text-white px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 font-mono">${m.operatorCount || 0} Operatör</span>
-                                <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-black text-xs flex items-center justify-center border border-slate-700 hover:border-cyan-500 transition cursor-pointer" title="Personel Artır">+</button>
+                                <button onclick="changeMachineOperatorCount('${m.id}', -1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-900/60 active:scale-95 text-white font-black text-sm flex items-center justify-center border border-slate-700 hover:border-rose-500 transition cursor-pointer" title="Personel Azalt">-</button>
+                                <span class="w-8 text-center font-mono font-black text-cyan-300 text-sm">${m.operatorCount || 0}</span>
+                                <button onclick="changeMachineOperatorCount('${m.id}', 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-emerald-900/60 active:scale-95 text-white font-black text-sm flex items-center justify-center border border-slate-700 hover:border-emerald-500 transition cursor-pointer" title="Personel Ekle">+</button>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
-                            <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3 h-3 text-slate-500"></i> Nöbetçi Ekip:</span>
+                        <div class="flex items-center justify-between pt-1 text-[11px] text-slate-400 border-t border-slate-800/60">
+                            <span>Makineler Arası İSG Boşluğu:</span>
+                            <span class="text-amber-300 font-mono font-bold">${dtFactoryConfig.hatBoslugu || 6.2} m</span>
+                        </div>
+                        <button onclick="open3DFactoryConfigModal()" class="w-full py-1.5 bg-slate-800/90 hover:bg-slate-700 text-cyan-300 hover:text-white font-bold text-xs rounded-lg transition border border-cyan-500/30 flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Tüm Saha Ölçülerini & Hat Boşluklarını Düzenle
+                        </button>
+                    </div>
+
+                    <!-- Nöbetçi Ekip & Hat Durum Notu -->
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                        <div class="flex items-center justify-between text-slate-400">
+                            <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Nöbetçi Ekip:</span>
                             <span class="font-bold text-slate-300">${m.operator}</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
-                            <span class="flex items-center gap-1.5"><i data-lucide="move-horizontal" class="w-3 h-3 text-amber-400"></i> Makineler Arası Boşluk:</span>
-                            <span class="font-bold text-amber-300 font-mono">${dtFactoryConfig.hatBoslugu || 6.2} m Hat Açıklığı</span>
-                        </div>
-                        <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
-                            <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-slate-500"></i> Hat Durum Notu:</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-slate-500"></i> Hat Durum Notu:</span>
                             <span class="font-bold truncate max-w-[190px] ${m.status === 'warning' ? 'text-amber-400' : (m.status === 'idle' ? 'text-red-400' : 'text-emerald-400')}">
                                 ${m.downtime}
                             </span>
                         </div>
                     </div>
-                </div>
 
                 <div class="flex gap-2 mt-4">
                     <button onclick="focusOnSelectedMachine3D()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">

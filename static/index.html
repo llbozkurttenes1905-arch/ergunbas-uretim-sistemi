@@ -11190,8 +11190,10 @@
 
         async function handleLogin(e) {
             if (e) e.preventDefault();
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
+            const usernameInput = document.getElementById('login-username');
+            const passwordInput = document.getElementById('login-password');
+            const username = (usernameInput ? usernameInput.value : '').trim();
+            const password = (passwordInput ? passwordInput.value : '').trim();
             const errorEl = document.getElementById('login-error');
 
             try {

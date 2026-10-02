@@ -3131,11 +3131,42 @@ class UserUpdate(BaseModel):
     role: Optional[str] = None
     name: Optional[str] = None
 
+AUTH_TR_MAP = str.maketrans('ıİğĞüÜşŞöÖçÇI', 'iigguussoocci')
+
+def normalize_auth_str(s: Optional[str]) -> str:
+    if not s:
+        return ""
+    s = s.strip().replace('i̇', 'i').translate(AUTH_TR_MAP).lower()
+    return re.sub(r'[^a-z0-9]', '', s)
+
 @app.post("/api/auth/login")
 def login(req: LoginRequest):
     users_data = load_users()
-    for u in users_data["users"]:
-        if u["username"] == req.username and u["password"] == req.password:
+    req_u = (req.username or "").strip()
+    req_p = (req.password or "").strip()
+    req_u_clean = normalize_auth_str(req_u)
+    req_p_clean = normalize_auth_str(req_p)
+
+    def is_password_match(stored_p: str) -> bool:
+        stored_p = (stored_p or "").strip()
+        return (
+            stored_p == req_p or
+            stored_p.lower() == req_p.lower() or
+            normalize_auth_str(stored_p) == req_p_clean
+        )
+
+    # 1. Exact or exact-normalized match
+    for u in users_data.get("users", []):
+        if not is_password_match(u.get("password", "")):
+            continue
+        u_username = u.get("username", "").strip()
+        u_name = u.get("name", "").strip()
+        u_id = u.get("id", "").strip()
+
+        if (u_username.lower() == req_u.lower() or
+            normalize_auth_str(u_username) == req_u_clean or
+            normalize_auth_str(u_name) == req_u_clean or
+            normalize_auth_str(u_id) == req_u_clean):
             return {
                 "status": "success",
                 "user": {
@@ -3145,6 +3176,32 @@ def login(req: LoginRequest):
                     "name": u["name"]
                 }
             }
+
+    # 2. First-word or prefix match (e.g. typing 'vedat' for 'Vedat ERGÜNBAŞ')
+    for u in users_data.get("users", []):
+        if not is_password_match(u.get("password", "")):
+            continue
+        u_username = u.get("username", "").strip()
+        u_name = u.get("name", "").strip()
+        first_user_word = normalize_auth_str(u_username.split()[0]) if u_username else ""
+        first_name_word = normalize_auth_str(u_name.split()[0]) if u_name else ""
+        u_user_clean = normalize_auth_str(u_username)
+
+        if len(req_u_clean) >= 3 and (
+            req_u_clean == first_user_word or
+            req_u_clean == first_name_word or
+            u_user_clean.startswith(req_u_clean)
+        ):
+            return {
+                "status": "success",
+                "user": {
+                    "id": u["id"],
+                    "username": u["username"],
+                    "role": u["role"],
+                    "name": u["name"]
+                }
+            }
+
     raise HTTPException(status_code=401, detail="Kullanıcı adı veya şifre hatalı!")
 
 @app.get("/api/users")

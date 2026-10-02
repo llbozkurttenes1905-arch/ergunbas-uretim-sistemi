@@ -313,6 +313,24 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 120.0,
+          "desc": "Helezon arızası."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 0.0,
+          "desc": "Hammadde yetersiz olduğu için kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "GENEL",
+          "fire_reason": "Elektrik dalgalanması.",
+          "fire_kg": 0.0,
+          "down_reason": "",
           "down_min": 0.0,
           "desc": ""
         }
@@ -322,17 +340,17 @@
           "hat": "Kırım 1",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 4274,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 4887,
           "gece": 0,
           "status": "normal"
         },
@@ -346,44 +364,75 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2995,
+          "gece": 3942,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
+          "gunduz": 1710,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1890,
+          "gece": 1850,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
+          "gunduz": 2163,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 690,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 1320,
           "gece": 0,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 27,
+          "gece_sarj": 0,
+          "gunduz_kg": 7861.049999999999,
+          "gece_kg": 0,
+          "toplam_kg": 7861.049999999999
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 14,
+          "gece_sarj": 0,
+          "gunduz_kg": 3859.0999999999995,
+          "gece_kg": 0,
+          "toplam_kg": 3859.0999999999995
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Levha Renkli (Takoz)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 23,
+          "gece_sarj": 0,
+          "gunduz_kg": 7688.900000000001,
+          "gece_kg": 0,
+          "toplam_kg": 7688.900000000001
+        }
+      ],
+      "mixer_emp_gunduz": 11,
+      "mixer_emp_gece": 1
     }
   }
 }

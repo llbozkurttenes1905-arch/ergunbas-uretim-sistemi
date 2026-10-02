@@ -333,6 +333,24 @@
           "down_reason": "",
           "down_min": 0.0,
           "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Parça bekleniyor."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Parça bekleniyor."
         }
       ],
       "kirim": [

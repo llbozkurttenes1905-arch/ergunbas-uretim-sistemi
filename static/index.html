@@ -1259,14 +1259,43 @@
 
             <!-- Fire ve Duruş Sebepleri Tablosu -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-md">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i> Günlük Fire ve Duruş Sebepleri
-                    </h3>
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i> Günlük Fire ve Duruş / Arıza Sebepleri
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Makinelerin arıza, bakım, hammadde yokluğu veya tam gün çalışmama (duruş) nedenlerini buradan kaydedebilirsiniz. Buradaki kayıtlar PDF Kapasite Matrisine otomatik yansır.</p>
+                    </div>
                     <button onclick="addDowntimeRow()" class="edit-action daily-edit-action px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 rounded-lg transition flex items-center gap-1 border border-slate-700">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Kayıt Ekle
                     </button>
                 </div>
+
+                <datalist id="downtime-hats-list">
+                    <option value="101">Hat 101 (Ekstrüder)</option>
+                    <option value="102">Hat 102 (Ekstrüder)</option>
+                    <option value="103">Hat 103 (Ekstrüder)</option>
+                    <option value="104">Hat 104 (Ekstrüder)</option>
+                    <option value="105">Hat 105 (Ekstrüder)</option>
+                    <option value="106">Hat 106 (Ekstrüder)</option>
+                    <option value="107">Hat 107 (Ekstrüder)</option>
+                    <option value="108">Hat 108 (Ekstrüder)</option>
+                    <option value="109">Hat 109 (Ekstrüder)</option>
+                    <option value="201">Hat 201 (Levha)</option>
+                    <option value="GENEL">GENEL (Fabrika Geneli)</option>
+                </datalist>
+
+                <datalist id="downtime-reasons-list">
+                    <option value="Mekanik Arıza / Onarım">Mekanik Arıza / Onarım</option>
+                    <option value="Elektrik / Elektronik Arıza">Elektrik / Elektronik Arıza</option>
+                    <option value="Periyodik / Kalıp Bakımı">Periyodik / Kalıp Bakımı</option>
+                    <option value="Kalıp / Ürün Değişimi & Ayar">Kalıp / Ürün Değişimi & Ayar</option>
+                    <option value="Hammadde / Dozajlama Bekleme">Hammadde / Dozajlama Bekleme</option>
+                    <option value="Operatör / Eleman Yetersizliği">Operatör / Eleman Yetersizliği</option>
+                    <option value="Elektrik / Enerji Kesintisi">Elektrik / Enerji Kesintisi</option>
+                    <option value="Soğutma Suyu / Kompresör Arızası">Soğutma Suyu / Kompresör Arızası</option>
+                    <option value="Planlı Kapalı / Üretim Planı Yok">Planlı Kapalı / Üretim Planı Yok</option>
+                </datalist>
 
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left text-sm text-slate-300">
@@ -4801,7 +4830,7 @@
                         </select>
                     </td>
                     <td class="p-2.5">
-                        <input type="text" value="${dt.hat || ''}" class="bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-24">
+                        <input type="text" list="downtime-hats-list" value="${dt.hat || ''}" class="bg-slate-950 border border-slate-800 text-white font-semibold text-xs rounded px-2 py-1 w-24 text-center focus:ring-1 focus:ring-amber-500" placeholder="Hat No">
                     </td>
                     <td class="p-2.5">
                         <input type="text" value="${dt.fire_reason || ''}" class="bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full" placeholder="Fire Sebebi">
@@ -4810,13 +4839,13 @@
                         <input type="number" value="${dt.fire_kg || 0}" class="bg-slate-950 border border-slate-800 text-amber-400 font-bold text-xs rounded px-2 py-1 w-20 text-center">
                     </td>
                     <td class="p-2.5">
-                        <input type="text" value="${dt.down_reason || ''}" class="bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full" placeholder="Duruş Sebebi">
+                        <input type="text" list="downtime-reasons-list" value="${dt.down_reason || ''}" class="bg-slate-950 border border-slate-800 text-white text-xs rounded px-2 py-1 w-full focus:ring-1 focus:ring-amber-500" placeholder="Duruş / Arıza Sebebi">
                     </td>
                     <td class="p-2.5">
                         <input type="number" value="${dt.down_min || 0}" class="bg-slate-950 border border-slate-800 text-red-400 font-bold text-xs rounded px-2 py-1 w-20 text-center">
                     </td>
                     <td class="p-2.5">
-                        <input type="text" value="${dt.desc || ''}" class="bg-slate-950 border border-slate-800 text-slate-400 text-xs rounded px-2 py-1 w-full" placeholder="Açıklama">
+                        <input type="text" value="${dt.desc || ''}" class="bg-slate-950 border border-slate-800 text-slate-400 text-xs rounded px-2 py-1 w-full" placeholder="Detay Açıklama (Arıza, parça vb.)">
                     </td>
                     <td class="p-2.5 text-center">
                         <button onclick="this.closest('tr').remove()" class="edit-action daily-edit-action p-1 text-red-400 hover:text-red-300">
@@ -4832,7 +4861,7 @@
         function addDowntimeRow() {
             renderDowntimesTable([
                 ...(getDowntimesFromUI()),
-                { shift: 'Gündüz', hat: '1', fire_reason: '', fire_kg: 0, down_reason: '', down_min: 0, desc: '' }
+                { shift: 'Gündüz', hat: '101', fire_reason: '', fire_kg: 0, down_reason: '', down_min: 0, desc: '' }
             ]);
         }
 

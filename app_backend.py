@@ -3769,14 +3769,27 @@ def export_daily_pdf(date: Optional[str] = None):
     door_stats = target_day.get("door_stats", {})
     completable_doors = door_stats.get("completable_doors", 0)
 
-    # Duruş kayıtlarını hat bazında indeksle
+    def norm_hat_key(val):
+        s = str(val or "").strip().lower()
+        s = s.replace("hat", "").replace("levha", "").strip()
+        return s
+
+    # Duruş ve arıza kayıtlarını hat bazında indeksle
     dt_by_hat = {}
+    dt_general = []
     for dt in day_obj.get("downtimes", []):
-        h = str(dt.get("hat", "")).strip()
+        raw_h = str(dt.get("hat", "")).strip()
+        norm_h = norm_hat_key(raw_h)
         reason = dt.get("down_reason") or dt.get("fire_reason") or dt.get("desc") or "Duruş"
         d_min = int(float(dt.get("down_min", 0) or 0))
         text = f"{reason} ({d_min} dk)" if d_min > 0 else reason
-        dt_by_hat.setdefault(h, []).append(text)
+        entry = {"reason": reason, "down_min": d_min, "text": text, "desc": dt.get("desc", ""), "raw_hat": raw_h}
+        if norm_h in ["genel", "fabrika", "all"]:
+            dt_general.append(entry)
+        else:
+            dt_by_hat.setdefault(norm_h, []).append(entry)
+            if raw_h != norm_h:
+                dt_by_hat.setdefault(raw_h, []).append(entry)
 
     # Kayıtlı ve gün verisinde yer alan tüm hatları tespit et
     reg_machines = data.get("machines", [])
@@ -3804,7 +3817,7 @@ def export_daily_pdf(date: Optional[str] = None):
     mach_status_rows = []
     active_hat_count = 0
     idle_hat_count = 0
-    idle_hat_names = []
+    idle_hat_details = []
     active_gunduz_count = 0
     active_gece_count = 0
     total_mach_hours = 0.0
@@ -3812,8 +3825,9 @@ def export_daily_pdf(date: Optional[str] = None):
 
     # Ekstrüder Hatları Durum Analizi
     for h in known_ext_hats:
-        g_exts = [e for e in day_obj.get("gunduz", {}).get("extruders", []) if str(e.get("hat", "")).strip() == h]
-        n_exts = [e for e in day_obj.get("gece", {}).get("extruders", []) if str(e.get("hat", "")).strip() == h]
+        norm_h = norm_hat_key(h)
+        g_exts = [e for e in day_obj.get("gunduz", {}).get("extruders", []) if norm_hat_key(e.get("hat")) == norm_h or str(e.get("hat", "")).strip() == h]
+        n_exts = [e for e in day_obj.get("gece", {}).get("extruders", []) if norm_hat_key(e.get("hat")) == norm_h or str(e.get("hat", "")).strip() == h]
 
         g_p = sum(float(e.get("prod_kg", 0) or 0) for e in g_exts)
         g_h = sum(float(e.get("hours", 0) or 0) for e in g_exts)
@@ -3833,12 +3847,6 @@ def export_daily_pdf(date: Optional[str] = None):
         total_mach_prod_kg += tot_p
         line_working = (g_working or n_working)
 
-        if line_working:
-            active_hat_count += 1
-        else:
-            idle_hat_count += 1
-            idle_hat_names.append(f"Hat {h}")
-
         # Gündüz hücresi (Resmi/Kurumsal format: Ürün adı, üretim miktarı ve süre)
         if g_working:
             prod_str = ", ".join(g_prods) if g_prods else "Üretimde"
@@ -3853,23 +3861,48 @@ def export_daily_pdf(date: Optional[str] = None):
         else:
             n_cell = "<font color='#94A3B8'>—</font>"
 
-        d_reasons = dt_by_hat.get(h, [])
-        if g_working and n_working:
-            if d_reasons or tot_h < 23.5:
-                status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
-            else:
-                status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
-        elif g_working or n_working:
-            status_cell = "<font color='#0369A1'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
-        else:
-            status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Kapalı</font>"
+        # Bu hatta ait duruş ve arıza kayıtları
+        d_entries = dt_by_hat.get(norm_h, []) + (dt_by_hat.get(h, []) if h != norm_h else [])
+        seen_t = set()
+        uniq_entries = []
+        for de in d_entries:
+            if de["text"] not in seen_t:
+                seen_t.add(de["text"])
+                uniq_entries.append(de)
+        d_reasons = [de["text"] for de in uniq_entries]
 
-        if d_reasons:
-            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>"
-        elif not line_working:
-            note_cell = "<font color='#94A3B8'>Üretim Planı Yok</font>"
+        has_breakdown = any(
+            any(w in de["reason"].lower() or w in de.get("desc", "").lower()
+                for w in ["arız", "bakım", "tamir", "kalıp", "hammadde", "motor", "testere", "elektrik", "eleman", "personel", "helezon", "su "])
+            for de in uniq_entries
+        )
+
+        if line_working:
+            active_hat_count += 1
+            if g_working and n_working:
+                if d_reasons or tot_h < 23.5:
+                    status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
+                else:
+                    status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
+            else:
+                status_cell = "<font color='#0369A1'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#15803D'>Normal İşletme</font>"
         else:
-            note_cell = "<font color='#15803D'>Normal İşletme</font>"
+            # HAT HİÇ ÇALIŞMADI
+            idle_hat_count += 1
+            if uniq_entries:
+                rsn_str = ", ".join(d_reasons)
+                if has_breakdown:
+                    status_cell = "<font color='#DC2626'><b>Gayrifaal</b></font><br/><font size=6 color='#B91C1C'>Arıza / Duruş</font>"
+                    note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
+                else:
+                    status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#64748B'>Duruş Kayıtlı</font>"
+                    note_cell = f"<font color='#B45309'>{rsn_str}</font>"
+                idle_hat_details.append((f"Hat {h}", rsn_str))
+            else:
+                status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Boşta</font>"
+                note_cell = "<font color='#94A3B8'>Planlı Boşta (Üretim Yok)</font>"
+                idle_hat_details.append((f"Hat {h}", "Planlı Boşta (Üretim Yok)"))
 
         mach_status_rows.append([
             f"Hat {h}",
@@ -3884,8 +3917,9 @@ def export_daily_pdf(date: Optional[str] = None):
 
     # Levha Hatları Durum Analizi
     for h in known_lev_hats:
-        g_levs = [e for e in day_obj.get("gunduz", {}).get("levha", []) if str(e.get("hat", "")).strip() == h]
-        n_levs = [e for e in day_obj.get("gece", {}).get("levha", []) if str(e.get("hat", "")).strip() == h]
+        norm_h = norm_hat_key(h)
+        g_levs = [e for e in day_obj.get("gunduz", {}).get("levha", []) if norm_hat_key(e.get("hat")) == norm_h or str(e.get("hat", "")).strip() == h]
+        n_levs = [e for e in day_obj.get("gece", {}).get("levha", []) if norm_hat_key(e.get("hat")) == norm_h or str(e.get("hat", "")).strip() == h]
 
         g_p = sum(float(e.get("total_kg", 0) or 0) for e in g_levs)
         g_h = sum(float(e.get("hours", 0) or 0) for e in g_levs)
@@ -3905,12 +3939,6 @@ def export_daily_pdf(date: Optional[str] = None):
         total_mach_prod_kg += tot_p
         line_working = (g_working or n_working)
 
-        if line_working:
-            active_hat_count += 1
-        else:
-            idle_hat_count += 1
-            idle_hat_names.append(f"Levha {h}")
-
         if g_working:
             col_str = ", ".join(g_colors) if g_colors else "Levha"
             g_cell = f"<b>{col_str}</b><br/><font size=6 color='#64748B'>{g_p:,.1f} kg · {g_h:.1f} sa</font>"
@@ -3923,23 +3951,46 @@ def export_daily_pdf(date: Optional[str] = None):
         else:
             n_cell = "<font color='#94A3B8'>—</font>"
 
-        d_reasons = dt_by_hat.get(h, [])
-        if g_working and n_working:
-            if d_reasons or tot_h < 23.5:
-                status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
-            else:
-                status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
-        elif g_working or n_working:
-            status_cell = "<font color='#0284C7'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
-        else:
-            status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Kapalı</font>"
+        d_entries = dt_by_hat.get(norm_h, []) + (dt_by_hat.get(h, []) if h != norm_h else [])
+        seen_t = set()
+        uniq_entries = []
+        for de in d_entries:
+            if de["text"] not in seen_t:
+                seen_t.add(de["text"])
+                uniq_entries.append(de)
+        d_reasons = [de["text"] for de in uniq_entries]
 
-        if d_reasons:
-            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>"
-        elif not line_working:
-            note_cell = "<font color='#94A3B8'>Üretim Planı Yok</font>"
+        has_breakdown = any(
+            any(w in de["reason"].lower() or w in de.get("desc", "").lower()
+                for w in ["arız", "bakım", "tamir", "kalıp", "hammadde", "motor", "testere", "elektrik", "eleman", "personel", "helezon", "su "])
+            for de in uniq_entries
+        )
+
+        if line_working:
+            active_hat_count += 1
+            if g_working and n_working:
+                if d_reasons or tot_h < 23.5:
+                    status_cell = "<font color='#B45309'><b>Kısmi Faal</b></font><br/><font size=6 color='#D97706'>Kesintili</font>"
+                else:
+                    status_cell = "<font color='#15803D'><b>Faal</b></font><br/><font size=6 color='#64748B'>Tam Zamanlı</font>"
+            else:
+                status_cell = "<font color='#0284C7'><b>Kısmi Faal</b></font><br/><font size=6 color='#64748B'>Tek Vardiya</font>"
+            note_cell = f"<font color='#B45309'>{', '.join(d_reasons)}</font>" if d_reasons else "<font color='#15803D'>Normal İşletme</font>"
         else:
-            note_cell = "<font color='#15803D'>Normal İşletme</font>"
+            idle_hat_count += 1
+            if uniq_entries:
+                rsn_str = ", ".join(d_reasons)
+                if has_breakdown:
+                    status_cell = "<font color='#DC2626'><b>Gayrifaal</b></font><br/><font size=6 color='#B91C1C'>Arıza / Duruş</font>"
+                    note_cell = f"<font color='#DC2626'><b>{rsn_str}</b></font>"
+                else:
+                    status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#64748B'>Duruş Kayıtlı</font>"
+                    note_cell = f"<font color='#B45309'>{rsn_str}</font>"
+                idle_hat_details.append((f"Levha {h}", rsn_str))
+            else:
+                status_cell = "<font color='#64748B'><b>Devre Dışı</b></font><br/><font size=6 color='#94A3B8'>Planlı Boşta</font>"
+                note_cell = "<font color='#94A3B8'>Planlı Boşta (Üretim Yok)</font>"
+                idle_hat_details.append((f"Levha {h}", "Planlı Boşta (Üretim Yok)"))
 
         mach_status_rows.append([
             f"Levha {h}",
@@ -3954,7 +4005,6 @@ def export_daily_pdf(date: Optional[str] = None):
 
     tot_hats = len(known_ext_hats) + len(known_lev_hats)
     hat_utilization = (active_hat_count / tot_hats * 100.0) if tot_hats > 0 else 0.0
-    idle_hat_names_str = ", ".join(idle_hat_names) if idle_hat_names else "Yok (Tüm hatlar faal)"
 
     mach_status_rows.append([
         "TOPLAM",
@@ -3964,7 +4014,7 @@ def export_daily_pdf(date: Optional[str] = None):
         f"{total_mach_hours:.1f} sa",
         f"{total_mach_prod_kg:,.1f} kg",
         f"<b>%{hat_utilization:.1f} KKO</b>",
-        f"{idle_hat_count} Kapalı" if idle_hat_count > 0 else "Tam Kapasite"
+        f"{idle_hat_count} Hat Dışı" if idle_hat_count > 0 else "Tam Kapasite"
     ])
 
     # ---- 2) EKSTRÜDER VE LEVHA DETAYLI ÜRETİM TABLOLARI (SADECE GERÇEKLEŞEN HAREKETLER) ----
@@ -4170,7 +4220,7 @@ def export_daily_pdf(date: Optional[str] = None):
     summary_text = (
         f"<b>Kapasite Kullanım Özeti:</b> Toplam <b>{tot_hats}</b> Hat · "
         f"<b><font color='#1E40AF'>{active_hat_count} Hat Faal (İşletmede)</font></b> · "
-        f"<b><font color='#64748B'>{idle_hat_count} Hat Devre Dışı (Planlı/Boşta)</font></b> · "
+        f"<b><font color='#64748B'>{idle_hat_count} Hat Devre Dışı / Gayrifaal</font></b> · "
         f"Kapasite Kullanım Oranı (KKO): <b>%{hat_utilization:.1f}</b>"
     )
     story.append(Paragraph(summary_text, subtitle_style))
@@ -4185,12 +4235,17 @@ def export_daily_pdf(date: Optional[str] = None):
     )
     story.append(t_mach)
     if idle_hat_count > 0:
+        idle_items = [f"<b>{name}:</b> {rsn}" for name, rsn in idle_hat_details]
         idle_note = (
-            f"<i><font color='#64748B'>* Bilgilendirme: Raporlanan günde planlı devre dışı olan hat(lar): "
-            f"<b>{idle_hat_names_str}</b>. Bu hat(lar) için vardiya bazlı üretim hareketi oluşmamıştır.</font></i>"
+            f"<i><font color='#475569'>* <b>Çalışmayan Hatlar & Sebepleri:</b> "
+            f"{' · '.join(idle_items)}.</font></i>"
         )
         story.append(Spacer(1, 2))
         story.append(Paragraph(idle_note, subtitle_style))
+    if dt_general:
+        gen_txts = [g["text"] for g in dt_general]
+        story.append(Spacer(1, 1))
+        story.append(Paragraph(f"<i><font color='#B45309'>* <b>Fabrika Geneli Duruş / Şebeke:</b> {', '.join(gen_txts)}</font></i>", subtitle_style))
     story.append(Spacer(1, 4))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----

@@ -31,7 +31,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Image as RLImage
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.pdfbase import pdfmetrics
@@ -4063,14 +4063,14 @@ def export_daily_pdf(date: Optional[str] = None):
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
-        topMargin=1.0 * cm, bottomMargin=1.5 * cm,
+        topMargin=0.7 * cm, bottomMargin=1.1 * cm,
         leftMargin=1.2 * cm, rightMargin=1.2 * cm
     )
 
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle("TitleTR", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=13, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
     subtitle_style = ParagraphStyle("SubtitleTR", parent=styles["Normal"], fontName=PDF_FONT, fontSize=8, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
-    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=10, textColor=colors.HexColor("#0F172A"), spaceBefore=8, spaceAfter=3)
+    h2_style = ParagraphStyle("H2TR", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=10, textColor=colors.HexColor("#0F172A"), spaceBefore=5, spaceAfter=2)
 
     def make_table(head_row, data_rows, col_widths=None, align_cols=None):
         n_cols = len(head_row)
@@ -4108,8 +4108,8 @@ def export_daily_pdf(date: Optional[str] = None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
             ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 3),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
             ("LEFTPADDING", (0, 0), (-1, -1), 3.5),
             ("RIGHTPADDING", (0, 0), (-1, -1), 3.5),
         ]))
@@ -4249,7 +4249,6 @@ def export_daily_pdf(date: Optional[str] = None):
     story.append(Spacer(1, 4))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----
-    story.append(Paragraph(f"Kapı Kapasitesi (Reçete Eşdeğeri & Devir Zinciri) — Tamamlanan: {completable_doors} Adet Kapı", h2_style))
     door_head = ["Kategori", "Dünden Devir", "Bugünkü Üretim", "Toplam Havuz", "Reçete Oranı", "Kapı Eşdeğeri", "Yarına Devir"]
     door_rows = []
     details = door_stats.get("details", {})
@@ -4266,8 +4265,12 @@ def export_daily_pdf(date: Optional[str] = None):
             f"{float(cd.get('carryover', 0) or 0):,.1f}"
         ])
     t_door = make_table(door_head, door_rows, col_widths=[3.0 * cm, 2.6 * cm, 2.6 * cm, 2.6 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['L', 'R', 'R', 'R', 'C', 'R', 'R'])
-    story.append(t_door)
-    story.append(Spacer(1, 4))
+    door_section = KeepTogether([
+        Paragraph(f"Kapı Kapasitesi (Reçete Eşdeğeri & Devir Zinciri) — Tamamlanan: {completable_doors} Adet Kapı", h2_style),
+        t_door
+    ])
+    story.append(door_section)
+    story.append(PageBreak())
 
     # ---- EKSTRÜDER HATLARI TABLOSU (KAFA SAYILARI DAHİL) ----
     if ext_rows:

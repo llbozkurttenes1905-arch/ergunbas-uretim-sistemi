@@ -1164,8 +1164,11 @@
                             <span class="text-slate-400">10 Hat Birebir 3D Modellenmiştir</span>
                         </div>
 
-                        <!-- 3D Kamera Hızlı Kontrol Düğmeleri -->
-                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/80 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg">
+                        <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
+                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-10">
+                            <button onclick="toggle3DLayoutEditMode()" id="btn-dt-layout-edit" title="Makinelerin Yerini Değiştir / Düzenle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30">
+                                <i data-lucide="move" class="w-3 h-3 text-white"></i> <span id="dt-layout-edit-text">Yerleşimi Düzenle</span>
+                            </button>
                             <button onclick="reset3DCameraView()" title="İzometrik Başlangıç Açısına Dön" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1">
                                 <i data-lucide="compass" class="w-3 h-3 text-cyan-400"></i> İzometrik
                             </button>
@@ -1177,6 +1180,30 @@
                             </button>
                         </div>
 
+                        <!-- Yerleşim Düzenleme Modu Yüzen Kontrol Paneli -->
+                        <div id="dt-layout-edit-banner" class="hidden absolute top-14 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md border border-indigo-500/50 rounded-2xl px-3.5 py-2 shadow-2xl flex flex-wrap items-center gap-2.5 z-20 text-xs">
+                            <div class="flex items-center gap-1.5 text-indigo-300 font-bold whitespace-nowrap">
+                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping"></span>
+                                <span>Yerleşim Modu</span>
+                            </div>
+                            <div class="flex items-center gap-1 bg-slate-950/90 px-2 py-1 rounded-xl border border-slate-800">
+                                <span class="text-[11px] text-cyan-300 px-1 font-bold whitespace-nowrap" id="dt-edit-selected-name">Seçili: Hat 101</span>
+                                <button onclick="nudgeSelectedMachine('x', -1)" title="Sola Kaydır (-X)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs">◀</button>
+                                <button onclick="nudgeSelectedMachine('x', 1)" title="Sağa Kaydır (+X)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs">▶</button>
+                                <button onclick="nudgeSelectedMachine('z', -1)" title="İleri Kaydır (-Z)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs">▲</button>
+                                <button onclick="nudgeSelectedMachine('z', 1)" title="Geri Kaydır (+Z)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs">▼</button>
+                                <button onclick="rotateSelectedMachine(Math.PI / 4)" title="45° Çevir" class="px-2 h-6 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold flex items-center justify-center text-[10px] gap-0.5">🔄 45°</button>
+                            </div>
+                            <div class="flex items-center gap-1.5 whitespace-nowrap">
+                                <button onclick="toggle3DLayoutEditMode()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shadow-md shadow-emerald-600/30">
+                                    💾 Kaydet & Kapat
+                                </button>
+                                <button onclick="reset3DPositionsToDefault()" class="px-2 py-1 rounded-lg bg-rose-600/80 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1" title="Orijinal fabrika düzenine dön">
+                                    🔄 Sıfırla
+                                </button>
+                            </div>
+                        </div>
+
                         <!-- 3D Navigasyon İpucu Rozeti -->
                         <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-800/70 rounded-lg px-2.5 py-1 text-[10px] text-slate-400 flex items-center gap-2 pointer-events-none">
                             <span><b class="text-slate-200">Sol Tık:</b> Döndür</span>
@@ -1185,7 +1212,7 @@
                             <span>•</span>
                             <span><b class="text-slate-200">Tekerlek:</b> Yakınlaş</span>
                             <span>•</span>
-                            <span><b class="text-cyan-300">Makineye Tıkla:</b> Detayı Aç</span>
+                            <span><b class="text-cyan-300">Yerleşimi Düzenle:</b> Makineleri Sürükle</span>
                         </div>
                     </div>
 
@@ -3014,23 +3041,33 @@
         let dtIsPointerDown = false;
         let dtPointerDownPos = { x: 0, y: 0 };
 
-        // 3D Fabrika Sahası Dünya Koordinatları (Image 2 Düzeni: Paralel & Kademeli Hatlar)
-        const DT_3D_POSITIONS = {
+        // 3D Düzenleme & Sürükleme Durum Değişkenleri
+        let dtEditMode = false;
+        let dtIsDraggingMachine = false;
+        let dtDraggedMachineId = null;
+        let dtFloorPlane = null;
+        let dtDragOffset = null;
+        let dtPlaneIntersect = null;
+        const DT_STORAGE_KEY = 'ergunbas_dt_3d_positions_v1';
+
+        // 3D Fabrika Sahası Dünya Koordinatları (Varsayılan Yerleşim)
+        const DT_3D_DEFAULT_POSITIONS = {
             // Ön Hatlar (Kademeli Düzen)
-            '101': { x: -14, z: 24, name: 'Hat 101', type: 'ext', heads: 1 },
-            '102': { x: 12,  z: 24, name: 'Hat 102', type: 'ext', heads: 2 },
+            '101': { x: -14, z: 24, name: 'Hat 101', type: 'ext', heads: 1, rotY: 0 },
+            '102': { x: 12,  z: 24, name: 'Hat 102', type: 'ext', heads: 2, rotY: 0 },
             // Orta Ön Hatlar
-            '103': { x: -26, z: 8,  name: 'Hat 103', type: 'ext', heads: 2 },
-            '104': { x: -1,  z: 8,  name: 'Hat 104', type: 'ext', heads: 2 },
-            '105': { x: 24,  z: 8,  name: 'Hat 105', type: 'ext', heads: 2 },
+            '103': { x: -26, z: 8,  name: 'Hat 103', type: 'ext', heads: 2, rotY: 0 },
+            '104': { x: -1,  z: 8,  name: 'Hat 104', type: 'ext', heads: 2, rotY: 0 },
+            '105': { x: 24,  z: 8,  name: 'Hat 105', type: 'ext', heads: 2, rotY: 0 },
             // Orta Arka Hatlar
-            '106': { x: -26, z: -9, name: 'Hat 106', type: 'ext', heads: 1 },
-            '107': { x: -1,  z: -9, name: 'Hat 107', type: 'ext', heads: 1 },
-            '108': { x: 24,  z: -9, name: 'Hat 108', type: 'ext', heads: 1 },
+            '106': { x: -26, z: -9, name: 'Hat 106', type: 'ext', heads: 1, rotY: 0 },
+            '107': { x: -1,  z: -9, name: 'Hat 107', type: 'ext', heads: 1, rotY: 0 },
+            '108': { x: 24,  z: -9, name: 'Hat 108', type: 'ext', heads: 1, rotY: 0 },
             // Arka Hatlar
-            '109': { x: -14, z: -25, name: 'Hat 109', type: 'ext', heads: 2 },
-            '201': { x: 12,  z: -25, name: 'Levha 201', type: 'levha', heads: 1 }
+            '109': { x: -14, z: -25, name: 'Hat 109', type: 'ext', heads: 2, rotY: 0 },
+            '201': { x: 12,  z: -25, name: 'Levha 201', type: 'levha', heads: 1, rotY: 0 }
         };
+        let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
         async function loadDigitalTwin() {
             try {
@@ -3208,8 +3245,8 @@
 
             // 1. Sahne (Scene)
             dtScene = new THREE.Scene();
-            dtScene.background = new THREE.Color(0x060913); // Koyu lacivert/siyah fabrika ortamı
-            dtScene.fog = new THREE.FogExp2(0x060913, 0.009);
+            dtScene.background = new THREE.Color(0x181f2a); // Derin endüstriyel stüdyo tonu
+            dtScene.fog = new THREE.FogExp2(0x181f2a, 0.007);
 
             // 2. Kamera (Camera - Image 2 İzometrik Açısı)
             dtCamera = new THREE.PerspectiveCamera(38, width / height, 0.1, 400);
@@ -3236,8 +3273,8 @@
                 dtControls.update();
             }
 
-            // 5. Işıklandırma (Image 2 Tarzı Yumuşak & Parlak Endüstriyel Stüdyo Işığı)
-            const ambientLight = new THREE.AmbientLight(0x94a3b8, 1.2);
+            // 5. Işıklandırma (Endüstriyel Stüdyo Işığı)
+            const ambientLight = new THREE.AmbientLight(0xcfd8dc, 1.3);
             dtScene.add(ambientLight);
 
             const sunLight = new THREE.DirectionalLight(0xffffff, 2.4);
@@ -3255,7 +3292,7 @@
             sunLight.shadow.bias = -0.0004;
             dtScene.add(sunLight);
 
-            // Mavi/Turkuaz yüksek tavan SCADA projektörü
+            // SCADA tepe aydınlatması
             const pointCyan = new THREE.PointLight(0x38bdf8, 1.6, 60);
             pointCyan.position.set(0, 22, 10);
             dtScene.add(pointCyan);
@@ -3264,29 +3301,24 @@
             pointAmber.position.set(-20, 18, -10);
             dtScene.add(pointAmber);
 
-            // 6. Fabrika Zemini & Çevre Mimarisi
-            buildFactoryFloorAndArchitecture();
-
-            // 7. 10 Üretim Hattı Modelini İnşa Et
-            buildAll3DMachines();
-
-            // 8. Tıklama / Raycaster Kurulumu
+            // Raycasting & Sürükleme Düzlemi Yardımcıları
             dtRaycaster = new THREE.Raycaster();
             dtMouse = new THREE.Vector2();
+            dtFloorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+            dtDragOffset = new THREE.Vector3();
+            dtPlaneIntersect = new THREE.Vector3();
 
-            canvas.addEventListener('pointerdown', (e) => {
-                dtIsPointerDown = true;
-                dtPointerDownPos = { x: e.clientX, y: e.clientY };
-            });
+            // 6. Fabrika Zemini (Pürüzsüz Gri Sanayi Zemini, Izgarasız) & Mimari
+            buildFactoryFloorAndArchitecture();
 
-            canvas.addEventListener('pointerup', (e) => {
-                if (!dtIsPointerDown) return;
-                dtIsPointerDown = false;
-                const dist = Math.hypot(e.clientX - dtPointerDownPos.x, e.clientY - dtPointerDownPos.y);
-                if (dist < 6) { // Sürükleme değil, tıklama ise
-                    handle3DCanvasClick(e);
-                }
-            });
+            // 7. Kayıtlı Özel Yerleşimi Yükle ve Modelleri İnşa Et
+            loadSaved3DPositions();
+            buildAll3DMachines();
+
+            // 8. Tıklama & Sürükleme Dinleyicileri
+            canvas.addEventListener('pointerdown', on3DPointerDown);
+            window.addEventListener('pointermove', on3DPointerMove);
+            window.addEventListener('pointerup', on3DPointerUp);
 
             window.addEventListener('resize', on3DWindowResize);
 
@@ -3307,58 +3339,55 @@
         }
 
         /* --------------------------------------------------------
-           ZEMİN, GÜVENLİK YOLLARI VE ENDÜSTRİYEL AYDINLATMA (Image 2 Stili)
+           ZEMİN, GÜVENLİK YOLLARI VE ENDÜSTRİYEL AYDINLATMA (Izgarasız Gri Zemin)
         -------------------------------------------------------- */
         function buildFactoryFloorAndArchitecture() {
-            // Pürüzsüz Koyu Antrasit Sanayi Epoksi Zemini (Image 2'deki gibi)
-            const floorGeo = new THREE.PlaneGeometry(140, 100);
+            // Pürüzsüz Temiz Endüstriyel Sanayi Grisi Epoksi/Beton Zemin (Izgarasız)
+            const floorGeo = new THREE.PlaneGeometry(160, 120);
             const floorMat = new THREE.MeshStandardMaterial({
-                color: 0x1a222f, // Koyu antrasit / arduvaz gri
-                roughness: 0.55,
-                metalness: 0.22
+                color: 0x3d4756, // Modern pürüzsüz sanayi grisi
+                roughness: 0.65,
+                metalness: 0.15
             });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             floor.receiveShadow = true;
             dtScene.add(floor);
 
-            // Çok Fevkalade Hafif Zemin Izgara Çizgisi (Gözü yormayan)
-            const grid = new THREE.GridHelper(130, 65, 0x273549, 0x1e2736);
-            grid.position.y = 0.01;
-            dtScene.add(grid);
+            // Zemin ızgarası kaldırıldı (Kullanıcı talebi doğrultusunda temiz pürüzsüz sanayi zemini)
 
-            // Temiz Sarı Güvenlik Sınır Çizgileri (Image 2'deki gibi)
+            // Temiz Sarı Güvenlik Sınır Çizgileri
             const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             
             // Hat Başları Güvenlik Şeridi (Kafaların hemen önünden geçer)
-            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
+            const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
             lineFront.rotation.x = -Math.PI / 2;
             lineFront.position.set(0, 0.02, 34);
             dtScene.add(lineFront);
 
             // Orta hat koridoru
-            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
+            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
             lineMid.rotation.x = -Math.PI / 2;
             lineMid.position.set(0, 0.02, 0);
             dtScene.add(lineMid);
 
             // Arka koridor çizgisi
-            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(120, 0.3), lineMat);
+            const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(130, 0.35), lineMat);
             lineBack.rotation.x = -Math.PI / 2;
             lineBack.position.set(0, 0.02, -34);
             dtScene.add(lineBack);
 
             // Fabrika Arka Duvarı & Taşıyıcı Çelik Kolonlar
-            const wallGeo = new THREE.BoxGeometry(130, 20, 1.2);
-            const wallMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85, metalness: 0.15 });
+            const wallGeo = new THREE.BoxGeometry(140, 22, 1.2);
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.85, metalness: 0.15 });
             const wall = new THREE.Mesh(wallGeo, wallMat);
-            wall.position.set(0, 10, -42);
+            wall.position.set(0, 11, -44);
             wall.receiveShadow = true;
             dtScene.add(wall);
 
-            [-50, -25, 0, 25, 50].forEach(cx => {
-                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, 20, 2.2), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.4 }));
-                col.position.set(cx, 10, -41);
+            [-55, -28, 0, 28, 55].forEach(cx => {
+                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, 22, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
+                col.position.set(cx, 11, -43);
                 col.castShadow = true;
                 dtScene.add(col);
             });
@@ -3378,7 +3407,7 @@
         }
 
         /* --------------------------------------------------------
-           PROSEDÜREL 3D EKSTRÜDER VE LEVHA MAKİNE MODELLERİ (IMAGE 2 BİREBİR)
+           PROSEDÜREL 3D EKSTRÜDER VE LEVHA MAKİNE MODELLERİ
         -------------------------------------------------------- */
         function buildAll3DMachines() {
             dtMachineGroups = {};
@@ -3393,11 +3422,12 @@
                 }
 
                 group.position.set(cfg.x, 0, cfg.z);
+                if (typeof cfg.rotY === 'number') group.rotation.y = cfg.rotY;
                 group.userData = { id: id, name: cfg.name, type: cfg.type };
                 dtScene.add(group);
                 dtMachineGroups[id] = group;
 
-                // Zemin 3D Neon Durum Halkası (Image 2'deki gibi kaide tabanında parlar!)
+                // Zemin 3D Neon Durum Halkası (Makine grubuna eklenir, makineyle birlikte hareket eder)
                 const ringGeo = new THREE.RingGeometry(1.6, 2.0, 36);
                 const ringMat = new THREE.MeshBasicMaterial({
                     color: 0x22c55e,
@@ -3407,8 +3437,8 @@
                 });
                 const ring = new THREE.Mesh(ringGeo, ringMat);
                 ring.rotation.x = -Math.PI / 2;
-                ring.position.set(cfg.x - 9.5, 0.04, cfg.z);
-                dtScene.add(ring);
+                ring.position.set(-9.5, 0.04, 0);
+                group.add(ring);
                 dtFloorRings[id] = ring;
             });
         }
@@ -3699,8 +3729,16 @@
         function updateSelectionReticle() {
             if (!dtSelectionRing) return;
             const targetPos = DT_3D_POSITIONS[dtSelectedMachineId];
-            if (targetPos) {
-                dtSelectionRing.position.set(targetPos.x - 9.5, 0.05, targetPos.z);
+            const group = dtMachineGroups[dtSelectedMachineId];
+            if (targetPos && group) {
+                const offset = new THREE.Vector3(-9.5, 0.05, 0);
+                if (typeof targetPos.rotY === 'number') {
+                    offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), targetPos.rotY);
+                }
+                dtSelectionRing.position.set(group.position.x + offset.x, 0.05, group.position.z + offset.z);
+                dtSelectionRing.visible = true;
+            } else {
+                dtSelectionRing.visible = false;
             }
         }
 
@@ -3723,7 +3761,7 @@
             });
 
             // Seçim halkasını yavaşça döndür
-            if (dtSelectionRing) {
+            if (dtSelectionRing && dtSelectionRing.visible) {
                 dtSelectionRing.rotation.z += 0.015;
             }
 
@@ -3747,9 +3785,12 @@
 
             Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
                 const m = dtMachinesData.find(x => x.id === id) || { name: cfg.name, product: '—', hours: 0, status: 'idle' };
+                const group = dtMachineGroups[id];
+                const gx = group ? group.position.x : cfg.x;
+                const gz = group ? group.position.z : cfg.z;
                 
                 // Makine gövdesi üzerindeki 3D koordinat
-                const p3d = new THREE.Vector3(cfg.x - 3.5, 2.6, cfg.z);
+                const p3d = new THREE.Vector3(gx - 3.5, 2.6, gz);
                 p3d.project(dtCamera);
 
                 if (p3d.z > 1.0) return;
@@ -3774,7 +3815,7 @@
                     statusLabel = '0s';
                 }
 
-                // Image 2'deki şık yuvarlak hap (Pill) rozet tasarımı
+                // Şık yuvarlak hap (Pill) rozet tasarımı
                 const pinBorder = isSelected 
                     ? 'ring-2 ring-cyan-400 shadow-xl shadow-cyan-500/60 bg-slate-900 border-cyan-400 scale-105' 
                     : 'bg-slate-900/90 border-slate-700/80 hover:border-slate-500';
@@ -3795,8 +3836,97 @@
         }
 
         /* --------------------------------------------------------
-           3D SAHNEDE TIKLAMA (RAYCASTING) VE KAMERA AKSİYONLARI
+           3D SAHNEDE TIKLAMA, SÜRÜKLE-BIRAK VE YERLEŞİM DÜZENLEME
         -------------------------------------------------------- */
+        function on3DPointerDown(e) {
+            const canvas = document.getElementById('dt-3d-canvas');
+            if (!canvas || !dtRaycaster || !dtCamera || !dtScene) return;
+
+            dtIsPointerDown = true;
+            dtPointerDownPos = { x: e.clientX, y: e.clientY };
+
+            const rect = canvas.getBoundingClientRect();
+            if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+
+            dtMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            dtMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            dtRaycaster.setFromCamera(dtMouse, dtCamera);
+
+            if (dtEditMode) {
+                const meshes = Object.values(dtMachineGroups);
+                const intersects = dtRaycaster.intersectObjects(meshes, true);
+                if (intersects.length > 0) {
+                    let obj = intersects[0].object;
+                    while (obj.parent && !obj.userData?.id && obj.parent !== dtScene) {
+                        obj = obj.parent;
+                    }
+                    if (obj.userData?.id) {
+                        dtDraggedMachineId = obj.userData.id;
+                        selectDigitalTwinMachine(dtDraggedMachineId);
+
+                        if (dtFloorPlane && dtRaycaster.ray.intersectPlane(dtFloorPlane, dtPlaneIntersect)) {
+                            dtDragOffset.copy(obj.position).sub(dtPlaneIntersect);
+                            dtDragOffset.y = 0;
+                            dtIsDraggingMachine = true;
+                            if (dtControls) dtControls.enabled = false;
+                            canvas.style.cursor = 'move';
+                            updateEditSelectedBadge();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }
+        }
+
+        function on3DPointerMove(e) {
+            const canvas = document.getElementById('dt-3d-canvas');
+            if (!canvas || !dtRaycaster || !dtCamera) return;
+
+            const rect = canvas.getBoundingClientRect();
+            dtMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            dtMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            dtRaycaster.setFromCamera(dtMouse, dtCamera);
+
+            if (dtEditMode && dtIsDraggingMachine && dtDraggedMachineId) {
+                if (dtFloorPlane && dtRaycaster.ray.intersectPlane(dtFloorPlane, dtPlaneIntersect)) {
+                    let targetX = dtPlaneIntersect.x + dtDragOffset.x;
+                    let targetZ = dtPlaneIntersect.z + dtDragOffset.z;
+
+                    // 0.5m adımlarla pürüzsüz hizalama (Snap)
+                    targetX = Math.round(targetX * 2) / 2;
+                    targetZ = Math.round(targetZ * 2) / 2;
+
+                    // Saha sınırları [-55, 55] x [-36, 36]
+                    targetX = Math.max(-55, Math.min(55, targetX));
+                    targetZ = Math.max(-36, Math.min(36, targetZ));
+
+                    setMachine3DPosition(dtDraggedMachineId, targetX, targetZ);
+                }
+            }
+        }
+
+        function on3DPointerUp(e) {
+            const canvas = document.getElementById('dt-3d-canvas');
+            if (dtIsDraggingMachine) {
+                dtIsDraggingMachine = false;
+                dtDraggedMachineId = null;
+                if (dtControls) dtControls.enabled = true;
+                if (canvas) canvas.style.cursor = dtEditMode ? 'crosshair' : 'grab';
+                save3DPositionsToStorage();
+            }
+
+            if (dtIsPointerDown) {
+                dtIsPointerDown = false;
+                const dist = Math.hypot(e.clientX - dtPointerDownPos.x, e.clientY - dtPointerDownPos.y);
+                if (dist < 6 && canvas) {
+                    const rect = canvas.getBoundingClientRect();
+                    if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                        handle3DCanvasClick(e);
+                    }
+                }
+            }
+        }
+
         function handle3DCanvasClick(event) {
             const canvas = document.getElementById('dt-3d-canvas');
             if (!canvas || !dtRaycaster || !dtCamera || !dtScene) return;
@@ -3820,6 +3950,128 @@
                 if (obj.userData?.id) {
                     selectDigitalTwinMachine(obj.userData.id);
                 }
+            }
+        }
+
+        function setMachine3DPosition(id, x, z, rotY) {
+            if (!DT_3D_POSITIONS[id]) return;
+            if (typeof x === 'number') DT_3D_POSITIONS[id].x = x;
+            if (typeof z === 'number') DT_3D_POSITIONS[id].z = z;
+            if (typeof rotY === 'number') DT_3D_POSITIONS[id].rotY = rotY;
+
+            const group = dtMachineGroups[id];
+            if (group) {
+                group.position.x = DT_3D_POSITIONS[id].x;
+                group.position.z = DT_3D_POSITIONS[id].z;
+                if (typeof DT_3D_POSITIONS[id].rotY === 'number') {
+                    group.rotation.y = DT_3D_POSITIONS[id].rotY;
+                }
+            }
+
+            updateSelectionReticle();
+        }
+
+        function nudgeSelectedMachine(axis, delta) {
+            if (!dtSelectedMachineId || !DT_3D_POSITIONS[dtSelectedMachineId]) return;
+            const cur = DT_3D_POSITIONS[dtSelectedMachineId];
+            if (axis === 'x') {
+                const nx = Math.max(-55, Math.min(55, cur.x + delta));
+                setMachine3DPosition(dtSelectedMachineId, nx, cur.z);
+            } else if (axis === 'z') {
+                const nz = Math.max(-36, Math.min(36, cur.z + delta));
+                setMachine3DPosition(dtSelectedMachineId, cur.x, nz);
+            }
+            save3DPositionsToStorage();
+        }
+
+        function rotateSelectedMachine(deltaRad) {
+            if (!dtSelectedMachineId || !DT_3D_POSITIONS[dtSelectedMachineId]) return;
+            const cur = DT_3D_POSITIONS[dtSelectedMachineId];
+            const newRot = ((cur.rotY || 0) + deltaRad) % (Math.PI * 2);
+            setMachine3DPosition(dtSelectedMachineId, cur.x, cur.z, newRot);
+            save3DPositionsToStorage();
+        }
+
+        function toggle3DLayoutEditMode() {
+            dtEditMode = !dtEditMode;
+            const banner = document.getElementById('dt-layout-edit-banner');
+            const btn = document.getElementById('btn-dt-layout-edit');
+            const btnText = document.getElementById('dt-layout-edit-text');
+            const canvas = document.getElementById('dt-3d-canvas');
+
+            if (dtEditMode) {
+                if (banner) banner.classList.remove('hidden');
+                if (btn) {
+                    btn.className = 'px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1 shadow-lg shadow-emerald-600/30';
+                }
+                if (btnText) btnText.textContent = 'Düzenlemeyi Bitir';
+                if (canvas) canvas.style.cursor = 'crosshair';
+                updateEditSelectedBadge();
+                if (typeof showToast === 'function') {
+                    showToast('Yerleşim Düzenleme Açık: Makineleri fareyle zeminde serbestçe sürükleyebilirsiniz.', 'info');
+                }
+            } else {
+                if (banner) banner.classList.add('hidden');
+                if (btn) {
+                    btn.className = 'px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30';
+                }
+                if (btnText) btnText.textContent = 'Yerleşimi Düzenle';
+                if (canvas) canvas.style.cursor = 'grab';
+                save3DPositionsToStorage();
+                if (typeof showToast === 'function') {
+                    showToast('Yeni makine yerleşimi başarıyla kaydedildi.', 'success');
+                }
+            }
+        }
+
+        function updateEditSelectedBadge() {
+            const badge = document.getElementById('dt-edit-selected-name');
+            if (badge) {
+                const name = DT_3D_POSITIONS[dtSelectedMachineId]?.name || dtSelectedMachineId || 'Seçim Yok';
+                badge.textContent = `Seçili: ${name}`;
+            }
+        }
+
+        function save3DPositionsToStorage() {
+            try {
+                const toSave = {};
+                Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
+                    toSave[id] = { x: cfg.x, z: cfg.z, rotY: cfg.rotY || 0 };
+                });
+                localStorage.setItem(DT_STORAGE_KEY, JSON.stringify(toSave));
+            } catch (err) {
+                console.warn('3D pozisyon kayıt hatası:', err);
+            }
+        }
+
+        function loadSaved3DPositions() {
+            try {
+                const saved = localStorage.getItem(DT_STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    Object.keys(parsed).forEach(id => {
+                        if (DT_3D_POSITIONS[id]) {
+                            if (typeof parsed[id].x === 'number') DT_3D_POSITIONS[id].x = parsed[id].x;
+                            if (typeof parsed[id].z === 'number') DT_3D_POSITIONS[id].z = parsed[id].z;
+                            if (typeof parsed[id].rotY === 'number') DT_3D_POSITIONS[id].rotY = parsed[id].rotY;
+                        }
+                    });
+                }
+            } catch (err) {
+                console.warn('3D pozisyon yükleme hatası:', err);
+            }
+        }
+
+        function reset3DPositionsToDefault() {
+            if (!confirm('Tüm makineler orijinal fabrika yerleşimine sıfırlansın mı?')) return;
+            localStorage.removeItem(DT_STORAGE_KEY);
+            Object.keys(DT_3D_DEFAULT_POSITIONS).forEach(id => {
+                const def = DT_3D_DEFAULT_POSITIONS[id];
+                setMachine3DPosition(id, def.x, def.z, def.rotY || 0);
+            });
+            updateSelectionReticle();
+            if (typeof showToast === 'function') {
+                showToast('Fabrika yerleşimi varsayılana sıfırlandı.', 'info');
             }
         }
 
@@ -3886,6 +4138,7 @@
             updateSelectionReticle();
             renderDigitalTwinQuickBar();
             renderDigitalTwinHUD();
+            updateEditSelectedBadge();
         }
 
         function renderDigitalTwinHUD() {

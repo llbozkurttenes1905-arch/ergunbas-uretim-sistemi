@@ -156,6 +156,27 @@
             animation: dt-scan 4s linear infinite;
             pointer-events: none;
         }
+
+        /* ==== 🥽 XR & SİBER HOLOGRAM FX ==== */
+        .hologram-scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 38, 0) 50%, 
+                rgba(6, 182, 212, 0.18) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 128, 0.03),
+                rgba(0, 255, 234, 0.05),
+                rgba(0, 128, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+        }
+        @keyframes hologram-pulse {
+            0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.6)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(217, 70, 239, 0.9)); }
+        }
+        .hologram-glow {
+            animation: hologram-pulse 2.4s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100">
@@ -1155,15 +1176,37 @@
                     </div>
 
                     <!-- GERÇEK 3D WEBGL DİJİTAL İKİZ FABRİKA SAHASI -->
-                    <div class="relative w-full aspect-[16/9] min-h-[460px] rounded-xl overflow-hidden border border-slate-800/90 shadow-2xl bg-slate-950 group">
+                    <div class="relative w-full aspect-[16/9] min-h-[460px] rounded-xl overflow-hidden border border-slate-800/90 shadow-2xl bg-slate-950 group" id="dt-3d-main-container">
+                        <!-- CANLI KAMERA VİDEO AKIŞI (AR Passthrough İçin) -->
+                        <video id="dt-ar-camera-video" playsinline autoplay muted class="hidden absolute inset-0 w-full h-full object-cover z-0"></video>
+
+                        <!-- SİBER HOLOGRAM TARAMA VE SCANLINE OVERLAY -->
+                        <div id="dt-hologram-overlay" class="hidden pointer-events-none absolute inset-0 z-15 hologram-scanlines opacity-40 flex flex-col justify-between p-4">
+                            <!-- Fütüristik HUD Köşeleri -->
+                            <div class="flex justify-between items-start">
+                                <div class="border-t-2 border-l-2 border-cyan-400 w-8 h-8"></div>
+                                <div class="text-[10px] font-mono font-bold text-cyan-400 bg-slate-950/80 px-2.5 py-0.5 rounded border border-cyan-500/40 tracking-widest animate-pulse flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span> HOLOGRAM TRANSMISSION ACTIVE [60 FPS]
+                                </div>
+                                <div class="border-t-2 border-r-2 border-cyan-400 w-8 h-8"></div>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <div class="border-b-2 border-l-2 border-cyan-400 w-8 h-8"></div>
+                                <div class="text-[9px] font-mono text-cyan-400/80 bg-slate-950/70 px-2 py-0.5 rounded">
+                                    ERGUNBAS-XR // MATRIX FREQ: 5.8 GHz // DEPTH: SLAM
+                                </div>
+                                <div class="border-b-2 border-r-2 border-cyan-400 w-8 h-8"></div>
+                            </div>
+                        </div>
+
                         <!-- Three.js 3D WebGL Canvas -->
-                        <canvas id="dt-3d-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+                        <canvas id="dt-3d-canvas" class="relative z-10 w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
 
                         <!-- 3D Nesnelere Kilitlenen Dinamik HTML Etiket Katmanı -->
-                        <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                        <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
 
                         <!-- 3D Sahne Bilgi & Kamera Kılavuzu -->
-                        <div class="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-xl z-10">
+                        <div class="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-xl z-20">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span class="font-black text-cyan-300 flex items-center gap-1">
                                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> WebGL 2.0 • GPU Donanım Hızlandırma (60 FPS)
@@ -1175,8 +1218,12 @@
                         </div>
 
                         <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
-                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-10">
-                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="Canlı Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer animate-pulse">
+                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-20">
+                            <!-- 🥽 XR & Hologram Butonu -->
+                            <button onclick="openXRHologramModal()" id="btn-dt-xr-hologram" title="🥽 Masanın Üzerinde Hologram & Canlı AR/VR Modu" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-fuchsia-600 via-indigo-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white transition flex items-center gap-1.5 shadow-lg shadow-fuchsia-600/30 cursor-pointer animate-pulse">
+                                <i data-lucide="glasses" class="w-3.5 h-3.5 text-white"></i> <span>🥽 Hologram / AR</span>
+                            </button>
+                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="Canlı Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer">
                                 <i data-lucide="play-circle" class="w-3.5 h-3.5 text-white"></i> <span id="btn-dt-simulation-text">Canlı Simülasyon</span>
                             </button>
                             <button onclick="open3DFactoryConfigModal()" id="btn-dt-factory-config" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30">
@@ -1197,6 +1244,45 @@
                             <button onclick="toggle3DAutoRotate()" id="btn-dt-autorotate" title="Otomatik Tesis Turunu Başlat/Durdur" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1">
                                 <i data-lucide="rotate-cw" class="w-3 h-3 text-amber-400"></i> Otomatik Tur
                             </button>
+                        </div>
+
+                        <!-- CANLI AR & HOLOGRAM ALT KONTROL HUD'I -->
+                        <div id="dt-xr-floating-hud" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md border border-fuchsia-500/60 rounded-2xl px-4 py-2.5 shadow-2xl z-30 flex flex-wrap items-center justify-between gap-3 max-w-xl w-[94%]">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-fuchsia-400 animate-ping"></span>
+                                <div>
+                                    <span class="text-xs font-black text-white flex items-center gap-1" id="dt-xr-mode-title">
+                                        🔮 SİBER HOLOGRAM MASASI
+                                    </span>
+                                    <span class="text-[9.5px] text-fuchsia-300 font-bold block" id="dt-xr-mode-desc">1:50 Masaüstü Minyatür Modu</span>
+                                </div>
+                            </div>
+
+                            <!-- Kontroller: Ölçek, Kamera, Fotoğraf, Çıkış -->
+                            <div class="flex items-center gap-1.5">
+                                <!-- Ölçek Seçimi -->
+                                <select id="dt-xr-scale-select" onchange="setXRModelScale(this.value)" class="bg-slate-950 text-cyan-300 text-xs font-black border border-cyan-500/40 rounded-lg px-2 py-1 focus:ring-1 focus:ring-cyan-400 cursor-pointer">
+                                    <option value="0.02">1:100 (Minyatür)</option>
+                                    <option value="0.04" selected>1:50 (Masaüstü)</option>
+                                    <option value="0.08">1:20 (Sehpa/Salon)</option>
+                                    <option value="1.0">1:1 (Tam Fabrika)</option>
+                                </select>
+
+                                <!-- Kamera Değiştir (Sadece Canlı AR modunda) -->
+                                <button type="button" onclick="switchARCameraDevice()" id="btn-xr-camera-switch" title="Ön/Arka Kamerayı Değiştir" class="hidden p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition cursor-pointer">
+                                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                </button>
+
+                                <!-- Fotoğraf Çek -->
+                                <button type="button" onclick="captureARPhotoSnapshot()" title="Masanın Üzerindeki Fabrikanın Fotoğrafını Çek" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30 cursor-pointer">
+                                    <i data-lucide="camera" class="w-3.5 h-3.5"></i> <span>Fotoğraf</span>
+                                </button>
+
+                                <!-- Standart Fabrikaya Dön -->
+                                <button type="button" onclick="exitXRMode()" title="Standart Fabrika Görünümüne Dön" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white transition flex items-center gap-1 shadow-md shadow-rose-600/30 cursor-pointer">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Çıkış</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- CANLI ÜRETİM & FİRE SİMÜLASYONU KONTROL PANELİ -->
@@ -2737,7 +2823,111 @@
                         <tbody id="tbl-users" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
+        <!-- 3D DİJİTAL İKİZ: 🥽 ERGÜNBAŞ XR & HOLOGRAM STUDIO MODALI -->
+        <div id="modal-dt-xr-studio" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-indigo-500/50 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 sm:p-8 space-y-6 relative">
+                <!-- Arka Plan Neon Işık Parıltısı -->
+                <div class="absolute -top-24 -left-24 w-72 h-72 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Header -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4 relative z-10">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-600 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-indigo-500/30 flex items-center justify-center">
+                            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                                <i data-lucide="glasses" class="w-6 h-6 text-cyan-300"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-xl font-black text-white tracking-wide">Ergünbaş XR & Hologram Studio</h3>
+                                <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-500/20 to-cyan-500/20 text-cyan-300 border border-cyan-500/30">Next-Gen Extreme</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">Fabrikayı gerçek masanızın üzerine taşıyın veya fütüristik siber hologram masasında inceleyin</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeXRHologramModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- 3 XR Deneyim Kartı -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                    <!-- Kart 1: Canlı Kamera ile Masamda AR -->
+                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-cyan-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-cyan-400 transition group shadow-xl">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                                <i data-lucide="smartphone" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                    <span>📱 Masamda Canlı AR</span>
+                                </h4>
+                                <span class="text-[11px] font-bold text-cyan-400">Kamera Passthrough Modu</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Cihazınızın kamerasını açar ve fabrikayı gerçek çalışma masanızın, sehpanızın veya zeminin üzerine 1:50 minyatür canlı maket olarak indirir. Masada serbestçe çevirin ve fotoğrafını çekin!
+                            </p>
+                        </div>
+                        <button type="button" onclick="startLiveCameraAR()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                            <i data-lucide="camera" class="w-4 h-4"></i> Masamda AR'ı Başlat
+                        </button>
+                    </div>
+
+                    <!-- Kart 2: Siber Hologram Masası -->
+                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-fuchsia-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-fuchsia-400 transition group shadow-xl">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                    <span>🔮 Siber Hologram Masası</span>
+                                </h4>
+                                <span class="text-[11px] font-bold text-fuchsia-400">Sci-Fi Cyber Twin</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Fabrikayı Tony Stark / Iron Man tarzı fütüristik parlayan bir hologram projektör kaidesine dönüştürür. Dönen siber halkalar, lazer tarama ızgarası ve parlayan veri parçacıklarıyla görsel şölen.
+                            </p>
+                        </div>
+                        <button type="button" onclick="startTabletopHologram()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-fuchsia-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                            <i data-lucide="disc" class="w-4 h-4"></i> Hologram Masasını Aç
+                        </button>
+                    </div>
+
+                    <!-- Kart 3: WebXR Sanal Gerçeklik (VR Headset) -->
+                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-indigo-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-400 transition group shadow-xl">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                                <i data-lucide="headset" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                    <span>🥽 WebXR Sanal Gerçeklik</span>
+                                </h4>
+                                <span class="text-[11px] font-bold text-indigo-400">Meta Quest & Vision Pro</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                VR/AR gözlükler ve WebXR destekli tarayıcılar için tam donanımlı sürükleyici 3D uzay oturumu. Fabrikayı gözlüğünüzü takarak 1:1 gerçek boyutta içinde gezerek deneyimleyin.
+                            </p>
+                        </div>
+                        <button type="button" onclick="startNativeWebXRSession()" id="btn-xr-native" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                            <i data-lucide="glasses" class="w-4 h-4"></i> WebXR Oturumu Başlat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bilgi Notu -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-400 flex items-start gap-3 relative z-10">
+                    <i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong class="text-white block font-bold">Nasıl Kullanılır?</strong>
+                        Telefon veya dizüstü bilgisayarınızda <span class="text-cyan-300 font-bold">"Masamda Canlı AR"</span> seçeneğine tıkladığınızda kamera izni istenir. Kamerayı masanıza tuttuğunuzda fabrika masanızın üstünde çalışmaya başlar. Dokunmatik ekran veya fareyle fabrikayı çevirebilir, büyütebilir ve fotoğrafını çekebilirsiniz.
+                    </div>
+                </div>
             </div>
+        </div>
+
         <!-- 3D DİJİTAL İKİZ: SAHA & MAKİNE ÖLÇÜLERİ VE PERSONEL KONFİGÜRASYONU MODALI -->
         <div id="modal-dt-factory-config" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
             <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-6">
@@ -3250,8 +3440,26 @@
         let dtPlaneIntersect = null;
         let dtDimensionsGroup = null;
         let dtArchitectureGroup = null;
-        let dtShowDimensions = false; // Kullanıcı isteği: Varsayılan temiz sahne
+        let dtShowDimensions = false;
         const DT_STORAGE_KEY = 'ergunbas_dt_3d_positions_v2';
+        let dtFactoryRootGroup = null;
+
+        // 🥽 XR & SİBER HOLOGRAM DURUM MOTORU
+        const dtXRState = {
+            active: false,
+            mode: null,               // 'hologram' | 'ar_camera' | 'webxr'
+            scale: 0.04,              // 1:50 Masaüstü Ölçeği
+            cameraStream: null,
+            cameraFacingMode: 'environment',
+            hologramGroup: null,
+            ringOuter: null,
+            ringInner: null,
+            ringCore: null,
+            particlesMesh: null,
+            particlePositions: null,
+            savedCameraPos: null,
+            savedControlsTarget: null
+        };
 
         // 3D Saha & Makine Ölçüleri Konfigürasyonu
         const DT_DEFAULT_FACTORY_CONFIG = {
@@ -3561,6 +3769,15 @@
             if (footerClearance) footerClearance.textContent = `${dtFactoryConfig.hatBoslugu} m (İş Güvenliği Standart)`;
         }
 
+        function add3DObjectToFactoryRoot(obj) {
+            if (!obj) return;
+            if (dtFactoryRootGroup) {
+                dtFactoryRootGroup.add(obj);
+            } else if (dtScene) {
+                dtScene.add(obj);
+            }
+        }
+
         /* --------------------------------------------------------
            THREE.JS 3D FABRİKA SAHNESİ KURULUMU
         -------------------------------------------------------- */
@@ -3581,14 +3798,29 @@
             dtCamera = new THREE.PerspectiveCamera(38, width / height, 0.1, 400);
             dtCamera.position.set(32, 40, 48);
 
-            // 3. Renderer (WebGL)
-            dtRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
+            // 3. Renderer (WebGL - WebXR, Şeffaf AR & Ekran Alıntısı Desteği)
+            dtRenderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                antialias: true, 
+                alpha: true, 
+                powerPreference: "high-performance",
+                preserveDrawingBuffer: true 
+            });
             dtRenderer.setSize(width, height);
             dtRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             dtRenderer.shadowMap.enabled = true;
             dtRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
             dtRenderer.toneMapping = THREE.ACESFilmicToneMapping;
             dtRenderer.toneMappingExposure = 1.2;
+
+            // 🥽 Fabrika Kök Konteyner Grubu (Hologram & AR Masaüstü Ölçeklemesi İçin)
+            if (!dtFactoryRootGroup) {
+                dtFactoryRootGroup = new THREE.Group();
+                dtFactoryRootGroup.name = 'dtFactoryRootGroup';
+            }
+            if (!dtScene.children.includes(dtFactoryRootGroup)) {
+                dtScene.add(dtFactoryRootGroup);
+            }
 
             // 4. Orbit Kontrolleri (OrbitControls)
             if (typeof THREE.OrbitControls !== 'undefined') {
@@ -3764,13 +3996,13 @@
                 dtSelectionRing = new THREE.Mesh(selGeo, selMat);
                 dtSelectionRing.rotation.x = -Math.PI / 2;
                 dtSelectionRing.position.set(0, 0.05, 0);
-                dtScene.add(dtSelectionRing);
+                add3DObjectToFactoryRoot(dtSelectionRing);
             }
 
             // 7. Fabrika Mamul Depolama Sahası (Pervaz, Kasa, Seren, Levha Palet Deposu)
             buildWarehouseStorageZone();
 
-            dtScene.add(dtArchitectureGroup);
+            add3DObjectToFactoryRoot(dtArchitectureGroup);
 
             // Saha Ölçüleri ve Hat Boşluğu Kılavuzları
             buildFactoryDimensionsAndClearances();
@@ -3925,7 +4157,7 @@
                 dtDimensionsGroup.add(gapLine2);
             });
 
-            dtScene.add(dtDimensionsGroup);
+            add3DObjectToFactoryRoot(dtDimensionsGroup);
             dtDimensionsGroup.visible = dtShowDimensions;
         }
 
@@ -4433,7 +4665,7 @@
 
                 group.position.set(cfg.x, 0, cfg.z);
                 if (typeof cfg.rotY === 'number') group.rotation.y = cfg.rotY;
-                dtScene.add(group);
+                add3DObjectToFactoryRoot(group);
                 dtMachineGroups[id] = group;
 
                 const m = dtMachinesData.find(x => x.id === id);
@@ -5035,7 +5267,7 @@
 
             dtWarehouseGroup = whGroup;
             dtMachineGroups['warehouse'] = whGroup;
-            if (dtScene) dtScene.add(whGroup);
+            add3DObjectToFactoryRoot(whGroup);
         }
 
         function createInitialWarehouseStock() {
@@ -5211,11 +5443,12 @@
         }
 
         function init3DForklift() {
-            if (dtForklift && dtScene) {
-                dtScene.remove(dtForklift);
+            if (dtForklift) {
+                if (dtForklift.parent) dtForklift.parent.remove(dtForklift);
+                else if (dtScene) dtScene.remove(dtForklift);
             }
             dtForklift = create3DForkliftModel();
-            if (dtScene) dtScene.add(dtForklift);
+            add3DObjectToFactoryRoot(dtForklift);
         }
 
         function steerAndMoveForklift(targetX, targetZ, speed, deltaSec) {
@@ -6557,6 +6790,11 @@
                 updateProductionSimulation(0.016);
             }
 
+            // 🥽 XR & Hologram Animasyonları
+            if (typeof updateXRHologramAnimations === 'function') {
+                updateXRHologramAnimations(0.016);
+            }
+
             // 3D Dünya Koordinatlarından 2D Ekran Etiketlerini Hesapla
             updateProjected3DLabels();
 
@@ -7780,8 +8018,446 @@
             }
         }
 
-        function triggerDigitalTwinLiveSensorModal(machineName) {
-            alert(`[PLC TELEMETRİ BAĞLANTISI AKTİF]\n\n${machineName} kovan basıncı, vida devri (${document.querySelector('#dt-telemetry-hud .text-xl')?.textContent?.trim() || 'Aktif'}) ve hat çekme enkoderi PLC veri akışı başarıyla senkronize edildi.`);
+        /* ========================================================
+           🥽 ERGÜNBAŞ XR & HOLOGRAM STUDIO MOTORU
+           (Masaüstü Hologram Masası & Canlı Kamera ile AR Passthrough)
+        ======================================================== */
+        function openXRHologramModal() {
+            const m = document.getElementById('modal-dt-xr-studio');
+            if (m) m.classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function closeXRHologramModal() {
+            const m = document.getElementById('modal-dt-xr-studio');
+            if (m) m.classList.add('hidden');
+        }
+
+        function build3DHologramElements() {
+            if (dtXRState.hologramGroup) {
+                return dtXRState.hologramGroup;
+            }
+
+            const hg = new THREE.Group();
+            hg.name = 'dtHologramTableGroup';
+
+            // 1. Fütüristik Dairesel Kaide Tabanı (Pedestal)
+            const baseGeo = new THREE.CylinderGeometry(44, 46, 1.4, 64);
+            const baseMat = new THREE.MeshStandardMaterial({
+                color: 0x050c18,
+                roughness: 0.35,
+                metalness: 0.85
+            });
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.set(0, -0.75, 0);
+            base.receiveShadow = true;
+            hg.add(base);
+
+            // 2. Siber Izgara Üst Zemin (Cyber Neon Grid)
+            const gridHelper = new THREE.GridHelper(80, 40, 0x06b6d4, 0x1e293b);
+            gridHelper.position.set(0, 0.02, 0);
+            hg.add(gridHelper);
+
+            // 3. Dönen Konsantrik Lazer Tarama Halkaları
+            const ringOuterGeo = new THREE.RingGeometry(44.5, 45.4, 64);
+            const ringOuterMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide });
+            const ringOuter = new THREE.Mesh(ringOuterGeo, ringOuterMat);
+            ringOuter.rotation.x = -Math.PI / 2;
+            ringOuter.position.set(0, 0.08, 0);
+            hg.add(ringOuter);
+            dtXRState.ringOuter = ringOuter;
+
+            const ringInnerGeo = new THREE.RingGeometry(38.0, 38.6, 64);
+            const ringInnerMat = new THREE.MeshBasicMaterial({ color: 0xd946ef, side: THREE.DoubleSide });
+            const ringInner = new THREE.Mesh(ringInnerGeo, ringInnerMat);
+            ringInner.rotation.x = -Math.PI / 2;
+            ringInner.position.set(0, 0.12, 0);
+            hg.add(ringInner);
+            dtXRState.ringInner = ringInner;
+
+            const ringCoreGeo = new THREE.RingGeometry(24.0, 24.5, 48);
+            const ringCoreMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
+            const ringCore = new THREE.Mesh(ringCoreGeo, ringCoreMat);
+            ringCore.rotation.x = -Math.PI / 2;
+            ringCore.position.set(0, 0.16, 0);
+            hg.add(ringCore);
+            dtXRState.ringCore = ringCore;
+
+            // 4. 4 Köşe Hologram Projektör Direği
+            const emitterPositions = [
+                [-36, -24], [36, -24], [-36, 24], [36, 24]
+            ];
+            const poleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+            const crystalMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
+
+            emitterPositions.forEach(([ex, ez]) => {
+                const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.45, 3.2, 16), poleMat);
+                pole.position.set(ex, 1.6, ez);
+                hg.add(pole);
+
+                const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.5, 0), crystalMat);
+                crystal.position.set(ex, 3.4, ez);
+                hg.add(crystal);
+            });
+
+            // 5. Yukarı Doğru Süzülen Veri Akış Parçacıkları (Particles)
+            const particleCount = 260;
+            const pPositions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const rad = Math.random() * 38;
+                pPositions[i * 3 + 0] = Math.cos(ang) * rad;
+                pPositions[i * 3 + 1] = Math.random() * 25;
+                pPositions[i * 3 + 2] = Math.sin(ang) * rad;
+            }
+            const pGeometry = new THREE.BufferGeometry();
+            pGeometry.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+            const pMaterial = new THREE.PointsMaterial({
+                color: 0x38bdf8,
+                size: 0.65,
+                transparent: true,
+                opacity: 0.85,
+                blending: THREE.AdditiveBlending
+            });
+            const particlesMesh = new THREE.Points(pGeometry, pMaterial);
+            hg.add(particlesMesh);
+            dtXRState.particlesMesh = particlesMesh;
+            dtXRState.particlePositions = pPositions;
+
+            // 6. Hologram Merkezi Aydınlatması
+            const holoLight = new THREE.PointLight(0x06b6d4, 2.8, 80);
+            holoLight.position.set(0, 18, 0);
+            hg.add(holoLight);
+
+            hg.visible = false;
+            add3DObjectToFactoryRoot(hg);
+            dtXRState.hologramGroup = hg;
+            return hg;
+        }
+
+        function updateXRHologramAnimations(delta) {
+            if (!dtXRState.active) return;
+            if (dtXRState.hologramGroup && dtXRState.hologramGroup.visible) {
+                if (dtXRState.ringOuter) dtXRState.ringOuter.rotation.z += 0.008;
+                if (dtXRState.ringInner) dtXRState.ringInner.rotation.z -= 0.014;
+                if (dtXRState.ringCore) dtXRState.ringCore.rotation.z += 0.005;
+
+                if (dtXRState.particlePositions && dtXRState.particlesMesh) {
+                    const pos = dtXRState.particlePositions;
+                    for (let i = 0; i < pos.length / 3; i++) {
+                        pos[i * 3 + 1] += 0.09;
+                        if (pos[i * 3 + 1] > 26) {
+                            pos[i * 3 + 1] = 0.2;
+                        }
+                    }
+                    dtXRState.particlesMesh.geometry.attributes.position.needsUpdate = true;
+                }
+            }
+        }
+
+        function setXRModelScale(scaleVal) {
+            const s = parseFloat(scaleVal) || 0.04;
+            dtXRState.scale = s;
+            if (dtFactoryRootGroup) {
+                dtFactoryRootGroup.scale.set(s, s, s);
+            }
+            const sel = document.getElementById('dt-xr-scale-select');
+            if (sel && sel.value !== String(scaleVal)) {
+                sel.value = String(scaleVal);
+            }
+        }
+
+        function startTabletopHologram() {
+            closeXRHologramModal();
+            build3DHologramElements();
+
+            dtXRState.active = true;
+            dtXRState.mode = 'hologram';
+            dtXRState.hologramGroup.visible = true;
+
+            // Arka planı derin siber siyah/maviye çek
+            if (dtScene) {
+                dtScene.background = new THREE.Color(0x030712);
+                dtScene.fog = new THREE.FogExp2(0x030712, 0.015);
+            }
+
+            if (dtArchitectureGroup) {
+                dtArchitectureGroup.visible = true;
+            }
+
+            // Masaüstü 1:50 ölçeğini uygula
+            setXRModelScale(0.04);
+
+            // Kamerayı masaüstü izleme açısına ayarla
+            if (dtCamera && dtControls) {
+                dtXRState.savedCameraPos = dtCamera.position.clone();
+                dtXRState.savedControlsTarget = dtControls.target.clone();
+
+                dtCamera.position.set(2.4, 2.6, 3.4);
+                dtControls.target.set(0, 0.2, 0);
+                dtControls.maxDistance = 18;
+                dtControls.minDistance = 0.5;
+                dtControls.update();
+            }
+
+            // HUD ve Scanlines göster
+            const overlay = document.getElementById('dt-hologram-overlay');
+            if (overlay) overlay.classList.remove('hidden');
+
+            const hud = document.getElementById('dt-xr-floating-hud');
+            if (hud) hud.classList.remove('hidden');
+
+            const modeTitle = document.getElementById('dt-xr-mode-title');
+            if (modeTitle) modeTitle.innerHTML = '🔮 SİBER HOLOGRAM MASASI';
+
+            const modeDesc = document.getElementById('dt-xr-mode-desc');
+            if (modeDesc) modeDesc.textContent = '1:50 Masaüstü Minyatür Modu';
+
+            const camSwitch = document.getElementById('btn-xr-camera-switch');
+            if (camSwitch) camSwitch.classList.add('hidden');
+
+            const scaleSelect = document.getElementById('dt-xr-scale-select');
+            if (scaleSelect) scaleSelect.value = "0.04";
+
+            if (typeof showToast === 'function') {
+                showToast('🔮 Siber Hologram Masası Açıldı! Farenizle minyatür fabrikayı çevirebilirsiniz.', 'info');
+            }
+        }
+
+        async function startLiveCameraAR() {
+            closeXRHologramModal();
+            const video = document.getElementById('dt-ar-camera-video');
+
+            try {
+                if (typeof showToast === 'function') {
+                    showToast('Cihaz kamerası açılıyor, lütfen izin verin...', 'info');
+                }
+
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: dtXRState.cameraFacingMode,
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 }
+                        },
+                        audio: false
+                    });
+                    dtXRState.cameraStream = stream;
+
+                    if (video) {
+                        video.srcObject = stream;
+                        await video.play();
+                        video.classList.remove('hidden');
+                    }
+                } else {
+                    throw new Error('Tarayıcınız kamera erişimini desteklemiyor.');
+                }
+            } catch (err) {
+                console.warn('Kamera açılamadı:', err);
+                if (typeof showToast === 'function') {
+                    showToast('Kamera açılamadı. Siber Hologram Masası moduna geçiliyor...', 'warning');
+                }
+                startTabletopHologram();
+                return;
+            }
+
+            dtXRState.active = true;
+            dtXRState.mode = 'ar_camera';
+
+            // Şeffaf Three.js arka planı (Kamerayı arkadan gösterir)
+            if (dtScene) {
+                dtScene.background = null;
+                dtScene.fog = null;
+            }
+            if (dtRenderer) {
+                dtRenderer.setClearColor(0x000000, 0);
+            }
+
+            // Fabrika binası duvarlarını gizle (Masanın üstünde sadece makineler, paletler ve forklift kalsın)
+            if (dtArchitectureGroup) {
+                dtArchitectureGroup.visible = false;
+            }
+            if (dtXRState.hologramGroup) {
+                dtXRState.hologramGroup.visible = false;
+            }
+
+            // 1:50 Masaüstü ölçeği
+            setXRModelScale(0.04);
+
+            if (dtCamera && dtControls) {
+                dtXRState.savedCameraPos = dtCamera.position.clone();
+                dtXRState.savedControlsTarget = dtControls.target.clone();
+
+                dtCamera.position.set(0, 1.8, 3.2);
+                dtControls.target.set(0, -0.2, 0);
+                dtControls.maxDistance = 20;
+                dtControls.minDistance = 0.4;
+                dtControls.update();
+            }
+
+            const overlay = document.getElementById('dt-hologram-overlay');
+            if (overlay) overlay.classList.add('hidden');
+
+            const hud = document.getElementById('dt-xr-floating-hud');
+            if (hud) hud.classList.remove('hidden');
+
+            const modeTitle = document.getElementById('dt-xr-mode-title');
+            if (modeTitle) modeTitle.innerHTML = '📱 MASAMDA CANLI AR';
+
+            const modeDesc = document.getElementById('dt-xr-mode-desc');
+            if (modeDesc) modeDesc.textContent = 'Kamera Passthrough Modu';
+
+            const camSwitch = document.getElementById('btn-xr-camera-switch');
+            if (camSwitch) camSwitch.classList.remove('hidden');
+
+            const scaleSelect = document.getElementById('dt-xr-scale-select');
+            if (scaleSelect) scaleSelect.value = "0.04";
+
+            if (typeof showToast === 'function') {
+                showToast('📱 Canlı AR Aktif! Kamerayı masanıza tutarak fabrikayı masanızda inceleyin.', 'success');
+            }
+        }
+
+        async function switchARCameraDevice() {
+            if (dtXRState.cameraStream) {
+                dtXRState.cameraStream.getTracks().forEach(t => t.stop());
+                dtXRState.cameraStream = null;
+            }
+            dtXRState.cameraFacingMode = (dtXRState.cameraFacingMode === 'environment' ? 'user' : 'environment');
+            await startLiveCameraAR();
+        }
+
+        async function startNativeWebXRSession() {
+            closeXRHologramModal();
+            if (navigator.xr && navigator.xr.isSessionSupported) {
+                try {
+                    const isAR = await navigator.xr.isSessionSupported('immersive-ar').catch(() => false);
+                    const isVR = await navigator.xr.isSessionSupported('immersive-vr').catch(() => false);
+                    if (isAR) {
+                        const session = await navigator.xr.requestSession('immersive-ar', { requiredFeatures: ['local-floor'] });
+                        if (dtRenderer) {
+                            dtRenderer.xr.enabled = true;
+                            await dtRenderer.xr.setSession(session);
+                            showToast('WebXR AR Oturumu başlatıldı.', 'success');
+                            return;
+                        }
+                    } else if (isVR) {
+                        const session = await navigator.xr.requestSession('immersive-vr');
+                        if (dtRenderer) {
+                            dtRenderer.xr.enabled = true;
+                            await dtRenderer.xr.setSession(session);
+                            showToast('WebXR VR Oturumu başlatıldı.', 'success');
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('WebXR hatası:', e);
+                }
+            }
+            if (typeof showToast === 'function') {
+                showToast('WebXR donanımı algılanamadı. Canlı Kamera AR başlatılıyor...', 'info');
+            }
+            startLiveCameraAR();
+        }
+
+        function captureARPhotoSnapshot() {
+            const dtCanvas = document.getElementById('dt-3d-canvas');
+            const video = document.getElementById('dt-ar-camera-video');
+            if (!dtCanvas) return;
+
+            const w = dtCanvas.width || dtCanvas.clientWidth;
+            const h = dtCanvas.height || dtCanvas.clientHeight;
+
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = w;
+            offCanvas.height = h;
+            const ctx = offCanvas.getContext('2d');
+
+            // 1. Canlı kamera görüntüsü varsa çiz
+            if (dtXRState.mode === 'ar_camera' && video && !video.classList.contains('hidden') && video.readyState >= 2) {
+                ctx.drawImage(video, 0, 0, w, h);
+            } else {
+                ctx.fillStyle = '#030712';
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            // 2. 3D WebGL sahnesini çiz
+            ctx.drawImage(dtCanvas, 0, 0, w, h);
+
+            // 3. Fütüristik AR Filigran Damgası (Watermark)
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(20, h - 65, 340, 45);
+            ctx.strokeRect(20, h - 65, 340, 45);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('ERGÜNBAŞ DİJİTAL İKİZ // AR SNAPSHOT', 32, h - 42);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px monospace';
+            ctx.fillText(new Date().toLocaleString('tr-TR') + ' • 10 HAT + MAMUL DEPO', 32, h - 26);
+
+            // 4. İndir
+            const a = document.createElement('a');
+            a.download = `Ergunbas_Fabrika_AR_${Date.now()}.png`;
+            a.href = offCanvas.toDataURL('image/png');
+            a.click();
+
+            if (typeof showToast === 'function') {
+                showToast('📸 AR Fotoğrafı başarıyla indirildi!', 'success');
+            }
+        }
+
+        function exitXRMode() {
+            if (dtXRState.cameraStream) {
+                dtXRState.cameraStream.getTracks().forEach(t => t.stop());
+                dtXRState.cameraStream = null;
+            }
+            const video = document.getElementById('dt-ar-camera-video');
+            if (video) {
+                video.pause();
+                video.srcObject = null;
+                video.classList.add('hidden');
+            }
+
+            dtXRState.active = false;
+            dtXRState.mode = null;
+
+            // Sahneyi ve arkaplanı geri yükle
+            if (dtScene) {
+                dtScene.background = new THREE.Color(0x181f2a);
+                dtScene.fog = new THREE.FogExp2(0x181f2a, 0.007);
+            }
+            if (dtRenderer) {
+                dtRenderer.setClearColor(0x181f2a, 1);
+            }
+
+            // Normal mimariyi geri getir
+            if (dtArchitectureGroup) {
+                dtArchitectureGroup.visible = true;
+            }
+            if (dtXRState.hologramGroup) {
+                dtXRState.hologramGroup.visible = false;
+            }
+
+            // 1:1 Tam fabrika ölçeğine dön
+            setXRModelScale(1.0);
+
+            // Overlay ve HUD'ı gizle
+            const overlay = document.getElementById('dt-hologram-overlay');
+            if (overlay) overlay.classList.add('hidden');
+
+            const hud = document.getElementById('dt-xr-floating-hud');
+            if (hud) hud.classList.add('hidden');
+
+            // Kamerayı izometrik fabrika açısına döndür
+            reset3DCameraView();
+
+            if (typeof showToast === 'function') {
+                showToast('Standart fabrika görünümüne dönüldü.', 'info');
+            }
         }
 
         function switchTab(tabId) {

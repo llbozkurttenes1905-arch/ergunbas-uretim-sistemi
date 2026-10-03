@@ -2823,207 +2823,210 @@
                         <tbody id="tbl-users" class="divide-y divide-slate-800"></tbody>
                     </table>
                 </div>
-        <!-- 3D DİJİTAL İKİZ: 🥽 ERGÜNBAŞ XR & HOLOGRAM STUDIO MODALI -->
-        <div id="modal-dt-xr-studio" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-indigo-500/50 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 sm:p-8 space-y-6 relative">
-                <!-- Arka Plan Neon Işık Parıltısı -->
-                <div class="absolute -top-24 -left-24 w-72 h-72 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none"></div>
-
-                <!-- Header -->
-                <div class="flex items-center justify-between border-b border-slate-800 pb-4 relative z-10">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-600 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-indigo-500/30 flex items-center justify-center">
-                            <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                                <i data-lucide="glasses" class="w-6 h-6 text-cyan-300"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="text-xl font-black text-white tracking-wide">Ergünbaş XR & Hologram Studio</h3>
-                                <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-500/20 to-cyan-500/20 text-cyan-300 border border-cyan-500/30">Next-Gen Extreme</span>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-0.5">Fabrikayı gerçek masanızın üzerine taşıyın veya fütüristik siber hologram masasında inceleyin</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="closeXRHologramModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <!-- 3 XR Deneyim Kartı -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
-                    <!-- Kart 1: Canlı Kamera ile Masamda AR -->
-                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-cyan-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-cyan-400 transition group shadow-xl">
-                        <div class="space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
-                                <i data-lucide="smartphone" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
-                                    <span>📱 Masamda Canlı AR</span>
-                                </h4>
-                                <span class="text-[11px] font-bold text-cyan-400">Kamera Passthrough Modu</span>
-                            </div>
-                            <p class="text-xs text-slate-400 leading-relaxed">
-                                Cihazınızın kamerasını açar ve fabrikayı gerçek çalışma masanızın, sehpanızın veya zeminin üzerine 1:50 minyatür canlı maket olarak indirir. Masada serbestçe çevirin ve fotoğrafını çekin!
-                            </p>
-                        </div>
-                        <button type="button" onclick="startLiveCameraAR()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
-                            <i data-lucide="camera" class="w-4 h-4"></i> Masamda AR'ı Başlat
-                        </button>
-                    </div>
-
-                    <!-- Kart 2: Siber Hologram Masası -->
-                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-fuchsia-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-fuchsia-400 transition group shadow-xl">
-                        <div class="space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
-                                    <span>🔮 Siber Hologram Masası</span>
-                                </h4>
-                                <span class="text-[11px] font-bold text-fuchsia-400">Sci-Fi Cyber Twin</span>
-                            </div>
-                            <p class="text-xs text-slate-400 leading-relaxed">
-                                Fabrikayı Tony Stark / Iron Man tarzı fütüristik parlayan bir hologram projektör kaidesine dönüştürür. Dönen siber halkalar, lazer tarama ızgarası ve parlayan veri parçacıklarıyla görsel şölen.
-                            </p>
-                        </div>
-                        <button type="button" onclick="startTabletopHologram()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-fuchsia-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
-                            <i data-lucide="disc" class="w-4 h-4"></i> Hologram Masasını Aç
-                        </button>
-                    </div>
-
-                    <!-- Kart 3: WebXR Sanal Gerçeklik (VR Headset) -->
-                    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-indigo-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-400 transition group shadow-xl">
-                        <div class="space-y-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
-                                <i data-lucide="headset" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-black text-white flex items-center gap-1.5">
-                                    <span>🥽 WebXR Sanal Gerçeklik</span>
-                                </h4>
-                                <span class="text-[11px] font-bold text-indigo-400">Meta Quest & Vision Pro</span>
-                            </div>
-                            <p class="text-xs text-slate-400 leading-relaxed">
-                                VR/AR gözlükler ve WebXR destekli tarayıcılar için tam donanımlı sürükleyici 3D uzay oturumu. Fabrikayı gözlüğünüzü takarak 1:1 gerçek boyutta içinde gezerek deneyimleyin.
-                            </p>
-                        </div>
-                        <button type="button" onclick="startNativeWebXRSession()" id="btn-xr-native" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
-                            <i data-lucide="glasses" class="w-4 h-4"></i> WebXR Oturumu Başlat
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Bilgi Notu -->
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-400 flex items-start gap-3 relative z-10">
-                    <i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i>
-                    <div>
-                        <strong class="text-white block font-bold">Nasıl Kullanılır?</strong>
-                        Telefon veya dizüstü bilgisayarınızda <span class="text-cyan-300 font-bold">"Masamda Canlı AR"</span> seçeneğine tıkladığınızda kamera izni istenir. Kamerayı masanıza tuttuğunuzda fabrika masanızın üstünde çalışmaya başlar. Dokunmatik ekran veya fareyle fabrikayı çevirebilir, büyütebilir ve fotoğrafını çekebilirsiniz.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3D DİJİTAL İKİZ: SAHA & MAKİNE ÖLÇÜLERİ VE PERSONEL KONFİGÜRASYONU MODALI -->
-        <div id="modal-dt-factory-config" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
-                            <i data-lucide="sliders" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-black text-white">Saha & Makine Ölçüleri ve Personel Konfigürasyonu</h3>
-                            <p class="text-xs text-slate-400">Fabrika bina ölçülerini, hat mesafelerini ve makinelerde çalışan kişi sayılarını belirleyin</p>
-                        </div>
-                    </div>
-                    <button onclick="close3DFactoryConfigModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <!-- BÖLÜM 1: SAHA VE BİNA ÖLÇÜLERİ -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="building" class="w-4 h-4"></i> 1. Fabrika Sahası (Bina Boyutları)
-                    </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Uzunluğu (m)</label>
-                            <input type="number" id="cfg-saha-uzunluk" step="0.5" min="20" max="250" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">X Ekseni (Örn: 65 m)</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Derinliği / Eni (m)</label>
-                            <input type="number" id="cfg-saha-derinlik" step="0.5" min="15" max="200" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">Z Ekseni (Örn: 42 m)</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Tavan / Kolon Yüksekliği (m)</label>
-                            <input type="number" id="cfg-tavan-yukseklik" step="0.5" min="6" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">Y Ekseni (Örn: 12 m)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BÖLÜM 2: MAKİNE & HAT ÖLÇÜLERİ VE AÇIKLIKLAR -->
-                <div class="space-y-3">
-                    <h4 class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="ruler" class="w-4 h-4"></i> 2. Makine Boyutları ve Koridor Açıklıkları
-                    </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Hatlar Arası Boşluk (m)</label>
-                            <input type="number" id="cfg-hat-boslugu" step="0.1" min="2" max="20" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-amber-300 font-black text-sm focus:ring-2 focus:ring-amber-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">İSG Emniyet Açıklığı (Örn: 6.2 m)</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Ana Taşıma Koridoru (m)</label>
-                            <input type="number" id="cfg-koridor-genislik" step="0.1" min="2" max="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-emerald-300 font-black text-sm focus:ring-2 focus:ring-emerald-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">Forklift & Koridor (Örn: 4.5 m)</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <label class="block text-[11px] font-bold text-slate-400 mb-1">Profil Ekstrüder Boyu (m)</label>
-                            <input type="number" id="cfg-makine-boyu" step="0.5" min="8" max="40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
-                            <span class="text-[10px] text-slate-500 block mt-1">Hat Gövde Boyu (Örn: 18.0 m)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BÖLÜM 3: MAKİNE BAŞINA ÇALIŞAN KİŞİ SAYILARI -->
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-black text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                            <i data-lucide="users" class="w-4 h-4"></i> 3. Makine Başına Çalışan Kişi Sayıları
-                        </h4>
-                        <span class="text-[10px] text-slate-400">3D sahnedeki işçi modelleri bu sayılara göre güncellenir</span>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5" id="cfg-operators-grid">
-                        <!-- JS ile Hat 101..109, Levha 201 ve Kalite Masası için doldurulacak -->
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
-                    <button onclick="resetFactoryConfigToDefaults()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Varsayılanlara Dön
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <button onclick="close3DFactoryConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
-                            Vazgeç
-                        </button>
-                        <button onclick="saveAndApplyFactoryConfig()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-black text-xs rounded-xl transition shadow-lg shadow-cyan-600/30 flex items-center gap-1.5 cursor-pointer">
-                            <i data-lucide="check" class="w-4 h-4"></i> Ayarları Kaydet ve Uygula
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
     </main>
+
+    <!-- 3D DİJİTAL İKİZ: 🥽 ERGÜNBAŞ XR & HOLOGRAM STUDIO MODALI -->
+    <div id="modal-dt-xr-studio" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-indigo-500/50 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 sm:p-8 space-y-6 relative">
+            <!-- Arka Plan Neon Işık Parıltısı -->
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 relative z-10">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-600 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-indigo-500/30 flex items-center justify-center">
+                        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                            <i data-lucide="glasses" class="w-6 h-6 text-cyan-300"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-xl font-black text-white tracking-wide">Ergünbaş XR & Hologram Studio</h3>
+                            <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-500/20 to-cyan-500/20 text-cyan-300 border border-cyan-500/30">Next-Gen Extreme</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Fabrikayı gerçek masanızın üzerine taşıyın veya fütüristik siber hologram masasında inceleyin</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeXRHologramModal()" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- 3 XR Deneyim Kartı -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+                <!-- Kart 1: Canlı Kamera ile Masamda AR -->
+                <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-cyan-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-cyan-400 transition group shadow-xl">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                            <i data-lucide="smartphone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                <span>📱 Masamda Canlı AR</span>
+                            </h4>
+                            <span class="text-[11px] font-bold text-cyan-400">Kamera Passthrough Modu</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Cihazınızın kamerasını açar ve fabrikayı gerçek çalışma masanızın, sehpanızın veya zeminin üzerine 1:50 minyatür canlı maket olarak indirir. Masada serbestçe çevirin ve fotoğrafını çekin!
+                        </p>
+                    </div>
+                    <button type="button" onclick="startLiveCameraAR()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i data-lucide="camera" class="w-4 h-4"></i> Masamda AR'ı Başlat
+                    </button>
+                </div>
+
+                <!-- Kart 2: Siber Hologram Masası -->
+                <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-fuchsia-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-fuchsia-400 transition group shadow-xl">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-fuchsia-500/10 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                <span>🔮 Siber Hologram Masası</span>
+                            </h4>
+                            <span class="text-[11px] font-bold text-fuchsia-400">Sci-Fi Cyber Twin</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Fabrikayı Tony Stark / Iron Man tarzı fütüristik parlayan bir hologram projektör kaidesine dönüştürür. Dönen siber halkalar, lazer tarama ızgarası ve parlayan veri parçacıklarıyla görsel şölen.
+                        </p>
+                    </div>
+                    <button type="button" onclick="startTabletopHologram()" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white shadow-lg shadow-fuchsia-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i data-lucide="disc" class="w-4 h-4"></i> Hologram Masasını Aç
+                    </button>
+                </div>
+
+                <!-- Kart 3: WebXR Sanal Gerçeklik (VR Headset) -->
+                <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-indigo-500/40 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-400 transition group shadow-xl">
+                    <div class="space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                            <i data-lucide="headset" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black text-white flex items-center gap-1.5">
+                                <span>🥽 WebXR Sanal Gerçeklik</span>
+                            </h4>
+                            <span class="text-[11px] font-bold text-indigo-400">Meta Quest & Vision Pro</span>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            VR/AR gözlükler ve WebXR destekli tarayıcılar için tam donanımlı sürükleyici 3D uzay oturumu. Fabrikayı gözlüğünüzü takarak 1:1 gerçek boyutta içinde gezerek deneyimleyin.
+                        </p>
+                    </div>
+                    <button type="button" onclick="startNativeWebXRSession()" id="btn-xr-native" class="mt-4 w-full py-2.5 px-4 rounded-xl font-black text-xs bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition cursor-pointer">
+                        <i data-lucide="glasses" class="w-4 h-4"></i> WebXR Oturumu Başlat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bilgi Notu -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-xs text-slate-400 flex items-start gap-3 relative z-10">
+                <i data-lucide="info" class="w-5 h-5 text-cyan-400 shrink-0 mt-0.5"></i>
+                <div>
+                    <strong class="text-white block font-bold">Nasıl Kullanılır?</strong>
+                    Telefon veya dizüstü bilgisayarınızda <span class="text-cyan-300 font-bold">"Masamda Canlı AR"</span> seçeneğine tıkladığınızda kamera izni istenir. Kamerayı masanıza tuttuğunuzda fabrika masanızın üstünde çalışmaya başlar. Dokunmatik ekran veya fareyle fabrikayı çevirebilir, büyütebilir ve fotoğrafını çekebilirsiniz.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D DİJİTAL İKİZ: SAHA & MAKİNE ÖLÇÜLERİ VE PERSONEL KONFİGÜRASYONU MODALI -->
+    <div id="modal-dt-factory-config" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl p-6 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
+                        <i data-lucide="sliders" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-white">Saha & Makine Ölçüleri ve Personel Konfigürasyonu</h3>
+                        <p class="text-xs text-slate-400">Fabrika bina ölçülerini, hat mesafelerini ve makinelerde çalışan kişi sayılarını belirleyin</p>
+                    </div>
+                </div>
+                <button onclick="close3DFactoryConfigModal()" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- BÖLÜM 1: SAHA VE BİNA ÖLÇÜLERİ -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-black text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="building" class="w-4 h-4"></i> 1. Fabrika Sahası (Bina Boyutları)
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Uzunluğu (m)</label>
+                        <input type="number" id="cfg-saha-uzunluk" step="0.5" min="20" max="250" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">X Ekseni (Örn: 65 m)</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Saha Derinliği / Eni (m)</label>
+                        <input type="number" id="cfg-saha-derinlik" step="0.5" min="15" max="200" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">Z Ekseni (Örn: 42 m)</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Tavan / Kolon Yüksekliği (m)</label>
+                        <input type="number" id="cfg-tavan-yukseklik" step="0.5" min="6" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">Y Ekseni (Örn: 12 m)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BÖLÜM 2: MAKİNE & HAT ÖLÇÜLERİ VE AÇIKLIKLAR -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="ruler" class="w-4 h-4"></i> 2. Makine Boyutları ve Koridor Açıklıkları
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Hatlar Arası Boşluk (m)</label>
+                        <input type="number" id="cfg-hat-boslugu" step="0.1" min="2" max="20" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-amber-300 font-black text-sm focus:ring-2 focus:ring-amber-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">İSG Emniyet Açıklığı (Örn: 6.2 m)</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Ana Taşıma Koridoru (m)</label>
+                        <input type="number" id="cfg-koridor-genislik" step="0.1" min="2" max="15" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-emerald-300 font-black text-sm focus:ring-2 focus:ring-emerald-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">Forklift & Koridor (Örn: 4.5 m)</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1">Profil Ekstrüder Boyu (m)</label>
+                        <input type="number" id="cfg-makine-boyu" step="0.5" min="8" max="40" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-black text-sm focus:ring-2 focus:ring-cyan-500">
+                        <span class="text-[10px] text-slate-500 block mt-1">Hat Gövde Boyu (Örn: 18.0 m)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BÖLÜM 3: MAKİNE BAŞINA ÇALIŞAN KİŞİ SAYILARI -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-black text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4"></i> 3. Makine Başına Çalışan Kişi Sayıları
+                    </h4>
+                    <span class="text-[10px] text-slate-400">3D sahnedeki işçi modelleri bu sayılara göre güncellenir</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5" id="cfg-operators-grid">
+                    <!-- JS ile Hat 101..109, Levha 201 ve Kalite Masası için doldurulacak -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
+                <button onclick="resetFactoryConfigToDefaults()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Varsayılanlara Dön
+                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="close3DFactoryConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                        Vazgeç
+                    </button>
+                    <button onclick="saveAndApplyFactoryConfig()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-black text-xs rounded-xl transition shadow-lg shadow-cyan-600/30 flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="check" class="w-4 h-4"></i> Ayarları Kaydet ve Uygula
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- App Logic JavaScript -->
     <script>

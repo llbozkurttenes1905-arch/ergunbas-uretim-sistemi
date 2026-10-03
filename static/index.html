@@ -4406,7 +4406,22 @@
             dtMachineGroups = {};
             dtFloorRings = {};
 
+            // Mamul Depolama Sahasını (Görsel 2'deki 4 bölümlü müstakil saha) koru
+            if (dtWarehouseGroup) {
+                dtMachineGroups['warehouse'] = dtWarehouseGroup;
+            }
+
             Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
+                if (cfg.type === 'storage' || id === 'warehouse') {
+                    // Depo bir ekstrüder makinesi DEĞİLDİR; sadece 4 bölümlü mamul depolama sahasıdır!
+                    if (dtWarehouseGroup) {
+                        dtWarehouseGroup.position.set(cfg.x, 0, cfg.z);
+                        if (typeof cfg.rotY === 'number') dtWarehouseGroup.rotation.y = cfg.rotY;
+                        dtMachineGroups['warehouse'] = dtWarehouseGroup;
+                    }
+                    return;
+                }
+
                 let group;
                 if (cfg.type === 'qc') {
                     group = create3DQualityControlTable(id, cfg.name);
@@ -4967,6 +4982,7 @@
             outerBorder.position.set(0, 0.015, 0);
             outerBorder.userData = { id: 'warehouse' };
             whGroup.add(outerBorder);
+            whGroup.userData.outerBorder = outerBorder;
 
             // 4 Ayrı Depolama Sahası Bölümü (Pervaz, Kasa, Seren, Levha)
             const bays = [
@@ -6208,11 +6224,19 @@
             if (!dtSelectionRing) return;
             const targetPos = DT_3D_POSITIONS[dtSelectedMachineId];
             const group = dtMachineGroups[dtSelectedMachineId];
+
+            // Mamul Depo Sahası (Görsel 2) dış sınır çerçeve vurgusu
+            if (dtWarehouseGroup && dtWarehouseGroup.userData && dtWarehouseGroup.userData.outerBorder) {
+                if (dtSelectedMachineId === 'warehouse') {
+                    dtWarehouseGroup.userData.outerBorder.material.color.setHex(0x38bdf8); // Seçili: Cyan
+                } else {
+                    dtWarehouseGroup.userData.outerBorder.material.color.setHex(0xfacc15); // Normal: Sarı
+                }
+            }
+
             if (targetPos && group) {
                 if (dtSelectedMachineId === 'warehouse') {
-                    dtSelectionRing.position.set(group.position.x, 0.08, group.position.z);
-                    dtSelectionRing.scale.set(3.5, 3.5, 3.5);
-                    dtSelectionRing.visible = true;
+                    dtSelectionRing.visible = false;
                 } else {
                     dtSelectionRing.scale.set(1.0, 1.0, 1.0);
                     const offset = new THREE.Vector3(-6.5, 0.05, 0);

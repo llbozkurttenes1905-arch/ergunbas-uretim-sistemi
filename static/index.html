@@ -1119,8 +1119,8 @@
                         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> <span id="dt-stat-warning" class="font-bold text-amber-400">-- Kısmi</span></div>
                         <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> <span id="dt-stat-idle" class="font-bold text-red-400">-- Devre Dışı</span></div>
                     </div>
-                    <button onclick="toggleProductionSimulation(true)" title="01.10.2026 Tarihli Gerçek Üretim ve Fireleri Canlı 3D Simüle Et" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white text-xs font-black rounded-xl transition shadow-lg shadow-purple-600/30 flex items-center gap-2 border border-purple-400/40 cursor-pointer">
-                        <i data-lucide="play-circle" class="w-4 h-4 text-amber-200"></i> <span class="font-extrabold tracking-wide">🎬 01.10.2026 Üretimini Canlı Simüle Et</span>
+                    <button onclick="toggleProductionSimulation(true)" title="Seçili Günün Gerçek Üretim ve Firelerini Canlı 3D Simüle Et" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white text-xs font-black rounded-xl transition shadow-lg shadow-purple-600/30 flex items-center gap-2 border border-purple-400/40 cursor-pointer">
+                        <i data-lucide="play-circle" class="w-4 h-4 text-amber-200"></i> <span id="dash-sim-btn-text" class="font-extrabold tracking-wide">🎬 Canlı Üretimi Simüle Et</span>
                     </button>
                     <button onclick="open3DFactoryConfigModal()" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 via-cyan-600 to-blue-600 hover:from-amber-500 hover:to-blue-500 text-white text-xs font-black rounded-xl transition shadow-lg shadow-cyan-600/30 flex items-center gap-2 border border-cyan-400/40 cursor-pointer">
                         <i data-lucide="sliders" class="w-4 h-4 text-amber-200"></i> <span class="font-extrabold tracking-wide">📐 Saha Ölçüleri & 👥 Personel Belirle</span>
@@ -1176,8 +1176,8 @@
 
                         <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
                         <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-10">
-                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="01.10.2026 Gerçek Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer animate-pulse">
-                                <i data-lucide="play-circle" class="w-3.5 h-3.5 text-white"></i> <span>01.10 Canlı Simülasyon</span>
+                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="Canlı Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer animate-pulse">
+                                <i data-lucide="play-circle" class="w-3.5 h-3.5 text-white"></i> <span id="btn-dt-simulation-text">Canlı Simülasyon</span>
                             </button>
                             <button onclick="open3DFactoryConfigModal()" id="btn-dt-factory-config" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30">
                                 <i data-lucide="sliders" class="w-3 h-3 text-white"></i> <span>Ölçü & Personel</span>
@@ -1199,7 +1199,7 @@
                             </button>
                         </div>
 
-                        <!-- CANLI ÜRETİM & FİRE SİMÜLASYONU KONTROL PANELİ (01.10.2026) -->
+                        <!-- CANLI ÜRETİM & FİRE SİMÜLASYONU KONTROL PANELİ -->
                         <div id="dt-sim-control-panel" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md border border-cyan-500/50 rounded-2xl px-4 py-2.5 shadow-2xl z-20 w-[96%] max-w-4xl flex flex-col gap-2">
                             <!-- Üst Satır: Başlık, Saat, Vardiya & Kontroller -->
                             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
@@ -1209,7 +1209,7 @@
                                         <span class="text-xs font-black text-white flex items-center gap-1.5">
                                             <i data-lucide="play-circle" class="w-3.5 h-3.5 text-cyan-400"></i> CANLI ÜRETİM & FİRE SİMÜLASYONU
                                         </span>
-                                        <span class="text-[10px] text-cyan-300 font-bold" id="sim-date-badge">01.10.2026 Gerçek Verileri (15,694 kg Üretim & Kırma Fireleri)</span>
+                                        <span class="text-[10px] text-cyan-300 font-bold" id="sim-date-badge">Seçili Gün Verileri (Net Üretim & Kırma Fireleri)</span>
                                     </div>
                                 </div>
 
@@ -1266,12 +1266,12 @@
                                     <div class="bg-slate-950 px-2.5 py-1 rounded-xl border border-emerald-500/30">
                                         <span class="text-[8.5px] text-slate-400 block font-bold">✓ SAĞLAM MAMUL</span>
                                         <span class="font-mono font-black text-emerald-400 text-xs" id="sim-live-net-kg">0 kg</span>
-                                        <span class="text-[8.5px] text-slate-500 ml-1">/ 15,694 kg</span>
+                                        <span class="text-[8.5px] text-slate-500 ml-1" id="sim-target-net-kg-badge">/ -- kg</span>
                                     </div>
                                     <div class="bg-slate-950 px-2.5 py-1 rounded-xl border border-amber-500/30">
                                         <span class="text-[8.5px] text-slate-400 block font-bold">♻ FİRE & KIRMA</span>
                                         <span class="font-mono font-black text-amber-400 text-xs" id="sim-live-fire-kg">0 kg</span>
-                                        <span class="text-[8.5px] text-slate-500 ml-1">/ 2,804 kg</span>
+                                        <span class="text-[8.5px] text-slate-500 ml-1" id="sim-target-fire-kg-badge">/ -- kg</span>
                                     </div>
                                 </div>
                             </div>
@@ -1280,7 +1280,7 @@
                             <div class="flex items-center gap-2 bg-slate-950/80 px-2.5 py-1 rounded-xl border border-slate-800/80 text-[10px]">
                                 <i data-lucide="radio" class="w-3 h-3 text-cyan-400 animate-pulse shrink-0"></i>
                                 <span class="text-slate-400 shrink-0 font-bold">Fabrika Olayı:</span>
-                                <span class="text-cyan-300 truncate font-mono" id="sim-event-ticker">08:00 - 01.10.2026 Üretim simülasyonu hazır. Hat 103 (50X80 Pervaz) ve Hat 102 (100mm Kasa) üretime başladı.</span>
+                                <span class="text-cyan-300 truncate font-mono" id="sim-event-ticker">08:00 - Gerçek üretim ve fire simülasyonu devrede. Aktif hatlar üretime başladı.</span>
                             </div>
                         </div>
 
@@ -4946,6 +4946,25 @@
             whGroup.position.set(whPos.x, 0, whPos.z);
             if (typeof whPos.rotY === 'number') whGroup.rotation.y = whPos.rotY;
 
+            // 1. Katı Depo Taban Plakası (Raycast, Seçim ve Serbest Sürüklemeyi Garanti Eder)
+            const slabMat = new THREE.MeshStandardMaterial({
+                color: 0x0f172a,
+                roughness: 0.7,
+                metalness: 0.25
+            });
+            const baseSlab = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.12, 38.0), slabMat);
+            baseSlab.position.set(0, 0.06, 0);
+            baseSlab.receiveShadow = true;
+            baseSlab.userData = { id: 'warehouse', name: 'Mamul Stok & Sevkiyat Sahası', type: 'storage' };
+            whGroup.add(baseSlab);
+
+            // Depo Sahası Dış Sarı Güvenlik Çerçevesi
+            const yellowOuterMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+            const outerBorder = new THREE.Mesh(new THREE.BoxGeometry(10.0, 0.03, 38.4), yellowOuterMat);
+            outerBorder.position.set(0, 0.015, 0);
+            outerBorder.userData = { id: 'warehouse' };
+            whGroup.add(outerBorder);
+
             // 4 Ayrı Depolama Sahası Bölümü (Pervaz, Kasa, Seren, Levha)
             const bays = [
                 { id: 'pervaz', title: 'PERVAZ DEPOSU (50x80 mm)', z: -14.0, color: 0x0284c7 },
@@ -4961,26 +4980,30 @@
                 // 1. Zemin Palet Hücresi (6.5m x 7.8m) - whGroup lokal merkezine göre
                 const cell = new THREE.Mesh(new THREE.PlaneGeometry(6.5, 7.8), darkFloorCellMat);
                 cell.rotation.x = -Math.PI / 2;
-                cell.position.set(0, 0.02, bay.z);
+                cell.position.set(0, 0.13, bay.z);
                 cell.receiveShadow = true;
+                cell.userData = { id: 'warehouse' };
                 whGroup.add(cell);
 
                 // 2. Sarı Güvenlik Sınır Bordürü
                 const border = new THREE.Mesh(new THREE.RingGeometry(3.6, 3.8, 4), yellowLineMat);
                 border.rotation.x = -Math.PI / 2;
                 border.rotation.z = Math.PI / 4;
-                border.position.set(0, 0.025, bay.z);
+                border.position.set(0, 0.135, bay.z);
+                border.userData = { id: 'warehouse' };
                 whGroup.add(border);
 
                 // 3. Bölüm Tanımlayıcı 3D Tabela Postu (Direk + Levha)
                 const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.0, 12), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8 }));
                 pole.position.set(3.3, 1.5, bay.z - 3.2);
                 pole.castShadow = true;
+                pole.userData = { id: 'warehouse' };
                 whGroup.add(pole);
 
                 const signMat = new THREE.MeshStandardMaterial({ color: bay.color, roughness: 0.3 });
                 const board = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.65, 2.6), signMat);
                 board.position.set(3.3, 2.7, bay.z - 3.2);
+                board.userData = { id: 'warehouse' };
                 whGroup.add(board);
             });
 
@@ -5244,27 +5267,60 @@
             const state = dtForklift.userData.state;
             const speed = 7.5 * deltaSec; // Sürüş hızı
 
-            // Hedef Makinenin Z koordinatı ve Hat Sonu X koordinatı
+            // 1. Hedef Makine Canlı Dünya Koordinatları ve Palet Alma (Pickup) Noktası
             const targetLineGroup = dtMachineGroups ? dtMachineGroups[job.hatId] : null;
-            const lineZ = targetLineGroup ? targetLineGroup.position.z : 0;
-            const lineExitX = (targetLineGroup ? targetLineGroup.position.x : 0) + 11.2;
+            const isLev = (job.productType === 'levha' || job.hatId === '201');
+            const exitDist = isLev ? 13.8 : 12.2;
+            const exitLocalOffset = new THREE.Vector3(exitDist, 0, 0);
 
-            // Taşınabilir Depo Koordinatları (Kullanıcının belirlediği yerleşim)
-            const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0 };
+            if (targetLineGroup && typeof targetLineGroup.rotation.y === 'number') {
+                exitLocalOffset.applyAxisAngle(new THREE.Vector3(0, 1, 0), targetLineGroup.rotation.y);
+            }
+            const lineExitWorld = new THREE.Vector3();
+            if (targetLineGroup) {
+                lineExitWorld.copy(targetLineGroup.position).add(exitLocalOffset);
+            } else {
+                const defPos = DT_3D_POSITIONS[job.hatId] || { x: 10, z: 0 };
+                lineExitWorld.set(defPos.x + exitDist, 0, defPos.z);
+            }
+
+            // 2. Taşınabilir Depolama Sahası Canlı Dünya Koordinatları ve Hücre Bırakma (Drop-off) Noktası
+            const whGroup = dtMachineGroups ? dtMachineGroups['warehouse'] : dtWarehouseGroup;
+            const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0, rotY: 0 };
             const bayZMap = { pervaz: -14.0, kasa: -4.5, seren: 5.0, levha: 14.5 };
-            const whTargetZ = whPos.z + (bayZMap[job.productType] !== undefined ? bayZMap[job.productType] : 0);
-            const whBayX = whPos.x;
-            const corridorX = 18.0;
+            const bayLocalZ = bayZMap[job.productType] !== undefined ? bayZMap[job.productType] : 0;
 
-            // 1. DRIVING_TO_LINE: Önce koridordan makinenin Z seviyesine, sonra hatta dönüp sehpaya yanaş
+            // Depo hücresinin yanaşma noktası (whGroup lokalinde X: -3.5, Z: bayLocalZ)
+            const bayDockLocal = new THREE.Vector3(-3.5, 0, bayLocalZ);
+            if (whGroup && typeof whGroup.rotation.y === 'number') {
+                bayDockLocal.applyAxisAngle(new THREE.Vector3(0, 1, 0), whGroup.rotation.y);
+            }
+            const whBayWorld = new THREE.Vector3();
+            if (whGroup) {
+                whBayWorld.copy(whGroup.position).add(bayDockLocal);
+            } else {
+                whBayWorld.set(whPos.x - 3.5, 0, whPos.z + bayLocalZ);
+            }
+
+            // 3. Dinamik Güvenli Koridor (Aisle)
+            let corridorX;
+            if (Math.abs(lineExitWorld.x - whBayWorld.x) <= 6.0) {
+                corridorX = (lineExitWorld.x + whBayWorld.x) / 2;
+            } else if (whBayWorld.x > lineExitWorld.x) {
+                corridorX = Math.min(whBayWorld.x - 2.5, lineExitWorld.x + 2.8);
+            } else {
+                corridorX = Math.max(whBayWorld.x + 2.5, lineExitWorld.x - 2.8);
+            }
+
+            // 1. DRIVING_TO_LINE: Önce koridordan makinenin Z seviyesine, sonra doğrudan hatta yanaş
             if (state === 'DRIVING_TO_LINE') {
                 if (dtForklift.userData.subStep === 1) {
-                    const reachedZ = steerAndMoveForklift(corridorX, lineZ, speed, deltaSec);
+                    const reachedZ = steerAndMoveForklift(corridorX, lineExitWorld.z, speed, deltaSec);
                     if (reachedZ) {
                         dtForklift.userData.subStep = 2;
                     }
                 } else if (dtForklift.userData.subStep === 2) {
-                    const reachedLine = steerAndMoveForklift(lineExitX + 1.4, lineZ, speed, deltaSec);
+                    const reachedLine = steerAndMoveForklift(lineExitWorld.x, lineExitWorld.z, speed, deltaSec);
                     if (reachedLine) {
                         dtForklift.userData.state = 'LIFTING';
                         dtForklift.userData.subStateTime = 0;
@@ -5287,7 +5343,13 @@
 
                         // Hattın üzerindeki istif sehpasını sıfırla
                         if (targetLineGroup && targetLineGroup.userData) {
-                            if (targetLineGroup.userData.goodStack) {
+                            if (job.productType === 'levha' && targetLineGroup.userData.goodSheetStack) {
+                                targetLineGroup.remove(targetLineGroup.userData.goodSheetStack);
+                                const freshSheet = createLevhaFinishedGoodsPallet(400, job.label);
+                                freshSheet.position.set(12.8, 0, 0);
+                                targetLineGroup.add(freshSheet);
+                                targetLineGroup.userData.goodSheetStack = freshSheet;
+                            } else if (targetLineGroup.userData.goodStack) {
                                 targetLineGroup.remove(targetLineGroup.userData.goodStack);
                                 const freshStack = createFinishedGoodsTrolley(350, job.label, job.hatId);
                                 freshStack.position.set(11.2, 0, 0);
@@ -5307,17 +5369,17 @@
             // 3. DRIVING_TO_WAREHOUSE: Koridora geri çık, deponun Z hizasına git ve hücreye yanaş
             else if (state === 'DRIVING_TO_WAREHOUSE') {
                 if (dtForklift.userData.subStep === 1) {
-                    const reachedCorridor = steerAndMoveForklift(corridorX, lineZ, speed, deltaSec);
+                    const reachedCorridor = steerAndMoveForklift(corridorX, lineExitWorld.z, speed, deltaSec);
                     if (reachedCorridor) {
                         dtForklift.userData.subStep = 2;
                     }
                 } else if (dtForklift.userData.subStep === 2) {
-                    const reachedBayZ = steerAndMoveForklift(corridorX, whTargetZ, speed, deltaSec);
+                    const reachedBayZ = steerAndMoveForklift(corridorX, whBayWorld.z, speed, deltaSec);
                     if (reachedBayZ) {
                         dtForklift.userData.subStep = 3;
                     }
                 } else if (dtForklift.userData.subStep === 3) {
-                    const reachedBay = steerAndMoveForklift(whBayX - 1.2, whTargetZ, speed, deltaSec);
+                    const reachedBay = steerAndMoveForklift(whBayWorld.x, whBayWorld.z, speed, deltaSec);
                     if (reachedBay) {
                         dtForklift.userData.state = 'PLACING';
                         dtForklift.userData.subStateTime = 0;
@@ -5351,14 +5413,15 @@
             // 5. RETURNING: Depodan koridora çık ve ana bekleme/park noktasına dön
             else if (state === 'RETURNING') {
                 if (dtForklift.userData.subStep === 1) {
-                    const reachedCorridor = steerAndMoveForklift(corridorX, whTargetZ, speed, deltaSec);
+                    const reachedCorridor = steerAndMoveForklift(corridorX, whBayWorld.z, speed, deltaSec);
                     if (reachedCorridor) {
                         dtForklift.userData.subStep = 2;
                     }
                 } else if (dtForklift.userData.subStep === 2) {
-                    const reachedPark = steerAndMoveForklift(corridorX, 0, speed, deltaSec);
+                    const parkZ = (lineExitWorld.z + whBayWorld.z) / 2;
+                    const reachedPark = steerAndMoveForklift(corridorX, parkZ, speed, deltaSec);
                     if (reachedPark) {
-                        dtForklift.position.set(corridorX, 0, 0);
+                        dtForklift.position.set(corridorX, 0, parkZ);
                         dtForklift.rotation.y = 0;
                         dtForklift.userData.state = 'IDLE';
                         dtForkliftCurrentJob = null;
@@ -5458,12 +5521,36 @@
 
             const dateBadge = document.getElementById('sim-date-badge');
             if (dateBadge) {
-                dateBadge.textContent = `${dateLabel} Verileri (${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg Net Üretim & ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg Fire)`;
+                dateBadge.textContent = `${dateLabel} Gerçek Verileri (${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg Net Üretim & ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg Fire)`;
+            }
+
+            const btnSimText = document.getElementById('btn-dt-simulation-text');
+            if (btnSimText) {
+                btnSimText.textContent = `${dateLabel} Simülasyon`;
+            }
+
+            const dashSimBtnText = document.getElementById('dash-sim-btn-text');
+            if (dashSimBtnText) {
+                dashSimBtnText.textContent = `🎬 ${dateLabel} Üretimini Canlı Simüle Et`;
+            }
+
+            const targetNetBadge = document.getElementById('sim-target-net-kg-badge');
+            if (targetNetBadge) {
+                targetNetBadge.textContent = `/ ${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg`;
+            }
+
+            const targetFireBadge = document.getElementById('sim-target-fire-kg-badge');
+            if (targetFireBadge) {
+                targetFireBadge.textContent = `/ ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg`;
             }
 
             const ticker = document.getElementById('sim-event-ticker');
             if (ticker) {
                 ticker.textContent = `[08:00] ${dateLabel} simülasyonu devrede: Toplam ${Math.round(dtSimulation.targetNetKg).toLocaleString('tr-TR')} kg mamul ve ${Math.round(dtSimulation.targetFireKg).toLocaleString('tr-TR')} kg kırma firesi simüle ediliyor.`;
+            }
+
+            if (dtSimulation.active && typeof updateSimulationDisplay === 'function') {
+                updateSimulationDisplay();
             }
 
             // Depo başlangıç stoklarını güncelle
@@ -6119,12 +6206,19 @@
             const targetPos = DT_3D_POSITIONS[dtSelectedMachineId];
             const group = dtMachineGroups[dtSelectedMachineId];
             if (targetPos && group) {
-                const offset = new THREE.Vector3(-6.5, 0.05, 0);
-                if (typeof targetPos.rotY === 'number') {
-                    offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), targetPos.rotY);
+                if (dtSelectedMachineId === 'warehouse') {
+                    dtSelectionRing.position.set(group.position.x, 0.08, group.position.z);
+                    dtSelectionRing.scale.set(3.5, 3.5, 3.5);
+                    dtSelectionRing.visible = true;
+                } else {
+                    dtSelectionRing.scale.set(1.0, 1.0, 1.0);
+                    const offset = new THREE.Vector3(-6.5, 0.05, 0);
+                    if (typeof targetPos.rotY === 'number') {
+                        offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), targetPos.rotY);
+                    }
+                    dtSelectionRing.position.set(group.position.x + offset.x, 0.05, group.position.z + offset.z);
+                    dtSelectionRing.visible = true;
                 }
-                dtSelectionRing.position.set(group.position.x + offset.x, 0.05, group.position.z + offset.z);
-                dtSelectionRing.visible = true;
             } else {
                 dtSelectionRing.visible = false;
             }
@@ -6135,13 +6229,13 @@
         -------------------------------------------------------- */
 
         /* --------------------------------------------------------
-           01.10.2026 CANLI ÜRETİM & FİRE SİMÜLASYON MOTORU
+           DİNAMİK CANLI ÜRETİM & FİRE SİMÜLASYON MOTORU
         -------------------------------------------------------- */
         const dtSimulation = {
             active: false,
             isPlaying: false,
-            dateKey: '62',
-            dateLabel: '01.10.2026',
+            dateKey: '',
+            dateLabel: 'Seçili Gün',
             simTimeMinutes: 480, // 08:00 (dakika cinsinden)
             speedMultiplier: 5,  // 1x, 5x, 20x, 60x
             targetNetKg: 15694,
@@ -6171,16 +6265,12 @@
             }
 
             if (shouldOpen) {
-                // 01.10.2026 (Key: 62) gününü seç ve yükle
-                const dtSelect = document.getElementById('select-dt-day');
-                if (dtSelect) {
-                    dtSelect.value = '62';
-                }
+                // Seçili günün canlı verilerini yükle ve simülasyonu başlat
                 loadDigitalTwin().then(() => {
                     dtSimulation.isPlaying = true;
                     updateSimPlayButton();
                     if (typeof showToast === 'function') {
-                        showToast('01.10.2026 Canlı Üretim Simülasyonu Aktif: Pervaz, Kasa, Sağlam İstif ve Kırma Kasaları devrede!', 'success');
+                        showToast(`${dtSimulation.dateLabel || 'Seçili Gün'} Canlı Üretim Simülasyonu Aktif: Pervaz, Kasa, Sağlam İstif ve Kırma Kasaları devrede!`, 'success');
                     }
                 });
             } else {
@@ -6297,23 +6387,23 @@
                 hat105Ring.material.color.setHex(isHat105Down ? 0xf59e0b : 0x22c55e);
             }
 
-            // Ticker Olay Bildirimi
+            // Ticker Olay Bildirimi - Seçili günün gerçek verilerine göre dinamik
             const ticker = document.getElementById('sim-event-ticker');
             if (ticker) {
+                const dateLbl = dtSimulation.dateLabel || 'Seçili Gün';
+                const actCount = dtSimulation.activeHats.length;
                 if (curMin < 540) {
-                    ticker.textContent = `[${timeStr}] 08:00 Gündüz vardiyası başladı. Hat 103 (50X80 Pervaz) ve Hat 102 (100mm Kasa) faal.`;
+                    ticker.textContent = `[${timeStr}] 08:00 Gündüz vardiyası devrede (${dateLbl}). ${actCount} faal hat üretime başladı.`;
                 } else if (curMin < 600) {
-                    ticker.textContent = `[${timeStr}] Hat 107 (200 mm Kasa) ayar firesi Kırma Haznesine aktarıldı.`;
-                } else if (isHat105Down) {
-                    ticker.textContent = `[${timeStr}] ⚠️ Hat 105 (Seren) Helezon arızası! Mekanik bakım ekibi müdahale ediyor (120 dk).`;
+                    ticker.textContent = `[${timeStr}] Ayar ve başlangıç fireleri Kırma Bölümüne sevk edildi. Sağlam profiller istif sehpalarında toplanıyor.`;
                 } else if (curMin < 960) {
-                    ticker.textContent = `[${timeStr}] Hat 105 onarımı tamamlandı. Levha 201 (Dişbudak Levha 94x207 cm) tam hızda kesim yapıyor.`;
+                    ticker.textContent = `[${timeStr}] ${dateLbl} gün ortası üretimi sürüyor: Anlık sağlam mamul: ${curNet.toLocaleString('tr-TR')} kg | Kırma: ${curFire.toLocaleString('tr-TR')} kg`;
                 } else if (curMin < 1200) {
-                    ticker.textContent = `[${timeStr}] Hat 109 (50X80 Pervaz) 2.258 kg üretimle günlük hedefini aştı. Sağlam istife yeni paket eklendi.`;
+                    ticker.textContent = `[${timeStr}] Vardiya sevkiyatı: Otonom forklift dolan sehpaları algılayıp depoya taşıyor.`;
                 } else if (curMin < 1320) {
-                    ticker.textContent = `[${timeStr}] 20:00 Vardiya devir teslimi: Gece vardiyası nöbeti devraldı (10 Operatör).`;
+                    ticker.textContent = `[${timeStr}] 20:00 Vardiya devir teslimi: Gece vardiyası devraldı (${actCount} hat aktif).`;
                 } else {
-                    ticker.textContent = `[${timeStr}] Gece üretimi devam ediyor. Toplam sağlam mamul: ${curNet.toLocaleString('tr-TR')} kg | Kırma firesi: ${curFire.toLocaleString('tr-TR')} kg`;
+                    ticker.textContent = `[${timeStr}] Gece üretimi devam ediyor (${dateLbl}). Toplam sağlam mamul: ${curNet.toLocaleString('tr-TR')} kg | Kırma firesi: ${curFire.toLocaleString('tr-TR')} kg`;
                 }
             }
         }
@@ -6328,9 +6418,9 @@
             const group = dtMachineGroups[hatId];
             if (!group || !group.userData) return;
 
-            // Hat 101 ve Hat 105 arıza anında kesim yapmaz
-            const curMin = Math.floor(dtSimulation.simTimeMinutes);
-            if (hatId === '101' || (hatId === '105' && curMin >= 600 && curMin <= 720)) return;
+            // Sadece aktif çalışan hatlar kesim yapsın
+            const m = dtMachinesData ? dtMachinesData.find(x => x.id === hatId) : null;
+            if (m && (m.status === 'idle' || (m.hours <= 0 && m.prodKg <= 0))) return;
 
             // Testere daldırma animasyonu (Dip down)
             if (group.userData.sawGroup) {
@@ -6724,6 +6814,7 @@
                 setMachine3DPosition(dtSelectedMachineId, cur.x, nz);
             }
             save3DPositionsToStorage();
+            renderDigitalTwinHUD();
         }
 
         function rotateSelectedMachine(deltaRad) {
@@ -6732,6 +6823,7 @@
             const newRot = ((cur.rotY || 0) + deltaRad) % (Math.PI * 2);
             setMachine3DPosition(dtSelectedMachineId, cur.x, cur.z, newRot);
             save3DPositionsToStorage();
+            renderDigitalTwinHUD();
         }
 
         function toggle3DLayoutEditMode() {
@@ -6918,7 +7010,8 @@
 
             // Mamul Depolama Alanı Seçildiğinde Gösterilecek Özel Lojistik Kartı
             if (dtSelectedMachineId === 'warehouse') {
-                const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0 };
+                const whPos = DT_3D_POSITIONS['warehouse'] || { x: 26, z: 0, rotY: 0 };
+                const deg = Math.round(((whPos.rotY || 0) * 180) / Math.PI) % 360;
                 container.innerHTML = `
                     <div class="space-y-4">
                         <div class="flex items-start justify-between border-b border-cyan-900/50 pb-3">
@@ -6929,8 +7022,11 @@
                                         4 Lojistik Hücresi
                                     </span>
                                 </div>
-                                <p class="text-xs font-bold text-cyan-400 mt-1 flex items-center gap-1">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> Konum: X: ${whPos.x.toFixed(1)}m, Z: ${whPos.z.toFixed(1)}m
+                                <p class="text-xs font-bold text-cyan-400 mt-1 flex items-center gap-1.5">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                                    <span>Konum: X: <strong class="text-white">${whPos.x.toFixed(1)}m</strong>, Z: <strong class="text-white">${whPos.z.toFixed(1)}m</strong></span>
+                                    <span class="text-slate-500">|</span>
+                                    <span>Açı: <strong class="text-amber-300">${deg}°</strong></span>
                                 </p>
                             </div>
                             <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 flex items-center gap-1.5">
@@ -6962,13 +7058,37 @@
                             </div>
                         </div>
 
+                        <!-- Canlı Konumlandırma & Yön Kontrol Paneli -->
+                        <div class="bg-slate-950/90 p-3 rounded-xl border border-amber-500/30 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                                    <i data-lucide="move" class="w-4 h-4 text-amber-400"></i> Depoyu Taşı & Yönlendir
+                                </span>
+                                <span class="text-[10px] text-slate-400">Forklift anında hedefleri günceller</span>
+                            </div>
+                            <div class="grid grid-cols-5 gap-1.5 text-center text-xs">
+                                <button type="button" onclick="nudgeSelectedMachine('x', -2)" title="Sola 2m Taşı" class="py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-black transition border border-slate-700 hover:border-cyan-400 cursor-pointer">← Sol</button>
+                                <button type="button" onclick="nudgeSelectedMachine('x', 2)" title="Sağa 2m Taşı" class="py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-black transition border border-slate-700 hover:border-cyan-400 cursor-pointer">Sağ →</button>
+                                <button type="button" onclick="nudgeSelectedMachine('z', -2)" title="İleri 2m Taşı" class="py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-black transition border border-slate-700 hover:border-cyan-400 cursor-pointer">↑ İleri</button>
+                                <button type="button" onclick="nudgeSelectedMachine('z', 2)" title="Geri 2m Taşı" class="py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-black transition border border-slate-700 hover:border-cyan-400 cursor-pointer">↓ Geri</button>
+                                <button type="button" onclick="rotateSelectedMachine(Math.PI/2)" title="90 Derece Döndür" class="py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-black transition shadow-md shadow-indigo-600/30 cursor-pointer">🔄 90°</button>
+                            </div>
+                            <!-- Hızlı Konum Önayarları -->
+                            <div class="flex items-center gap-2 pt-1 border-t border-slate-800">
+                                <span class="text-[10px] text-slate-400 font-semibold shrink-0">Hızlı Yerleşim:</span>
+                                <button type="button" onclick="setMachine3DPosition('warehouse', 26, 0, 0); save3DPositionsToStorage(); renderDigitalTwinHUD();" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 cursor-pointer">Varsayılan Sağ (X:26)</button>
+                                <button type="button" onclick="setMachine3DPosition('warehouse', -26, 0, 0); save3DPositionsToStorage(); renderDigitalTwinHUD();" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 cursor-pointer">Sol Hol (X:-26)</button>
+                                <button type="button" onclick="setMachine3DPosition('warehouse', 0, 26, Math.PI/2); save3DPositionsToStorage(); renderDigitalTwinHUD();" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold border border-slate-700 cursor-pointer">Ön Hol (Z:26)</button>
+                            </div>
+                        </div>
+
                         <!-- Taşıma ve Konumlandırma İpucu -->
                         <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
-                            <div class="flex items-center gap-1.5 font-bold text-amber-300">
-                                <i data-lucide="move" class="w-4 h-4"></i> Taşınabilir Depolama Sahası
+                            <div class="flex items-center gap-1.5 font-bold text-cyan-300">
+                                <i data-lucide="info" class="w-4 h-4 text-cyan-400"></i> Serbest Sürükle-Bırak & Otomatik Algılama
                             </div>
                             <p class="text-[11px] text-slate-400 leading-relaxed">
-                                Bu alanı fabrikanın istediğiniz yerine taşımak için üstteki <strong class="text-white">"Yerleşimi Düzenle"</strong> modunu açıp fareyle serbestçe sürükleyebilirsiniz. Forklift robotu yeni konumu otomatik algılayıp paletleri oraya taşır.
+                                Depoyu veya üretim makinelerini üstteki <strong class="text-white">"Yerleşimi Düzenle"</strong> modunu açarak 3D sahnede fareyle istediğiniz yere sürükleyebilirsiniz. Otonom forklift, makinelerin ve deponun yeni dünya koordinatlarını canlı olarak algılar ve rotasını anında günceller.
                             </p>
                         </div>
 
@@ -6976,7 +7096,7 @@
                             <button onclick="triggerForkliftManualDispatch()" class="flex-1 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
                                 <i data-lucide="truck" class="w-4 h-4"></i> Forklift ile Palet Taşı
                             </button>
-                            <button onclick="focusOnSelectedMachine3D()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+                            <button onclick="focusOnSelectedMachine3D()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> Odaklan
                             </button>
                         </div>

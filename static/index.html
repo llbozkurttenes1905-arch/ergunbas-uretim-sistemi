@@ -1176,9 +1176,9 @@
                     </div>
 
                     <!-- GERÇEK 3D WEBGL DİJİTAL İKİZ FABRİKA SAHASI -->
-                    <div class="relative w-full aspect-[16/9] min-h-[460px] rounded-xl overflow-hidden border border-slate-800/90 shadow-2xl bg-slate-950 group" id="dt-3d-main-container">
+                    <div class="relative w-full aspect-[16/9] min-h-[460px] rounded-xl overflow-hidden border border-slate-800/90 shadow-2xl bg-slate-950 group select-none" id="dt-3d-main-container" style="touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;">
                         <!-- CANLI KAMERA VİDEO AKIŞI (AR Passthrough İçin) -->
-                        <video id="dt-ar-camera-video" playsinline autoplay muted class="hidden absolute inset-0 w-full h-full object-cover z-0"></video>
+                        <video id="dt-ar-camera-video" playsinline autoplay muted class="hidden absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"></video>
 
                         <!-- SİBER HOLOGRAM TARAMA VE SCANLINE OVERLAY -->
                         <div id="dt-hologram-overlay" class="hidden pointer-events-none absolute inset-0 z-15 hologram-scanlines opacity-40 flex flex-col justify-between p-4">
@@ -1199,14 +1199,14 @@
                             </div>
                         </div>
 
-                        <!-- Three.js 3D WebGL Canvas -->
-                        <canvas id="dt-3d-canvas" class="relative z-10 w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+                        <!-- Three.js 3D WebGL Canvas (Mobilde Kaymayı Kesin Olarak Önleyen touch-action: none) -->
+                        <canvas id="dt-3d-canvas" class="relative z-10 w-full h-full block cursor-grab active:cursor-grabbing select-none" style="touch-action: none !important; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;"></canvas>
 
                         <!-- 3D Nesnelere Kilitlenen Dinamik HTML Etiket Katmanı -->
-                        <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-20"></div>
+                        <div id="dt-3d-labels-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-20 select-none" style="touch-action: none;"></div>
 
-                        <!-- 3D Sahne Bilgi & Kamera Kılavuzu -->
-                        <div class="absolute top-3 left-3 bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-xl z-20">
+                        <!-- 3D Sahne Bilgi & Kamera Kılavuzu (Mobilde taşmayı önlemek için masaüstünde görünür) -->
+                        <div class="hidden lg:flex absolute top-2 left-2 bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl px-3 py-1.5 text-[11px] text-slate-300 items-center gap-2 pointer-events-none shadow-xl z-20">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span class="font-black text-cyan-300 flex items-center gap-1">
                                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> WebGL 2.0 • GPU Donanım Hızlandırma (60 FPS)
@@ -1217,32 +1217,32 @@
                             <span class="text-amber-400 font-semibold" id="dt-factory-dim-stat">📏 65m × 42m (2,730 m²)</span>
                         </div>
 
-                        <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri -->
-                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-slate-950/85 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-20">
+                        <!-- 3D Kamera & Yerleşim Kontrol Düğmeleri (Mobilde Sağa/Sola Kaymayı Önleyen Responsive Çubuk) -->
+                        <div class="absolute top-2 right-2 max-w-[calc(100%-16px)] flex items-center gap-1 bg-slate-950/90 backdrop-blur-md border border-slate-800/80 rounded-xl p-1 shadow-lg z-20 overflow-x-auto custom-scrollbar flex-nowrap shrink-0">
                             <!-- 🥽 XR & Hologram Butonu -->
-                            <button onclick="openXRHologramModal()" id="btn-dt-xr-hologram" title="🥽 Masanın Üzerinde Hologram & Canlı AR/VR Modu" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-fuchsia-600 via-indigo-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white transition flex items-center gap-1.5 shadow-lg shadow-fuchsia-600/30 cursor-pointer animate-pulse">
-                                <i data-lucide="glasses" class="w-3.5 h-3.5 text-white"></i> <span>🥽 Hologram / AR</span>
+                            <button onclick="openXRHologramModal()" id="btn-dt-xr-hologram" title="🥽 Masanın Üzerinde Hologram & Canlı AR/VR Modu" class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-fuchsia-600 via-indigo-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white transition flex items-center gap-1 shadow-lg shadow-fuchsia-600/30 cursor-pointer animate-pulse shrink-0">
+                                <i data-lucide="glasses" class="w-3.5 h-3.5 text-white"></i> <span class="whitespace-nowrap">🥽 Hologram / AR</span>
                             </button>
-                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="Canlı Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-3 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer">
-                                <i data-lucide="play-circle" class="w-3.5 h-3.5 text-white"></i> <span id="btn-dt-simulation-text">Canlı Simülasyon</span>
+                            <button onclick="toggleProductionSimulation()" id="btn-dt-simulation" title="Canlı Üretim & Fire Simülasyonunu Başlat/Durdur" class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-gradient-to-r from-purple-600 via-pink-600 to-amber-600 hover:from-purple-500 hover:to-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-purple-600/30 cursor-pointer shrink-0">
+                                <i data-lucide="play-circle" class="w-3.5 h-3.5 text-white"></i> <span id="btn-dt-simulation-text" class="whitespace-nowrap">Canlı Simülasyon</span>
                             </button>
-                            <button onclick="open3DFactoryConfigModal()" id="btn-dt-factory-config" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30">
-                                <i data-lucide="sliders" class="w-3 h-3 text-white"></i> <span>Ölçü & Personel</span>
+                            <button onclick="open3DFactoryConfigModal()" id="btn-dt-factory-config" title="Saha & Makine Ölçüleri ve Operatör Sayılarını Belirle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1 shadow-md shadow-cyan-600/30 shrink-0">
+                                <i data-lucide="sliders" class="w-3 h-3 text-white"></i> <span class="hidden sm:inline whitespace-nowrap">Ölçü & Personel</span>
                             </button>
-                            <button onclick="toggle3DDimensions()" id="btn-dt-dimensions" title="Saha Ölçü Çizgilerini Göster/Gizle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/20">
-                                <i data-lucide="ruler" class="w-3 h-3 text-white"></i> <span>Ölçüler</span>
+                            <button onclick="toggle3DDimensions()" id="btn-dt-dimensions" title="Saha Ölçü Çizgilerini Göster/Gizle" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1 shadow-md shadow-amber-600/20 shrink-0">
+                                <i data-lucide="ruler" class="w-3 h-3 text-white"></i> <span class="hidden sm:inline whitespace-nowrap">Ölçüler</span>
                             </button>
-                            <button onclick="toggle3DLayoutEditMode()" id="btn-dt-layout-edit" title="Makinelerin Yerini Değiştir / Düzenle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30">
-                                <i data-lucide="move" class="w-3 h-3 text-white"></i> <span id="dt-layout-edit-text">Yerleşimi Düzenle</span>
+                            <button onclick="toggle3DLayoutEditMode()" id="btn-dt-layout-edit" title="Makinelerin Yerini Değiştir / Düzenle" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center gap-1 shadow-md shadow-indigo-600/30 shrink-0">
+                                <i data-lucide="move" class="w-3 h-3 text-white"></i> <span id="dt-layout-edit-text" class="whitespace-nowrap">Yerleşimi Düzenle</span>
                             </button>
-                            <button onclick="reset3DCameraView()" title="İzometrik Başlangıç Açısına Dön" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1">
-                                <i data-lucide="compass" class="w-3 h-3 text-cyan-400"></i> İzometrik
+                            <button onclick="reset3DCameraView()" title="İzometrik Başlangıç Açısına Dön" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 shrink-0">
+                                <i data-lucide="compass" class="w-3 h-3 text-cyan-400"></i> <span class="hidden md:inline whitespace-nowrap">İzometrik</span>
                             </button>
-                            <button onclick="focusOnSelectedMachine3D()" title="Seçili Hatta 3D Odaklan" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1">
-                                <i data-lucide="crosshair" class="w-3 h-3 text-emerald-400"></i> Odaklan
+                            <button onclick="focusOnSelectedMachine3D()" title="Seçili Hatta 3D Odaklan" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 shrink-0">
+                                <i data-lucide="crosshair" class="w-3 h-3 text-emerald-400"></i> <span class="hidden md:inline whitespace-nowrap">Odaklan</span>
                             </button>
-                            <button onclick="toggle3DAutoRotate()" id="btn-dt-autorotate" title="Otomatik Tesis Turunu Başlat/Durdur" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1">
-                                <i data-lucide="rotate-cw" class="w-3 h-3 text-amber-400"></i> Otomatik Tur
+                            <button onclick="toggle3DAutoRotate()" id="btn-dt-autorotate" title="Otomatik Tesis Turunu Başlat/Durdur" class="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center gap-1 shrink-0">
+                                <i data-lucide="rotate-cw" class="w-3 h-3 text-amber-400"></i> <span class="hidden md:inline whitespace-nowrap">Otomatik Tur</span>
                             </button>
                         </div>
 
@@ -1370,26 +1370,26 @@
                             </div>
                         </div>
 
-                        <!-- Yerleşim Düzenleme Modu Yüzen Kontrol Paneli -->
-                        <div id="dt-layout-edit-banner" class="hidden absolute top-14 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md border border-indigo-500/50 rounded-2xl px-3.5 py-2 shadow-2xl flex flex-wrap items-center gap-2.5 z-20 text-xs">
-                            <div class="flex items-center gap-1.5 text-indigo-300 font-bold whitespace-nowrap">
-                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping"></span>
-                                <span>Yerleşim Modu</span>
+                        <!-- Yerleşim Düzenleme Modu Yüzen Kontrol Paneli (Mobilde Taşmayan Responsive Düzen) -->
+                        <div id="dt-layout-edit-banner" class="hidden absolute top-12 left-1/2 -translate-x-1/2 w-[96%] max-w-lg justify-center bg-slate-900/95 backdrop-blur-md border border-indigo-500/50 rounded-2xl p-2 shadow-2xl flex flex-wrap items-center gap-1.5 z-20 text-xs">
+                            <div class="flex items-center gap-1 text-indigo-300 font-bold whitespace-nowrap text-[11px]">
+                                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
+                                <span>Yerleşim</span>
                             </div>
-                            <div class="flex items-center gap-1 bg-slate-950/90 px-2 py-1 rounded-xl border border-slate-800">
-                                <span class="text-[11px] text-cyan-300 px-1 font-bold whitespace-nowrap" id="dt-edit-selected-name">Seçili: Hat 101</span>
+                            <div class="flex items-center gap-0.5 bg-slate-950/90 px-1.5 py-1 rounded-xl border border-slate-800">
+                                <span class="text-[10px] text-cyan-300 px-1 font-bold whitespace-nowrap max-w-[90px] truncate" id="dt-edit-selected-name">Seçili: Hat 101</span>
                                 <button onclick="nudgeSelectedMachine('x', -1)" title="Sola Kaydır (-X) [Sol Ok]" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs cursor-pointer">◀</button>
                                 <button onclick="nudgeSelectedMachine('x', 1)" title="Sağa Kaydır (+X) [Sağ Ok]" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs cursor-pointer">▶</button>
                                 <button onclick="nudgeSelectedMachine('z', -1)" title="İleri Kaydır (-Z) [Yukarı Ok]" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs cursor-pointer">▲</button>
                                 <button onclick="nudgeSelectedMachine('z', 1)" title="Geri Kaydır (+Z) [Aşağı Ok]" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold flex items-center justify-center text-xs cursor-pointer">▼</button>
-                                <button onclick="rotateSelectedMachine(Math.PI / 2)" title="90° Döndür [R Tuşu]" class="px-2.5 h-6 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-black flex items-center justify-center text-[10px] gap-1 shadow-md shadow-indigo-600/30 cursor-pointer">🔄 90° Döndür</button>
+                                <button onclick="rotateSelectedMachine(Math.PI / 2)" title="90° Döndür [R Tuşu]" class="px-2 h-6 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-black flex items-center justify-center text-[10px] gap-0.5 shadow-md shadow-indigo-600/30 cursor-pointer">🔄 90°</button>
                                 <button onclick="rotateSelectedMachine(Math.PI / 4)" title="45° Döndür" class="px-1.5 h-6 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold flex items-center justify-center text-[10px] cursor-pointer">45°</button>
                             </div>
-                            <div class="flex items-center gap-1.5 whitespace-nowrap">
-                                <button onclick="toggle3DLayoutEditMode()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 shadow-md shadow-emerald-600/30">
-                                    💾 Kaydet & Kapat
+                            <div class="flex items-center gap-1 whitespace-nowrap">
+                                <button onclick="toggle3DLayoutEditMode()" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center gap-1 shadow-md shadow-emerald-600/30">
+                                    💾 Kaydet
                                 </button>
-                                <button onclick="reset3DPositionsToDefault()" class="px-2 py-1 rounded-lg bg-rose-600/80 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1" title="Orijinal fabrika düzenine dön">
+                                <button onclick="reset3DPositionsToDefault()" class="px-2 py-1 rounded-lg bg-rose-600/80 hover:bg-rose-500 text-white font-bold text-[11px] flex items-center gap-1" title="Orijinal fabrika düzenine dön">
                                     🔄 Sıfırla
                                 </button>
                             </div>
@@ -3872,19 +3872,29 @@
             dtDragOffset = new THREE.Vector3();
             dtPlaneIntersect = new THREE.Vector3();
 
-            // 6. Kayıtlı Özel Yerleşimi Yükle
-            loadSaved3DPositions();
-
-            // 7. Fabrika Zemini (Pürüzsüz Gri Sanayi Zemini, Izgarasız) & Mimari
+            // 6. Fabrika Zemini (Pürüzsüz Gri Sanayi Zemini, Izgarasız) & Mimari
             buildFactoryFloorAndArchitecture();
             buildAll3DMachines();
             applyFactoryLayoutFromConfig();
             init3DForklift();
 
-            // 8. Tıklama & Sürükleme Dinleyicileri
+            // 7. Kayıtlı Özel Yerleşimi Yükle (applyFactoryLayoutFromConfig'ten sonra yüklenerek kullanıcının özel planını korur)
+            loadSaved3DPositions();
+
+            // 8. Tıklama & Sürükleme Dinleyicileri (Mobilde kaymayı önleyen korumalar)
             canvas.addEventListener('pointerdown', on3DPointerDown);
             window.addEventListener('pointermove', on3DPointerMove);
             window.addEventListener('pointerup', on3DPointerUp);
+
+            // Mobilde kaymayı önleme: Dokunmatik parmak hareketlerinin tüm web sayfasını kaydırmasını engelle
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            }, { passive: false });
 
             window.addEventListener('resize', on3DWindowResize);
 
@@ -3932,19 +3942,13 @@
             // Temiz Sarı Güvenlik Sınır Çizgileri
             const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             
-            // Hat Başları Ön Güvenlik Şeridi
+            // Hat Başları Ön Güvenlik Şeridi (Bina ön sınır)
             const lineFront = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
             lineFront.rotation.x = -Math.PI / 2;
             lineFront.position.set(0, 0.02, D / 2 - 2);
             dtArchitectureGroup.add(lineFront);
 
-            // Orta hat koridoru
-            const lineMid = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
-            lineMid.rotation.x = -Math.PI / 2;
-            lineMid.position.set(0, 0.02, 6);
-            dtArchitectureGroup.add(lineMid);
-
-            // Arka koridor çizgisi
+            // Arka koridor çizgisi (Bina arka sınır)
             const lineBack = new THREE.Mesh(new THREE.PlaneGeometry(L + 10, 0.35), lineMat);
             lineBack.rotation.x = -Math.PI / 2;
             lineBack.position.set(0, 0.02, -(D / 2 - 2));
@@ -4014,7 +4018,7 @@
         /* --------------------------------------------------------
            SAHA & MAKİNE ÖLÇÜLERİNİ CANLI OLARAK 3D SAHNEYE UYGULAMA
         -------------------------------------------------------- */
-        function applyFactoryLayoutFromConfig() {
+        function applyFactoryLayoutFromConfig(forceDefaults = false) {
             if (!dtScene || !dtMachineGroups) return;
 
             const L = dtFactoryConfig.sahaUzunluk || 65;
@@ -4044,17 +4048,32 @@
             const leftLines = ['101', '102', '103', '104', '106'];
             const rightLines = ['105', '107', '108', '109', '201'];
 
+            // Kullanıcının kayıtlı özel bir yerleşimi var mı kontrol et (varsa X-Z koordinatlarını ezme)
+            let hasCustomPositions = false;
+            try {
+                const raw = localStorage.getItem(DT_STORAGE_KEY);
+                if (raw) {
+                    const p = JSON.parse(raw);
+                    if (p && Object.keys(p).length > 0) hasCustomPositions = true;
+                }
+            } catch(e) {}
+
             leftLines.forEach((id, idx) => {
                 const newZ = zOffsets[idx];
                 const newX = solBlokX;
-                if (DT_3D_POSITIONS[id]) {
-                    DT_3D_POSITIONS[id].x = newX;
-                    DT_3D_POSITIONS[id].z = newZ;
+                if (forceDefaults || !hasCustomPositions) {
+                    if (DT_3D_POSITIONS[id]) {
+                        DT_3D_POSITIONS[id].x = newX;
+                        DT_3D_POSITIONS[id].z = newZ;
+                    }
+                    const grp = dtMachineGroups[id];
+                    if (grp) {
+                        grp.position.x = newX;
+                        grp.position.z = newZ;
+                    }
                 }
                 const grp = dtMachineGroups[id];
                 if (grp) {
-                    grp.position.x = newX;
-                    grp.position.z = newZ;
                     const scaleX = makineBoyu / 18.0;
                     grp.scale.set(scaleX, 1, 1);
                 }
@@ -4063,14 +4082,19 @@
             rightLines.forEach((id, idx) => {
                 const newZ = zOffsets[idx];
                 const newX = sagBlokX;
-                if (DT_3D_POSITIONS[id]) {
-                    DT_3D_POSITIONS[id].x = newX;
-                    DT_3D_POSITIONS[id].z = newZ;
+                if (forceDefaults || !hasCustomPositions) {
+                    if (DT_3D_POSITIONS[id]) {
+                        DT_3D_POSITIONS[id].x = newX;
+                        DT_3D_POSITIONS[id].z = newZ;
+                    }
+                    const grp = dtMachineGroups[id];
+                    if (grp) {
+                        grp.position.x = newX;
+                        grp.position.z = newZ;
+                    }
                 }
                 const grp = dtMachineGroups[id];
                 if (grp) {
-                    grp.position.x = newX;
-                    grp.position.z = newZ;
                     const scaleX = (id === '201') ? (levhaBoyu / 22.0) : (makineBoyu / 18.0);
                     grp.scale.set(scaleX, 1, 1);
                 }
@@ -4079,14 +4103,16 @@
             // Kalite Kontrol Masası (qc1):
             const qcZ = (2 * spacingZ) + 7;
             const qcX = (solBlokX + sagBlokX) / 2;
-            if (DT_3D_POSITIONS['qc1']) {
-                DT_3D_POSITIONS['qc1'].x = qcX;
-                DT_3D_POSITIONS['qc1'].z = qcZ;
-            }
-            const qcGrp = dtMachineGroups['qc1'];
-            if (qcGrp) {
-                qcGrp.position.x = qcX;
-                qcGrp.position.z = qcZ;
+            if (forceDefaults || !hasCustomPositions) {
+                if (DT_3D_POSITIONS['qc1']) {
+                    DT_3D_POSITIONS['qc1'].x = qcX;
+                    DT_3D_POSITIONS['qc1'].z = qcZ;
+                }
+                const qcGrp = dtMachineGroups['qc1'];
+                if (qcGrp) {
+                    qcGrp.position.x = qcX;
+                    qcGrp.position.z = qcZ;
+                }
             }
 
             // Ölçü çizgilerini ve güvenlik şeritlerini güncelle
@@ -4263,10 +4289,85 @@
         }
 
         /* --------------------------------------------------------
+           SARI İSG GÜVENLİK ALANI (Safety Zone) MOTORU
+           Makinelerin zemin güvenlik şeridi ve tehlike uyarı sınırları
+           doğrudan makine grubuna bağlıdır; makine taşındığında veya
+           döndürüldüğünde sarı güvenlik alanı da onunla birlikte hareket eder!
+        -------------------------------------------------------- */
+        function createMachineSafetyZone(widthX, depthZ, labelText = 'İSG EMNİYET ALANI') {
+            const safetyGroup = new THREE.Group();
+            safetyGroup.name = 'safetyZone';
+
+            // 1. Zemin Yarı Saydam Kehribar/Sarı Güvenlik Dolgusu
+            const floorGeo = new THREE.PlaneGeometry(widthX, depthZ);
+            const floorMat = new THREE.MeshBasicMaterial({
+                color: 0xfacc15,
+                transparent: true,
+                opacity: 0.12,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.set(0, 0.015, 0);
+            floor.receiveShadow = true;
+            safetyGroup.add(floor);
+
+            // 2. Çevre Endüstriyel Parlak Sarı Sınır Şeridi (0.16m)
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+
+            // Üst ve Alt Şeritler
+            const topStrip = new THREE.Mesh(new THREE.PlaneGeometry(widthX, 0.16), lineMat);
+            topStrip.rotation.x = -Math.PI / 2;
+            topStrip.position.set(0, 0.02, depthZ / 2);
+            safetyGroup.add(topStrip);
+
+            const bottomStrip = new THREE.Mesh(new THREE.PlaneGeometry(widthX, 0.16), lineMat);
+            bottomStrip.rotation.x = -Math.PI / 2;
+            bottomStrip.position.set(0, 0.02, -depthZ / 2);
+            safetyGroup.add(bottomStrip);
+
+            // Sol ve Sağ Şeritler
+            const leftStrip = new THREE.Mesh(new THREE.PlaneGeometry(0.16, depthZ), lineMat);
+            leftStrip.rotation.x = -Math.PI / 2;
+            leftStrip.position.set(-widthX / 2, 0.02, 0);
+            safetyGroup.add(leftStrip);
+
+            const rightStrip = new THREE.Mesh(new THREE.PlaneGeometry(0.16, depthZ), lineMat);
+            rightStrip.rotation.x = -Math.PI / 2;
+            rightStrip.position.set(widthX / 2, 0.02, 0);
+            safetyGroup.add(rightStrip);
+
+            // 3. 4 Köşe Sarı-Siyah Emniyet L-Köşebentleri (Hazard Corner Markers)
+            const blackMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+            [[-1, -1], [-1, 1], [1, -1], [1, 1]].forEach(([sx, sz]) => {
+                const cx = sx * (widthX / 2 - 0.6);
+                const cz = sz * (depthZ / 2 - 0.6);
+
+                const cornerOuter = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), lineMat);
+                cornerOuter.rotation.x = -Math.PI / 2;
+                cornerOuter.position.set(cx, 0.022, cz);
+                safetyGroup.add(cornerOuter);
+
+                const cornerInner = new THREE.Mesh(new THREE.PlaneGeometry(0.75, 0.75), blackMat);
+                cornerInner.rotation.x = -Math.PI / 2;
+                cornerInner.position.set(cx, 0.024, cz);
+                safetyGroup.add(cornerInner);
+            });
+
+            return safetyGroup;
+        }
+
+        /* --------------------------------------------------------
            PROSEDÜREL 3D KALİTE KONTROL MASASI VE MUAYENE İSTASYONU
         -------------------------------------------------------- */
         function create3DQualityControlTable(id, name) {
             const group = new THREE.Group();
+
+            // SARI İSG GÜVENLİK ALANI (Masa ile birlikte taşınır ve döner)
+            const safetyZone = createMachineSafetyZone(6.0, 4.0, 'KALİTE KONTROL ALANI');
+            safetyZone.position.set(0, 0, 0);
+            group.add(safetyZone);
 
             const steelMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.3, metalness: 0.8 });
             const darkFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6, metalness: 0.5 });
@@ -5842,6 +5943,13 @@
             const motorMat = new THREE.MeshStandardMaterial({ color: motorColor, roughness: 0.35, metalness: 0.50 });
 
             // ==========================================
+            // SARI İSG GÜVENLİK ALANI (Makine ile birlikte taşınır ve döner)
+            // ==========================================
+            const safetyZone = createMachineSafetyZone(19.2, 4.4, 'İSG EMNİYET ALANI');
+            safetyZone.position.set(-0.5, 0, 0);
+            group.add(safetyZone);
+
+            // ==========================================
             // A. TAŞIYICI AĞIR TABAN ŞASESİ (I-Beam Base Skid)
             // ==========================================
             const skid = new THREE.Mesh(new THREE.BoxGeometry(15.2, 0.20, 1.8), darkChassisMat);
@@ -6241,6 +6349,11 @@
             });
             const rollGearMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 });
             const rollStripeMat = new THREE.MeshBasicMaterial({ color: 0x0b63a7 });
+
+            // SARI İSG GÜVENLİK ALANI (Levha 201 ile birlikte taşınır ve döner)
+            const safetyZone = createMachineSafetyZone(24.0, 6.2, 'LEVHA HATTI İSG ALANI');
+            safetyZone.position.set(2.0, 0, 0);
+            group.add(safetyZone);
 
             // 1. Ağır Taban Şasesi
             const skid = new THREE.Mesh(new THREE.BoxGeometry(19.5, 0.22, 4.6), darkChassisMat);
@@ -6942,6 +7055,10 @@
             const rect = canvas.getBoundingClientRect();
             if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
 
+            if (canvas.setPointerCapture && e.pointerId !== undefined) {
+                try { canvas.setPointerCapture(e.pointerId); } catch(err){}
+            }
+
             dtMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
             dtMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
             dtRaycaster.setFromCamera(dtMouse, dtCamera);
@@ -6983,6 +7100,7 @@
             dtRaycaster.setFromCamera(dtMouse, dtCamera);
 
             if (dtEditMode && dtIsDraggingMachine && dtDraggedMachineId) {
+                e.preventDefault();
                 if (dtFloorPlane && dtRaycaster.ray.intersectPlane(dtFloorPlane, dtPlaneIntersect)) {
                     let targetX = dtPlaneIntersect.x + dtDragOffset.x;
                     let targetZ = dtPlaneIntersect.z + dtDragOffset.z;
@@ -7022,6 +7140,10 @@
 
         function on3DPointerUp(e) {
             const canvas = document.getElementById('dt-3d-canvas');
+            if (canvas && canvas.releasePointerCapture && e.pointerId !== undefined) {
+                try { canvas.releasePointerCapture(e.pointerId); } catch(err){}
+            }
+
             if (dtIsDraggingMachine) {
                 dtIsDraggingMachine = false;
                 dtDraggedMachineId = null;
@@ -7175,43 +7297,92 @@
             }
         });
 
-        function save3DPositionsToStorage() {
+        function save3DPositionsToStorage(syncBackend = true) {
             try {
                 const toSave = {};
                 Object.entries(DT_3D_POSITIONS).forEach(([id, cfg]) => {
                     toSave[id] = { x: cfg.x, z: cfg.z, rotY: cfg.rotY || 0 };
                 });
                 localStorage.setItem(DT_STORAGE_KEY, JSON.stringify(toSave));
+
+                // Sunucuya (Backend) kalıcı olarak kaydet (Tüm cihazlar ve telefon ile anında eşitlenir)
+                if (syncBackend) {
+                    fetch('/api/dt_layout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ positions: toSave, timestamp: Date.now() })
+                    })
+                    .then(res => res.json())
+                    .then(d => {
+                        console.log('3D yerleşim backend senkronizasyonu tamam:', d);
+                    })
+                    .catch(err => console.warn('3D backend sync hatası:', err));
+                }
             } catch (err) {
                 console.warn('3D pozisyon kayıt hatası:', err);
             }
         }
 
-        function loadSaved3DPositions() {
+        async function loadSaved3DPositions() {
+            let loadedPositions = null;
+            // 1. Önce localStorage'dan yükle
             try {
                 const saved = localStorage.getItem(DT_STORAGE_KEY);
                 if (saved) {
-                    const parsed = JSON.parse(saved);
-                    Object.keys(parsed).forEach(id => {
-                        if (DT_3D_POSITIONS[id]) {
-                            if (typeof parsed[id].x === 'number') DT_3D_POSITIONS[id].x = parsed[id].x;
-                            if (typeof parsed[id].z === 'number') DT_3D_POSITIONS[id].z = parsed[id].z;
-                            if (typeof parsed[id].rotY === 'number') DT_3D_POSITIONS[id].rotY = parsed[id].rotY;
-                        }
-                    });
+                    loadedPositions = JSON.parse(saved);
                 }
             } catch (err) {
-                console.warn('3D pozisyon yükleme hatası:', err);
+                console.warn('LocalStorage 3D pozisyon okuma hatası:', err);
+            }
+
+            // 2. Sunucudaki (Backend) kalıcı yerleşimden yükle ve senkronize et
+            try {
+                const res = await fetch('/api/dt_layout');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.positions && Object.keys(data.positions).length > 0) {
+                        loadedPositions = data.positions;
+                        localStorage.setItem(DT_STORAGE_KEY, JSON.stringify(data.positions));
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend dt_layout yükleme uyarısı:', err);
+            }
+
+            // 3. Pozisyonları hem DT_3D_POSITIONS hem de 3D nesnelerine uygula!
+            if (loadedPositions) {
+                Object.entries(loadedPositions).forEach(([id, pos]) => {
+                    if (DT_3D_POSITIONS[id]) {
+                        if (typeof pos.x === 'number') DT_3D_POSITIONS[id].x = pos.x;
+                        if (typeof pos.z === 'number') DT_3D_POSITIONS[id].z = pos.z;
+                        if (typeof pos.rotY === 'number') DT_3D_POSITIONS[id].rotY = pos.rotY;
+                    }
+                    const grp = dtMachineGroups[id];
+                    if (grp) {
+                        if (typeof pos.x === 'number') grp.position.x = pos.x;
+                        if (typeof pos.z === 'number') grp.position.z = pos.z;
+                        if (typeof pos.rotY === 'number') grp.rotation.y = pos.rotY;
+                    }
+                });
+                if (typeof updateSelectionReticle === 'function') updateSelectionReticle();
+                if (typeof updateProjected3DLabels === 'function') updateProjected3DLabels();
             }
         }
 
         function reset3DPositionsToDefault() {
             if (!confirm('Tüm makineler orijinal fabrika yerleşimine sıfırlansın mı?')) return;
             localStorage.removeItem(DT_STORAGE_KEY);
+            fetch('/api/dt_layout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ positions: {}, timestamp: Date.now() })
+            }).catch(() => {});
+
             Object.keys(DT_3D_DEFAULT_POSITIONS).forEach(id => {
                 const def = DT_3D_DEFAULT_POSITIONS[id];
                 setMachine3DPosition(id, def.x, def.z, def.rotY || 0);
             });
+            applyFactoryLayoutFromConfig(true);
             updateSelectionReticle();
             if (typeof showToast === 'function') {
                 showToast('Fabrika yerleşimi varsayılana sıfırlandı.', 'info');

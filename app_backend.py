@@ -4393,6 +4393,28 @@ def root():
             return f.read()
     return "<h1>ERGUNBAS Group Üretim Takip Sistemi</h1>"
 
+# 3D Dijital İkiz: Makine Yerleşim Planı Kalıcı Depolama API
+DT_LAYOUT_FILE = os.path.join(APP_DIR, "dt_layout.json")
+
+@app.get("/api/dt_layout")
+def get_dt_layout():
+    if os.path.exists(DT_LAYOUT_FILE):
+        try:
+            with open(DT_LAYOUT_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print("dt_layout okuma hatası:", e)
+    return {"positions": {}, "factoryConfig": {}}
+
+@app.post("/api/dt_layout")
+def save_dt_layout(payload: Dict[str, Any] = Body(...)):
+    try:
+        with open(DT_LAYOUT_FILE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        return {"status": "ok", "message": "3D yerleşim planı başarıyla kaydedildi"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"3D yerleşim kaydedilemedi: {str(e)}")
+
 # Mount static files
 static_dir = os.path.join(APP_DIR, "static")
 os.makedirs(static_dir, exist_ok=True)

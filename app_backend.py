@@ -4384,13 +4384,17 @@ def export_daily_pdf(date: Optional[str] = None):
     headers = {'Content-Disposition': f'attachment; filename="{filename}"'}
     return Response(content=buf.getvalue(), media_type="application/pdf", headers=headers)
 
-# Serve Web Interface
 @app.get("/", response_class=HTMLResponse)
 def root():
     index_path = os.path.join(APP_DIR, "static", "index.html")
     if os.path.exists(index_path):
         with open(index_path, "r", encoding="utf-8") as f:
-            return f.read()
+            content = f.read()
+            return HTMLResponse(content=content, headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            })
     return "<h1>ERGUNBAS Group Üretim Takip Sistemi</h1>"
 
 # 3D Dijital İkiz: Makine Yerleşim Planı Kalıcı Depolama API

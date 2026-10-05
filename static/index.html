@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>ERGUNBAS Group | Ekstrüder & Levha Canlı Üretim Yönetimi</title>
 
     <!-- PWA / Ana Ekrana Ekleme desteği -->
@@ -3323,7 +3326,9 @@
         // Service Worker kaydı (Ana Ekrana Ekle / PWA desteği için)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/static/sw.js').catch(() => {});
+                navigator.serviceWorker.register('/static/sw.js?v=2.4.2').then(reg => {
+                    reg.update().catch(() => {});
+                }).catch(() => {});
             });
         }
 

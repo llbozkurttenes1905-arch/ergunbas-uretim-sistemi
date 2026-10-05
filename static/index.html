@@ -4782,55 +4782,555 @@
 
 
         /* --------------------------------------------------------
-           GERÇEKÇİ ÜRÜN GEOMETRİLERİ (Pervaz, Kasa, Seren, Levha)
-           & SAĞLAM İSTİF SEHPASI İLE FİRE GERİ DÖNÜŞÜM KIRMA KASASI
+           SOLIDWORKS CAD & PRECISION ENGINEERING GENERATORS
+           (Pnömatik Silindirler, Analog Manometreler, Boru Hatları,
+            Sigma Alüminyum Profiller ve Hassas Mekanik Parçalar)
+        -------------------------------------------------------- */
+        const dtCadGaugeTextures = {};
+        function getCadGaugeTexture(type = 'melt') {
+            if (dtCadGaugeTextures[type]) return dtCadGaugeTextures[type];
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return null;
+
+                // Kadran Beyaz Dairesel Gövdesi
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.arc(128, 128, 122, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Dış Koyu Çerçeve
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+
+                // İç İnce Çember
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(128, 128, 108, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Kalibrasyon Yay Açısı (-135° ile +135°)
+                const startAngle = 0.75 * Math.PI;
+                const endAngle = 2.25 * Math.PI;
+                const totalArc = endAngle - startAngle;
+
+                // Yeşil / Kırmızı Güvenli Çalışma Bölgesi
+                ctx.lineWidth = 7;
+                ctx.beginPath();
+                ctx.arc(128, 128, 96, startAngle, startAngle + totalArc * 0.70);
+                ctx.strokeStyle = '#22c55e';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(128, 128, 96, startAngle + totalArc * 0.70, endAngle);
+                ctx.strokeStyle = '#ef4444';
+                ctx.stroke();
+
+                // Skala Çizgileri (Ticks)
+                const numTicks = 24;
+                for (let i = 0; i <= numTicks; i++) {
+                    const angle = startAngle + (totalArc * (i / numTicks));
+                    const isMajor = (i % 4 === 0);
+                    const rIn = isMajor ? 78 : 88;
+                    const rOut = 104;
+                    const x1 = 128 + Math.cos(angle) * rIn;
+                    const y1 = 128 + Math.sin(angle) * rIn;
+                    const x2 = 128 + Math.cos(angle) * rOut;
+                    const y2 = 128 + Math.sin(angle) * rOut;
+
+                    ctx.strokeStyle = isMajor ? '#0f172a' : '#64748b';
+                    ctx.lineWidth = isMajor ? 3.5 : 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+
+                // Kadran Metinleri
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                let mainLabel = 'bar';
+                let subLabel = '0...250';
+                let needleVal = 0.62;
+
+                if (type === 'vacuum') {
+                    mainLabel = 'VACUUM';
+                    subLabel = '-1...0 bar';
+                    needleVal = 0.82;
+                } else if (type === 'melt') {
+                    mainLabel = 'MELT';
+                    subLabel = '0...350 bar';
+                    needleVal = 0.58;
+                } else if (type === 'water') {
+                    mainLabel = 'WATER';
+                    subLabel = '0...10 bar';
+                    needleVal = 0.45;
+                } else if (type === 'pneumatic') {
+                    mainLabel = 'AIR (6 bar)';
+                    subLabel = '0...12 bar';
+                    needleVal = 0.50;
+                }
+
+                ctx.fillText(mainLabel, 128, 80);
+                ctx.font = 'bold 13px monospace';
+                ctx.fillStyle = '#475569';
+                ctx.fillText(subLabel, 128, 172);
+
+                // İbre (Needle - Kırmızı)
+                const nAngle = startAngle + totalArc * needleVal;
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(128, 128);
+                ctx.lineTo(128 + Math.cos(nAngle) * 80, 128 + Math.sin(nAngle) * 80);
+                ctx.stroke();
+
+                // İbre Karşı Ağırlığı
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(128, 128);
+                ctx.lineTo(128 - Math.cos(nAngle) * 22, 128 - Math.sin(nAngle) * 22);
+                ctx.stroke();
+
+                // Merkez Göbek Pimi
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(128, 128, 9, 0, Math.PI * 2);
+                ctx.fill();
+
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.minFilter = THREE.LinearFilter;
+                dtCadGaugeTextures[type] = texture;
+                return texture;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function createCadPressureGauge(diameter = 0.22, gaugeType = 'melt') {
+            const gaugeGroup = new THREE.Group();
+            const radius = diameter / 2;
+
+            const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.25, metalness: 0.85 });
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.10, metalness: 0.95 });
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.45, roughness: 0.1, metalness: 0.2 });
+
+            // Alt Pirinç Montaj Nipeli (Hex Nipple)
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.22, radius * 0.22, diameter * 0.7, 12), brassMat);
+            stem.position.y = -diameter * 0.42;
+            gaugeGroup.add(stem);
+
+            // Pirinç Altıgen Somun
+            const hexNut = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.38, radius * 0.38, diameter * 0.2, 6), brassMat);
+            hexNut.position.y = -diameter * 0.22;
+            gaugeGroup.add(hexNut);
+
+            // Krom Kadran Gövdesi / Çanağı
+            const bezel = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius * 0.96, diameter * 0.28, 28), chromeMat);
+            bezel.rotation.x = Math.PI / 2;
+            gaugeGroup.add(bezel);
+
+            // Kadran Ön Yüzeyi (Texture)
+            const texture = getCadGaugeTexture(gaugeType);
+            const dialMat = texture 
+                ? new THREE.MeshBasicMaterial({ map: texture })
+                : new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const dialFace = new THREE.Mesh(new THREE.CircleGeometry(radius * 0.92, 28), dialMat);
+            dialFace.position.z = (diameter * 0.28) / 2 + 0.002;
+            gaugeGroup.add(dialFace);
+
+            // Ön Koruyucu Akrilik Lens
+            const lens = new THREE.Mesh(new THREE.CircleGeometry(radius * 0.94, 28), glassMat);
+            lens.position.z = (diameter * 0.28) / 2 + 0.006;
+            gaugeGroup.add(lens);
+
+            return gaugeGroup;
+        }
+
+        function createCadSigmaProfile(length = 1.0, size = 0.10, axis = 'x') {
+            const profileGroup = new THREE.Group();
+            const alumMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, roughness: 0.22, metalness: 0.85 });
+            const slotDarkMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.7 });
+
+            let geo;
+            if (axis === 'x') geo = new THREE.BoxGeometry(length, size, size);
+            else if (axis === 'y') geo = new THREE.BoxGeometry(size, length, size);
+            else geo = new THREE.BoxGeometry(size, size, length);
+
+            const mainBeam = new THREE.Mesh(geo, alumMat);
+            mainBeam.castShadow = true;
+            profileGroup.add(mainBeam);
+
+            const slotWidth = size * 0.28;
+            const slotOffset = size * 0.505;
+
+            if (axis === 'x') {
+                const slotH = new THREE.Mesh(new THREE.BoxGeometry(length, size * 0.015, slotWidth), slotDarkMat);
+                slotH.position.y = slotOffset;
+                profileGroup.add(slotH);
+                const slotH2 = slotH.clone();
+                slotH2.position.y = -slotOffset;
+                profileGroup.add(slotH2);
+
+                const slotV = new THREE.Mesh(new THREE.BoxGeometry(length, slotWidth, size * 0.015), slotDarkMat);
+                slotV.position.z = slotOffset;
+                profileGroup.add(slotV);
+                const slotV2 = slotV.clone();
+                slotV2.position.z = -slotOffset;
+                profileGroup.add(slotV2);
+            } else if (axis === 'y') {
+                const slot1 = new THREE.Mesh(new THREE.BoxGeometry(slotWidth, length, size * 0.015), slotDarkMat);
+                slot1.position.z = slotOffset;
+                profileGroup.add(slot1);
+                const slot2 = slot1.clone();
+                slot2.position.z = -slotOffset;
+                profileGroup.add(slot2);
+
+                const slot3 = new THREE.Mesh(new THREE.BoxGeometry(size * 0.015, length, slotWidth), slotDarkMat);
+                slot3.position.x = slotOffset;
+                profileGroup.add(slot3);
+                const slot4 = slot3.clone();
+                slot4.position.x = -slotOffset;
+                profileGroup.add(slot4);
+            } else {
+                const slot1 = new THREE.Mesh(new THREE.BoxGeometry(slotWidth, size * 0.015, length), slotDarkMat);
+                slot1.position.y = slotOffset;
+                profileGroup.add(slot1);
+                const slot2 = slot1.clone();
+                slot2.position.y = -slotOffset;
+                profileGroup.add(slot2);
+
+                const slot3 = new THREE.Mesh(new THREE.BoxGeometry(size * 0.015, slotWidth, length), slotDarkMat);
+                slot3.position.x = slotOffset;
+                profileGroup.add(slot3);
+                const slot4 = slot3.clone();
+                slot4.position.x = -slotOffset;
+                profileGroup.add(slot4);
+            }
+
+            return profileGroup;
+        }
+
+        function createCadCornerBracket(size = 0.09) {
+            const bracketGroup = new THREE.Group();
+            const alumMat = new THREE.MeshStandardMaterial({ color: 0xb0bec5, roughness: 0.35, metalness: 0.8 });
+            const boltMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.9 });
+
+            const body = new THREE.Mesh(new THREE.BoxGeometry(size, size, size * 0.9), alumMat);
+            bracketGroup.add(body);
+
+            [-size * 0.22, size * 0.22].forEach(by => {
+                const bolt = new THREE.Mesh(new THREE.CylinderGeometry(size * 0.12, size * 0.12, 0.015, 6), boltMat);
+                bolt.rotation.x = Math.PI / 2;
+                bolt.position.set(0, by, size * 0.46);
+                bracketGroup.add(bolt);
+            });
+
+            return bracketGroup;
+        }
+
+        function createCadPneumaticCylinder(bore = 0.09, stroke = 0.35, rodExt = 0.15, axis = 'y') {
+            const cylGroup = new THREE.Group();
+            const radius = bore / 2;
+
+            const barrelMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.35, metalness: 0.75 });
+            const capMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.8 });
+            const chromeRodMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.05, metalness: 0.98 });
+            const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.3, metalness: 0.85 });
+            const blueFittingMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3, metalness: 0.3 });
+            const blueHoseMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.15 });
+            const orangeHoseMat = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.35, metalness: 0.15 });
+
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, stroke, 24), barrelMat);
+            cylGroup.add(barrel);
+
+            const capSize = bore * 1.25;
+            const capThickness = 0.04;
+            [-stroke / 2 - capThickness / 2, stroke / 2 + capThickness / 2].forEach(cy => {
+                const cap = new THREE.Mesh(new THREE.BoxGeometry(capSize, capThickness, capSize), capMat);
+                cap.position.y = cy;
+                cylGroup.add(cap);
+
+                [[-capSize*0.38, -capSize*0.38], [capSize*0.38, -capSize*0.38], [-capSize*0.38, capSize*0.38], [capSize*0.38, capSize*0.38]].forEach(([tx, tz]) => {
+                    const tieRod = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, stroke + capThickness * 2, 8), chromeRodMat);
+                    tieRod.position.set(tx, 0, tz);
+                    cylGroup.add(tieRod);
+                });
+            });
+
+            const rodRadius = radius * 0.42;
+            const totalRodLen = stroke * 0.6 + rodExt;
+            const rod = new THREE.Mesh(new THREE.CylinderGeometry(rodRadius, rodRadius, totalRodLen, 20), chromeRodMat);
+            rod.position.y = stroke / 2 + capThickness + totalRodLen / 2 - 0.02;
+            cylGroup.add(rod);
+
+            const clevis = new THREE.Mesh(new THREE.BoxGeometry(rodRadius * 2.2, 0.06, rodRadius * 2.2), capMat);
+            clevis.position.y = stroke / 2 + capThickness + totalRodLen - 0.01;
+            cylGroup.add(clevis);
+
+            [-stroke * 0.35, stroke * 0.35].forEach((fy, idx) => {
+                const fittingBase = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.03, 12), brassMat);
+                fittingBase.rotation.z = Math.PI / 2;
+                fittingBase.position.set(radius + 0.015, fy, 0);
+                cylGroup.add(fittingBase);
+
+                const fittingCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.02, 12), (idx === 0 ? blueFittingMat : new THREE.MeshStandardMaterial({ color: 0xf97316 })));
+                fittingCollar.rotation.z = Math.PI / 2;
+                fittingCollar.position.set(radius + 0.035, fy, 0);
+                cylGroup.add(fittingCollar);
+
+                const hoseGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.35, 12);
+                const hoseMesh = new THREE.Mesh(hoseGeo, idx === 0 ? blueHoseMat : orangeHoseMat);
+                hoseMesh.position.set(radius + 0.10, fy - 0.08, 0);
+                hoseMesh.rotation.z = 0.5 * (idx === 0 ? 1 : -1);
+                cylGroup.add(hoseMesh);
+            });
+
+            if (axis === 'x') cylGroup.rotation.z = -Math.PI / 2;
+            else if (axis === 'z') cylGroup.rotation.x = Math.PI / 2;
+
+            return cylGroup;
+        }
+
+        function createCadAirFRLUnit() {
+            const frlGroup = new THREE.Group();
+            const alumMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.75 });
+            const polycarbMat = new THREE.MeshStandardMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.55, roughness: 0.15, metalness: 0.1 });
+            const knobMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 });
+            const blueHoseMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.15 });
+
+            const header = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.12, 0.14), alumMat);
+            frlGroup.add(header);
+
+            [-0.11, 0.11].forEach(hx => {
+                const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.045, 0.22, 16), polycarbMat);
+                bowl.position.set(hx, -0.15, 0);
+                frlGroup.add(bowl);
+            });
+
+            const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.08, 16), knobMat);
+            knob.position.set(-0.11, 0.10, 0);
+            frlGroup.add(knob);
+
+            const miniGauge = createCadPressureGauge(0.12, 'pneumatic');
+            miniGauge.position.set(-0.11, 0.02, 0.10);
+            frlGroup.add(miniGauge);
+
+            const mainAirLine = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.5, 12), blueHoseMat);
+            mainAirLine.position.set(-0.25, 0, 0);
+            mainAirLine.rotation.z = Math.PI / 2;
+            frlGroup.add(mainAirLine);
+
+            return frlGroup;
+        }
+
+        function createCadVacuumWaterManifold(length = 5.8) {
+            const manifoldGroup = new THREE.Group();
+            const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.20, metalness: 0.88 });
+            const flangeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.25, metalness: 0.85 });
+            const brassMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.25, metalness: 0.85 });
+            const redValveMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.35, metalness: 0.6 });
+            const blueValveMat = new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.35, metalness: 0.6 });
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.5, roughness: 0.1, metalness: 0.2 });
+
+            // 1. Ana Paslanmaz Su Borusu (Ø 60 mm)
+            const mainWaterPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, length, 24), stainlessMat);
+            mainWaterPipe.rotation.z = Math.PI / 2;
+            mainWaterPipe.position.set(0, 0.18, 0.55);
+            manifoldGroup.add(mainWaterPipe);
+
+            // 2. Ana Vakum Emiş Borusu (Ø 80 mm)
+            const mainVacPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.048, length, 24), stainlessMat);
+            mainVacPipe.rotation.z = Math.PI / 2;
+            mainVacPipe.position.set(0, -0.05, 0.58);
+            manifoldGroup.add(mainVacPipe);
+
+            // Flanşlar
+            [-length / 2, length / 2].forEach(fx => {
+                const f1 = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.025, 16), flangeMat);
+                f1.rotation.z = Math.PI / 2;
+                f1.position.set(fx, 0.18, 0.55);
+                manifoldGroup.add(f1);
+
+                const f2 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.025, 16), flangeMat);
+                f2.rotation.z = Math.PI / 2;
+                f2.position.set(fx, -0.05, 0.58);
+                manifoldGroup.add(f2);
+            });
+
+            // 4 Ayrı Bölge İniş Kovanları, Kırmızı Volanlar, Mavi Vanalar ve Manometreler
+            const branchX = [-2.1, -0.7, 0.7, 2.1];
+            branchX.forEach((bx, idx) => {
+                const dropPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.32, 16), stainlessMat);
+                dropPipe.position.set(bx, 0.02, 0.55);
+                manifoldGroup.add(dropPipe);
+
+                // Kırmızı Çark Simidi (Handwheel Gate Valve)
+                const valveBody = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.08, 16), brassMat);
+                valveBody.position.set(bx, 0.10, 0.55);
+                manifoldGroup.add(valveBody);
+
+                const valveStem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.09, 12), brassMat);
+                valveStem.position.set(bx, 0.16, 0.55);
+                manifoldGroup.add(valveStem);
+
+                const handwheel = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.014, 10, 24), redValveMat);
+                handwheel.rotation.x = Math.PI / 2;
+                handwheel.position.set(bx, 0.21, 0.55);
+                manifoldGroup.add(handwheel);
+
+                const spoke1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.01, 0.015), redValveMat);
+                spoke1.position.set(bx, 0.21, 0.55);
+                manifoldGroup.add(spoke1);
+                const spoke2 = spoke1.clone();
+                spoke2.rotation.y = Math.PI / 2;
+                manifoldGroup.add(spoke2);
+
+                // Mavi Küresel Vana (Quarter-Turn)
+                const ballValve = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.06, 12), flangeMat);
+                ballValve.position.set(bx, -0.16, 0.58);
+                manifoldGroup.add(ballValve);
+
+                const blueHandle = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.015, 0.025), blueValveMat);
+                blueHandle.position.set(bx + 0.04, -0.16, 0.62);
+                manifoldGroup.add(blueHandle);
+
+                // Analog Manometre (Vakum & Su Basıncı)
+                const gaugeType = (idx % 2 === 0) ? 'vacuum' : 'water';
+                const gauge = createCadPressureGauge(0.18, gaugeType);
+                gauge.position.set(bx, 0.38, 0.55);
+                manifoldGroup.add(gauge);
+
+                // Muayene Gözetleme Camı (Sight-Glass)
+                const sightRing = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.02, 12, 24), flangeMat);
+                sightRing.position.set(bx + 0.45, -0.05, 0.65);
+                manifoldGroup.add(sightRing);
+
+                const sGlass = new THREE.Mesh(new THREE.CircleGeometry(0.08, 20), glassMat);
+                sGlass.position.set(bx + 0.45, -0.05, 0.655);
+                manifoldGroup.add(sGlass);
+
+                for (let b = 0; b < 6; b++) {
+                    const bAngle = (b / 6) * Math.PI * 2;
+                    const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.015, 6), flangeMat);
+                    bolt.rotation.x = Math.PI / 2;
+                    bolt.position.set(bx + 0.45 + Math.cos(bAngle) * 0.09, -0.05 + Math.sin(bAngle) * 0.09, 0.66);
+                    manifoldGroup.add(bolt);
+                }
+            });
+
+            return manifoldGroup;
+        }
+
+        function createCadLinearRail(length = 1.2, railSize = 0.04) {
+            const railGroup = new THREE.Group();
+            const groundSteelMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.15, metalness: 0.92 });
+            const blockMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.35, metalness: 0.8 });
+            const redSealMat = new THREE.MeshBasicMaterial({ color: 0xdc2626 });
+
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(length, railSize * 0.7, railSize), groundSteelMat);
+            rail.castShadow = true;
+            railGroup.add(rail);
+
+            for (let rx = -length / 2 + 0.10; rx <= length / 2 - 0.10; rx += 0.20) {
+                const boltHole = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, railSize * 0.72, 8), blockMat);
+                boltHole.position.set(rx, 0, 0);
+                railGroup.add(boltHole);
+            }
+
+            const block = new THREE.Mesh(new THREE.BoxGeometry(railSize * 2.8, railSize * 1.3, railSize * 1.8), blockMat);
+            block.position.set(0, railSize * 0.3, 0);
+            block.castShadow = true;
+            railGroup.add(block);
+
+            [-railSize * 1.4, railSize * 1.4].forEach(bx => {
+                const seal = new THREE.Mesh(new THREE.BoxGeometry(0.01, railSize * 1.2, railSize * 1.7), redSealMat);
+                seal.position.set(bx, railSize * 0.3, 0);
+                railGroup.add(seal);
+            });
+
+            return railGroup;
+        }
+
+        /* --------------------------------------------------------
+           SOLIDWORKS CAD UÇAN TESTERE ÜNİTESİ (FLYING SAW UNIT)
         -------------------------------------------------------- */
         function createSawUnit() {
             const sawGroup = new THREE.Group();
-            const casingMat = new THREE.MeshStandardMaterial({ color: 0x0b63a7, roughness: 0.35, metalness: 0.45 }); // Siemens mavisi
-            const greyMat = new THREE.MeshStandardMaterial({ color: 0xdde3ea, roughness: 0.40, metalness: 0.25 }); // RAL 7035
+            const casingMat = new THREE.MeshStandardMaterial({ color: 0x0b63a7, roughness: 0.35, metalness: 0.45 });
+            const greyMat = new THREE.MeshStandardMaterial({ color: 0xdde3ea, roughness: 0.40, metalness: 0.25 });
             const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 });
             const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.3, metalness: 0.8 });
             const yellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+            const carbideMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.95 });
 
-            // Testere Taşıyıcı Şasesi ve Lineer Kızak Milleri
-            const carriage = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.20, 1.2), greyMat);
-            carriage.position.set(0, 0.10, 0);
+            // 1. Lineer Kızak Rayları ve Taşıyıcı Araba Şasesi
+            const carriage = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.16, 1.2), greyMat);
+            carriage.position.set(0, 0.08, 0);
             carriage.castShadow = true;
             sawGroup.add(carriage);
 
             [-0.45, 0.45].forEach(rz => {
-                const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.4, 16), chromeMat);
-                rail.rotation.z = Math.PI / 2;
-                rail.position.set(0, 0.10, rz);
-                sawGroup.add(rail);
+                const linearRail = createCadLinearRail(1.4, 0.045);
+                linearRail.position.set(0, 0.10, rz);
+                sawGroup.add(linearRail);
             });
 
-            // Testere Ana Muhafazası (Siemens Mavi Kabin)
+            // 2. Testere Ana Muhafazası (Siemens Mavi Kabin)
             const casing = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.95, 0.90), casingMat);
             casing.position.set(0, 0.65, 0);
             casing.castShadow = true;
             sawGroup.add(casing);
 
-            // Üst Pnömatik Baskı Silindiri
-            const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.55, 16), chromeMat);
-            cyl.position.set(0, 1.35, 0);
-            sawGroup.add(cyl);
+            // 3. Hassas Dikey Dalma Pnömatik Silindiri (Festo Piston)
+            const plungeCyl = createCadPneumaticCylinder(0.09, 0.45, 0.18, 'y');
+            plungeCyl.position.set(0, 1.35, 0);
+            sawGroup.add(plungeCyl);
 
-            // Talaş Emiş Siklon Borusu (Yukarı ve arkaya açılı)
+            // 4. Profil Yatay Sıkıştırma Pnömatik Kıskacı
+            const clampCyl = createCadPneumaticCylinder(0.07, 0.30, 0.12, 'z');
+            clampCyl.position.set(0, 0.45, 0.52);
+            sawGroup.add(clampCyl);
+
+            // 5. Talaş Emiş Siklon Borusu (Flanşlı Paslanmaz Emiş Kanalı)
             const duct = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.75, 16), steelMat);
             duct.position.set(0.12, 1.35, -0.25);
             duct.rotation.z = -0.3;
             sawGroup.add(duct);
 
-            // Dönen Karbür Dişli Dairesel Testere Bıçağı
-            const sawBlade = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.02, 32), chromeMat);
+            const ductClamp = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.04, 16), chromeMat);
+            ductClamp.position.set(0.12, 1.15, -0.25);
+            ductClamp.rotation.z = -0.3;
+            sawGroup.add(ductClamp);
+
+            // 6. Dönen Karbür Dişli Dairesel Testere Bıçağı (Carbide Tipped Blade Assembly)
+            const sawBlade = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.02, 36), chromeMat);
             sawBlade.rotation.x = Math.PI / 2;
             sawBlade.position.set(0, 0.35, 0);
             sawBlade.castShadow = true;
+
+            // Karbür Bıçak Göbeği & Sıkma Flanşı
+            const bladeArbor = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.028, 20), carbideMat);
+            sawBlade.add(bladeArbor);
+
+            const arborNut = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.04, 6), steelMat);
+            sawBlade.add(arborNut);
+
+            // Çevre Elmas Diş Efekti (Tungsten Carbide Teeth Ring)
+            const teethRing = new THREE.Mesh(new THREE.TorusGeometry(0.385, 0.012, 8, 36), carbideMat);
+            sawBlade.add(teethRing);
+
             sawGroup.add(sawBlade);
 
-            // Sarı Emniyet Siperliği
+            // 7. Sarı Emniyet Siperliği
             const guard = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.32, 0.95), yellowMat);
             guard.position.set(0, 0.40, 0);
             sawGroup.add(guard);
@@ -5916,12 +6416,14 @@
         }
 
         // ========================================================
-        // OPTION 1: FOTOGERÇEKÇİ ENDÜSTRİYEL FABRİKA İKİZİ (SIEMENS / KRAUSSMAFFEI)
+        // SOLIDWORKS CAD / HASSAS MEKANİK PROFİL EKSTRÜDER HATTI
+        // (Sigma Profiller, Pnömatik Silindirler, Analog Manometreler,
+        //  Boru Hatları, Termokupllar & Termal Isıtıcı Muayene Bölgeleri)
         // ========================================================
         function create3DProfileExtruderModel(id, name, heads) {
             const group = new THREE.Group();
 
-            // 1. Fotogerçekçi PBR Malzeme Paleti (Option 1 Standartı)
+            // 1. Fotogerçekçi CAD & PBR Malzeme Paleti
             const siemensBlueMat = new THREE.MeshStandardMaterial({ color: 0x0b63a7, roughness: 0.35, metalness: 0.45 }); // Siemens Mavisi (RAL 5012)
             const ral7035GreyMat = new THREE.MeshStandardMaterial({ color: 0xdde3ea, roughness: 0.40, metalness: 0.25 }); // RAL 7035 Açık Gri Kapaklar
             const darkChassisMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.50 }); // Ağır Çelik Şase & Pabuçlar
@@ -5929,10 +6431,17 @@
             const chromeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.08, metalness: 0.98 }); // Ayna Polisajlı Krom
             const brassGaugeMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.25, metalness: 0.85 }); // Pirinç Manometre & Vanalar
             const rubberPadMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.95, metalness: 0.05 }); // Tırtıklı Kauçuk Çekici Pabuçlar
-            const glassBathMat = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.45, roughness: 0.12, metalness: 0.15 }); // Şeffaf Akrilik Muayene Pencereleri
+            const glassBathMat = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.45, roughness: 0.12, metalness: 0.15 }); // Akrilik Pencereler
             const waterBathMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, transparent: true, opacity: 0.68, roughness: 0.08, metalness: 0.25 }); // Soğutma Suyu
             const hazardYellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 }); // İş Güvenliği Sarısı
-            const pvcWhiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.05 }); // Saf Beyaz PVC Profil
+            const thermalGlowMat = new THREE.MeshStandardMaterial({ 
+                color: 0xf59e0b, 
+                emissive: 0xf59e0b, 
+                emissiveIntensity: 0.70, 
+                roughness: 0.25, 
+                metalness: 0.4 
+            }); // 195.2 °C Kovan Termal Işıma / Muayene Penceresi
+            const pneuBlueHoseMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.15 }); // Festo Mavi Pnömatik Hortum
 
             // Hat Motor Vurgusu (Canlı Renk Ayrımı)
             const motorColors = {
@@ -5950,7 +6459,7 @@
             group.add(safetyZone);
 
             // ==========================================
-            // A. TAŞIYICI AĞIR TABAN ŞASESİ (I-Beam Base Skid)
+            // A. TAŞIYICI AĞIR TABAN ŞASESİ & SİGMA ALÜMİNYUM PROFİL RAYLARI
             // ==========================================
             const skid = new THREE.Mesh(new THREE.BoxGeometry(15.2, 0.20, 1.8), darkChassisMat);
             skid.position.set(-0.5, 0.10, 0);
@@ -5958,17 +6467,39 @@
             skid.receiveShadow = true;
             group.add(skid);
 
-            // Ayarlanabilir Çelik Vidalı Seviye Pabuçları
+            // Ağır Şase Üstü Boyuna Eloksallı Alüminyum Sigma Raylar (T-Slot Profil)
+            [-0.82, 0.82].forEach(sz => {
+                const sigmaRail = createCadSigmaProfile(15.0, 0.08, 'x');
+                sigmaRail.position.set(-0.5, 0.22, sz);
+                group.add(sigmaRail);
+
+                // Köşe Bağlantı Gönyeleri
+                [-7.8, 6.8].forEach(sx => {
+                    const corner = createCadCornerBracket(0.08);
+                    corner.position.set(sx, 0.24, sz);
+                    group.add(corner);
+                });
+            });
+
+            // Ayarlanabilir Çelik Vidalı Seviye Pabuçları (M24 Kontra Somunlu Kauçuk Tabanlı)
             for (let fx = -7.5; fx <= 6.5; fx += 2.8) {
                 [-0.8, 0.8].forEach(fz => {
-                    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.12, 16), chromeMat);
-                    foot.position.set(fx, 0.06, fz);
+                    const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.10, 16), chromeMat);
+                    foot.position.set(fx, 0.05, fz);
                     group.add(foot);
+
+                    const threadStud = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.14, 12), chromeMat);
+                    threadStud.position.set(fx, 0.12, fz);
+                    group.add(threadStud);
+
+                    const lockNut = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.04, 6), brassGaugeMat);
+                    lockNut.position.set(fx, 0.15, fz);
+                    group.add(lockNut);
                 });
             }
 
             // ==========================================
-            // 1. SOL: ANA EKSTRÜDER GÖVDESİ, REDÜKTÖR & KOVAN (X: -8.0 to -4.0)
+            // 1. SOL: ANA EKSTRÜDER GÖVDESİ, REDÜKTÖR & BÖLGELİ KOVAN (X: -8.0 to -4.0)
             // ==========================================
             // Alt Gövde Kabini (Siemens RAL 5012 Mavi + RAL 7035 Gri Kapaklar)
             const extCabinet = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.15, 1.6), siemensBlueMat);
@@ -5977,7 +6508,7 @@
             extCabinet.receiveShadow = true;
             group.add(extCabinet);
 
-            // Ön Servis Kapakları (RAL 7035) ve Tutamakları
+            // Servis Kapakları (RAL 7035) ve Tutamakları
             [-0.9, 0.9].forEach(px => {
                 const door = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.90, 0.04), ral7035GreyMat);
                 door.position.set(-6.2 + px, 0.75, 0.82);
@@ -5988,10 +6519,15 @@
                 group.add(handle);
             });
 
-            // Arka Havalandırma Izgarası (Louver)
+            // Arka Havalandırma Paneli (Louver)
             const louver = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.7, 0.04), ral7035GreyMat);
             louver.position.set(-6.2, 0.75, -0.82);
             group.add(louver);
+
+            // Pnömatik Şartlandırıcı Grubu (FRL Unit - Basınçlı Hava Filtresi, Regülatör & Mini Manometre)
+            const frlUnit = createCadAirFRLUnit();
+            frlUnit.position.set(-4.5, 0.85, 0.84);
+            group.add(frlUnit);
 
             // Ağır Döküm Tahrik Motoru & Helisel Dişli Redüktör
             const motorBox = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.95, 1.4), motorMat);
@@ -6012,19 +6548,41 @@
             motorPulley.add(fBlade2);
             group.add(motorPulley);
 
-            // Ekstrüder Kovanı (Extruder Barrel - Çift Helezon Kovan Kütüğü)
+            // Ekstrüder Kovanı (Çift Helezon Kovan Kütüğü - Bölümlü Hassas Çelik)
             const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 3.2, 32), chromeMat);
             barrel.rotation.z = Math.PI / 2;
             barrel.position.set(-5.1, 1.55, 0);
             barrel.castShadow = true;
             group.add(barrel);
 
-            // 4 Adet Isıtıcı Bölge Bilezikleri (Ceramic Heater Bands)
-            [-6.2, -5.5, -4.8, -4.1].forEach(hx => {
-                const heaterBand = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.04, 12, 28), stainlessMat);
+            // Kovan Altı Elektrik & Sinyal Kablo Kanalı (Wiring Conduit Trunk)
+            const conduitTrunk = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.08, 0.12), darkChassisMat);
+            conduitTrunk.position.set(-5.1, 1.20, 0.28);
+            group.add(conduitTrunk);
+
+            // 4 Adet Isıtıcı Bölge (Ceramic Heater Bands) + Termal Işıma Pencereleri (195.2 °C) + Zırhlı Termokupllar
+            const heaterZonesX = [-6.2, -5.5, -4.8, -4.1];
+            heaterZonesX.forEach((hx, zIdx) => {
+                // Paslanmaz Çelik Isıtıcı Bileziği
+                const heaterBand = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.045, 12, 28), stainlessMat);
                 heaterBand.rotation.y = Math.PI / 2;
                 heaterBand.position.set(hx, 1.55, 0);
                 group.add(heaterBand);
+
+                // Isıtıcı Sıkma Kulakları ve Alyan Civata
+                const clampLug = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.10, 0.08), stainlessMat);
+                clampLug.position.set(hx, 1.94, 0);
+                group.add(clampLug);
+
+                // Termal Muayene Işıma Penceresi (195.2 °C Sıcak Bölge Efekti)
+                const thermalWin = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.04), thermalGlowMat);
+                thermalWin.position.set(hx, 1.55, 0.36);
+                group.add(thermalWin);
+
+                // Spiralli Zırhlı Paslanmaz Termokupl Kablosu (Kovan Isı Sensörü)
+                const tcCable = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.36, 12), chromeMat);
+                tcCable.position.set(hx, 1.38, 0.28);
+                group.add(tcCable);
             });
 
             // Paslanmaz Çelik Hammadde Besleme Hunisi (Bunker)
@@ -6032,6 +6590,22 @@
             mainHopper.position.set(-6.6, 2.90, 0);
             mainHopper.castShadow = true;
             group.add(mainHopper);
+
+            // Boğaz Soğutma Ceketi (Hopper Feed Throat Water Jacket) & Mavi Su Besleme Boruları
+            const throatCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.22, 24), stainlessMat);
+            throatCollar.position.set(-6.6, 2.05, 0);
+            group.add(throatCollar);
+
+            [-0.15, 0.15].forEach(pz => {
+                const throatFitting = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.08, 12), brassGaugeMat);
+                throatFitting.rotation.x = Math.PI / 2;
+                throatFitting.position.set(-6.6, 2.05, pz * 2.8);
+                group.add(throatFitting);
+
+                const blueWaterTube = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.55, 12), pneuBlueHoseMat);
+                blueWaterTube.position.set(-6.6, 1.75, pz * 2.8);
+                group.add(blueWaterTube);
+            });
 
             // Huni Üst Kapağı & Gözetleme Camı
             const hopperLid = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.88, 0.08, 32), chromeMat);
@@ -6057,10 +6631,21 @@
             dieFlange.castShadow = true;
             group.add(dieFlange);
 
+            // Kalıp Eriyik Basıncı Analog Manometresi (0-350 bar)
+            const meltGauge = createCadPressureGauge(0.24, 'melt');
+            meltGauge.position.set(-3.7, 2.05, 0.28);
+            meltGauge.rotation.y = 0.3;
+            group.add(meltGauge);
+
             // HMI Dokunmatik Kumanda Paneli & Andon Sinyal Kulesi (Operatör İstasyonu)
             const hmiStand = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.4, 16), darkChassisMat);
             hmiStand.position.set(-5.6, 0.70, 1.25);
             group.add(hmiStand);
+
+            // HMI Alüminyum Sigma Taşıyıcı Kolu
+            const hmiArm = createCadSigmaProfile(0.35, 0.06, 'y');
+            hmiArm.position.set(-5.6, 1.25, 1.25);
+            group.add(hmiArm);
 
             const hmiBox = new THREE.Mesh(new THREE.BoxGeometry(0.70, 0.48, 0.12), ral7035GreyMat);
             hmiBox.position.set(-5.6, 1.45, 1.25);
@@ -6078,7 +6663,7 @@
             estop.position.set(-5.35, 1.25, 1.25);
             group.add(estop);
 
-            // 3 Renkli Andon İkaz Lambası (Kırmızı, Sarı, Yeşil)
+            // 3 Renkli Andon İkaz Lambası
             const andonStem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.30, 8), chromeMat);
             andonStem.position.set(-5.8, 1.80, 1.20);
             group.add(andonStem);
@@ -6106,17 +6691,20 @@
             bathBody.receiveShadow = true;
             group.add(bathBody);
 
-            // Taşıyıcı Paslanmaz Kare Boru Ayaklar
+            // Taşıyıcı Sigma Alüminyum Ayak Konstrüksiyonu & Gusset Gönyeler
             [-3.0, -0.5, 2.0].forEach(lx => {
                 [-0.60, 0.60].forEach(lz => {
-                    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.60, 0.12), darkChassisMat);
-                    leg.position.set(lx, 0.30, lz);
-                    leg.castShadow = true;
-                    group.add(leg);
+                    const sigmaLeg = createCadSigmaProfile(0.60, 0.10, 'y');
+                    sigmaLeg.position.set(lx, 0.30, lz);
+                    group.add(sigmaLeg);
+
+                    const bracket = createCadCornerBracket(0.08);
+                    bracket.position.set(lx, 0.56, lz);
+                    group.add(bracket);
                 });
             });
 
-            // 2 Adet Büyük Şeffaf Akrilik Muayene Penceresi (Ön Yüzde)
+            // Muayene Pencereleri (Ön Yüzde Akrilik)
             [-1.9, 0.9].forEach(wx => {
                 const winFrame = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.55, 0.08), siemensBlueMat);
                 winFrame.position.set(wx, 0.95, 0.74);
@@ -6133,23 +6721,10 @@
             waterSurface.position.set(bathX, 1.28, 0);
             group.add(waterSurface);
 
-            // Havuz İçi Püskürtme Nozulları & Boru Manifoldu
-            const topPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 5.8, 24), chromeMat);
-            topPipe.rotation.z = Math.PI / 2;
-            topPipe.position.set(bathX, 1.58, 0.55);
-            group.add(topPipe);
-
-            // 4 Adet Analog Manometre (Vakum & Su Basıncı Saatleri)
-            [-2.6, -1.2, 0.2, 1.6].forEach(gx => {
-                const gaugeStem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.18, 12), brassGaugeMat);
-                gaugeStem.position.set(gx, 1.68, 0.55);
-                group.add(gaugeStem);
-
-                const gaugeDial = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.03, 20), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-                gaugeDial.rotation.x = Math.PI / 2;
-                gaugeDial.position.set(gx, 1.80, 0.55);
-                group.add(gaugeDial);
-            });
+            // Hassas Paslanmaz Boru Manifoldu (Kırmızı El Volanlı Vanalar, Mavi Küresel Vanalar, Manometreler & Gözetleme Camları)
+            const vacuumManifold = createCadVacuumWaterManifold(5.8);
+            vacuumManifold.position.set(bathX, 1.45, 0.15);
+            group.add(vacuumManifold);
 
             // 4 Adet Paslanmaz Menteşeli Havuz Kapağı & Kulpları
             for (let c = 0; c < 4; c++) {
@@ -6164,6 +6739,14 @@
                 group.add(handle);
             }
 
+            // Kapak Açma Destek Pnömatik Amortisörleri (Pneumatic Gas Struts)
+            [-2.0, 1.2].forEach(sx => {
+                const lidStrut = createCadPneumaticCylinder(0.05, 0.35, 0.12, 'y');
+                lidStrut.position.set(sx, 1.35, -0.65);
+                lidStrut.rotation.x = 0.3;
+                group.add(lidStrut);
+            });
+
             // ==========================================
             // 3. SAĞ ORTA: PALETLİ ÇEKİCİ (CATERPILLAR HAUL-OFF) (X: +2.7 to +5.0)
             // ==========================================
@@ -6173,28 +6756,40 @@
             pullerCab.castShadow = true;
             group.add(pullerCab);
 
-            // Sarı Emniyet Çerçevesi (Option 1 Güvenlik Kafesi)
+            // Üst & Alt Sigma Alüminyum Güvenlik Çerçeve Profilleri
+            [-0.78, 0.78].forEach(pz => {
+                const topSigma = createCadSigmaProfile(2.3, 0.08, 'x');
+                topSigma.position.set(pullerX, 1.74, pz);
+                group.add(topSigma);
+            });
+
+            // Sarı Emniyet Çerçevesi
             const pFrameYellow = new THREE.Mesh(new THREE.BoxGeometry(2.34, 0.10, 1.64), hazardYellowMat);
             pFrameYellow.position.set(pullerX, 1.70, 0);
             group.add(pFrameYellow);
 
-            // Operatör Tarafı Polikarbonat Gözetleme Kapağı
+            // Operatör Polikarbonat Gözetleme Kapağı
             const pullerWindow = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.0), glassBathMat);
             pullerWindow.position.set(pullerX, 0.95, 0.82);
             group.add(pullerWindow);
+
+            // Üst Palet Baskı Pnömatik Silindirleri (Profile Clamping Cylinders)
+            [-0.55, 0.55].forEach(cx => {
+                const trackCyl = createCadPneumaticCylinder(0.08, 0.32, 0.12, 'y');
+                trackCyl.position.set(pullerX + cx, 1.95, 0);
+                group.add(trackCyl);
+            });
 
             // Üst & Alt Paletli Çekici (Tırtıklı Kauçuk Pabuçlu Bantlar & Canlı Dönen Merdaneler)
             const pullerRollers = [];
             const pGearMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3, metalness: 0.8 });
 
             [0.95, 1.60].forEach((trackY, idx) => {
-                // Tırtıklı Kauçuk Palet Gövdesi
                 const trackBelt = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.28, 0.85), rubberPadMat);
                 trackBelt.position.set(pullerX, trackY, 0);
                 trackBelt.castShadow = true;
                 group.add(trackBelt);
 
-                // Canlı Dönen Tamburlar & Tahrik Dişlileri
                 const prGroup = new THREE.Group();
                 prGroup.position.set(pullerX, trackY, 0);
 
@@ -6214,25 +6809,31 @@
             // ==========================================
             // 4. SAĞ: UÇAN TESTERE VE ÇIKIŞ MASASI (X: +5.2 to +12.0)
             // ==========================================
-            // Uçan Testere Ünitesi (Dönen Bıçak & Pnömatik İniş/Kalkış)
+            // Hassas CAD Uçan Testere Ünitesi (Lineer Kızaklar, Karbür Bıçak, Dalma & Baskı Pistonları)
             const sawData = createSawUnit();
             sawData.sawGroup.position.set(6.0, 0.95, 0);
             group.add(sawData.sawGroup);
 
-            // Rulolu Profil Çıkış Devirme Sehpası
+            // Sigma Profilli Rulolu Profil Çıkış Devirme Sehpası
             const exitTable = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.12, 1.1), stainlessMat);
             exitTable.position.set(8.5, 0.85, 0);
             exitTable.castShadow = true;
             group.add(exitTable);
 
-            // Masa Ayakları
+            // Masa Taşıyıcı Sigma Alüminyum Ayaklar
             [6.8, 10.2].forEach(tx => {
-                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.80, 0.95), siemensBlueMat);
-                leg.position.set(tx, 0.40, 0);
-                group.add(leg);
+                [-0.45, 0.45].forEach(tz => {
+                    const tableLeg = createCadSigmaProfile(0.80, 0.08, 'y');
+                    tableLeg.position.set(tx, 0.40, tz);
+                    group.add(tableLeg);
+
+                    const tableBracket = createCadCornerBracket(0.07);
+                    tableBracket.position.set(tx, 0.78, tz);
+                    group.add(tableBracket);
+                });
             });
 
-            // Sehpa Üzerinde Serbest Krom Kılavuz Makaraları
+            // Sehpa Üzerinde Serbest Dönen Krom Kılavuz Makaraları
             for (let rx = 6.8; rx <= 10.2; rx += 0.85) {
                 const roller = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9, 16), chromeMat);
                 roller.rotation.x = Math.PI / 2;
@@ -6246,7 +6847,6 @@
             const prodKg = mData ? mData.prodKg : 1200;
             const fireKg = mData ? mData.fireKg : 250;
 
-            // Kalıp Kafasından (Die) Çıkıp Havuzun ve Çekicinin İçinden Geçen Sürekli Profil Akışı (Pencerelerden Görünür)
             const pColorSpec = resolveProductColorAndSpec(id, productStr);
             const continuousMat = new THREE.MeshStandardMaterial({
                 color: pColorSpec.colorHex,
@@ -6260,7 +6860,7 @@
             continuousProfileMesh.castShadow = true;
             group.add(continuousProfileMesh);
 
-            // Çıkış Masası Üzerinde Canlı LED Muayene Aydınlatması (Ürün Rengini & Saten Parlaklığı Net Gösterir)
+            // Çıkış Masası Üzerinde Canlı LED Muayene Aydınlatması
             const inspectionLight = new THREE.PointLight(0xffffff, 1.4, 8);
             inspectionLight.position.set(8.5, 2.8, 0.5);
             group.add(inspectionLight);
@@ -6355,11 +6955,17 @@
             safetyZone.position.set(2.0, 0, 0);
             group.add(safetyZone);
 
-            // 1. Ağır Taban Şasesi
+            // 1. Ağır Taban Şasesi & Sigma Alüminyum Boyuna Raylar
             const skid = new THREE.Mesh(new THREE.BoxGeometry(19.5, 0.22, 4.6), darkChassisMat);
             skid.position.set(2.0, 0.11, 0);
             skid.castShadow = true;
             group.add(skid);
+
+            [-2.2, 2.2].forEach(sz => {
+                const sigmaRail = createCadSigmaProfile(19.2, 0.08, 'x');
+                sigmaRail.position.set(2.0, 0.24, sz);
+                group.add(sigmaRail);
+            });
 
             // 2. Ekstrüder Ana Gövdesi (Siemens Mavi + RAL 7035)
             const chassis = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.2, 2.4), siemensBlueMat);
@@ -6388,11 +6994,26 @@
             tDie.castShadow = true;
             group.add(tDie);
 
+            // 3 Adet Kalıp Eriyik Basıncı Analog Manometresi (Sol, Orta, Sağ Bölge)
+            [-1.4, 0, 1.4].forEach(gz => {
+                const dieGauge = createCadPressureGauge(0.22, 'melt');
+                dieGauge.position.set(-3.5, 1.82, gz);
+                dieGauge.rotation.y = 0;
+                group.add(dieGauge);
+            });
+
             // 3. 3-Valsli Ayna Parlatma Kalenderi (WebGL 60 FPS Canlı Dönen Krom Valsler)
             const calenderStand = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.6, 4.4), siemensBlueMat);
             calenderStand.position.set(-1.8, 1.3, 0);
             calenderStand.castShadow = true;
             group.add(calenderStand);
+
+            // Kalender Pnömatik / Hidrolik Vals Baskı Silindirleri
+            [-1.9, 1.9].forEach(cz => {
+                const nipCyl = createCadPneumaticCylinder(0.12, 0.50, 0.20, 'y');
+                nipCyl.position.set(-1.8, 2.75, cz);
+                group.add(nipCyl);
+            });
 
             const animatedRolls = [];
             [0.65, 1.3, 1.95].forEach(vy => {
@@ -6438,11 +7059,17 @@
             sheetLight.position.set(4.0, 3.2, 0);
             group.add(sheetLight);
 
-            // 5. Giyotin Kesim Ünitesi
+            // 5. Giyotin Kesim Ünitesi & Pnömatik Baskı Silindirleri
             const cutter = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.8, 4.4), siemensBlueMat);
             cutter.position.set(9.2, 1.0, 0);
             cutter.castShadow = true;
             group.add(cutter);
+
+            [-1.5, 1.5].forEach(kz => {
+                const cutCyl = createCadPneumaticCylinder(0.14, 0.60, 0.25, 'y');
+                cutCyl.position.set(9.2, 2.15, kz);
+                group.add(cutCyl);
+            });
 
             // 6. DÜZGÜN LEVHA İSTİF PALETİ (Sağlam Dişbudak Levhalar 94x207 cm)
             const levTotalKg = mLevData ? mLevData.prodKg : 2455;

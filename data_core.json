@@ -1432,6 +1432,49 @@
           "kg": 13.0
         }
       ]
+    },
+    {
+      "id": "rec_levha_renkli_9",
+      "name": "Levha Renkli",
+      "batch_kg": 334.3,
+      "ingredients": [
+        {
+          "material": "PVC",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 1K",
+          "kg": 150.0
+        },
+        {
+          "material": "ASMIX 42555-2FB",
+          "kg": 5.7
+        },
+        {
+          "material": "PRY 901",
+          "kg": 1.5
+        },
+        {
+          "material": "MSY 701",
+          "kg": 1.0
+        },
+        {
+          "material": "CPE",
+          "kg": 9.0
+        },
+        {
+          "material": "PE WAX",
+          "kg": 1.0
+        },
+        {
+          "material": "ASC 1010A",
+          "kg": 1.0
+        },
+        {
+          "material": "CARBON BLACK",
+          "kg": 0.1
+        }
+      ]
     }
   ],
   "monthly_targets": {

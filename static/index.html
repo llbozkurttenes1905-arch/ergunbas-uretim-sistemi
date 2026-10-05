@@ -418,11 +418,9 @@
             <div class="w-14 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-3 justify-between z-10 shrink-0">
                 <!-- Top: Logo Icon & Nav Icons -->
                 <div class="flex flex-col items-center gap-3 w-full">
-                    <!-- Brand Icon (Hexagon / Shield) -->
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ergunbas-600 via-amber-600 to-ergunbas-500 p-0.5 shadow-lg shadow-ergunbas-600/30 flex items-center justify-center cursor-pointer mb-1 group" onclick="switchTab('dashboard')" title="ERGUNBAS Group">
-                        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center group-hover:bg-slate-900 transition">
-                            <i data-lucide="activity" class="w-5 h-5 text-ergunbas-400 group-hover:scale-110 transition-transform"></i>
-                        </div>
+                    <!-- Brand Logo -->
+                    <div class="w-10 h-10 rounded-xl bg-white p-1 shadow-md shadow-ergunbas-600/30 border border-slate-200 flex items-center justify-center cursor-pointer mb-1 group hover:scale-105 transition-transform shrink-0" onclick="switchTab('dashboard')" title="ERGUNBAS Group">
+                        <img src="/static/logo.png" alt="ERGUNBAS" class="h-full w-full object-contain">
                     </div>
 
                     <div class="w-8 h-[1px] bg-slate-800/80 my-1"></div>
@@ -479,8 +477,8 @@
                 <!-- Branding Header -->
                 <div class="h-14 px-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900">
                     <div class="flex items-center gap-2.5 min-w-0">
-                        <div class="w-7 h-7 rounded-lg bg-ergunbas-600/20 border border-ergunbas-500/40 flex items-center justify-center shrink-0">
-                            <span class="text-xs font-black text-ergunbas-400">EG</span>
+                        <div class="w-8 h-8 rounded-xl bg-white p-1 shadow-md border border-slate-200 flex items-center justify-center shrink-0">
+                            <img src="/static/logo.png" alt="ERGUNBAS Group" class="h-full w-full object-contain">
                         </div>
                         <div class="min-w-0">
                             <div class="text-xs font-black text-white tracking-wide truncate">ERGUNBAS Group</div>
@@ -651,12 +649,39 @@
         <!-- RIGHT WORKSPACE AREA -->
         <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-slate-950">
             <!-- CLEAN SCADA TOP BAR -->
-            <header class="h-14 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 flex items-center justify-between gap-3 shrink-0 z-30 shadow-md">
-                <!-- Left: Hamburger (Mobile) + Breadcrumb + Plant Status -->
+            <header class="relative overflow-hidden h-14 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 sm:px-6 flex items-center justify-between gap-3 shrink-0 z-30 shadow-md">
+                <!-- Türk Bayrağı: Sol tarafta yumuşak kırmızı gradient + ay-yıldız watermark -->
+                <div class="absolute inset-0 -z-10 pointer-events-none bg-gradient-to-r from-red-700/40 via-red-900/15 to-transparent"></div>
+                <div class="absolute top-0 bottom-0 left-[260px] sm:left-[300px] -z-10 pointer-events-none flex items-center opacity-30">
+                    <svg viewBox="0 0 60 60" class="h-10 sm:h-12 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="crescent-hole-mask-top">
+                            <rect x="0" y="0" width="60" height="60" fill="#ffffff"/>
+                            <circle cx="28.5" cy="30" r="12" fill="#000000"/>
+                        </mask>
+                        <circle cx="24" cy="30" r="15" fill="#ffffff" mask="url(#crescent-hole-mask-top)"/>
+                        <polygon points="0,-8.5 1.9,-2.6 8,-2.6 3.05,1 4.95,6.8 0,3.2 -4.95,6.8 -3.05,1 -8,-2.6 -1.9,-2.6" fill="#ffffff" transform="translate(42,30)"/>
+                    </svg>
+                </div>
+
+                <!-- Left: Hamburger (Mobile) + Corporate Logo + Breadcrumb + Plant Status -->
                 <div class="flex items-center gap-3 min-w-0">
                     <button onclick="toggleScadaMobileMenu()" class="lg:hidden p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition" title="Menü">
                         <i data-lucide="menu" class="w-4 h-4"></i>
                     </button>
+
+                    <!-- Corporate Logo & Brand -->
+                    <div class="flex items-center gap-2.5 shrink-0 pr-3 border-r border-slate-800/80">
+                        <div class="bg-white p-1 rounded-xl shadow-md flex items-center justify-center border border-slate-200 shrink-0 h-9 w-9">
+                            <img src="/static/logo.png" alt="ERGUNBAS Group Logo" class="h-full w-full object-contain">
+                        </div>
+                        <div class="hidden sm:block">
+                            <h1 class="text-xs font-black tracking-tight text-white flex items-center gap-1.5 whitespace-nowrap leading-none">
+                                ERGUNBAS Group
+                                <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-ergunbas-600/30 text-ergunbas-400 border border-ergunbas-600/40">Üretim & Fire</span>
+                            </h1>
+                            <p class="text-[9px] text-slate-400 font-medium leading-none mt-1">İnteraktif SCADA Yönetim Portalı</p>
+                        </div>
+                    </div>
 
                     <!-- Breadcrumb Navigation -->
                     <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 truncate">

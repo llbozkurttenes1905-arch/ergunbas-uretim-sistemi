@@ -1039,7 +1039,7 @@
             "sets": 40.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": null,
+            "hours": 4.0,
             "en_firesi_cm": 33.0
           }
         ]
@@ -1171,25 +1171,35 @@
           {
             "row": 0,
             "hat": "201",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
+            "color": "BEYAZ TEAK",
+            "width": 75.0,
+            "length": 210.0,
+            "m2_one": 1.575,
+            "qty": 390,
+            "total_m2": 614.25,
             "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
+            "dead_fire_m2": 270.27,
+            "dead_fire_kg": 662.16,
+            "total_kg": 1504.91,
+            "sets": 195.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": null,
-            "en_firesi_cm": 15.0
+            "hours": 12.0,
+            "en_firesi_cm": 33.0
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "ELEKTRİK DALGALANMASI",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

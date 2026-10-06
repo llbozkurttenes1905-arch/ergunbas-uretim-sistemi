@@ -1452,7 +1452,7 @@
             "sets": 125.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": 250.0,
+            "hours": 6.0,
             "en_firesi_cm": 33.0
           }
         ]
@@ -1791,7 +1791,7 @@
         },
         {
           "makine": "Mixer 2",
-          "recipe": "Levha Renkli",
+          "recipe": "Levha Renkli (Takoz)",
           "batch_kg": 334.3,
           "gunduz_sarj": 16,
           "gece_sarj": 0,

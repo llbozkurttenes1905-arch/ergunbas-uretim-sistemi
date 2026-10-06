@@ -1770,7 +1770,7 @@
       ],
       "mixer": [
         {
-          "makine": "Mixer 1",
+          "makine": "Mixer 3",
           "recipe": "Kasa Pervaz",
           "batch_kg": 275.65,
           "gunduz_sarj": 23,
@@ -1780,7 +1780,7 @@
           "toplam_kg": 6339.95
         },
         {
-          "makine": "Mixer 1",
+          "makine": "Mixer 3",
           "recipe": "Seren",
           "batch_kg": 291.15,
           "gunduz_sarj": 10,

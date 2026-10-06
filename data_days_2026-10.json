@@ -1621,7 +1621,89 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "3 DEFA ELEKTRİK DALGALANMASI OLDU.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "TESTERE ARIZASI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "106",
+          "fire_reason": "BARREL ELEKTRİK ARIZASI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 420.0,
+          "desc": "Kalıp değişimi için kapatıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 120.0,
+          "desc": "Kalıp bakım ve temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 0.0,
+          "desc": "Su pompası arıza yaptı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 300.0,
+          "desc": "Kalıp değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 0.0,
+          "desc": "Hammadde yetersizliğinden dolayı kapatıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

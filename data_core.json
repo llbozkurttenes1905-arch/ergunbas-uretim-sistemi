@@ -1026,6 +1026,13 @@
       "category": "levha",
       "door_ratio": 2.0,
       "description": ""
+    },
+    {
+      "id": "p_133",
+      "name": "SEREN(39mm)",
+      "category": "seren",
+      "door_ratio": 3.5,
+      "description": ""
     }
   ],
   "mixer_recipes": [

@@ -1956,16 +1956,16 @@
             "width": 94.0,
             "length": 210.0,
             "m2_one": 1.974,
-            "qty": 0,
-            "total_m2": 0.0,
+            "qty": 40,
+            "total_m2": 78.96,
             "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
+            "dead_fire_m2": 11.76,
+            "dead_fire_kg": 28.81,
+            "total_kg": 193.45,
+            "sets": 20.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": null,
+            "hours": 2.0,
             "en_firesi_cm": 14.0
           }
         ]

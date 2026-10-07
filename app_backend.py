@@ -4532,10 +4532,21 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
         leftMargin=1.0 * cm, rightMargin=1.0 * cm
     )
 
+    def fmt_tr(val, decimals=1):
+        if val is None:
+            return "0"
+        if decimals == 0:
+            return f"{int(round(float(val))):,}".replace(",", ".")
+        s = f"{float(val):,.{decimals}f}"
+        parts = s.split(".")
+        int_part = parts[0].replace(",", ".")
+        dec_part = parts[1] if len(parts) > 1 else ""
+        return f"{int_part},{dec_part}" if dec_part else int_part
+
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle("TitleTR_Mixer", parent=styles["Title"], fontName=PDF_FONT_BOLD, fontSize=12, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
     subtitle_style = ParagraphStyle("SubtitleTR_Mixer", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7.5, textColor=colors.HexColor("#64748B"), alignment=TA_LEFT)
-    h2_style = ParagraphStyle("H2TR_Mixer", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=8.5, textColor=colors.HexColor("#0F172A"), spaceBefore=3, spaceAfter=1.5)
+    h2_style = ParagraphStyle("H2TR_Mixer", parent=styles["Heading2"], fontName=PDF_FONT_BOLD, fontSize=8.5, textColor=colors.HexColor("#0F172A"), spaceBefore=4, spaceAfter=2)
 
     def make_table(head_row, data_rows, col_widths=None, align_cols=None):
         n_cols = len(head_row)
@@ -4573,8 +4584,8 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
             ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 1.1),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 1.1),
+            ("TOPPADDING", (0, 0), (-1, -1), 1.2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 1.2),
             ("LEFTPADDING", (0, 0), (-1, -1), 2.5),
             ("RIGHTPADDING", (0, 0), (-1, -1), 2.5),
         ]))
@@ -4582,10 +4593,10 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
 
     story = []
 
-    # 1. Header
+    # 1. Header (19.0 cm toplam genişlik)
     logo_path = os.path.join(APP_DIR, "static", "logo.png")
     header_title = Paragraph("<b>ERGÜNBAŞ GROUP</b>", title_style)
-    header_sub = Paragraph("<font size=7.5 color='#059669'><b>MİKSER, KIRIM & MİKRONİZE GÜNLÜK YÖNETİCİ RAPORU</b></font>", subtitle_style)
+    header_sub = Paragraph("<font size=7.5 color='#059669'><b>MİKSER, KIRIM VE MİKRONİZE GÜNLÜK YÖNETİCİ RAPORU</b></font>", subtitle_style)
 
     if os.path.exists(logo_path):
         logo_img = RLImage(logo_path, width=1.2 * cm, height=1.2 * cm)
@@ -4605,14 +4616,14 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
     header_right = [
         Paragraph(f"<b>TARİH:</b> {date_str}", ParagraphStyle("HDate_M", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=9, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)),
         Paragraph(f"<b>Rapor No:</b> {doc_no}", ParagraphStyle("HNo_M", parent=subtitle_style, fontSize=7, alignment=TA_RIGHT)),
-        Paragraph(f"<b>Basım:</b> Günlük Özet", ParagraphStyle("HTime_M", parent=subtitle_style, fontSize=7, alignment=TA_RIGHT))
+        Paragraph(f"<b>Basım:</b> Günlük Yönetici Özeti", ParagraphStyle("HTime_M", parent=subtitle_style, fontSize=7, alignment=TA_RIGHT))
     ]
     htable = Table([[header_left, header_right]], colWidths=[12.0 * cm, 7.0 * cm])
     htable.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("BOTTOMPADDING", (0, 0), (-1, -1), 2)]))
     story.append(htable)
-    story.append(Spacer(1, 1.5))
+    story.append(Spacer(1, 2.5))
 
-    # 2. KPI Kartları (GERİ DÖNÜŞÜM ve DOLGU ibareleri temizlendi)
+    # 2. KPI Kartları (19.0 cm toplam genişlik, sembolsüz Türkçe ifadeler)
     kpi_label_style = ParagraphStyle("KpiLabel_M", parent=styles["Normal"], fontName=PDF_FONT, fontSize=6.5, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
     kpi_val_style = ParagraphStyle("KpiVal_M", parent=styles["Normal"], fontName=PDF_FONT_BOLD, fontSize=9.5, alignment=TA_CENTER)
 
@@ -4627,10 +4638,10 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             Paragraph("MİKRONİZE", kpi_label_style),
         ],
         [
-            Paragraph(f"{mx_tot_kg:,.1f} kg<br/><font size=6 color='#D97706'>G: {mx_g_kg:,.0f} kg</font> · <font size=6 color='#0284C7'>N: {mx_n_kg:,.0f} kg</font>", ParagraphStyle("v1_m", parent=kpi_val_style, textColor=colors.HexColor("#059669"))),
-            Paragraph(f"{mx_tot_sarj} Şarj<br/><font size=6 color='#D97706'>G: {mx_g_sarj} şarj</font> · <font size=6 color='#0284C7'>N: {mx_n_sarj} şarj</font>", ParagraphStyle("v2_m", parent=kpi_val_style, textColor=colors.HexColor("#0F172A"))),
-            Paragraph(f"{k_tot_kg:,.1f} kg<br/><font size=6 color='#D97706'>G: {k_g_kg:,.0f} kg</font> · <font size=6 color='#0284C7'>N: {k_n_kg:,.0f} kg</font>", ParagraphStyle("v3_m", parent=kpi_val_style, textColor=colors.HexColor("#D97706"))),
-            Paragraph(f"{m_tot_kg:,.1f} kg<br/><font size=6 color='#D97706'>G: {m_g_kg:,.0f} kg</font> · <font size=6 color='#0284C7'>N: {m_n_kg:,.0f} kg</font>", ParagraphStyle("v4_m", parent=kpi_val_style, textColor=colors.HexColor("#0284C7"))),
+            Paragraph(f"{fmt_tr(mx_tot_kg)} kg<br/><font size=6 color='#D97706'>Gündüz: {fmt_tr(mx_g_kg)} kg</font><br/><font size=6 color='#0284C7'>Gece: {fmt_tr(mx_n_kg)} kg</font>", ParagraphStyle("v1_m", parent=kpi_val_style, textColor=colors.HexColor("#059669"))),
+            Paragraph(f"{mx_tot_sarj} Şarj<br/><font size=6 color='#D97706'>Gündüz: {mx_g_sarj} şarj</font><br/><font size=6 color='#0284C7'>Gece: {mx_n_sarj} şarj</font>", ParagraphStyle("v2_m", parent=kpi_val_style, textColor=colors.HexColor("#0F172A"))),
+            Paragraph(f"{fmt_tr(k_tot_kg)} kg<br/><font size=6 color='#D97706'>Gündüz: {fmt_tr(k_g_kg)} kg</font><br/><font size=6 color='#0284C7'>Gece: {fmt_tr(k_n_kg)} kg</font>", ParagraphStyle("v3_m", parent=kpi_val_style, textColor=colors.HexColor("#D97706"))),
+            Paragraph(f"{fmt_tr(m_tot_kg)} kg<br/><font size=6 color='#D97706'>Gündüz: {fmt_tr(m_g_kg)} kg</font><br/><font size=6 color='#0284C7'>Gece: {fmt_tr(m_n_kg)} kg</font>", ParagraphStyle("v4_m", parent=kpi_val_style, textColor=colors.HexColor("#0284C7"))),
         ],
         [
             Paragraph("BÖLÜM PERSONELİ", kpi_label_style),
@@ -4639,10 +4650,10 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             Paragraph("İŞLETME DURUMU", kpi_label_style),
         ],
         [
-            Paragraph(f"{tot_emp} Personel<br/><font size=6 color='#64748B'>{emp_g} Gündüz · {emp_n} Gece</font>", kpi_val_style),
-            Paragraph(f"{(grand_total_kg / 1000.0):,.2f} Ton<br/><font size=6 color='#64748B'>Mikser + Kırım + Mikronize</font>", ParagraphStyle("v5_m", parent=kpi_val_style, textColor=colors.HexColor("#4F46E5"))),
-            Paragraph(f"{active_k}/4 Kırım · {active_m}/6 Mik.<br/><font size=6 color='#64748B'>Faal Hat Oranı</font>", kpi_val_style),
-            Paragraph("Aktif İşletme<br/><font size=6 color='#64748B'>Çift Vardiya Operasyon</font>", ParagraphStyle("v6_m", parent=kpi_val_style, fontSize=8.5)),
+            Paragraph(f"{tot_emp} Personel<br/><font size=6 color='#64748B'>Gündüz: {emp_g} kişi</font><br/><font size=6 color='#64748B'>Gece: {emp_n} kişi</font>", kpi_val_style),
+            Paragraph(f"{fmt_tr(grand_total_kg / 1000.0, 2)} Ton<br/><font size=6 color='#64748B'>Mikser, Kırım ve Mikronize</font><br/><font size=6 color='#64748B'>Genel Tesis Toplamı</font>", ParagraphStyle("v5_m", parent=kpi_val_style, textColor=colors.HexColor("#4F46E5"))),
+            Paragraph(f"{active_k + active_m} / 10 Hat<br/><font size=6 color='#64748B'>Kırım: {active_k} / 4 Hat</font><br/><font size=6 color='#64748B'>Mikronize: {active_m} / 6 Hat</font>", kpi_val_style),
+            Paragraph("Faal<br/><font size=6 color='#64748B'>Çift Vardiya</font><br/><font size=6 color='#64748B'>Kesintisiz Üretim</font>", ParagraphStyle("v6_m", parent=kpi_val_style, fontSize=8.5)),
         ]
     ]
     t_kpi = Table(kpi_matrix, colWidths=[4.75 * cm] * 4)
@@ -4654,21 +4665,21 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
         ("BOTTOMPADDING", (0, 0), (-1, -1), 1.2),
     ]))
     story.append(t_kpi)
-    story.append(Spacer(1, 1.5))
+    story.append(Spacer(1, 2.5))
 
-    # 3. Vardiya Kırılımı Tablosu
+    # 3. Vardiya Kırılımı Tablosu (19.0 cm toplam genişlik)
     story.append(Paragraph("Vardiya Bazında Bölüm Üretim ve İşleme Özeti", h2_style))
     v_head = ["Vardiya", "Personel", "Mikser (Şarj)", "Mikser (kg)", "Kırım (kg)", "Mikronize (kg)", "Toplam Kütle (kg)"]
     v_rows = [
-        ["Gündüz Vardiyası", f"{emp_g} kişi", f"{mx_g_sarj} şarj", f"{mx_g_kg:,.1f} kg", f"{k_g_kg:,.1f} kg", f"{m_g_kg:,.1f} kg", f"{(mx_g_kg + k_g_kg + m_g_kg):,.1f} kg"],
-        ["Gece Vardiyası", f"{emp_n} kişi", f"{mx_n_sarj} şarj", f"{mx_n_kg:,.1f} kg", f"{k_n_kg:,.1f} kg", f"{m_n_kg:,.1f} kg", f"{(mx_n_kg + k_n_kg + m_n_kg):,.1f} kg"],
-        ["GENEL TOPLAM", f"{tot_emp} kişi", f"{mx_tot_sarj} şarj", f"{mx_tot_kg:,.1f} kg", f"{k_tot_kg:,.1f} kg", f"{m_tot_kg:,.1f} kg", f"{grand_total_kg:,.1f} kg"]
+        ["Gündüz Vardiyası", f"{emp_g} kişi", f"{mx_g_sarj} şarj", f"{fmt_tr(mx_g_kg)} kg", f"{fmt_tr(k_g_kg)} kg", f"{fmt_tr(m_g_kg)} kg", f"{fmt_tr(mx_g_kg + k_g_kg + m_g_kg)} kg"],
+        ["Gece Vardiyası", f"{emp_n} kişi", f"{mx_n_sarj} şarj", f"{fmt_tr(mx_n_kg)} kg", f"{fmt_tr(k_n_kg)} kg", f"{fmt_tr(m_n_kg)} kg", f"{fmt_tr(mx_n_kg + k_n_kg + m_n_kg)} kg"],
+        ["GENEL TOPLAM", f"{tot_emp} kişi", f"{mx_tot_sarj} şarj", f"{fmt_tr(mx_tot_kg)} kg", f"{fmt_tr(k_tot_kg)} kg", f"{fmt_tr(m_tot_kg)} kg", f"{fmt_tr(grand_total_kg)} kg"]
     ]
-    t_v = make_table(v_head, v_rows, col_widths=[3.5 * cm, 2.0 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm, 2.7 * cm, 3.0 * cm], align_cols=['L', 'C', 'R', 'R', 'R', 'R', 'R'])
+    t_v = make_table(v_head, v_rows, col_widths=[3.4 * cm, 2.0 * cm, 2.4 * cm, 2.8 * cm, 2.8 * cm, 2.8 * cm, 2.8 * cm], align_cols=['L', 'C', 'R', 'R', 'R', 'R', 'R'])
     story.append(t_v)
-    story.append(Spacer(1, 1.5))
+    story.append(Spacer(1, 2.5))
 
-    # 4. Mikser Kazanları Tablosu
+    # 4. Mikser Kazanları Tablosu (19.0 cm toplam genişlik: 2.2 + 3.4 + 1.8 + 1.8 + 2.1 + 1.8 + 2.1 + 1.8 + 2.0 = 19.0 cm)
     story.append(Paragraph(f"Mikser Kazanları İmalat Çizelgesi ({len(d_mixer)} Kayıt)", h2_style))
     mx_head = ["Kazan / Makine", "Reçete Adı", "Şarj (kg)", "Gündüz Şarj", "Gündüz (kg)", "Gece Şarj", "Gece (kg)", "Toplam Şarj", "Toplam (kg)"]
     mx_rows = []
@@ -4683,19 +4694,19 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
         t_s = int(me.get("toplam_sarj", 0) or (g_s + n_s))
         t_kg = float(me.get("toplam_kg", 0) or (g_kg + n_kg))
         mx_rows.append([
-            mak, rec, f"{b_kg:,.1f} kg", f"{g_s}", f"{g_kg:,.1f} kg", f"{n_s}", f"{n_kg:,.1f} kg", f"{t_s}", f"{t_kg:,.1f} kg"
+            mak, rec, f"{fmt_tr(b_kg)} kg", f"{g_s} şarj", f"{fmt_tr(g_kg)} kg", f"{n_s} şarj", f"{fmt_tr(n_kg)} kg", f"{t_s} şarj", f"{fmt_tr(t_kg)} kg"
         ])
     if not mx_rows:
-        mx_rows.append(["Mixer 1", "Kayıt girilmemiş", "—", "0", "0.0 kg", "0", "0.0 kg", "0", "0.0 kg"])
+        mx_rows.append(["Mixer 1", "Kayıt girilmemiş", "—", "0 şarj", "0,0 kg", "0 şarj", "0,0 kg", "0 şarj", "0,0 kg"])
     mx_rows_with_total = mx_rows + [
-        ["TOPLAM (Mikser)", "-", "-", f"{mx_g_sarj}", f"{mx_g_kg:,.1f} kg", f"{mx_n_sarj}", f"{mx_n_kg:,.1f} kg", f"{mx_tot_sarj}", f"{mx_tot_kg:,.1f} kg"]
+        ["TOPLAM", "-", "-", f"{mx_g_sarj} şarj", f"{fmt_tr(mx_g_kg)} kg", f"{mx_n_sarj} şarj", f"{fmt_tr(mx_n_kg)} kg", f"{mx_tot_sarj} şarj", f"{fmt_tr(mx_tot_kg)} kg"]
     ]
-    t_mx = make_table(mx_head, mx_rows_with_total, col_widths=[2.2 * cm, 3.8 * cm, 2.0 * cm, 1.8 * cm, 2.3 * cm, 1.8 * cm, 2.3 * cm, 1.8 * cm, 2.6 * cm], align_cols=['C', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 'R'])
+    t_mx = make_table(mx_head, mx_rows_with_total, col_widths=[2.2 * cm, 3.4 * cm, 1.8 * cm, 1.8 * cm, 2.1 * cm, 1.8 * cm, 2.1 * cm, 1.8 * cm, 2.0 * cm], align_cols=['C', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 'R'])
     story.append(t_mx)
-    story.append(Spacer(1, 1.5))
+    story.append(Spacer(1, 2.5))
 
-    # 5. Kırım & Mikronize Hatları (Gerçek Sistem Statüleri: Normal, Arızalı, Personel Yok)
-    story.append(Paragraph(f"Kırım & Mikronize Hatları İmalat Çizelgesi ({len(d_kirim) + len(d_mikronize)} Hat)", h2_style))
+    # 5. Kırım & Mikronize Hatları (19.0 cm toplam genişlik: 3.2 + 2.6 + 3.3 + 3.3 + 3.6 + 3.0 = 19.0 cm)
+    story.append(Paragraph(f"Kırım ve Mikronize Hatları İmalat Çizelgesi ({len(d_kirim) + len(d_mikronize)} Hat)", h2_style))
     km_head = ["Hat Adı", "Bölüm", "Gündüz (kg)", "Gece (kg)", "Toplam (kg)", "Sistem Durumu"]
     km_rows = []
     km_cell_styles = []
@@ -4717,7 +4728,7 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             st_bg = colors.HexColor("#16A34A") if t > 0 else colors.HexColor("#E2E8F0")
         km_cell_styles.append((r_idx, st_bg))
         r_idx += 1
-        km_rows.append([hat_name, "Kırım", f"{g:,.1f} kg", f"{n:,.1f} kg", f"{t:,.1f} kg", st_lbl])
+        km_rows.append([hat_name, "Kırım", f"{fmt_tr(g)} kg", f"{fmt_tr(n)} kg", f"{fmt_tr(t)} kg", st_lbl])
 
     for m in d_mikronize:
         hat_name = str(m.get("hat", "Mikronize"))
@@ -4736,21 +4747,21 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             st_bg = colors.HexColor("#0284C7") if t > 0 else colors.HexColor("#E2E8F0")
         km_cell_styles.append((r_idx, st_bg))
         r_idx += 1
-        km_rows.append([hat_name, "Mikronize", f"{g:,.1f} kg", f"{n:,.1f} kg", f"{t:,.1f} kg", st_lbl])
+        km_rows.append([hat_name, "Mikronize", f"{fmt_tr(g)} kg", f"{fmt_tr(n)} kg", f"{fmt_tr(t)} kg", st_lbl])
 
     km_rows_with_total = km_rows + [
-        ["TOPLAM (Kırım & Mikronize)", "-", f"{(k_g_kg + m_g_kg):,.1f} kg", f"{(k_n_kg + m_n_kg):,.1f} kg", f"{(k_tot_kg + m_tot_kg):,.1f} kg", f"<b>{active_k+active_m} Faal</b>"]
+        ["TOPLAM", "-", f"{fmt_tr(k_g_kg + m_g_kg)} kg", f"{fmt_tr(k_n_kg + m_n_kg)} kg", f"{fmt_tr(k_tot_kg + m_tot_kg)} kg", f"<b>{active_k + active_m} Faal</b>"]
     ]
-    t_km = make_table(km_head, km_rows_with_total, col_widths=[3.2 * cm, 2.5 * cm, 3.2 * cm, 3.2 * cm, 3.7 * cm, 3.2 * cm], align_cols=['C', 'C', 'R', 'R', 'R', 'C'])
+    t_km = make_table(km_head, km_rows_with_total, col_widths=[3.2 * cm, 2.6 * cm, 3.3 * cm, 3.3 * cm, 3.6 * cm, 3.0 * cm], align_cols=['C', 'C', 'R', 'R', 'R', 'C'])
     km_styles = []
     for r_i, s_bg in km_cell_styles:
         km_styles.append(("BACKGROUND", (5, r_i), (5, r_i), s_bg))
     if km_styles:
         t_km.setStyle(TableStyle(km_styles))
     story.append(t_km)
-    story.append(Spacer(1, 1.5))
+    story.append(Spacer(1, 2.5))
 
-    # 6. Günlük Hammadde Tüketim Tablosu (Gereksiz boşluğu önleyen kompakt 2 sütunlu düzen)
+    # 6. Günlük Hammadde Tüketim Tablosu (19.0 cm toplam genişlik: 4.5 + 2.8 + 2.2 + 4.5 + 2.8 + 2.2 = 19.0 cm)
     story.append(Paragraph(f"Günlük Hammadde Tüketim Dökümü ({len(day_mats)} Kalem Hammadde)", h2_style))
     sorted_mats = sorted(day_mats.items(), key=lambda x: x[1]["kg"], reverse=True)
     if len(sorted_mats) > 8:
@@ -4763,16 +4774,16 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             m1 = col1[i] if i < len(col1) else None
             m2 = col2[i] if i < len(col2) else None
             c1_name = f"<b>{m1[0]}</b>" if m1 else ""
-            c1_kg = f"{m1[1]['kg']:,.1f} kg" if m1 else ""
-            c1_pct = f"%{(m1[1]['kg']/tot_mats_kg*100):.1f}" if (m1 and tot_mats_kg > 0) else ""
+            c1_kg = f"{fmt_tr(m1[1]['kg'])} kg" if m1 else ""
+            c1_pct = f"%{fmt_tr(m1[1]['kg']/tot_mats_kg*100, 1)}" if (m1 and tot_mats_kg > 0) else ""
             c2_name = f"<b>{m2[0]}</b>" if m2 else ""
-            c2_kg = f"{m2[1]['kg']:,.1f} kg" if m2 else ""
-            c2_pct = f"%{(m2[1]['kg']/tot_mats_kg*100):.1f}" if (m2 and tot_mats_kg > 0) else ""
+            c2_kg = f"{fmt_tr(m2[1]['kg'])} kg" if m2 else ""
+            c2_pct = f"%{fmt_tr(m2[1]['kg']/tot_mats_kg*100, 1)}" if (m2 and tot_mats_kg > 0) else ""
             mat_rows.append([c1_name, c1_kg, c1_pct, c2_name, c2_kg, c2_pct])
         mat_rows_with_total = mat_rows + [
-            ["<b>TOPLAM ÇIKIŞ</b>", f"<b>{tot_mats_kg:,.1f} kg</b>", "<b>%100</b>", "", "", ""]
+            ["<b>TOPLAM ÇIKIŞ</b>", f"<b>{fmt_tr(tot_mats_kg)} kg</b>", "<b>%100</b>", "", "", ""]
         ]
-        t_mat = make_table(mat_head, mat_rows_with_total, col_widths=[4.5 * cm, 2.7 * cm, 2.3 * cm, 4.5 * cm, 2.7 * cm, 2.3 * cm], align_cols=['L', 'R', 'R', 'L', 'R', 'R'])
+        t_mat = make_table(mat_head, mat_rows_with_total, col_widths=[4.5 * cm, 2.8 * cm, 2.2 * cm, 4.5 * cm, 2.8 * cm, 2.2 * cm], align_cols=['L', 'R', 'R', 'L', 'R', 'R'])
     else:
         mat_head = ["Hammadde Cinsi", "Kullanıldığı Reçeteler", "Günlük Tüketim (kg)", "Reçete Payı (%)"]
         mat_rows = []
@@ -4780,38 +4791,14 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
             m_kg = mv["kg"]
             pct = (m_kg / tot_mats_kg * 100.0) if tot_mats_kg > 0 else 0.0
             recs_str = ", ".join(sorted(list(mv["recipes"])))
-            mat_rows.append([f"<b>{mat_name}</b>", recs_str, f"{m_kg:,.2f} kg", f"%{pct:.1f}"])
+            mat_rows.append([f"<b>{mat_name}</b>", recs_str, f"{fmt_tr(m_kg)} kg", f"%{fmt_tr(pct, 1)}"])
         if not mat_rows:
-            mat_rows.append(["—", "Bu gün için hammadde sarfiyatı hesaplanamadı", "0.0 kg", "%0.0"])
+            mat_rows.append(["—", "Bu gün için hammadde sarfiyatı hesaplanamadı", "0,0 kg", "%0,0"])
         mat_rows_with_total = mat_rows + [
-            ["TOPLAM HAMMADDE ÇIKIŞI", f"{len(day_mats)} Kalem Hammadde", f"{tot_mats_kg:,.2f} kg", "%100.0"]
+            ["TOPLAM HAMMADDE ÇIKIŞI", f"{len(day_mats)} Kalem Hammadde", f"{fmt_tr(tot_mats_kg)} kg", "%100"]
         ]
-        t_mat = make_table(mat_head, mat_rows_with_total, col_widths=[4.5 * cm, 7.5 * cm, 3.6 * cm, 3.4 * cm], align_cols=['L', 'L', 'R', 'R'])
+        t_mat = make_table(mat_head, mat_rows_with_total, col_widths=[4.5 * cm, 7.5 * cm, 3.8 * cm, 3.2 * cm], align_cols=['L', 'L', 'R', 'R'])
     story.append(t_mat)
-    story.append(Spacer(1, 2))
-
-    # 7. Kurumsal Onay ve İmza Bandı
-    sign_matrix = [
-        [
-            Paragraph("<b>VARDİYA MİKSER AMİRİ</b>", ParagraphStyle("S1_M", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=7.5, alignment=TA_CENTER)),
-            Paragraph("<b>KIRIM & MİKRONİZE SORUMLUSU</b>", ParagraphStyle("S2_M", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=7.5, alignment=TA_CENTER)),
-            Paragraph("<b>ÜRETİM MÜDÜRÜ / FABRİKA YÖNETİMİ</b>", ParagraphStyle("S3_M", parent=subtitle_style, fontName=PDF_FONT_BOLD, fontSize=7.5, alignment=TA_CENTER)),
-        ],
-        [
-            Paragraph("<br/>İmza / Kaşe<br/>................................................", ParagraphStyle("S4_M", parent=subtitle_style, fontSize=7, textColor=colors.HexColor("#94A3B8"), alignment=TA_CENTER)),
-            Paragraph("<br/>İmza / Kaşe<br/>................................................", ParagraphStyle("S5_M", parent=subtitle_style, fontSize=7, textColor=colors.HexColor("#94A3B8"), alignment=TA_CENTER)),
-            Paragraph("<br/>Onay<br/>................................................", ParagraphStyle("S6_M", parent=subtitle_style, fontSize=7, textColor=colors.HexColor("#94A3B8"), alignment=TA_CENTER)),
-        ]
-    ]
-    t_sign = Table(sign_matrix, colWidths=[6.33 * cm] * 3)
-    t_sign.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
-        ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
-        ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-        ("TOPPADDING", (0, 0), (-1, -1), 2),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
-    ]))
-    story.append(KeepTogether([t_sign]))
 
     doc.build(story, canvasmaker=NumberedCanvas)
     buf.seek(0)

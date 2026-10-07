@@ -1819,10 +1819,10 @@
             "speed": 0.86,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
+            "prod_kg": 672.0,
             "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "qty": 310,
+            "sets": 62.0
           },
           {
             "row": 0,
@@ -1831,11 +1831,11 @@
             "length": 2.15,
             "speed": 0.5,
             "heads": 1.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 12.0,
+            "prod_kg": 863.0,
+            "fire_kg": 69.27,
+            "qty": 155,
+            "sets": 62.0
           },
           {
             "row": 0,
@@ -1844,11 +1844,11 @@
             "length": 2.2,
             "speed": 0.72,
             "heads": 2.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 11.0,
+            "prod_kg": 533.0,
+            "fire_kg": 260.99,
+            "qty": 290,
+            "sets": 58.0
           },
           {
             "row": 0,
@@ -1857,11 +1857,11 @@
             "length": 2.1,
             "speed": 0.6,
             "heads": 2.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 12.0,
+            "prod_kg": 884.0,
+            "fire_kg": 542.29,
+            "qty": 255,
+            "sets": 72.9
           },
           {
             "row": 0,
@@ -1870,11 +1870,11 @@
             "length": 2.1,
             "speed": 0.66,
             "heads": 2.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 12.0,
+            "prod_kg": 1474.0,
+            "fire_kg": 73.77,
+            "qty": 431,
+            "sets": 123.1
           },
           {
             "row": 0,
@@ -1883,11 +1883,11 @@
             "length": 2.15,
             "speed": 0.47,
             "heads": 1.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
+            "hours": 12.0,
+            "prod_kg": 960.0,
             "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "qty": 200,
+            "sets": 80.0
           },
           {
             "row": 0,
@@ -1896,11 +1896,11 @@
             "length": 2.1,
             "speed": 1.05,
             "heads": 1.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 12.0,
+            "prod_kg": 1306.0,
+            "fire_kg": 97.46,
+            "qty": 335,
+            "sets": 95.7
           },
           {
             "row": 0,
@@ -1922,18 +1922,37 @@
             "length": 2.2,
             "speed": 1.32,
             "heads": 2.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 12.0,
+            "prod_kg": 1058.0,
+            "fire_kg": 202.84,
+            "qty": 725,
+            "sets": 145.0
           }
         ],
         "levha": [
           {
             "row": 0,
             "hat": "201",
-            "color": "",
+            "color": "SONOMO",
+            "width": 85.0,
+            "length": 210.0,
+            "m2_one": 1.785,
+            "qty": 480,
+            "total_m2": 856.8,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 231.84,
+            "dead_fire_kg": 568.01,
+            "total_kg": 2099.16,
+            "sets": 240.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 10.0,
+            "en_firesi_cm": 23.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "AY GRİ",
             "width": 93.0,
             "length": 208.0,
             "m2_one": 1.9344,

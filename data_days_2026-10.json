@@ -2185,9 +2185,18 @@
           "hat": "107",
           "fire_reason": "",
           "fire_kg": 0.0,
-          "down_reason": "",
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
           "down_min": 0.0,
-          "desc": ""
+          "desc": "Hammadde sorunluğu olduğu için hammadde değiştirildi."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı. Isılar beklendi."
         }
       ],
       "kirim": [

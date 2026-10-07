@@ -1212,8 +1212,11 @@
                     </h2>
                     <div class="flex items-center gap-2">
                         <input type="date" id="dash-day-select" onchange="onDashDaySelectChange()" class="bg-slate-950 border border-slate-700 text-white text-xs font-bold rounded-lg px-3 py-2 focus:ring-2 focus:ring-ergunbas-500 focus:outline-none">
-                        <button onclick="downloadDailyPDF()" class="px-3.5 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow-md">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> 📄 Günlük PDF Raporu İndir
+                        <button onclick="downloadDailyPDF()" class="px-3.5 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow-md" title="Ekstrüder ve Levha Hatları Günlük PDF Raporu">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> 📄 Ekstrüder Raporu (PDF)
+                        </button>
+                        <button onclick="downloadDailyMixerPDF()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow-md" title="Mikser, Kırım, Mikronize ve Hammadde Günlük PDF Raporu">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> 🥣 Mikser Raporu (PDF)
                         </button>
                     </div>
                 </div>
@@ -2203,6 +2206,9 @@
                     <select id="mixer-month-select" onchange="loadMixerDashboard(this.value)" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"></select>
                 </div>
                 <div class="flex items-center gap-2">
+                    <button onclick="downloadDailyMixerPDF()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition shadow-md flex items-center gap-1.5" title="Seçili Günün Resmi Mikser PDF Raporu">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> 📄 Günlük Mikser PDF Raporu
+                    </button>
                     <button onclick="loadMixerDashboard()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700 flex items-center gap-1.5">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-400"></i> Yenile
                     </button>
@@ -2637,6 +2643,9 @@
                             <i data-lucide="calendar" class="w-4 h-4 text-sky-400"></i> Gün Seçin:
                         </label>
                         <select id="mixer-dash-day-select" onchange="onMixerDayChange(this.value)" class="bg-slate-950 border border-slate-700 text-white rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-sky-500 focus:outline-none"></select>
+                        <button onclick="downloadDailyMixerPDF()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-md flex items-center gap-1.5" title="Bu Günün 2 Sayfalık Resmi Mikser PDF Raporunu İndir">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> 📄 Günlük Mikser PDF İndir
+                        </button>
                     </div>
 
                     <!-- Vardiya Personeli -->
@@ -13453,6 +13462,29 @@
                     const dateStr = `${parts[2]}.${parts[1]}.${parts[0]}`;
                     url += `?date=${encodeURIComponent(dateStr)}`;
                 }
+            }
+            window.open(url, '_blank');
+        }
+
+        function downloadDailyMixerPDF() {
+            let dateVal = '';
+            const mixerDaySel = document.getElementById('mixer-dash-day-select');
+            const dashDaySel = document.getElementById('dash-day-select');
+
+            // Eğer mikser sekmesinde gün seçiliyse
+            if (mixerDaySel && mixerDaySel.value) {
+                const selOption = mixerDaySel.options[mixerDaySel.selectedIndex];
+                dateVal = selOption ? (selOption.text || mixerDaySel.value) : mixerDaySel.value;
+            } else if (dashDaySel && dashDaySel.value) {
+                const parts = dashDaySel.value.split('-');
+                if (parts.length === 3) {
+                    dateVal = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                }
+            }
+
+            let url = '/api/export_daily_mixer_pdf';
+            if (dateVal && dateVal !== 'Kayıtlı gün yok') {
+                url += `?date=${encodeURIComponent(dateVal.trim())}`;
             }
             window.open(url, '_blank');
         }

@@ -697,9 +697,11 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
 
     return {
         "completable_doors": completable_doors,
+        "today_completable_doors": completable_doors,
         "details": {
             "pervaz": {
                 "produced": pervaz_prod,
+                "today_door_eq": round(pervaz_eq, 2),
                 "req_per_door": pervaz_req,
                 "door_eq": round(pervaz_eq, 2),
                 "used": pervaz_used,
@@ -707,6 +709,7 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
             },
             "kasa": {
                 "produced": kasa_prod,
+                "today_door_eq": round(kasa_eq, 2),
                 "req_per_door": kasa_req,
                 "door_eq": round(kasa_eq, 2),
                 "used": kasa_used,
@@ -714,6 +717,7 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
             },
             "seren": {
                 "produced": seren_prod,
+                "today_door_eq": round(seren_eq, 2),
                 "req_per_door": seren_req,
                 "door_eq": round(seren_eq, 2),
                 "used": seren_used,
@@ -721,6 +725,7 @@ def compute_door_capacity(db_data, filter_date_keys: Optional[List[str]] = None)
             },
             "levha": {
                 "produced": levha_prod,
+                "today_door_eq": round(levha_eq, 2),
                 "req_per_door": levha_req,
                 "door_eq": round(levha_eq, 2),
                 "used": levha_used,
@@ -1201,6 +1206,10 @@ def get_dashboard_summary():
         # önceki günden gelen fazlalık (running_carryover) bugünün üretimine eklenir,
         # tamamlanan kapılar düşüldükten sonra kalan fazlalık bir sonraki güne aktarılır.
         today_qty = get_day_category_qty(day_obj, prod_cat_map)
+        today_eq = {cat: (today_qty[cat] / door_req[cat] if door_req[cat] else 0) for cat in door_req}
+        has_any_today = any(today_qty[cat] > 0 for cat in door_req)
+        today_completable_doors = math.floor(min(today_eq.values())) if has_any_today else 0
+
         available = {cat: running_carryover[cat] + today_qty[cat] for cat in door_req}
         eq = {cat: (available[cat] / door_req[cat] if door_req[cat] else 0) for cat in door_req}
         has_any = any(available[cat] > 0 for cat in door_req)
@@ -1210,9 +1219,11 @@ def get_dashboard_summary():
 
         day_door_stats = {
             "completable_doors": day_completable_doors,
+            "today_completable_doors": today_completable_doors,
             "details": {
                 cat: {
                     "produced": today_qty[cat],
+                    "today_door_eq": round(today_eq[cat], 2),
                     "carryover_in": round(running_carryover[cat], 2),
                     "available": round(available[cat], 2),
                     "req_per_door": door_req[cat],
@@ -4314,24 +4325,53 @@ def export_daily_pdf(date: Optional[str] = None):
     story.append(Spacer(1, 4))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----
-    door_head = ["Kategori", "Dünden Devir", "Bugünkü Üretim", "Toplam Havuz", "Reçete Oranı", "Kapı Eşdeğeri", "Yarına Devir"]
+    door_head = [
+        "Kategori",
+        "Dünden Devir",
+        "Bugünkü Üretim",
+        "Bugün Eşdeğer",
+        "Toplam Havuz",
+        "Reçete Oranı",
+        "Havuz Eşdeğeri",
+        "Yarına Devir"
+    ]
     door_rows = []
     details = door_stats.get("details", {})
     cat_names = [("pervaz", "Pervaz"), ("kasa", "Kasa"), ("seren", "Seren"), ("levha", "Levha")]
     for cat_key, cat_lbl in cat_names:
         cd = details.get(cat_key, {})
+        prod_val = float(cd.get('produced', 0) or 0)
+        req_val = float(cd.get('req_per_door', 0) or 1)
+        today_eq = float(cd.get('today_door_eq', 0) or (prod_val / req_val if req_val else 0))
         door_rows.append([
             cat_lbl,
             f"{float(cd.get('carryover_in', 0) or 0):,.1f}",
-            f"{float(cd.get('produced', 0) or 0):,.1f}",
+            f"{prod_val:,.1f}",
+            f"{today_eq:,.1f} kapı",
             f"{float(cd.get('available', 0) or 0):,.1f}",
-            f"{cd.get('req_per_door', 0)} ad",
+            f"{req_val:g} ad",
             f"{float(cd.get('door_eq', 0) or 0):,.1f} kapı",
             f"{float(cd.get('carryover', 0) or 0):,.1f}"
         ])
-    t_door = make_table(door_head, door_rows, col_widths=[3.0 * cm, 2.6 * cm, 2.6 * cm, 2.6 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['L', 'R', 'R', 'R', 'C', 'R', 'R'])
+    t_door = make_table(
+        door_head,
+        door_rows,
+        col_widths=[2.5 * cm, 2.2 * cm, 2.3 * cm, 2.4 * cm, 2.3 * cm, 2.0 * cm, 2.4 * cm, 2.5 * cm],
+        align_cols=['L', 'R', 'R', 'R', 'R', 'C', 'R', 'R']
+    )
+    today_comp_doors = door_stats.get("today_completable_doors")
+    if today_comp_doors is None:
+        today_eq_list = [
+            float(details.get(k, {}).get("produced", 0) or 0) / float(details.get(k, {}).get("req_per_door", 1) or 1)
+            for k in ["pervaz", "kasa", "seren", "levha"]
+        ]
+        today_comp_doors = math.floor(min(today_eq_list)) if today_eq_list else 0
+
     door_section = KeepTogether([
-        Paragraph(f"Kapı Kapasitesi (Reçete Eşdeğeri & Devir Zinciri) — Tamamlanan: {completable_doors} Adet Kapı", h2_style),
+        Paragraph(
+            f"Kapı Kapasitesi (Reçete Eşdeğeri & Devir Zinciri) — Tamamlanan: {completable_doors} Adet Kapı (Bugün Üretilen Parçalardan: {today_comp_doors} Kapı)",
+            h2_style
+        ),
         t_door
     ])
     story.append(door_section)

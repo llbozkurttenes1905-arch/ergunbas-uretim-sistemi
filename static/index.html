@@ -1244,16 +1244,17 @@
                                     <th class="p-2">Kategori</th>
                                     <th class="p-2 text-right">Dünden Devir</th>
                                     <th class="p-2 text-right">Bugünkü Üretim</th>
+                                    <th class="p-2 text-right text-emerald-400">Bugün Eşdeğer</th>
                                     <th class="p-2 text-right">Toplam Havuz</th>
                                     <th class="p-2 text-right">Reçete Katsayısı</th>
-                                    <th class="p-2 text-right">Kapı Eşdeğeri</th>
+                                    <th class="p-2 text-right text-cyan-400">Havuz Eşdeğeri</th>
                                     <th class="p-2 text-right">Yarına Devir</th>
                                 </tr>
                             </thead>
                             <tbody id="dash-day-doors-tbody" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
-                    <p class="text-xs text-slate-500 mt-2">Tamamlanabilir Tam Kapı = <span id="dash-day-doors-completable" class="font-bold text-emerald-400">-</span> adet (en düşük eşdeğere göre)</p>
+                    <p class="text-xs text-slate-500 mt-2">Tamamlanabilir Tam Kapı (Devir Dahil) = <span id="dash-day-doors-completable" class="font-bold text-emerald-400">-</span> adet &nbsp;|&nbsp; Sadece Bugünkü Üretimden = <span id="dash-day-doors-today-completable" class="font-bold text-cyan-400">-</span> adet</p>
                 </div>
 
                 <!-- EKSTRÜDER HATLARI - AYRI DETAYLI ÖZET -->
@@ -9868,16 +9869,28 @@
             // Kapı kapasitesi tablosu (Formül: Kapı Eşdeğeri = (Dünden Devir + Bugünkü Üretim) / Reçete Katsayısı)
             const doorLabels = { pervaz: 'Pervaz', kasa: 'Kasa', seren: 'Seren', levha: 'Levha' };
             doorsCompletable.textContent = day.door_stats.completable_doors;
+            const doorsTodayCompEl = document.getElementById('dash-day-doors-today-completable');
+            if (doorsTodayCompEl) {
+                const tComp = day.door_stats.today_completable_doors !== undefined
+                    ? day.door_stats.today_completable_doors
+                    : Math.floor(Math.min(...Object.keys(doorLabels).map(k => {
+                        const d = day.door_stats.details[k];
+                        return (d && d.req_per_door) ? (d.produced / d.req_per_door) : 0;
+                    })));
+                doorsTodayCompEl.textContent = tComp;
+            }
             doorsBody.innerHTML = Object.keys(doorLabels).map(k => {
                 const d = day.door_stats.details[k];
+                const todayEq = (d.today_door_eq !== undefined) ? d.today_door_eq : (d.req_per_door ? +(d.produced / d.req_per_door).toFixed(1) : 0);
                 return `
                 <tr class="hover:bg-slate-800/40 transition">
                     <td class="p-2 font-bold text-white">${doorLabels[k]}</td>
                     <td class="p-2 text-right ${d.carryover_in > 0 ? 'text-sky-400 font-semibold' : 'text-slate-500'}">${d.carryover_in.toLocaleString('tr-TR')}</td>
                     <td class="p-2 text-right">${d.produced.toLocaleString('tr-TR')}</td>
+                    <td class="p-2 text-right font-bold text-emerald-400">${todayEq.toLocaleString('tr-TR')} kapı</td>
                     <td class="p-2 text-right font-semibold text-white">${d.available.toLocaleString('tr-TR')}</td>
                     <td class="p-2 text-right text-slate-400">${d.req_per_door}</td>
-                    <td class="p-2 text-right font-bold text-emerald-400">${d.door_eq}</td>
+                    <td class="p-2 text-right font-bold text-cyan-400">${d.door_eq} kapı</td>
                     <td class="p-2 text-right ${d.carryover > 0 ? 'text-sky-400 font-semibold' : 'text-slate-500'}">${d.carryover.toLocaleString('tr-TR')}</td>
                 </tr>`;
             }).join('');

@@ -1870,9 +1870,9 @@
             "length": 2.1,
             "speed": 0.66,
             "heads": 2.0,
-            "hours": 12.0,
+            "hours": 11.0,
             "prod_kg": 1474.0,
-            "fire_kg": 73.77,
+            "fire_kg": 0.0,
             "qty": 431,
             "sets": 123.1
           },
@@ -1922,9 +1922,9 @@
             "length": 2.2,
             "speed": 1.32,
             "heads": 2.0,
-            "hours": 12.0,
+            "hours": 11.0,
             "prod_kg": 1058.0,
-            "fire_kg": 202.84,
+            "fire_kg": 97.77,
             "qty": 725,
             "sets": 145.0
           }
@@ -2134,7 +2134,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "ELEKTRİK DALGALANMASI",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 60.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 60.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 180.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 200.0,
+          "desc": "Hammadde sorunluğu olduğu için hammadde değiştirildi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

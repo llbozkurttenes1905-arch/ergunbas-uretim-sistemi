@@ -1952,10 +1952,10 @@
           {
             "row": 0,
             "hat": "201",
-            "color": "AY GRİ",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
+            "color": "ANTRASİT",
+            "width": 94.0,
+            "length": 210.0,
+            "m2_one": 1.974,
             "qty": 0,
             "total_m2": 0.0,
             "width_fire_cm": 0,
@@ -1966,7 +1966,7 @@
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
             "hours": null,
-            "en_firesi_cm": 15.0
+            "en_firesi_cm": 14.0
           }
         ]
       },

@@ -1360,11 +1360,11 @@
     },
     {
       "id": "rec_levha_renkli",
-      "name": "Levha Renkli (Takoz)",
+      "name": "Levha Renkli (ÇAPAK)",
       "batch_kg": 334.3,
       "ingredients": [
         {
-          "material": "LEVHA HURDASI",
+          "material": "LEVHA ÇAPAK",
           "kg": 150.0
         },
         {

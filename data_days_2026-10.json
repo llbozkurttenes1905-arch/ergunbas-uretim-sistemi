@@ -2190,13 +2190,31 @@
           "desc": "Hammadde sorunluğu olduğu için hammadde değiştirildi."
         },
         {
-          "shift": "Gündüz",
+          "shift": "Gece",
           "hat": "109",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Kalıp / Ürün Değişimi & Ayar",
           "down_min": 120.0,
           "desc": "Kalıp temizliği yapıldı. Isılar beklendi."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": "Hammadde yetersizliğinden dolayı kapalı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": "Hammadde yetersizliğinden dolayı kapalı."
         }
       ],
       "kirim": [

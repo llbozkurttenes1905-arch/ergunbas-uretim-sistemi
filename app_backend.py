@@ -82,7 +82,7 @@ class NumberedCanvas(canvas.Canvas):
         self.line(1.2 * cm, 1.2 * cm, 19.8 * cm, 1.2 * cm)
 
         # Metinler
-        footer_text = "ERGÜNBAŞ Grup — Günlük Yönetici Özeti (Gizli ve Kurumsal Rapor)"
+        footer_text = "ERGUNBAS GROUP — Günlük Yönetici Özeti (Gizli ve Kurumsal Rapor)"
         page_text = f"Sayfa {self._pageNumber} / {page_count}"
         self.drawString(1.2 * cm, 0.8 * cm, footer_text)
         self.drawRightString(19.8 * cm, 0.8 * cm, page_text)
@@ -326,7 +326,7 @@ def require_daily_operator(x_username: Optional[str]):
             detail="Günlük üretim veri girişi yetkiniz bulunmamaktadır (Salt okunur)."
         )
 
-app = FastAPI(title="ERGÜNBAŞ Grup Ekstrüder ve Levha Üretim Yönetim Sistemi")
+app = FastAPI(title="ERGUNBAS GROUP Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
 # ============================================================================
 # AY BAZINDA BÖLÜNMÜŞ DEPOLAMA (GitHub Contents API 1MB dosya sınırını aşmamak için)
@@ -1762,7 +1762,7 @@ def get_dashboard_summary():
     kg_per_hour = (total_prod_kg / total_hours) if total_hours > 0 else 0
 
     return {
-        "company": "ERGÜNBAŞ Grup",
+        "company": "ERGUNBAS GROUP",
         "total_prod_ton": round(total_prod_kg / 1000.0, 2),
         "total_fire_ton": round(total_fire_kg / 1000.0, 2),
         "total_ext_prod_kg": round(total_ext_prod_kg, 2),
@@ -3611,7 +3611,7 @@ def export_excel():
     
     ws_summary = wb.active
     ws_summary.title = "ERGUNBAS Yönetici Özeti"
-    ws_summary.append(["ERGÜNBAŞ GRUP - EKSTRÜDER VE LEVHA ÜRETİM RAPORU"])
+    ws_summary.append(["ERGUNBAS GROUP - EKSTRÜDER VE LEVHA ÜRETİM RAPORU"])
     ws_summary.append([])
     ws_summary.append(["Tarih Key", "Tarih", "Gündüz Çalışan", "Gece Çalışan", "Toplam Üretim (kg)", "Toplam Fire (kg)", "Fire Oranı (%)"])
 
@@ -3689,7 +3689,7 @@ def export_pdf():
     story = []
 
     # ---- BAŞLIK ----
-    story.append(Paragraph("ERGÜNBAŞ GRUP", title_style))
+    story.append(Paragraph("ERGUNBAS GROUP", title_style))
     story.append(Paragraph("Üretim ve Fire Yönetimi — Genel Toplam Raporu", subtitle_style))
     story.append(Paragraph(f"Oluşturulma tarihi: {get_turkey_now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
     story.append(Spacer(1, 12))
@@ -4216,7 +4216,7 @@ def export_daily_pdf(date: Optional[str] = None):
     logo_path = os.path.join(APP_DIR, "static", "logo.png")
     if os.path.exists(logo_path):
         logo_img = RLImage(logo_path, width=1.35 * cm, height=1.35 * cm)
-        header_title = Paragraph("<b>ERGÜNBAŞ GRUP</b>", title_style)
+        header_title = Paragraph("<b>ERGUNBAS GROUP</b>", title_style)
         header_sub = Paragraph("<font size=8 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM VE PERFORMANS RAPORU</b></font>", subtitle_style)
         
         logo_text_cell = Table([[logo_img, [header_title, Spacer(1, 1), header_sub]]], colWidths=[1.55 * cm, 10.05 * cm])
@@ -4230,7 +4230,7 @@ def export_daily_pdf(date: Optional[str] = None):
         header_left = logo_text_cell
     else:
         header_left = [
-            Paragraph("<b>ERGÜNBAŞ GRUP</b>", title_style),
+            Paragraph("<b>ERGUNBAS GROUP</b>", title_style),
             Paragraph("<font size=8 color='#E11D48'><b>GÜNLÜK YÖNETİCİ ÜRETİM VE PERFORMANS RAPORU</b></font>", subtitle_style)
         ]
 
@@ -4325,7 +4325,7 @@ def export_daily_pdf(date: Optional[str] = None):
     t_mach = make_table(
         mach_head,
         mach_status_rows,
-        col_widths=[1.8 * cm, 1.4 * cm, 3.8 * cm, 3.8 * cm, 1.5 * cm, 1.7 * cm, 1.8 * cm, 2.8 * cm],
+        col_widths=[1.7 * cm, 1.7 * cm, 3.65 * cm, 3.65 * cm, 1.5 * cm, 1.7 * cm, 1.8 * cm, 2.9 * cm],
         align_cols=['C', 'C', 'L', 'L', 'R', 'R', 'C', 'L']
     )
     # Renk kodlaması: Ekipman hücresi ve Durum hücresi boyama (24 sa yeşil, 0 sa kırmızı, 0-24 sa sarı/turuncu)
@@ -4608,7 +4608,7 @@ def export_daily_mixer_pdf(date: Optional[str] = None):
 
     # 1. Header (19.0 cm toplam genişlik)
     logo_path = os.path.join(APP_DIR, "static", "logo.png")
-    header_title = Paragraph("<b>ERGÜNBAŞ GRUP</b>", title_style)
+    header_title = Paragraph("<b>ERGUNBAS GROUP</b>", title_style)
     header_sub = Paragraph("<font size=7.5 color='#059669'><b>MİKSER, KIRIM VE MİKRONİZE GÜNLÜK YÖNETİCİ RAPORU</b></font>", subtitle_style)
 
     if os.path.exists(logo_path):
@@ -4831,7 +4831,7 @@ def root():
                 "Pragma": "no-cache",
                 "Expires": "0"
             })
-    return "<h1>ERGÜNBAŞ Grup Üretim Takip Sistemi</h1>"
+    return "<h1>ERGUNBAS GROUP Üretim Takip Sistemi</h1>"
 
 # 3D Dijital İkiz: Makine Yerleşim Planı Kalıcı Depolama API
 DT_LAYOUT_FILE = os.path.join(APP_DIR, "dt_layout.json")

@@ -3939,7 +3939,14 @@ def export_daily_pdf(date: Optional[str] = None):
             if de["text"] not in seen_t:
                 seen_t.add(de["text"])
                 uniq_entries.append(de)
-        d_reasons = [de["text"] for de in uniq_entries]
+        d_reasons = []
+        for de in uniq_entries:
+            r_str = de.get("reason", "")
+            if len(r_str) > 24:
+                r_str = r_str[:22] + "…"
+            d_min = de.get("down_min", 0)
+            d_reasons.append(f"{r_str} ({d_min} dk)" if d_min > 0 else r_str)
+        d_reasons = d_reasons[:2]
 
         # RENK KODLAMASI: 24 sa -> Yeşil, 0 sa -> Kırmızı, 0-24 sa -> Sarı/Turuncu
         if tot_h >= 23.5:
@@ -4026,8 +4033,14 @@ def export_daily_pdf(date: Optional[str] = None):
         for de in d_entries:
             if de["text"] not in seen_t:
                 seen_t.add(de["text"])
-                uniq_entries.append(de)
-        d_reasons = [de["text"] for de in uniq_entries]
+        d_reasons = []
+        for de in uniq_entries:
+            r_str = de.get("reason", "")
+            if len(r_str) > 24:
+                r_str = r_str[:22] + "…"
+            d_min = de.get("down_min", 0)
+            d_reasons.append(f"{r_str} ({d_min} dk)" if d_min > 0 else r_str)
+        d_reasons = d_reasons[:2]
 
         # RENK KODLAMASI (Levha)
         if tot_h >= 23.5:
@@ -4177,10 +4190,10 @@ def export_daily_pdf(date: Optional[str] = None):
             ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F8FAFC")]),
             ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("TOPPADDING", (0, 0), (-1, -1), 2),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
-            ("LEFTPADDING", (0, 0), (-1, -1), 3.5),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 3.5),
+            ("TOPPADDING", (0, 0), (-1, -1), 1.5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
+            ("LEFTPADDING", (0, 0), (-1, -1), 3),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 3),
         ]))
         return t
 
@@ -4218,10 +4231,10 @@ def export_daily_pdf(date: Optional[str] = None):
     htable = Table([[header_left, header_right]], colWidths=[11.6 * cm, 7.0 * cm])
     htable.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4)
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 3)
     ]))
     story.append(htable)
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 2.5))
 
     # ---- KPI KARTLARI TABLOSU (EKSTRÜDER VE LEVHA KIRILIMLARIYLA) ----
     kpi_label_style = ParagraphStyle("KpiLabel", parent=styles["Normal"], fontName=PDF_FONT, fontSize=7, textColor=colors.HexColor("#64748B"), alignment=TA_CENTER)
@@ -4258,11 +4271,11 @@ def export_daily_pdf(date: Optional[str] = None):
         ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
         ("BOX", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E1")),
         ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
-        ("TOPPADDING", (0, 0), (-1, -1), 3),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+        ("TOPPADDING", (0, 0), (-1, -1), 1.8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 1.8),
     ]))
     story.append(t_kpi)
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 2.5))
 
     # ---- VARDİYA BAZINDA KIRILIM TABLOSU ----
     story.append(Paragraph("Vardiya Bazında Üretim & Fire Kırılımı", h2_style))
@@ -4282,7 +4295,7 @@ def export_daily_pdf(date: Optional[str] = None):
     v_rows.append(["GENEL TOPLAM", f"{tot_emp} kişi", f"{tot_prod_kg:,.1f} kg", f"{tot_fire_kg:,.1f} kg", f"%{fire_ratio:.2f}", f"{kg_per_emp:.1f} kg", f"{kg_per_hour:.1f} kg/sa"])
     t_v = make_table(v_head, v_rows, col_widths=[3.8 * cm, 2.2 * cm, 2.7 * cm, 2.7 * cm, 2.2 * cm, 2.5 * cm, 2.5 * cm], align_cols=['L', 'R', 'R', 'R', 'R', 'R', 'R'])
     story.append(t_v)
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 2.5))
 
     # ---- FABRİKA HATLARI İŞLETME VE KAPASİTE KULLANIM MATRİSİ ----
     story.append(Paragraph("Fabrika Hatları İşletme ve Kapasite Kullanım Matrisi", h2_style))
@@ -4293,13 +4306,13 @@ def export_daily_pdf(date: Optional[str] = None):
         f"Kapasite Kullanım Oranı (KKO): <b>%{hat_utilization:.1f}</b>"
     )
     story.append(Paragraph(summary_text, subtitle_style))
-    story.append(Spacer(1, 3))
+    story.append(Spacer(1, 2))
 
     mach_head = ["Ekipman / Hat", "Türü", "Vardiya I (Gündüz)", "Vardiya II (Gece)", "İşletme Süresi", "Net Üretim", "Durum", "Duruş / Not"]
     t_mach = make_table(
         mach_head,
         mach_status_rows,
-        col_widths=[2.0 * cm, 1.6 * cm, 3.8 * cm, 3.8 * cm, 1.6 * cm, 1.8 * cm, 2.0 * cm, 2.0 * cm],
+        col_widths=[1.8 * cm, 1.4 * cm, 3.8 * cm, 3.8 * cm, 1.5 * cm, 1.7 * cm, 1.8 * cm, 2.8 * cm],
         align_cols=['C', 'C', 'L', 'L', 'R', 'R', 'C', 'L']
     )
     # Renk kodlaması: Ekipman hücresi ve Durum hücresi boyama (24 sa yeşil, 0 sa kırmızı, 0-24 sa sarı/turuncu)
@@ -4316,13 +4329,13 @@ def export_daily_pdf(date: Optional[str] = None):
             f"<i><font color='#475569'>* <b>Çalışmayan Hatlar & Sebepleri:</b> "
             f"{' · '.join(idle_items)}.</font></i>"
         )
-        story.append(Spacer(1, 2))
+        story.append(Spacer(1, 1.5))
         story.append(Paragraph(idle_note, subtitle_style))
     if dt_general:
         gen_txts = [g["text"] for g in dt_general]
         story.append(Spacer(1, 1))
         story.append(Paragraph(f"<i><font color='#B45309'>* <b>Fabrika Geneli Duruş / Şebeke:</b> {', '.join(gen_txts)}</font></i>", subtitle_style))
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 2.5))
 
     # ---- KAPI KAPASİTESİ (REÇETE EŞDEĞERİ & DEVİR ZİNCİRİ) TABLOSU ----
     door_head = [

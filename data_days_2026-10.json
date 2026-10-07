@@ -2202,7 +2202,7 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 1130,
           "gece": 0,
           "status": "normal"
         },
@@ -2214,7 +2214,7 @@
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 5190,
           "gece": 0,
           "status": "normal"
         },
@@ -2228,44 +2228,55 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 3000,
+          "gece": 2635,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2984,
+          "gece": 1720,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1235,
+          "gece": 590,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
+          "gunduz": 1320,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 710,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 1230,
           "gece": 0,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren",
+          "batch_kg": 291.15,
+          "gunduz_sarj": 21,
+          "gece_sarj": 0,
+          "gunduz_kg": 6114.15,
+          "gece_kg": 0,
+          "toplam_kg": 6114.15
+        }
+      ],
+      "mixer_emp_gunduz": 7,
+      "mixer_emp_gece": 1
     }
   }
 }

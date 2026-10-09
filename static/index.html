@@ -3792,15 +3792,40 @@
         let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
         async function loadDigitalTwin() {
+            // 1. 3D Sahneyi her şeyden önce hemen başlat (asla boş/siyah ekran kalmasın)
+            if (!dt3DInitialized) {
+                try {
+                    init3DFactoryScene();
+                } catch(eInit) {
+                    console.error('init3DFactoryScene hatası:', eInit);
+                }
+            }
+
+            // 2. Canlı veriler gelene kadar varsayılan fabrika makinelerini hazırla
+            if (!dtMachinesData || dtMachinesData.length === 0) {
+                if (!dtDayData) dtDayData = {};
+                processDigitalTwinData();
+                renderDigitalTwinQuickBar();
+                renderDigitalTwinHUD();
+                update3DFactoryStatuses();
+            }
+
             try {
+                // 3. Sunucudan özet verileri çekmeyi dene (offline/dosya modunda hata vermez)
                 if (!dashboardData) {
-                    const res = await fetch('/api/dashboard');
-                    dashboardData = await res.json();
+                    try {
+                        const res = await fetch('/api/dashboard');
+                        if (res.ok) {
+                            dashboardData = await res.json();
+                        }
+                    } catch(eNet) {
+                        console.warn('Dashboard verisi sunucudan alınamadı:', eNet);
+                    }
                 }
 
                 // Tarih açılır kutusunu güncelle
                 const dtSelect = document.getElementById('select-dt-day');
-                if (dtSelect && dashboardData.available_dates) {
+                if (dtSelect && dashboardData && dashboardData.available_dates) {
                     const curVal = dtSelect.value;
                     dtSelect.innerHTML = dashboardData.available_dates.map(d => 
                         `<option value="${d.key}">${d.date || d.display || d.key}</option>`
@@ -3815,30 +3840,42 @@
                     }
                 }
 
-                const selectedKey = dtSelect ? dtSelect.value : (currentDateKey || dashboardData.latest_day_key);
-                if (!selectedKey) return;
-
-                const dayRes = await fetch(`/api/daily/${selectedKey}`);
-                const dayJson = await dayRes.json();
-                dtDayData = dayJson.day_data || {};
+                const selectedKey = dtSelect ? dtSelect.value : (currentDateKey || (dashboardData && dashboardData.latest_day_key));
+                if (selectedKey) {
+                    try {
+                        const dayRes = await fetch(`/api/daily/${selectedKey}`);
+                        if (dayRes.ok) {
+                            const dayJson = await dayRes.json();
+                            if (dayJson && dayJson.day_data) {
+                                dtDayData = dayJson.day_data;
+                            }
+                        }
+                    } catch(eDay) {
+                        console.warn('Günlük üretim verisi sunucudan alınamadı:', eDay);
+                    }
+                }
 
                 processDigitalTwinData();
                 renderDigitalTwinQuickBar();
                 renderDigitalTwinHUD();
 
-                // 3D WebGL Sahnesini Başlat / Güncelle
                 if (!dt3DInitialized) {
                     init3DFactoryScene();
                 } else {
                     update3DFactoryStatuses();
                 }
 
-                // Seçilen günün verilerini otomatik olarak canlı simülasyona aktar
                 if (typeof syncSimulationWithCurrentDay === 'function') {
                     syncSimulationWithCurrentDay();
                 }
 
-                lucide.createIcons();
+                if (typeof on3DWindowResize === 'function') {
+                    on3DWindowResize();
+                }
+
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
             } catch(e) {
                 console.error('3D Dijital ikiz yüklenirken hata:', e);
             }
@@ -4372,6 +4409,13 @@
             rearBorderBack.rotation.x = -Math.PI / 2;
             rearBorderBack.position.set(0, 0.02, divWallZ - rearDepth + 1.5);
             dtArchitectureGroup.add(rearBorderBack);
+
+            // Fabrika Dış & Bölme Duvar Malzemesi (Modern Antrasit Endüstriyel Panel)
+            const wallMat = new THREE.MeshStandardMaterial({
+                color: 0x243242,
+                roughness: 0.65,
+                metalness: 0.25
+            });
 
             // Arka Hol Dış Sınır Duvarı
             const rearBackWallGeo = new THREE.BoxGeometry(L + 30, H * 1.6, 1.2);

@@ -3142,11 +3142,47 @@
         {
           "shift": "Gündüz",
           "hat": "GENEL",
+          "fire_reason": "Hammadde kaynaklı üretimde fire verildi.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
           "fire_reason": "",
           "fire_kg": 0.0,
-          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 240.0,
+          "desc": "Barrel arızası."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "Soğutma su arızası.",
+          "fire_kg": 0.0,
+          "down_reason": "",
           "down_min": 0.0,
-          "desc": "Hammadde kaynaklı üretimde fire verildi."
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde Yokluğu (Hammadde Yok)",
+          "down_min": 720.0,
+          "desc": "Mixer arızası kaynaklı hammadde yok."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde Yokluğu (Hammadde Yok)",
+          "down_min": 720.0,
+          "desc": "Mixer arızası kaynaklı hammadde yok."
         }
       ],
       "kirim": [

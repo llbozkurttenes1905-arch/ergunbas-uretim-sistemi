@@ -3259,6 +3259,16 @@
           "gunduz_kg": 7278.749999999999,
           "gece_kg": 0,
           "toplam_kg": 7278.749999999999
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 28,
+          "gece_sarj": 0,
+          "gunduz_kg": 9360.4,
+          "gece_kg": 0,
+          "toplam_kg": 9360.4
         }
       ],
       "mixer_emp_gunduz": 12,

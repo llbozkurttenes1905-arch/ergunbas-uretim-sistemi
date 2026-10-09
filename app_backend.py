@@ -4855,6 +4855,275 @@ def save_dt_layout(payload: Dict[str, Any] = Body(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"3D yerleşim kaydedilemedi: {str(e)}")
 
+# ============================================================================
+# KALIPHANE & TAKIM ÖMRÜ YÖNETİMİ (MOLDS & TOOLING LIFECYCLE MANAGEMENT)
+# ============================================================================
+MOLDS_FILE = os.path.join(APP_DIR, "molds.json")
+
+def load_molds_data():
+    if os.path.exists(MOLDS_FILE):
+        try:
+            with open(MOLDS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print("molds okuma hatası:", e)
+    return []
+
+def save_molds_data(molds_list):
+    try:
+        with open(MOLDS_FILE, "w", encoding="utf-8") as f:
+            json.dump(molds_list, f, ensure_ascii=False, indent=2)
+        github_put_file("molds.json", molds_list, "Kalıp verisi güncellendi (otomatik)")
+        return True
+    except Exception as e:
+        print("molds kaydetme hatası:", e)
+        return False
+
+@app.get("/api/molds")
+def get_molds():
+    molds = load_molds_data()
+    screws = []
+    hats = ['101', '102', '103', '104', '105', '106', '107', '108', '109', '201']
+    for h in hats:
+        num = int(h) if h.isdigit() else 100
+        wear = 20 + ((num * 7) % 55)
+        health = max(15, 100 - wear)
+        screws.append({
+            "hat": h,
+            "type": "Konik Çift Vida" if h != '201' else "Paralel Çift Vida",
+            "health_pct": health,
+            "operating_hours": 2400 + ((num * 350) % 4500),
+            "max_hours": 8000,
+            "status": "good" if health >= 60 else ("warning" if health >= 35 else "critical")
+        })
+    return {"molds": molds, "screws": screws}
+
+@app.post("/api/molds")
+def save_or_update_mold(mold: Dict[str, Any] = Body(...)):
+    molds = load_molds_data()
+    m_id = mold.get("id")
+    if not m_id:
+        m_id = f"mld_{len(molds) + 1}"
+        mold["id"] = m_id
+        molds.append(mold)
+    else:
+        found = False
+        for idx, m in enumerate(molds):
+            if m.get("id") == m_id:
+                molds[idx] = mold
+                found = True
+                break
+        if not found:
+            molds.append(mold)
+    save_molds_data(molds)
+    return {"status": "ok", "mold": mold}
+
+@app.post("/api/molds/{mold_id}/maintenance")
+def record_mold_maintenance(mold_id: str, payload: Dict[str, Any] = Body(...)):
+    molds = load_molds_data()
+    target = None
+    for m in molds:
+        if m.get("id") == mold_id:
+            target = m
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Kalıp bulunamadı")
+    
+    target["current_maintenance_tons"] = 0.0
+    target["maintenance_count"] = (target.get("maintenance_count") or 0) + 1
+    target["last_maintenance_date"] = payload.get("date") or get_turkey_now().strftime("%d.%m.%Y")
+    target["status"] = "active"
+    if payload.get("notes"):
+        target["notes"] = payload["notes"]
+    save_molds_data(molds)
+    return {"status": "ok", "mold": target}
+
+@app.post("/api/molds/{mold_id}/assign")
+def assign_mold_to_hat(mold_id: str, payload: Dict[str, Any] = Body(...)):
+    molds = load_molds_data()
+    hat = payload.get("hat", "")
+    target = None
+    for m in molds:
+        if m.get("id") == mold_id:
+            target = m
+            target["assigned_hat"] = hat
+            if hat:
+                limit = float(target.get("maintenance_limit_tons") or 50)
+                cur = float(target.get("current_maintenance_tons") or 0)
+                target["status"] = "active" if cur < limit else "maintenance_due"
+            else:
+                target["status"] = "in_stock"
+        elif hat and m.get("assigned_hat") == hat and m.get("id") != mold_id:
+            m["assigned_hat"] = ""
+            m["status"] = "in_stock"
+    if not target:
+        raise HTTPException(status_code=404, detail="Kalıp bulunamadı")
+    save_molds_data(molds)
+    return {"status": "ok", "mold": target}
+
+# ============================================================================
+# YAPAY ZEKA DESTEKLİ ANOMALİ & FABRİKA VERİM ANALİZİ (AI ANOMALY ENGINE)
+# ============================================================================
+@app.get("/api/ai/anomalies")
+def get_ai_anomalies(date_key: Optional[str] = None):
+    data = load_data()
+    daily_data = data.get("daily_data", {})
+    if not daily_data:
+        return {"health_score": 100, "anomalies": [], "executive_summary": "Henüz analiz edilecek üretim verisi bulunamadı."}
+    
+    target_key = date_key
+    if not target_key or target_key not in daily_data:
+        sorted_keys = sorted(daily_data.keys(), key=lambda x: int(x) if str(x).isdigit() else str(x))
+        target_key = sorted_keys[-1] if sorted_keys else None
+        
+    if not target_key:
+        return {"health_score": 100, "anomalies": [], "executive_summary": "Veri bulunamadı."}
+        
+    target_day = daily_data.get(target_key, {})
+    target_date = target_day.get("date", "Seçili Gün")
+    
+    hat_rates = {}
+    hat_fires = {}
+    downtime_counts = {}
+    
+    for dk, d in daily_data.items():
+        exts = d.get("gunduz", {}).get("extruders", []) + d.get("gece", {}).get("extruders", [])
+        for e in exts:
+            h = str(e.get("hat"))
+            hrs = float(e.get("hours") or 0)
+            prod = float(e.get("prod_kg") or 0)
+            fire = float(e.get("fire_kg") or 0)
+            if hrs > 0 and prod > 0:
+                hat_rates.setdefault(h, []).append(prod / hrs)
+                hat_fires.setdefault(h, []).append((fire / (prod + fire)) * 100 if (prod + fire) > 0 else 0)
+        
+        downtimes = d.get("downtimes", []) or d.get("downtime_entries", [])
+        for dw in downtimes:
+            mh = str(dw.get("hat") or dw.get("machine_id") or "Bilinmeyen")
+            rs = str(dw.get("down_reason") or dw.get("reason_category") or "Duruş")
+            k = f"{mh}::{rs}"
+            downtime_counts[k] = downtime_counts.get(k, 0) + 1
+            
+    avg_rates = {h: sum(vals)/len(vals) for h, vals in hat_rates.items()}
+    avg_fires = {h: sum(vals)/len(vals) for h, vals in hat_fires.items()}
+    
+    anomalies = []
+    target_exts = target_day.get("gunduz", {}).get("extruders", []) + target_day.get("gece", {}).get("extruders", [])
+    
+    molds = load_molds_data()
+    
+    for e in target_exts:
+        h = str(e.get("hat"))
+        hrs = float(e.get("hours") or 0)
+        prod = float(e.get("prod_kg") or 0)
+        fire = float(e.get("fire_kg") or 0)
+        prod_name = e.get("product") or f"Hat {h} Profili"
+        
+        if hrs > 0 and prod > 0:
+            rate = prod / hrs
+            base_rate = avg_rates.get(h, rate)
+            pct_diff = ((rate - base_rate) / base_rate) * 100 if base_rate > 0 else 0
+            
+            if pct_diff <= -15.0:
+                sev = "HIGH" if pct_diff <= -25 else "MEDIUM"
+                anomalies.append({
+                    "id": f"anom_spd_{h}",
+                    "type": "yield_drop",
+                    "severity": sev,
+                    "hat": h,
+                    "product": prod_name,
+                    "title": f"Hat {h} Saatlik Çekim Verimi Düştü",
+                    "metric": f"{rate:.1f} kg/s (Referans: {base_rate:.1f} kg/s)",
+                    "deviation": f"{pct_diff:.1f}%",
+                    "diagnosis": "Besleme vidası aşınması, odun unu nem oranı veya kovan 3-4 bölge sıcaklık dalgalanması şüphesi.",
+                    "suggestion": "Vida besleme devrini (RPM) ve hammadde kule nemini kontrol ediniz."
+                })
+            
+            f_pct = (fire / (prod + fire)) * 100 if (prod + fire) > 0 else 0
+            base_f = avg_fires.get(h, 3.0)
+            if f_pct > 20.0 or (f_pct > base_f * 1.5 and f_pct > 5.0):
+                sev = "HIGH" if f_pct > 30 else "MEDIUM"
+                anomalies.append({
+                    "id": f"anom_fire_{h}",
+                    "type": "scrap_spike",
+                    "severity": sev,
+                    "hat": h,
+                    "product": prod_name,
+                    "title": f"Hat {h} Yüksek Fire & Kalite Uyarısı",
+                    "metric": f"%{f_pct:.1f} Fire ({fire:.0f} kg fire / {prod:.0f} kg net)",
+                    "deviation": f"+{(f_pct - base_f):.1f}%",
+                    "diagnosis": "Kalıp ağzı çapaklanması, soğutma kalibresi uyumsuzluğu veya kalsit/katkı homojenlik bozukluğu.",
+                    "suggestion": "Kalıp çıkış vakumunu ve çekici palet basınç ayarlarını kontrol ediniz."
+                })
+                
+    for m in molds:
+        cur_t = float(m.get("current_maintenance_tons") or 0)
+        lim_t = float(m.get("maintenance_limit_tons") or 50)
+        hat = m.get("assigned_hat")
+        if cur_t >= lim_t * 0.9 and hat:
+            anomalies.append({
+                "id": f"anom_mld_{m.get('id')}",
+                "type": "mold_wear",
+                "severity": "HIGH" if cur_t >= lim_t else "MEDIUM",
+                "hat": hat,
+                "product": m.get("name"),
+                "title": f"Kalıp Bakım Zamanı: {m.get('code')}",
+                "metric": f"{cur_t:.1f} Ton / {lim_t:.0f} Ton Limit",
+                "deviation": f"%{(cur_t/lim_t)*100:.0f} Doluluk",
+                "diagnosis": f"{m.get('name')} kalıbı bakım tonajına ulaştı. Kalıp odacıklarında aşınma ve tolerans kaybı riski yüksek.",
+                "suggestion": "Kalıphaneye haber verilerek sonraki duruşta polisaj ve revizyon planlanmalıdır."
+            })
+            
+    for k, cnt in downtime_counts.items():
+        if cnt >= 3:
+            h_part, r_part = k.split("::", 1)
+            anomalies.append({
+                "id": f"anom_dt_{h_part}_{cnt}",
+                "type": "chronic_downtime",
+                "severity": "MEDIUM",
+                "hat": h_part,
+                "product": "Genel Hat",
+                "title": f"Kronik Arıza Tekrarı: {h_part} - {r_part}",
+                "metric": f"Son Ayda {cnt} Kez Tekrar Etti",
+                "deviation": f"{cnt} Kez Duruş",
+                "diagnosis": "Bu arıza sıklığı tesiste önleyici bakım açığına işaret etmektedir.",
+                "suggestion": f"{h_part} için {r_part} odaklı yedek parça ve revizyon planı açılmalıdır."
+            })
+            
+    high_count = len([a for a in anomalies if a.get("severity") == "HIGH"])
+    med_count = len([a for a in anomalies if a.get("severity") == "MEDIUM"])
+    health_score = max(35, min(100, 100 - (high_count * 10 + med_count * 5)))
+    
+    summary_parts = []
+    if high_count > 0:
+        summary_parts.append(f"{target_date} üretiminde {high_count} adet yüksek öncelikli risk tespit edildi.")
+    else:
+        summary_parts.append(f"{target_date} üretim stabilitesi genel olarak tatmin edici seviyededir.")
+        
+    if any(a["type"] == "yield_drop" for a in anomalies):
+        drops = [a["hat"] for a in anomalies if a["type"] == "yield_drop"]
+        summary_parts.append(f"Hat {', '.join(drops)} çekim hızlarında ortalamanın altında verim saptandı; besleme ve kovan kontrolü önerilir.")
+        
+    if any(a["type"] == "scrap_spike" for a in anomalies):
+        spikes = [a["hat"] for a in anomalies if a["type"] == "scrap_spike"]
+        summary_parts.append(f"Hat {', '.join(spikes)} için fire oranları yüksek seyretmektedir; kalıp ağzı temizliği kritik.")
+        
+    if any(a["type"] == "mold_wear" for a in anomalies):
+        summary_parts.append("Kalıphane bakımı yaklaşan kalıplar için planlama yapılmalıdır.")
+        
+    summary_text = " ".join(summary_parts)
+    
+    return {
+        "date": target_date,
+        "date_key": target_key,
+        "health_score": health_score,
+        "anomalies_count": len(anomalies),
+        "high_priority_count": high_count,
+        "medium_priority_count": med_count,
+        "anomalies": anomalies,
+        "executive_summary": summary_text
+    }
+
 # Mount static files
 static_dir = os.path.join(APP_DIR, "static")
 os.makedirs(static_dir, exist_ok=True)

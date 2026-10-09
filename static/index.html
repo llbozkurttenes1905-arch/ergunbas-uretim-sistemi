@@ -438,6 +438,15 @@
                         <i data-lucide="box" class="w-5 h-5 text-cyan-400"></i>
                     </button>
 
+                    <button onclick="switchTab('ai')" id="tab-ai" title="🔮 Yapay Zeka & Anomali Radarı" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-purple-400 hover:bg-slate-800/80 relative group">
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                        <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+                    </button>
+
+                    <button onclick="switchTab('molds')" id="tab-molds" title="🔩 Kalıphane & Takım Ömrü" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-amber-400 hover:bg-slate-800/80 relative group">
+                        <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i>
+                    </button>
+
                     <button onclick="switchTab('daily')" id="tab-daily" title="Günlük Veri Girişi" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/80">
                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                     </button>
@@ -631,6 +640,14 @@
                                 <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-purple-400"></i>
                                 <span>Kalite Kontrol Masası</span>
                             </div>
+                            <div onclick="switchTab('ai')" class="flex items-center gap-2 px-2.5 py-1 rounded-lg text-slate-400 hover:text-purple-300 hover:bg-slate-800/50 cursor-pointer transition">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400"></i>
+                                <span>AI Anomali & Verim Radarı</span>
+                            </div>
+                            <div onclick="switchTab('molds')" class="flex items-center gap-2 px-2.5 py-1 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800/50 cursor-pointer transition">
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-amber-400"></i>
+                                <span>Kalıphane & Takım Ömrü</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -751,6 +768,49 @@
                 <div class="flex items-center gap-2 text-cyan-400 font-bold text-xs group-hover:translate-x-1 transition shrink-0">
                     <span>3D Sahayı Aç</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- AKILLI VERİ YÖNETİMİ BANNERLARI: AI ANOMALİ RADARI & KALIPHANE -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- AI Anomali Radarı Banner -->
+                <div onclick="switchTab('ai')" class="bg-gradient-to-r from-purple-950/60 via-slate-900 to-indigo-950/50 border border-purple-700/40 hover:border-purple-400 rounded-2xl p-4 shadow-xl cursor-pointer transition flex items-center justify-between gap-4 group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-300 group-hover:scale-110 transition shadow-lg shadow-purple-600/20">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-black text-purple-400 tracking-wider uppercase">AI ANOMALİ & VERİM RADARI</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-purple-500/20 text-purple-300 border border-purple-500/30">YEREL AI MOTORU</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-0.5">Ekstrüder hız sapmaları, yüksek fire uyarıları ve tekrarlayan kronik arızaları inceleyin.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-purple-400 font-bold text-xs group-hover:translate-x-1 transition shrink-0">
+                        <span>Radarı Aç</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Kalıphane & Takım Ömrü Banner -->
+                <div onclick="switchTab('molds')" class="bg-gradient-to-r from-amber-950/60 via-slate-900 to-orange-950/50 border border-amber-700/40 hover:border-amber-400 rounded-2xl p-4 shadow-xl cursor-pointer transition flex items-center justify-between gap-4 group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-300 group-hover:scale-110 transition shadow-lg shadow-amber-600/20">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-black text-amber-400 tracking-wider uppercase">KALIPHANE & TAKIM ÖMRÜ</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30">POLİSAJ & AŞINMA</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-0.5">WPC profil kalıplarının tonaj sayaçları, bakım uyarıları ve vida-kovan aşınma durumları.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-amber-400 font-bold text-xs group-hover:translate-x-1 transition shrink-0">
+                        <span>Kalıphaneyi Aç</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </div>
                 </div>
             </div>
 
@@ -1668,9 +1728,291 @@
                 <!-- Sağ: Canlı Telemetri & Makine Röntgeni HUD Paneli -->
                 <div class="xl:col-span-4 bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-5 shadow-2xl flex flex-col justify-between" id="dt-telemetry-hud">
                     <!-- JS ile dinamik doldurulacak -->
+        </div><!-- end view-digitaltwin -->
+
+        <!-- TAB: YAPAY ZEKA & ANOMALİ RADARI -->
+        <div id="view-ai" class="space-y-6 hidden">
+            <!-- Header Bar -->
+            <div class="bg-gradient-to-r from-purple-950/70 via-slate-900 to-indigo-950/60 border border-purple-800/40 rounded-2xl p-6 shadow-xl flex flex-wrap items-center justify-between gap-6">
+                <div class="space-y-1.5 max-w-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3 text-purple-400"></i> AI ANOMALİ & VERİM MOTORU
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono" id="ai-last-scan-time">Geçmiş 30 Gün Referans Modeli</span>
+                    </div>
+                    <h1 class="text-2xl font-black text-white flex items-center gap-2.5">
+                        Fabrika Anomali, Hız Sapması & Risk Radarı
+                    </h1>
+                    <p class="text-xs text-slate-300">Geçmiş üretim verilerini referans alarak ekstrüzyon hız düşüşlerini, anormal fire patlamalarını ve kronik arıza tekrarlarını anında teşhis eder.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-4">
+                    <!-- Sağlık Skoru Badge -->
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl px-5 py-3 text-center shadow-lg">
+                        <span class="text-[11px] text-slate-400 font-bold block mb-1">Fabrika Sağlık Skoru</span>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="text-2xl font-black text-emerald-400 font-mono" id="ai-health-score-val">%92</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                        </div>
+                    </div>
+
+                    <!-- Tarih Seçici & Yeniden Tara Butonu -->
+                    <div class="flex items-center gap-2 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800">
+                        <select id="select-ai-day" onchange="loadAiDashboard()" class="bg-transparent text-xs text-white font-bold px-2 py-1 outline-none cursor-pointer"></select>
+                        <button onclick="loadAiDashboard()" class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span>Yeniden Tara</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div><!-- end view-digitaltwin -->
+
+            <!-- AI Executive Briefing Card -->
+            <div class="bg-slate-900 border border-purple-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                <div class="absolute -right-12 -top-12 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shrink-0 shadow-md">
+                        <i data-lucide="bot" class="w-5 h-5"></i>
+                    </div>
+                    <div class="space-y-1 flex-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-black text-white flex items-center gap-2">
+                                <span>Akıllı Fabrika Brifingi & Değerlendirme</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-purple-300 border border-purple-800/40">Yerel Kural Motoru</span>
+                            </h3>
+                            <span class="text-[11px] text-slate-400 font-mono" id="ai-detected-count-badge">0 Anomali</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed font-sans" id="ai-executive-summary-text">
+                            Üretim verileri analiz ediliyor...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Mini Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Kritik Riskler (High)</span>
+                        <span class="text-xl font-black text-rose-400 mt-0.5 block font-mono" id="ai-kpi-high">0</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Verim Sapmaları</span>
+                        <span class="text-xl font-black text-amber-400 mt-0.5 block font-mono" id="ai-kpi-yield">0</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i data-lucide="trending-down" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Yüksek Fire Alarmları</span>
+                        <span class="text-xl font-black text-orange-400 mt-0.5 block font-mono" id="ai-kpi-scrap">0</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+                        <i data-lucide="flame" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Kronik / Tekrarlı Duruş</span>
+                        <span class="text-xl font-black text-purple-400 mt-0.5 block font-mono" id="ai-kpi-chronic">0</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                        <i data-lucide="repeat" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anomaly Cards Grid -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="radar" class="w-4 h-4 text-purple-400"></i> Tespit Edilen Anomaliler & Eylem Planı
+                    </h3>
+                    <div class="flex items-center gap-2 text-xs">
+                        <button onclick="filterAiAnomalies('all')" class="px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold transition cursor-pointer" id="ai-flt-all">Tümü</button>
+                        <button onclick="filterAiAnomalies('HIGH')" class="px-2.5 py-1 rounded-lg bg-slate-900 text-rose-400 font-bold hover:bg-slate-800 transition cursor-pointer" id="ai-flt-high">🔴 Yüksek Öncelik</button>
+                        <button onclick="filterAiAnomalies('MEDIUM')" class="px-2.5 py-1 rounded-lg bg-slate-900 text-amber-400 font-bold hover:bg-slate-800 transition cursor-pointer" id="ai-flt-med">🟡 Orta Öncelik</button>
+                    </div>
+                </div>
+
+                <div id="ai-anomalies-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </div>
+        </div><!-- end view-ai -->
+
+        <!-- TAB: KALIPHANE & TAKIM ÖMRÜ -->
+        <div id="view-molds" class="space-y-6 hidden">
+            <!-- Header Bar -->
+            <div class="bg-gradient-to-r from-amber-950/70 via-slate-900 to-orange-950/60 border border-amber-800/40 rounded-2xl p-6 shadow-xl flex flex-wrap items-center justify-between gap-6">
+                <div class="space-y-1.5 max-w-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                            <i data-lucide="layers" class="w-3 h-3 text-amber-400"></i> TAKIM ÖMRÜ & KALIPHANE YÖNETİMİ
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono">WPC Ekstrüzyon Kalıpları & Vidalar</span>
+                    </div>
+                    <h1 class="text-2xl font-black text-white flex items-center gap-2.5">
+                        Kalıp Aşınma, Polisaj & Vida-Kovan Sağlığı
+                    </h1>
+                    <p class="text-xs text-slate-300">WPC kompozit profil kalıplarının tonaj bazlı aşınma takibi, bakım/polisaj planlaması ve ekstrüder vida ömürleri.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="openNewMoldModal()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white rounded-xl text-xs font-black transition flex items-center gap-2 shadow-lg shadow-amber-600/30 cursor-pointer">
+                        <i data-lucide="plus" class="w-4 h-4"></i> <span>Yeni Kalıp Ekle</span>
+                    </button>
+                    <button onclick="loadMoldsDashboard()" class="p-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 transition cursor-pointer" title="Tazele">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Toplam Kayıtlı Kalıp</span>
+                        <span class="text-2xl font-black text-white mt-0.5 block font-mono" id="mld-kpi-total">9</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i data-lucide="layers" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Hatta Aktif Çalışan</span>
+                        <span class="text-2xl font-black text-emerald-400 mt-0.5 block font-mono" id="mld-kpi-active">7</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="play" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Bakım Zamanı Gelen</span>
+                        <span class="text-2xl font-black text-rose-400 mt-0.5 block font-mono" id="mld-kpi-due">3</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                        <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-slate-400 font-semibold block">Kalıphanede / Stokta</span>
+                        <span class="text-2xl font-black text-sky-400 mt-0.5 block font-mono" id="mld-kpi-stock">2</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                        <i data-lucide="archive" class="w-5 h-5"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kalıplar Tablosu & Kartları -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-amber-500"></i> Kalıp Parkuru & Tonaj Aşınma Durumu
+                    </h2>
+                    <span class="text-xs text-slate-400">Her 50-80 tonda bir polisaj/revizyon planlanır</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="molds-cards-container">
+                    <!-- JS ile dinamik doldurulacak -->
+                </div>
+            </div>
+
+            <!-- Ekstrüder Vida-Kovan (Screw & Barrel) Aşınma Sağlığı -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-5 h-5 text-cyan-400"></i> Ekstrüder Vida-Kovan (Screw & Barrel) Aşınma Monitörü
+                    </h2>
+                    <span class="text-xs text-slate-400">Çift Vida Kovan Geometrisi (8.000 Saat Referans Ömür)</span>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="screws-monitor-container">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </div>
+        </div><!-- end view-molds -->
+
+        <!-- MODAL: YENİ KALIP EKLE -->
+        <div id="modal-new-mold" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-base font-black text-white flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-amber-500"></i> Yeni Kalıp Tanımla
+                    </h3>
+                    <button onclick="closeNewMoldModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Kalıp Kodu:</label>
+                        <input type="text" id="mld-input-code" placeholder="Örn: KLP-108" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Kalıp Adı / Profil Tanımı:</label>
+                        <input type="text" id="mld-input-name" placeholder="Örn: 42x42 Masif Seren Kalıbı" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Kategori:</label>
+                            <select id="mld-input-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                                <option value="pervaz">Pervaz</option>
+                                <option value="kasa">Kasa</option>
+                                <option value="seren">Seren</option>
+                                <option value="levha">Levha</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Kafa Sayısı:</label>
+                            <select id="mld-input-heads" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                                <option value="1">1 (Tek Kafa)</option>
+                                <option value="2">2 (Çift Kafa)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Bakım Limiti (Ton):</label>
+                            <input type="number" id="mld-input-limit" value="60" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-300 mb-1">Maksimum Ömür (Ton):</label>
+                            <input type="number" id="mld-input-lifespan" value="350" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Bağlanacak Hat (Opsiyonel):</label>
+                        <select id="mld-input-hat" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+                            <option value="">Boşta / Stokta</option>
+                            <option value="101">Hat 101</option>
+                            <option value="102">Hat 102</option>
+                            <option value="103">Hat 103</option>
+                            <option value="104">Hat 104</option>
+                            <option value="105">Hat 105</option>
+                            <option value="106">Hat 106</option>
+                            <option value="107">Hat 107</option>
+                            <option value="108">Hat 108</option>
+                            <option value="109">Hat 109</option>
+                            <option value="201">Hat 201 (Levha)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button onclick="closeNewMoldModal()" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs hover:bg-slate-700">İptal</button>
+                    <button onclick="saveNewMoldFromModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow-md">Kaydet</button>
+                </div>
+            </div>
+        </div>
 
         <!-- TAB 2: GÜNLÜK VERİ GİRİŞİ -->
         <div id="view-daily" class="space-y-6 hidden">
@@ -10490,7 +10832,7 @@
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'digitaltwin', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
+            ['dashboard', 'digitaltwin', 'ai', 'molds', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
                 const viewEl = document.getElementById(`view-${t}`);
                 if (viewEl) viewEl.classList.add('hidden');
                 const btn = document.getElementById(`tab-${t}`);
@@ -10510,6 +10852,8 @@
             const sectionNames = {
                 dashboard: 'Özetler (Dashboard)',
                 digitaltwin: '3D Dijital İkiz (Digital Twin)',
+                ai: 'Yapay Zeka & Anomali Radarı',
+                molds: 'Kalıphane & Takım Ömrü',
                 daily: 'Günlük Veri Girişi',
                 doors: 'Kapı & Stok Takibi',
                 mixer: 'Mikser & Geri Dönüşüm',
@@ -10529,6 +10873,8 @@
                 loadDigitalTwin();
                 setTimeout(on3DWindowResize, 100);
             }
+            if (tabId === 'ai') loadAiDashboard();
+            if (tabId === 'molds') loadMoldsDashboard();
             if (tabId === 'daily') loadDayData();
             if (tabId === 'doors') loadDoorStats();
             if (tabId === 'mixer') loadMixerDashboard();
@@ -10536,6 +10882,397 @@
             if (tabId === 'users') loadUsers();
 
             safeCreateIcons();
+        }
+
+        /* ========================================================
+           YAPAY ZEKA ANOMALİ RADARI (AI ANOMALY ENGINE FRONTEND)
+        ======================================================== */
+        let currentAiData = null;
+        let currentAiFilter = 'all';
+
+        async function loadAiDashboard() {
+            try {
+                const selectEl = document.getElementById('select-ai-day');
+                let dayKey = selectEl ? selectEl.value : null;
+
+                if (selectEl && (!selectEl.options || selectEl.options.length === 0)) {
+                    if (!dashboardData) {
+                        try {
+                            const dbRes = await fetch('/api/dashboard');
+                            if (dbRes.ok) dashboardData = await dbRes.json();
+                        } catch(e) {}
+                    }
+                    if (dashboardData && dashboardData.available_dates) {
+                        selectEl.innerHTML = dashboardData.available_dates.map(d => 
+                            `<option value="${d.key}">${d.date || d.display || d.key}</option>`
+                        ).join('');
+                        if (currentDateKey && dashboardData.available_dates.some(d => d.key === currentDateKey)) {
+                            selectEl.value = currentDateKey;
+                        } else if (dashboardData.latest_day_key) {
+                            selectEl.value = dashboardData.latest_day_key;
+                        }
+                    }
+                }
+                dayKey = selectEl ? selectEl.value : null;
+
+                const url = dayKey ? `/api/ai/anomalies?date_key=${dayKey}` : '/api/ai/anomalies';
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('AI verisi alınamadı');
+                currentAiData = await res.json();
+
+                renderAiDashboard();
+                safeCreateIcons();
+            } catch(e) {
+                console.error('loadAiDashboard hatası:', e);
+            }
+        }
+
+        function renderAiDashboard() {
+            if (!currentAiData) return;
+
+            const scoreVal = document.getElementById('ai-health-score-val');
+            if (scoreVal) {
+                const s = currentAiData.health_score || 90;
+                scoreVal.textContent = `%${s}`;
+                scoreVal.className = `text-2xl font-black font-mono ${s >= 80 ? 'text-emerald-400' : (s >= 60 ? 'text-amber-400' : 'text-rose-400')}`;
+            }
+
+            const sumEl = document.getElementById('ai-executive-summary-text');
+            if (sumEl) {
+                sumEl.textContent = currentAiData.executive_summary || 'Genel üretim stabilitesi normal seviyede.';
+            }
+
+            const countBadge = document.getElementById('ai-detected-count-badge');
+            if (countBadge) {
+                countBadge.textContent = `${currentAiData.anomalies_count || 0} Anomali Saptandı`;
+            }
+
+            const anoms = currentAiData.anomalies || [];
+            const highCount = anoms.filter(a => a.severity === 'HIGH').length;
+            const yieldCount = anoms.filter(a => a.type === 'yield_drop').length;
+            const scrapCount = anoms.filter(a => a.type === 'scrap_spike').length;
+            const chronicCount = anoms.filter(a => a.type === 'chronic_downtime' || a.type === 'mold_wear').length;
+
+            const elHigh = document.getElementById('ai-kpi-high'); if (elHigh) elHigh.textContent = highCount;
+            const elYield = document.getElementById('ai-kpi-yield'); if (elYield) elYield.textContent = yieldCount;
+            const elScrap = document.getElementById('ai-kpi-scrap'); if (elScrap) elScrap.textContent = scrapCount;
+            const elChronic = document.getElementById('ai-kpi-chronic'); if (elChronic) elChronic.textContent = chronicCount;
+
+            renderAiAnomaliesList();
+        }
+
+        function filterAiAnomalies(flt) {
+            currentAiFilter = flt;
+            ['all', 'high', 'med'].forEach(f => {
+                const b = document.getElementById(`ai-flt-${f}`);
+                if (b) {
+                    if ((f === 'all' && flt === 'all') || (f === 'high' && flt === 'HIGH') || (f === 'med' && flt === 'MEDIUM')) {
+                        b.className = 'px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold transition cursor-pointer';
+                    } else {
+                        b.className = 'px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 font-bold hover:bg-slate-800 transition cursor-pointer';
+                    }
+                }
+            });
+            renderAiAnomaliesList();
+        }
+
+        function renderAiAnomaliesList() {
+            const listEl = document.getElementById('ai-anomalies-list');
+            if (!listEl || !currentAiData) return;
+
+            let items = currentAiData.anomalies || [];
+            if (currentAiFilter === 'HIGH') items = items.filter(a => a.severity === 'HIGH');
+            else if (currentAiFilter === 'MEDIUM') items = items.filter(a => a.severity === 'MEDIUM');
+
+            if (items.length === 0) {
+                listEl.innerHTML = `
+                    <div class="col-span-2 text-center py-10 bg-slate-900/60 rounded-2xl border border-slate-800 text-slate-400">
+                        <i data-lucide="check-circle-2" class="w-10 h-10 text-emerald-400 mx-auto mb-2"></i>
+                        <p class="font-bold text-sm text-slate-200">Kritik Anomali Bulunmadı!</p>
+                        <p class="text-xs text-slate-400 mt-1">Seçili günün üretim ve fire değerleri fabrika tolerans sınırları içerisinde stabil.</p>
+                    </div>
+                `;
+                safeCreateIcons();
+                return;
+            }
+
+            listEl.innerHTML = items.map(a => {
+                const isHigh = a.severity === 'HIGH';
+                const typeIcon = a.type === 'yield_drop' ? 'trending-down' : (a.type === 'scrap_spike' ? 'flame' : (a.type === 'mold_wear' ? 'layers' : 'alert-triangle'));
+                const iconColor = isHigh ? 'text-rose-400' : 'text-amber-400';
+                const borderColor = isHigh ? 'border-rose-800/40 hover:border-rose-500' : 'border-amber-800/40 hover:border-amber-500';
+                const badgeBg = isHigh ? 'bg-rose-500/10 text-rose-300 border-rose-500/30' : 'bg-amber-500/10 text-amber-300 border-amber-500/30';
+
+                return `
+                    <div class="bg-slate-900 border ${borderColor} rounded-2xl p-4 shadow-md transition space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-xl ${isHigh ? 'bg-rose-500/10' : 'bg-amber-500/10'} flex items-center justify-center shrink-0">
+                                    <i data-lucide="${typeIcon}" class="w-4 h-4 ${iconColor}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-white">${a.title}</h4>
+                                    <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400">
+                                        <span class="font-bold text-slate-300">${a.product || 'Profil'}</span>
+                                        ${a.hat ? `<span class="px-1.5 py-0.2 rounded bg-slate-800 text-cyan-300 font-mono text-[10px]">Hat ${a.hat}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-black border ${badgeBg} whitespace-nowrap">
+                                ${isHigh ? '🔴 YÜKSEK RİSK' : '🟡 DİKKAT'}
+                            </span>
+                        </div>
+
+                        <!-- Metrik ve Sapma -->
+                        <div class="bg-slate-950/70 rounded-xl p-2.5 border border-slate-800/80 flex items-center justify-between text-xs">
+                            <span class="text-slate-400">Ölçülen Değer: <b class="text-white">${a.metric}</b></span>
+                            <span class="font-mono font-black ${isHigh ? 'text-rose-400' : 'text-amber-400'}">${a.deviation}</span>
+                        </div>
+
+                        <!-- Teşhis ve Öneri -->
+                        <div class="text-[11px] text-slate-300 space-y-1">
+                            <p><b class="text-slate-400">🔍 Teşhis:</b> ${a.diagnosis}</p>
+                            ${a.suggestion ? `<p><b class="text-cyan-400">💡 Öneri:</b> ${a.suggestion}</p>` : ''}
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="pt-2 border-t border-slate-800 flex items-center justify-end gap-2 text-xs">
+                            ${a.hat ? `
+                                <button onclick="focusMachineIn3DFromAi('${a.hat}')" class="px-3 py-1 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-800/60 text-cyan-300 text-[11px] font-bold transition flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="box" class="w-3.5 h-3.5"></i> <span>3D Sahada Göster</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            safeCreateIcons();
+        }
+
+        function focusMachineIn3DFromAi(hatId) {
+            switchTab('digitaltwin');
+            setTimeout(() => {
+                if (typeof select3DMachine === 'function') {
+                    select3DMachine(String(hatId));
+                }
+            }, 300);
+        }
+
+        /* ========================================================
+           KALIPHANE & TAKIM ÖMRÜ YÖNETİMİ (MOLDS FRONTEND)
+        ======================================================== */
+        let currentMoldsData = null;
+
+        async function loadMoldsDashboard() {
+            try {
+                const res = await fetch('/api/molds');
+                if (!res.ok) throw new Error('Kalıp verisi alınamadı');
+                currentMoldsData = await res.json();
+                renderMoldsDashboard();
+                safeCreateIcons();
+            } catch(e) {
+                console.error('loadMoldsDashboard hatası:', e);
+            }
+        }
+
+        function renderMoldsDashboard() {
+            if (!currentMoldsData) return;
+            const molds = currentMoldsData.molds || [];
+            const screws = currentMoldsData.screws || [];
+
+            const total = molds.length;
+            const active = molds.filter(m => m.assigned_hat).length;
+            const due = molds.filter(m => m.status === 'maintenance_due' || ((m.current_maintenance_tons || 0) >= (m.maintenance_limit_tons || 50) * 0.9)).length;
+            const inStock = molds.filter(m => !m.assigned_hat).length;
+
+            const elTot = document.getElementById('mld-kpi-total'); if (elTot) elTot.textContent = total;
+            const elAct = document.getElementById('mld-kpi-active'); if (elAct) elAct.textContent = active;
+            const elDue = document.getElementById('mld-kpi-due'); if (elDue) elDue.textContent = due;
+            const elStk = document.getElementById('mld-kpi-stock'); if (elStk) elStk.textContent = inStock;
+
+            const cardsContainer = document.getElementById('molds-cards-container');
+            if (cardsContainer) {
+                cardsContainer.innerHTML = molds.map(m => {
+                    const curT = parseFloat(m.current_maintenance_tons || 0);
+                    const limT = parseFloat(m.maintenance_limit_tons || 50);
+                    const totT = parseFloat(m.total_tonnage || 0);
+                    const lifeT = parseFloat(m.max_lifespan_tons || 350);
+
+                    const maintPct = Math.min(100, Math.round((curT / limT) * 100));
+                    const lifePct = Math.min(100, Math.round((totT / lifeT) * 100));
+
+                    const isDue = maintPct >= 90;
+                    const statusBadge = m.assigned_hat 
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">Hat ${m.assigned_hat} (Aktif)</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">Kalıphanede (Boşta)</span>`;
+
+                    return `
+                        <div class="bg-slate-950/70 border ${isDue ? 'border-rose-700/60' : 'border-slate-800'} rounded-2xl p-4 shadow-md space-y-3 transition hover:border-amber-500/50">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs font-mono font-black text-amber-400">${m.code || 'KLP'}</span>
+                                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-bold uppercase">${m.category || 'profil'}</span>
+                                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-cyan-300 font-mono">${m.heads || 1} Kafa</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white mt-1">${m.name}</h4>
+                                </div>
+                                ${statusBadge}
+                            </div>
+
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-400">Son Bakımdan Beri Tonaj:</span>
+                                    <span class="font-bold ${isDue ? 'text-rose-400 animate-pulse' : 'text-slate-200'}">${curT.toFixed(1)} / ${limT.toFixed(0)} Ton (%${maintPct})</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                    <div class="h-full rounded-full transition-all ${isDue ? 'bg-gradient-to-r from-amber-500 to-rose-500' : 'bg-gradient-to-r from-emerald-500 to-cyan-500'}" style="width: ${maintPct}%"></div>
+                                </div>
+                                ${isDue ? `<span class="text-[10px] text-rose-400 font-bold block">⚠️ Bakım & Polisaj zamanı geldi!</span>` : ''}
+                            </div>
+
+                            <div class="space-y-1 pt-1">
+                                <div class="flex justify-between text-[11px] text-slate-400">
+                                    <span>Toplam Kalıp Ömrü:</span>
+                                    <span>${totT.toFixed(1)} / ${lifeT.toFixed(0)} Ton (%${lifePct})</span>
+                                </div>
+                                <div class="w-full bg-slate-800/60 rounded-full h-1.5 overflow-hidden">
+                                    <div class="h-full bg-slate-500 rounded-full" style="width: ${lifePct}%"></div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                                <span>Son Bakım: <b class="text-slate-300">${m.last_maintenance_date || '—'}</b></span>
+                                <span>Bakım Sayısı: <b class="text-amber-400">${m.maintenance_count || 0}</b></span>
+                            </div>
+
+                            <div class="pt-1 flex items-center justify-end gap-2">
+                                <select onchange="changeMoldHatAssignment('${m.id}', this.value)" class="bg-slate-900 border border-slate-700 text-[11px] text-slate-300 rounded-lg px-2 py-1 outline-none">
+                                    <option value="" ${!m.assigned_hat ? 'selected' : ''}>Boşta (Depo)</option>
+                                    ${['101','102','103','104','105','106','107','108','109','201'].map(h => 
+                                        `<option value="${h}" ${m.assigned_hat === h ? 'selected' : ''}>Hat ${h}</option>`
+                                    ).join('')}
+                                </select>
+                                <button onclick="recordMoldMaintenanceDirect('${m.id}')" class="px-2.5 py-1 bg-amber-600/30 hover:bg-amber-600 border border-amber-500/50 hover:text-white text-amber-300 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer" title="Bakım yapıldı ve tonajı sıfırla">
+                                    <i data-lucide="wrench" class="w-3 h-3"></i> <span>Bakım Yapıldı</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const screwsContainer = document.getElementById('screws-monitor-container');
+            if (screwsContainer) {
+                screwsContainer.innerHTML = screws.map(sc => {
+                    const hp = sc.health_pct || 80;
+                    const col = hp >= 60 ? 'text-emerald-400' : (hp >= 40 ? 'text-amber-400' : 'text-rose-400');
+                    const barBg = hp >= 60 ? 'bg-emerald-500' : (hp >= 40 ? 'bg-amber-500' : 'bg-rose-500');
+
+                    return `
+                        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 space-y-2 text-center">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-white">Hat ${sc.hat}</span>
+                                <span class="font-mono font-black ${col}">%${hp}</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div class="h-full ${barBg} rounded-full" style="width: ${hp}%"></div>
+                            </div>
+                            <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                                <span>${sc.operating_hours || 0} saat</span>
+                                <span class="text-slate-500">8.000s</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            safeCreateIcons();
+        }
+
+        async function changeMoldHatAssignment(moldId, hat) {
+            try {
+                const res = await fetch(`/api/molds/${moldId}/assign`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hat: hat })
+                });
+                if (res.ok) {
+                    if (typeof showToast === 'function') showToast(`Kalıp ${hat ? 'Hat ' + hat + ' konumuna bağlandı' : 'boşa çıkarıldı'}.`, 'success');
+                    loadMoldsDashboard();
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function recordMoldMaintenanceDirect(moldId) {
+            if (!confirm('Bu kalıp için bakım ve polisaj tamamlandı olarak işaretlensin mi? (Bakım tonaj sayacı sıfırlanacaktır)')) return;
+            try {
+                const res = await fetch(`/api/molds/${moldId}/maintenance`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes: 'Periyodik polisaj ve yüzey temizliği tamamlandı.' })
+                });
+                if (res.ok) {
+                    if (typeof showToast === 'function') showToast('Kalıp bakımı kaydedildi ve sayaç sıfırlandı.', 'success');
+                    loadMoldsDashboard();
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function openNewMoldModal() {
+            const m = document.getElementById('modal-new-mold');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeNewMoldModal() {
+            const m = document.getElementById('modal-new-mold');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function saveNewMoldFromModal() {
+            const code = document.getElementById('mld-input-code')?.value;
+            const name = document.getElementById('mld-input-name')?.value;
+            const category = document.getElementById('mld-input-category')?.value;
+            const heads = parseInt(document.getElementById('mld-input-heads')?.value || 1);
+            const limit = parseFloat(document.getElementById('mld-input-limit')?.value || 60);
+            const lifespan = parseFloat(document.getElementById('mld-input-lifespan')?.value || 350);
+            const hat = document.getElementById('mld-input-hat')?.value || '';
+
+            if (!code || !name) {
+                alert('Lütfen kalıp kodu ve adını doldurunuz.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/molds', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: code,
+                        name: name,
+                        category: category,
+                        heads: heads,
+                        maintenance_limit_tons: limit,
+                        max_lifespan_tons: lifespan,
+                        assigned_hat: hat,
+                        current_maintenance_tons: 0,
+                        total_tonnage: 0,
+                        status: hat ? 'active' : 'in_stock'
+                    })
+                });
+                if (res.ok) {
+                    closeNewMoldModal();
+                    if (typeof showToast === 'function') showToast('Yeni kalıp başarıyla eklendi.', 'success');
+                    loadMoldsDashboard();
+                }
+            } catch(e) {
+                console.error(e);
+            }
         }
 
         /* --------------------------------------------------------

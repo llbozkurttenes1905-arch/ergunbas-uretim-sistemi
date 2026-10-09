@@ -2806,6 +2806,23 @@
       ],
       "mixer_emp_gunduz": 11,
       "mixer_emp_gece": 1
+    },
+    "68": {
+      "day": "68",
+      "date": "08.10.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
     }
   }
 }

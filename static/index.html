@@ -3768,7 +3768,26 @@
             'qc1': { x: -6,  z: 32, name: 'Kalite Masası', type: 'qc', rotY: 0 },
 
             // 4 Hücreli Mamul Depolama & Sevkiyat Sahası (Kullanıcı İsteği: Taşınabilir)
-            'warehouse': { x: 26, z: 0, name: 'Mamul Stok & Sevkiyat Sahası', type: 'storage', rotY: 0 }
+            'warehouse': { x: 26, z: 0, name: 'Mamul Stok & Sevkiyat Sahası', type: 'storage', rotY: 0 },
+
+            // 4 Adet Kırım Makinesi (Geri Dönüşüm Holü)
+            'kirim_1': { x: -27, z: -38, name: 'Kırım 1', type: 'kirim', rotY: 0 },
+            'kirim_2': { x: -18, z: -38, name: 'Kırım 2', type: 'kirim', rotY: 0 },
+            'kirim_3': { x: -9,  z: -38, name: 'Kırım 3', type: 'kirim', rotY: 0 },
+            'kirim_4': { x: 0,   z: -38, name: 'Kırım 4', type: 'kirim', rotY: 0 },
+
+            // 6 Adet Mikronize Makinesi (Geri Dönüşüm Holü)
+            'mik_1': { x: -27, z: -49, name: 'Mikronize 1', type: 'mikronize', rotY: 0 },
+            'mik_2': { x: -19, z: -49, name: 'Mikronize 2', type: 'mikronize', rotY: 0 },
+            'mik_3': { x: -11, z: -49, name: 'Mikronize 3', type: 'mikronize', rotY: 0 },
+            'mik_4': { x: -3,  z: -49, name: 'Mikronize 4', type: 'mikronize', rotY: 0 },
+            'mik_5': { x: 5,   z: -49, name: 'Mikronize 5', type: 'mikronize', rotY: 0 },
+            'mik_6': { x: 13,  z: -49, name: 'Mikronize 6', type: 'mikronize', rotY: 0 },
+
+            // 3 Adet Mikser İstasyonu (Mezzanine Çelik Platform)
+            'mixer_1': { x: 15, z: -39, name: 'Mixer 1', type: 'mixer', rotY: 0 },
+            'mixer_2': { x: 23, z: -39, name: 'Mixer 2', type: 'mixer', rotY: 0 },
+            'mixer_3': { x: 31, z: -39, name: 'Mixer 3', type: 'mixer', rotY: 0 }
         };
         let DT_3D_POSITIONS = JSON.parse(JSON.stringify(DT_3D_DEFAULT_POSITIONS));
 
@@ -3977,7 +3996,115 @@
                     yuzeyParlaklik: '98.5 GU (A+ Sınıfı)',
                     darbeTesti: 'ISO 179-1: UYGUN',
                     cihazlar: 'Mitutoyo Dijital Komparatör, Granit Ölçüm Pleyti, Dijital Kumpas'
-                }
+            });
+
+            // 4 Adet Kırım Makinesi (Kırım 1..4)
+            const dKirimList = dtDayData.kirim || [];
+            [1, 2, 3, 4].forEach(num => {
+                const id = `kirim_${num}`;
+                const name = `Kırım ${num}`;
+                const rec = dKirimList.find(k => (k.hat && (k.hat.includes(String(num)) || k.hat.toLowerCase().includes(String(num))))) || dKirimList[num - 1] || {};
+                const gKg = parseFloat(rec.gunduz || rec.gunduz_kg || 0);
+                const nKg = parseFloat(rec.gece || rec.gece_kg || 0);
+                const totKg = gKg + nKg;
+                const recStatus = rec.status || (totKg > 0 ? 'normal' : 'personel_yok');
+                const status = (totKg > 0) ? 'active' : (recStatus === 'ariza' ? 'idle' : 'warning');
+                dtMachinesData.push({
+                    id: id,
+                    name: name,
+                    fullName: `${name} (Ağır Hizmet Granülatör)`,
+                    type: 'kirim',
+                    heads: 1,
+                    status: status,
+                    hours: totKg > 0 ? (nKg > 0 ? 24 : 12) : 0,
+                    prodKg: Math.round(totKg),
+                    fireKg: 0,
+                    gunduzKg: Math.round(gKg),
+                    geceKg: Math.round(nKg),
+                    product: 'Profil & Levha Takoz / Fire Granülasyonu',
+                    speed: totKg > 0 ? 4.5 : 0,
+                    rpm: totKg > 0 ? '650 RPM' : '0.0',
+                    temps: [45, 48, 52, 50, 47, 44],
+                    operator: recStatus === 'personel_yok' ? 'Personel Yok' : 'Geri Dönüşüm Ekibi',
+                    operatorCount: totKg > 0 ? (nKg > 0 ? 2 : 1) : 0,
+                    operatorDetail: `${name} Bıçaklı Kırma İstasyonu`,
+                    spacing: 'Geri Dönüşüm Holü #Kırıcı',
+                    downtime: recStatus === 'personel_yok' ? 'Personel Yetersizliği / Beklemede' : (totKg > 0 ? 'Normal Kırım İşletmesi' : 'Üretim Yok'),
+                    statusText: recStatus === 'ariza' ? 'Arıza / Onarım' : (totKg > 0 ? 'Normal Çalışıyor' : 'Beklemede')
+                });
+            });
+
+            // 6 Adet Mikronize Makinesi (Mikronize 1..6)
+            const dMikList = dtDayData.mikronize || [];
+            [1, 2, 3, 4, 5, 6].forEach(num => {
+                const id = `mik_${num}`;
+                const name = `Mikronize ${num}`;
+                const rec = dMikList.find(k => (k.hat && (k.hat.includes(String(num)) || k.hat.toLowerCase().includes(String(num))))) || dMikList[num - 1] || {};
+                const gKg = parseFloat(rec.gunduz || rec.gunduz_kg || 0);
+                const nKg = parseFloat(rec.gece || rec.gece_kg || 0);
+                const totKg = gKg + nKg;
+                const recStatus = rec.status || (totKg > 0 ? 'normal' : 'beklemede');
+                const status = (totKg > 0) ? 'active' : 'warning';
+                dtMachinesData.push({
+                    id: id,
+                    name: name,
+                    fullName: `${name} (PVC Diskli Pulverizer Değirmen)`,
+                    type: 'mikronize',
+                    heads: 1,
+                    status: status,
+                    hours: totKg > 0 ? (nKg > 0 ? 24 : 12) : 0,
+                    prodKg: Math.round(totKg),
+                    fireKg: 0,
+                    gunduzKg: Math.round(gKg),
+                    geceKg: Math.round(nKg),
+                    product: 'PVC İnce Toz (~400µm Mesh 40)',
+                    speed: totKg > 0 ? 5.2 : 0,
+                    rpm: totKg > 0 ? '3450 RPM' : '0.0',
+                    temps: [40, 42, 45, 48, 43, 38],
+                    operator: 'Mikronize Operatörü',
+                    operatorCount: totKg > 0 ? (nKg > 0 ? 2 : 1) : 0,
+                    operatorDetail: `${name} İkiz Siklonlu Değirmen`,
+                    spacing: 'Geri Dönüşüm Holü #Mikronize',
+                    downtime: totKg > 0 ? 'Normal Öğütme İşletmesi' : 'Beklemede / Hammadde Yok',
+                    statusText: totKg > 0 ? 'Normal Çalışıyor' : 'Beklemede'
+                });
+            });
+
+            // 3 Adet Mikser İstasyonu (Mixer 1..3)
+            const dMixerList = dtDayData.mixer || [];
+            [1, 2, 3].forEach(num => {
+                const id = `mixer_${num}`;
+                const name = `Mixer ${num}`;
+                const matches = dMixerList.filter(m => (m.makine && (m.makine.includes(String(num)) || m.makine.toLowerCase().includes(String(num)))));
+                const totKg = matches.reduce((acc, m) => acc + parseFloat(m.toplam_kg || 0), 0);
+                const totSarj = matches.reduce((acc, m) => acc + (parseInt(m.gunduz_sarj || 0) + parseInt(m.gece_sarj || 0)), 0);
+                const recipes = matches.map(m => m.recipe).filter(Boolean);
+                const recipeStr = recipes.length > 0 ? recipes.join(', ') : 'Standart PVC Reçetesi';
+                const avgBatch = matches.length > 0 ? Math.round(matches[0].batch_kg || 280) : 280;
+                const status = (totKg > 0) ? 'active' : 'warning';
+                dtMachinesData.push({
+                    id: id,
+                    name: name,
+                    fullName: `${name} (Sıcak/Soğuk Turbo Mikser)`,
+                    type: 'mixer',
+                    heads: 1,
+                    status: status,
+                    hours: totKg > 0 ? 24 : 0,
+                    prodKg: Math.round(totKg),
+                    fireKg: 0,
+                    batchCount: totSarj,
+                    batchKg: avgBatch,
+                    product: recipeStr,
+                    speed: totKg > 0 ? 6.0 : 0,
+                    rpm: totKg > 0 ? '1150 RPM' : '0.0',
+                    temps: [118, 122, 120, 42, 40, 38],
+                    operator: dtDayData.mixer_emp_gunduz ? `${dtDayData.mixer_emp_gunduz} Gündüz` : 'Mikser Sorumlusu',
+                    operatorCount: totKg > 0 ? 2 : 0,
+                    operatorDetail: `${name} Mezzanine Platformu`,
+                    spacing: 'Hammadde Hazırlama Platformu',
+                    downtime: totKg > 0 ? 'Normal Reçete Harmanlama' : 'Beklemede',
+                    statusText: totKg > 0 ? 'Aktif Karışım' : 'Beklemede'
+                });
             });
 
             // Personel İstatistikleri (1 Kalite Kontrol)
@@ -4220,13 +4347,104 @@
             lineLeftAisle.position.set(-(L / 2 - 2), 0.02, 0);
             dtArchitectureGroup.add(lineLeftAisle);
 
-            // Fabrika Arka Duvarı & Taşıyıcı Çelik Kolonlar
-            const wallGeo = new THREE.BoxGeometry(L + 30, H * 1.6, 1.2);
-            const wallMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.85, metalness: 0.15 });
-            const wall = new THREE.Mesh(wallGeo, wallMat);
-            wall.position.set(0, (H * 1.6) / 2, -(D / 2 + 8));
-            wall.receiveShadow = true;
-            dtArchitectureGroup.add(wall);
+            // ========================================================
+            // ARKA HOL ZEMİNİ & ÇEVRE DUVARLARI (HAMMADDE & GERİ DÖNÜŞÜM HOLÜ)
+            // ========================================================
+            const divWallZ = -(D / 2 + 8); // Bölme Duvarı Z Konumu (~ -29m)
+            const rearDepth = 34; // Arka Hol Derinliği (Z: -29 ile -63 arası)
+            
+            // Arka Hol Zemin Plakası
+            const rearFloorGeo = new THREE.PlaneGeometry(L + 30, rearDepth);
+            const rearFloorMat = new THREE.MeshStandardMaterial({
+                color: 0x161e2e,
+                roughness: 0.38,
+                metalness: 0.22
+            });
+            const rearFloor = new THREE.Mesh(rearFloorGeo, rearFloorMat);
+            rearFloor.rotation.x = -Math.PI / 2;
+            rearFloor.position.set(0, -0.005, divWallZ - (rearDepth / 2));
+            rearFloor.receiveShadow = true;
+            dtArchitectureGroup.add(rearFloor);
+
+            // Arka Hol Güvenlik Çizgileri
+            const rearBorderBack = new THREE.Mesh(new THREE.PlaneGeometry(L + 20, 0.35), lineMat);
+            rearBorderBack.rotation.x = -Math.PI / 2;
+            rearBorderBack.position.set(0, 0.02, divWallZ - rearDepth + 1.5);
+            dtArchitectureGroup.add(rearBorderBack);
+
+            // Arka Hol Dış Sınır Duvarı
+            const rearBackWallGeo = new THREE.BoxGeometry(L + 30, H * 1.6, 1.2);
+            const rearBackWall = new THREE.Mesh(rearBackWallGeo, wallMat);
+            rearBackWall.position.set(0, (H * 1.6) / 2, divWallZ - rearDepth);
+            rearBackWall.receiveShadow = true;
+            dtArchitectureGroup.add(rearBackWall);
+
+            // Arka Hol Sol & Sağ Yan Duvarları
+            const rearSideWallGeo = new THREE.BoxGeometry(1.2, H * 1.6, rearDepth);
+            const rearLeftWall = new THREE.Mesh(rearSideWallGeo, wallMat);
+            rearLeftWall.position.set(-(L / 2 + 8), (H * 1.6) / 2, divWallZ - (rearDepth / 2));
+            dtArchitectureGroup.add(rearLeftWall);
+
+            const rearRightWall = new THREE.Mesh(rearSideWallGeo, wallMat);
+            rearRightWall.position.set((L / 2 + 8), (H * 1.6) / 2, divWallZ - (rearDepth / 2));
+            dtArchitectureGroup.add(rearRightWall);
+
+            // ========================================================
+            // MERKEZİ BÖLME DUVARI & LEVHA - EKSTRÜDER ARASI GEÇİŞ KAPISI
+            // ========================================================
+            // Kullanıcı Talebi: "levha ile extrüder arasında kapı var duvardan şey açıp birbirine bağla"
+            const doorX = 4.0; // Levha 201 (X: 10) ile Ekstrüderler (X: -22..0) arası
+            const doorW = 5.4; // 5.4m genişliğinde endüstriyel forklift / servis kapısı
+            const doorH = 4.8; // 4.8m tavan açıklığı
+            const wallTotalW = L + 30; // Toplam duvar genişliği (~95m)
+            const leftEdgeX = -(wallTotalW / 2);
+            const rightEdgeX = (wallTotalW / 2);
+
+            // Sol Duvar Bloku (Sol sınırdan kapı başlangıcına kadar)
+            const leftWallW = (doorX - doorW / 2) - leftEdgeX;
+            const leftWallMesh = new THREE.Mesh(new THREE.BoxGeometry(leftWallW, H * 1.6, 1.2), wallMat);
+            leftWallMesh.position.set(leftEdgeX + leftWallW / 2, (H * 1.6) / 2, divWallZ);
+            leftWallMesh.receiveShadow = true;
+            dtArchitectureGroup.add(leftWallMesh);
+
+            // Sağ Duvar Bloku (Kapı bitişinden sağ sınıra kadar)
+            const rightWallW = rightEdgeX - (doorX + doorW / 2);
+            const rightWallMesh = new THREE.Mesh(new THREE.BoxGeometry(rightWallW, H * 1.6, 1.2), wallMat);
+            rightWallMesh.position.set((doorX + doorW / 2) + rightWallW / 2, (H * 1.6) / 2, divWallZ);
+            rightWallMesh.receiveShadow = true;
+            dtArchitectureGroup.add(rightWallMesh);
+
+            // Kapı Üstü Lento Kirişi (Kapının üstündeki duvar parçası)
+            const lintelH = (H * 1.6) - doorH;
+            const lintelMesh = new THREE.Mesh(new THREE.BoxGeometry(doorW, lintelH, 1.2), wallMat);
+            lintelMesh.position.set(doorX, doorH + lintelH / 2, divWallZ);
+            lintelMesh.receiveShadow = true;
+            dtArchitectureGroup.add(lintelMesh);
+
+            // Sarmal Endüstriyel Kepenk Kasası (Rolled-up Shutter Casing)
+            const shutterMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.45, metalness: 0.75 });
+            const shutterRoll = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, doorW + 0.3, 20), shutterMat);
+            shutterRoll.rotation.z = Math.PI / 2;
+            shutterRoll.position.set(doorX, doorH + 0.35, divWallZ);
+            dtArchitectureGroup.add(shutterRoll);
+
+            // Kapı Yan Kılavuz Rayları & Söveleri
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.3, metalness: 0.8 });
+            const leftPost = new THREE.Mesh(new THREE.BoxGeometry(0.35, doorH, 1.4), frameMat);
+            leftPost.position.set(doorX - doorW / 2 - 0.15, doorH / 2, divWallZ);
+            dtArchitectureGroup.add(leftPost);
+
+            const rightPost = new THREE.Mesh(new THREE.BoxGeometry(0.35, doorH, 1.4), frameMat);
+            rightPost.position.set(doorX + doorW / 2 + 0.15, doorH / 2, divWallZ);
+            dtArchitectureGroup.add(rightPost);
+
+            // İSG Sarı Koruma Direkleri / Bariyerleri (Door Safety Bollards)
+            const bollardMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3, metalness: 0.5 });
+            [-1, 1].forEach(dir => {
+                const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 1.3, 16), bollardMat);
+                bollard.position.set(doorX + (dir * (doorW / 2 + 0.6)), 0.65, divWallZ + 1.2);
+                dtArchitectureGroup.add(bollard);
+            });
 
             // Sol Fabrika Yan Duvarı
             const sideWallGeo = new THREE.BoxGeometry(1.2, H * 1.6, D + 30);
@@ -4235,21 +4453,64 @@
             sideWall.receiveShadow = true;
             dtArchitectureGroup.add(sideWall);
 
-            // Taşıyıcı Kolonlar
-            const colSpacing = Math.max(15, L / 5);
+            // Taşıyıcı Betonarme Kolonlar (Bölme Duvarı Boyunca - Kapı Açıklığı Hariç)
+            const colMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 });
+            const colSpacing = Math.max(14, L / 5);
             for (let cx = -(L / 2); cx <= (L / 2); cx += colSpacing) {
-                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
-                col.position.set(cx, (H * 1.6) / 2, -(D / 2 + 7));
+                // Kapı boşluğuna denk gelen kolonu atla
+                if (Math.abs(cx - doorX) < (doorW / 2 + 1.0)) continue;
+                const col = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), colMat);
+                col.position.set(cx, (H * 1.6) / 2, divWallZ);
                 col.castShadow = true;
                 dtArchitectureGroup.add(col);
             }
 
+            // Yan Duvar Kolonları
             for (let cz = -(D / 2); cz <= (D / 2); cz += 20) {
-                const sideCol = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.4 }));
+                const sideCol = new THREE.Mesh(new THREE.BoxGeometry(2.2, H * 1.6, 2.2), colMat);
                 sideCol.position.set(-(L / 2 + 7), (H * 1.6) / 2, cz);
                 sideCol.castShadow = true;
                 dtArchitectureGroup.add(sideCol);
             }
+
+            // ========================================================
+            // DUVARDAN GEÇEN PNÖMATİK PASLANMAZ ÇELİK BORU HATLARI
+            // (Mikser & Geri Dönüşümden Çıkıp Duvardaki Flanşlardan Geçerek Ekstrüderlere İnen Hatlar)
+            // ========================================================
+            const pipeSteelMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.18, metalness: 0.90 });
+            const flangeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.35, metalness: 0.85 });
+            const pipeY = 6.2; // Tavan boru kotu
+
+            // Duvardaki 4 Adet Flanşlı Boru Geçiş Menfezi (Wall Penetration Sleeves)
+            [-12, -4, 12, 20].forEach(px => {
+                const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.8, 18), flangeMat);
+                sleeve.rotation.x = Math.PI / 2;
+                sleeve.position.set(px, pipeY, divWallZ);
+                dtArchitectureGroup.add(sleeve);
+
+                const ringFlange = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.08, 12, 24), flangeMat);
+                ringFlange.position.set(px, pipeY, divWallZ + 0.8);
+                dtArchitectureGroup.add(ringFlange);
+
+                // Duvardan ön hole doğru uzanan ana dağıtım borusu
+                const mainPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 22, 16), pipeSteelMat);
+                mainPipe.rotation.x = Math.PI / 2;
+                mainPipe.position.set(px, pipeY, divWallZ - 5);
+                dtArchitectureGroup.add(mainPipe);
+            });
+
+            // Ana Ön Hol Tavan Boru Tavası & Hatlara Dağıtım Kolları
+            const feederHeader = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 38, 16), pipeSteelMat);
+            feederHeader.rotation.z = Math.PI / 2;
+            feederHeader.position.set(-6, pipeY, divWallZ + 6);
+            dtArchitectureGroup.add(feederHeader);
+
+            // Ekstrüderlerin Bunkerlarına İnen Düşey Besleme Boruları
+            [-22, -12, 0, 10].forEach(bx => {
+                const dropPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.8, 14), pipeSteelMat);
+                dropPipe.position.set(bx, pipeY - 1.4, divWallZ + 6);
+                dtArchitectureGroup.add(dropPipe);
+            });
 
             // Seçim Aurası Halkası (Cyan Targeting Reticle)
             if (!dtSelectionRing) {
@@ -5023,6 +5284,12 @@
                     group = create3DQualityControlTable(id, cfg.name);
                 } else if (cfg.type === 'levha') {
                     group = create3DSheetExtruderModel(id, cfg.name);
+                } else if (cfg.type === 'kirim') {
+                    group = create3DKirimModel(id, cfg.name);
+                } else if (cfg.type === 'mikronize') {
+                    group = create3DMikronizeModel(id, cfg.name);
+                } else if (cfg.type === 'mixer') {
+                    group = create3DMixerStationModel(id, cfg.name);
                 } else {
                     group = create3DProfileExtruderModel(id, cfg.name, cfg.heads);
                 }
@@ -6673,6 +6940,298 @@
             if (typeof createInitialWarehouseStock === 'function') {
                 createInitialWarehouseStock();
             }
+        }
+
+        // ========================================================
+        // 3D MODEL GENERATORS: GERİ DÖNÜŞÜM & HAMMADDE HAZIRLAMA
+        // (Kırım Granülatör, Mikronize Pulverizer, Turbo Mikser Platformu)
+        // ========================================================
+
+        // 1. Ağır Hizmet Kırım Makinesi (Granülatör / Shredder)
+        function create3DKirimModel(id, name) {
+            const group = new THREE.Group();
+            const darkChassisMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.50 });
+            const hopperBlueMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.40 });
+            const motorBlueMat = new THREE.MeshStandardMaterial({ color: 0x0369a1, roughness: 0.40, metalness: 0.55 });
+            const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.20, metalness: 0.88 });
+            const steelGalvMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.45, metalness: 0.70 });
+            const yellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+
+            // Sarı İSG Emniyet Alanı
+            const safetyZone = createMachineSafetyZone(5.4, 4.2, `${name} İSG ALANI`);
+            group.add(safetyZone);
+
+            // Ağır Çelik Şasi (NPU Çelik Kaide)
+            const baseSkid = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.45, 2.8), darkChassisMat);
+            baseSkid.position.y = 0.225;
+            baseSkid.castShadow = true;
+            group.add(baseSkid);
+
+            // Titreşim Sönümleyici Takozlar (4 Ayak)
+            [[-1.8, -1.1], [1.8, -1.1], [-1.8, 1.1], [1.8, 1.1]].forEach(([fx, fz]) => {
+                const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.25, 16), darkChassisMat);
+                foot.position.set(fx, 0.125, fz);
+                group.add(foot);
+            });
+
+            // Kırma Odası ve Rotor Yatak Gövdesi
+            const chamber = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.4, 2.2), darkChassisMat);
+            chamber.position.set(-0.3, 1.15, 0);
+            chamber.castShadow = true;
+            group.add(chamber);
+
+            // Bıçak Şaft Flanşı ve Rulman Yatağı
+            const bearingHub = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 2.5, 18), steelGalvMat);
+            bearingHub.rotation.x = Math.PI / 2;
+            bearingHub.position.set(-0.3, 1.15, 0);
+            group.add(bearingHub);
+
+            // Ses İzolasyonlu Mavi Giriş Bunkeri (Geniş Ağızlı Besleme Hunisi)
+            const hopperLower = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 2.0), hopperBlueMat);
+            hopperLower.position.set(-0.3, 2.45, 0);
+            group.add(hopperLower);
+
+            const hopperUpper = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.0, 1.1, 4), hopperBlueMat);
+            hopperUpper.rotation.y = Math.PI / 4;
+            hopperUpper.position.set(-0.3, 3.5, 0);
+            group.add(hopperUpper);
+
+            // Kauçuk Parça Sıçrama Perdesi
+            const curtain = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.8, 0.08), darkChassisMat);
+            curtain.position.set(-0.3, 3.4, 0.85);
+            group.add(curtain);
+
+            // 45 kW Yüksek Torklu Elektrik Motoru
+            const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 1.3, 20), motorBlueMat);
+            motor.rotation.z = Math.PI / 2;
+            motor.position.set(1.4, 1.0, 0);
+            motor.castShadow = true;
+            group.add(motor);
+
+            // Volan (Flywheel) ve V-Kayış Koruma Muhafazası
+            const beltGuard = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.5, 1.6), darkChassisMat);
+            beltGuard.position.set(0.65, 1.15, 0);
+            group.add(beltGuard);
+
+            // Alt Granül Çıkış Çekmecesi / Taşıma Kasası
+            const bin = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.55, 1.8), steelGalvMat);
+            bin.position.set(-0.3, 0.52, 0);
+            group.add(bin);
+
+            // Pnömatik Granül Nakil Borusu (Tavana Uzanan Emiş Hattı)
+            const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 4.2, 14), stainlessMat);
+            pipe.position.set(-1.6, 2.3, -0.9);
+            group.add(pipe);
+
+            const pipeBend = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.12, 10, 16, Math.PI / 2), stainlessMat);
+            pipeBend.position.set(-1.6, 4.4, -0.55);
+            group.add(pipeBend);
+
+            // Operatör Kumanda Paneli
+            const pnl = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.65, 0.45), darkChassisMat);
+            pnl.position.set(-1.6, 1.6, 0.9);
+            group.add(pnl);
+
+            const pnlScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.2), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+            pnlScreen.rotation.y = Math.PI / 2;
+            pnlScreen.position.set(-1.45, 1.65, 0.9);
+            group.add(pnlScreen);
+
+            group.userData = { id: id, name: name, type: 'kirim' };
+            return group;
+        }
+
+        // 2. PVC Mikronize Makinesi (İkiz Siklonlu Diskli Pulverizer Değirmen)
+        function create3DMikronizeModel(id, name) {
+            const group = new THREE.Group();
+            const darkChassisMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.70, metalness: 0.40 });
+            const tealMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.35, metalness: 0.45 }); // Endüstriyel Turkuaz/Petrol Yeşili
+            const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.18, metalness: 0.90 });
+            const motorMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.40, metalness: 0.50 });
+            const yellowMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+
+            // Sarı İSG Emniyet Alanı
+            const safetyZone = createMachineSafetyZone(5.6, 4.0, `${name} İSG ALANI`);
+            group.add(safetyZone);
+
+            // Ağır Rijit Taban Şasisi
+            const baseSkid = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.35, 2.6), darkChassisMat);
+            baseSkid.position.y = 0.175;
+            baseSkid.castShadow = true;
+            group.add(baseSkid);
+
+            // Diskli Öğütme Odası (Su Soğutma Ceketli Taşlama Değirmeni)
+            const millChamber = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.95, 0.85, 24), darkChassisMat);
+            millChamber.rotation.x = Math.PI / 2;
+            millChamber.position.set(-1.0, 1.45, 0);
+            millChamber.castShadow = true;
+            group.add(millChamber);
+
+            // Soğutma Suyu Flanş ve Manometre Halkası
+            const coolingRing = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.08, 12, 24), stainlessMat);
+            coolingRing.position.set(-1.0, 1.45, 0.45);
+            group.add(coolingRing);
+
+            // Değirmen Ana Tahrik Motoru (55 kW Yüksek Devirli Motor)
+            const mainMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 1.25, 20), motorMat);
+            mainMotor.rotation.z = Math.PI / 2;
+            mainMotor.position.set(-2.15, 1.45, 0);
+            group.add(mainMotor);
+
+            // Titreşimli Besleme Hunisi (Vibro-Feeder & Mıknatıs Separatörü)
+            const vibroFeeder = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.75, 0.75), stainlessMat);
+            vibroFeeder.position.set(-1.0, 2.5, 0);
+            group.add(vibroFeeder);
+
+            const feederHopper = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.4, 0.7, 16), stainlessMat);
+            feederHopper.position.set(-1.0, 3.2, 0);
+            group.add(feederHopper);
+
+            // İkiz Siklon Kuleleri (Twin Cyclone Towers)
+            [-0.1, 1.2].forEach((cx, idx) => {
+                // Üst Silindirik Siklon Gövdesi
+                const cycloneBody = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 1.8, 20), tealMat);
+                cycloneBody.position.set(cx, 3.2, idx === 0 ? -0.4 : 0.4);
+                cycloneBody.castShadow = true;
+                group.add(cycloneBody);
+
+                // Alt Konik Siklon Gövdesi
+                const cycloneCone = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.18, 1.2, 20), tealMat);
+                cycloneCone.position.set(cx, 1.7, idx === 0 ? -0.4 : 0.4);
+                group.add(cycloneCone);
+
+                // Alt Hava Kilidi (Rotary Airlock Valve)
+                const airlock = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.45, 16), darkChassisMat);
+                airlock.rotation.z = Math.PI / 2;
+                airlock.position.set(cx, 0.9, idx === 0 ? -0.4 : 0.4);
+                group.add(airlock);
+            });
+
+            // Siklonlar Arası Paslanmaz Çelik Hava Emme Boruları
+            const duct1 = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 2.0, 14), stainlessMat);
+            duct1.position.set(0.1, 4.2, 0);
+            duct1.rotation.z = Math.PI / 3;
+            group.add(duct1);
+
+            // Jet-Pulse Torbalı Filtre Kutusu (Dust Collector)
+            const filterBox = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 1.4), darkChassisMat);
+            filterBox.position.set(1.9, 2.2, 0);
+            group.add(filterBox);
+
+            // Egzoz Fanı ve Susturucu Baca
+            const exhaustFan = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.6, 16), tealMat);
+            exhaustFan.position.set(1.9, 3.6, 0);
+            group.add(exhaustFan);
+
+            // Dokunmatik PLC Kontrol Kabini
+            const cab = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.4, 0.75), darkChassisMat);
+            cab.position.set(-1.0, 1.1, 1.05);
+            group.add(cab);
+
+            const cabScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.45, 0.35), new THREE.MeshBasicMaterial({ color: 0x06b6d4 }));
+            cabScreen.position.set(-1.0, 1.35, 1.23);
+            group.add(cabScreen);
+
+            group.userData = { id: id, name: name, type: 'mikronize' };
+            return group;
+        }
+
+        // 3. PVC Sıcak & Soğuk Turbo Mikser İstasyonu (Mezzanine Çelik Platform)
+        function create3DMixerStationModel(id, name) {
+            const group = new THREE.Group();
+            const platformMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.60, metalness: 0.50 });
+            const stainlessMat = new THREE.MeshStandardMaterial({ color: 0xd8e0e8, roughness: 0.18, metalness: 0.92 });
+            const motorMat = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.35, metalness: 0.55 });
+            const siloMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.25, metalness: 0.75 });
+            const railingMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.35, metalness: 0.40 }); // Sarı Korkuluk
+
+            // Sarı İSG Emniyet Alanı
+            const safetyZone = createMachineSafetyZone(6.8, 5.8, `${name} PLATFORM ALANI`);
+            group.add(safetyZone);
+
+            // Yüksek Çelik Mezzanine Platform Bacakları (4 Kolon)
+            const legH = 3.2;
+            [[-2.5, -2.0], [2.5, -2.0], [-2.5, 2.0], [2.5, 2.0]].forEach(([lx, lz]) => {
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.25, legH, 0.25), platformMat);
+                leg.position.set(lx, legH / 2, lz);
+                leg.castShadow = true;
+                group.add(leg);
+            });
+
+            // Platform Taban Sacı (Diamond Grid Plaka)
+            const deck = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.25, 4.4), platformMat);
+            deck.position.set(0, legH + 0.125, 0);
+            deck.receiveShadow = true;
+            group.add(deck);
+
+            // Sarı Emniyet Korkulukları (Railing)
+            const railH = 1.1;
+            [
+                { w: 5.4, h: 0.06, d: 0.06, x: 0, y: legH + railH, z: -2.15 },
+                { w: 5.4, h: 0.06, d: 0.06, x: 0, y: legH + railH, z: 2.15 },
+                { w: 0.06, h: 0.06, d: 4.4, x: -2.65, y: legH + railH, z: 0 },
+                { w: 0.06, h: 0.06, d: 4.4, x: 2.65, y: legH + railH, z: 0 }
+            ].forEach(r => {
+                const rail = new THREE.Mesh(new THREE.BoxGeometry(r.w, r.h, r.d), railingMat);
+                rail.position.set(r.x, r.y, r.z);
+                group.add(rail);
+            });
+
+            // 1. Sıcak Mikser Kazanı (Hot Mixer Vessel - Üst Hazne)
+            const hotVessel = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 1.4, 28), stainlessMat);
+            hotVessel.position.set(-0.6, legH + 0.95, 0);
+            hotVessel.castShadow = true;
+            group.add(hotVessel);
+
+            // Sıcak Mikser Üst Tahrik Motoru (75 kW)
+            const hotMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.95, 20), motorMat);
+            hotMotor.position.set(-0.6, legH + 2.1, 0);
+            group.add(hotMotor);
+
+            // 2. Soğuk Mikser Kazanı (Cooling Mixer - Alt/Yan Hazne)
+            const coldVessel = new THREE.Mesh(new THREE.CylinderGeometry(1.35, 1.35, 1.1, 28), stainlessMat);
+            coldVessel.position.set(1.4, legH + 0.8, 0);
+            coldVessel.castShadow = true;
+            group.add(coldVessel);
+
+            const coldMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.8, 18), motorMat);
+            coldMotor.position.set(1.4, legH + 1.75, 0);
+            group.add(coldMotor);
+
+            // İki Mikser Arası Pnömatik Transfer Borusu
+            const xferPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 1.6, 14), stainlessMat);
+            xferPipe.rotation.z = Math.PI / 2;
+            xferPipe.position.set(0.4, legH + 0.85, 0);
+            group.add(xferPipe);
+
+            // Arka Hammadde Ara Stok Silosu (Buffer Silo)
+            const siloBody = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 3.6, 24), siloMat);
+            siloBody.position.set(-0.6, legH + 4.0, -1.8);
+            siloBody.castShadow = true;
+            group.add(siloBody);
+
+            const siloCone = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 0.22, 1.4, 24), siloMat);
+            siloCone.position.set(-0.6, legH + 1.5, -1.8);
+            group.add(siloCone);
+
+            // Tavana Uzanan Ana Pnömatik PVC Kuru Karışım (Dry Blend) Çıkış Borusu
+            const outletPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 4.5, 14), stainlessMat);
+            outletPipe.position.set(1.4, legH + 3.2, 0);
+            group.add(outletPipe);
+
+            const outletBend = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.14, 10, 16, Math.PI / 2), stainlessMat);
+            outletBend.position.set(1.4, legH + 5.45, 0.45);
+            group.add(outletBend);
+
+            // Operatör Merdiveni
+            const stairMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.5 });
+            const stairs = new THREE.Mesh(new THREE.BoxGeometry(0.9, legH * 1.3, 0.15), stairMat);
+            stairs.rotation.x = Math.PI / 3.8;
+            stairs.position.set(-2.85, legH / 2, 1.4);
+            group.add(stairs);
+
+            group.userData = { id: id, name: name, type: 'mixer' };
+            return group;
         }
 
         // ========================================================
@@ -8331,6 +8890,48 @@
                     `;
                 }
 
+                if (m.type === 'kirim') {
+                    let dot = m.status === 'active' ? 'bg-amber-400' : (m.status === 'warning' ? 'bg-yellow-400' : 'bg-red-500');
+                    const btnClass = isSelected
+                        ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30 border-amber-400 scale-[1.02]'
+                        : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-amber-800/50';
+                    return `
+                        <button onclick="selectDigitalTwinMachine('${m.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${btnClass}">
+                            <span class="w-2 h-2 rounded-full ${dot}"></span>
+                            <span>⚙️ ${m.name}</span>
+                            <span class="text-[10px] opacity-80">(${m.prodKg > 0 ? m.prodKg.toLocaleString('tr-TR') + ' kg' : 'Boşta'})</span>
+                        </button>
+                    `;
+                }
+
+                if (m.type === 'mikronize') {
+                    let dot = m.status === 'active' ? 'bg-sky-400' : 'bg-amber-400';
+                    const btnClass = isSelected
+                        ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/30 border-sky-400 scale-[1.02]'
+                        : 'bg-slate-900 hover:bg-slate-800 text-sky-300 border-sky-800/50';
+                    return `
+                        <button onclick="selectDigitalTwinMachine('${m.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${btnClass}">
+                            <span class="w-2 h-2 rounded-full ${dot}"></span>
+                            <span>🌀 ${m.name}</span>
+                            <span class="text-[10px] opacity-80">(${m.prodKg > 0 ? m.prodKg.toLocaleString('tr-TR') + ' kg' : 'Beklemede'})</span>
+                        </button>
+                    `;
+                }
+
+                if (m.type === 'mixer') {
+                    let dot = m.status === 'active' ? 'bg-emerald-400' : 'bg-amber-400';
+                    const btnClass = isSelected
+                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border-emerald-400 scale-[1.02]'
+                        : 'bg-slate-900 hover:bg-slate-800 text-emerald-300 border-emerald-800/50';
+                    return `
+                        <button onclick="selectDigitalTwinMachine('${m.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${btnClass}">
+                            <span class="w-2 h-2 rounded-full ${dot}"></span>
+                            <span>⚡ ${m.name}</span>
+                            <span class="text-[10px] opacity-80">(${m.prodKg > 0 ? m.prodKg.toLocaleString('tr-TR') + ' kg' : 'Hazır'})</span>
+                        </button>
+                    `;
+                }
+
                 let dot = 'bg-emerald-400';
                 if (m.status === 'warning') dot = 'bg-amber-400';
                 else if (m.status === 'idle') dot = 'bg-red-500';
@@ -8616,7 +9217,329 @@
                 return;
             }
 
-            // 2. Standart Ekstrüzyon Hatları İçin HUD
+            // 2. Kırım Makineleri İçin Özel HUD Kartı
+            if (m.type === 'kirim') {
+                const statusBadge = m.status === 'active'
+                    ? '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ÇALIŞIYOR</span>'
+                    : (m.status === 'warning'
+                        ? '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> BEKLEMEDE</span>'
+                        : '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-400"></span> DEVRE DIŞI / BOŞTA</span>');
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between border-b border-amber-900/50 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-2xl font-black text-white tracking-wide">⚙️ ${m.fullName || m.name}</h3>
+                                    <span class="text-[11px] text-amber-300 font-semibold bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800">
+                                        Geri Dönüşüm Granülatörü
+                                    </span>
+                                </div>
+                                <p class="text-xs font-bold text-amber-300/80 mt-1 flex items-center gap-1">
+                                    <i data-lucide="recycle" class="w-3.5 h-3.5 text-amber-400"></i> ${m.product}
+                                </p>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <!-- Canlı Kırım Metrikleri (2x2 Grid) -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="sun" class="w-3 h-3 text-amber-400"></i> Gündüz Vardiyası
+                                </span>
+                                <div class="text-xl font-mono font-black text-amber-300 mt-1">
+                                    ${(m.gunduzKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">08:00 - 20:00 Vardiyası</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="moon" class="w-3 h-3 text-sky-400"></i> Gece Vardiyası
+                                </span>
+                                <div class="text-xl font-mono font-black text-sky-300 mt-1">
+                                    ${(m.geceKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">20:00 - 08:00 Vardiyası</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="scale" class="w-3 h-3 text-emerald-400"></i> Toplam Kırılan
+                                </span>
+                                <div class="text-xl font-mono font-black text-emerald-400 mt-1">
+                                    ${(m.prodKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-emerald-400/90 font-bold block mt-0.5">✓ 24 Saatlik Geri Kazanım</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-amber-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="gauge" class="w-3 h-3 text-amber-400"></i> Rotor Devri
+                                </span>
+                                <div class="text-xl font-mono font-black text-white mt-1">
+                                    ${m.rpm}
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">Ø 8-10 mm Kalibre Elek</span>
+                            </div>
+                        </div>
+
+                        <!-- Donanım ve Teknik Özellikler -->
+                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="box" class="w-3.5 h-3.5 text-amber-400"></i> Bıçak Konfigürasyonu:</span>
+                                <span class="font-bold text-slate-200">6 Döner + 4 Sabit SKD-11 Çelik Bıçak</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i> Malzeme Çıkışı:</span>
+                                <span class="font-bold text-cyan-400">Pnömatik Fan + Big-Bag / Silo Sevk</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i> İSG / Ses İzolasyonu:</span>
+                                <span class="font-bold text-emerald-400">Akustik İzolasyon Kabini Aktif</span>
+                            </div>
+                        </div>
+
+                        <!-- Operatör & Nöbetçi Durumu -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Operatör:</span>
+                                <span class="font-bold text-slate-300">${m.operator}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-slate-500"></i> Durum Notu:</span>
+                                <span class="font-bold ${m.status === 'active' ? 'text-emerald-400' : 'text-amber-400'}">${m.downtime}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="focusOnSelectedMachine3D()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> 3D Yakınlaş
+                            </button>
+                            <button onclick="if (typeof showToast === 'function') showToast('${m.name} granülatör parametreleri ve elek durumu onaylandı.', 'success')" class="flex-[2] py-2.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-black text-xs rounded-xl shadow-lg shadow-amber-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Kırım Logunu Doğrula
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // 3. Mikronize Makineleri İçin Özel HUD Kartı
+            if (m.type === 'mikronize') {
+                const statusBadge = m.status === 'active'
+                    ? '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-sky-500/20 text-sky-400 border border-sky-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span> ÖĞÜTÜYOR</span>'
+                    : '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> BEKLEMEDE</span>';
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between border-b border-sky-900/50 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-2xl font-black text-white tracking-wide">🌀 ${m.fullName || m.name}</h3>
+                                    <span class="text-[11px] text-sky-300 font-semibold bg-sky-950/80 px-2 py-0.5 rounded border border-sky-800">
+                                        PVC Diskli Pulverizer
+                                    </span>
+                                </div>
+                                <p class="text-xs font-bold text-sky-300/80 mt-1 flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-sky-400"></i> ${m.product}
+                                </p>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <!-- Canlı Mikronize Metrikleri (2x2 Grid) -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-sky-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="sun" class="w-3 h-3 text-amber-400"></i> Gündüz Vardiyası
+                                </span>
+                                <div class="text-xl font-mono font-black text-amber-300 mt-1">
+                                    ${(m.gunduzKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">08:00 - 20:00 Vardiyası</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-sky-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="moon" class="w-3 h-3 text-sky-400"></i> Gece Vardiyası
+                                </span>
+                                <div class="text-xl font-mono font-black text-sky-300 mt-1">
+                                    ${(m.geceKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">20:00 - 08:00 Vardiyası</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-sky-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="scale" class="w-3 h-3 text-emerald-400"></i> Toplam Mikronize
+                                </span>
+                                <div class="text-xl font-mono font-black text-emerald-400 mt-1">
+                                    ${(m.prodKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-emerald-400/90 font-bold block mt-0.5">✓ Mikser Besleme Ham Tozu</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-sky-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="zap" class="w-3 h-3 text-cyan-400"></i> Disk Hızı
+                                </span>
+                                <div class="text-xl font-mono font-black text-cyan-300 mt-1">
+                                    ${m.rpm}
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">Döner Taşlama Diski</span>
+                            </div>
+                        </div>
+
+                        <!-- Siklon & Filtre Detayları -->
+                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="filter" class="w-3.5 h-3.5 text-sky-400"></i> Siklon Ayırma Sistemi:</span>
+                                <span class="font-bold text-slate-200">İkiz Siklon + Döner Hava Kilidi (Airlock)</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="disc" class="w-3.5 h-3.5 text-indigo-400"></i> Toz İnceliği / Mesh:</span>
+                                <span class="font-bold text-indigo-300">~400 µm (Mesh 40 PVC Mikron)</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="wind" class="w-3.5 h-3.5 text-emerald-400"></i> Jet Pulse Filtre:</span>
+                                <span class="font-bold text-emerald-400">%99.8 Toz Tutma & Geri Emiş</span>
+                            </div>
+                        </div>
+
+                        <!-- Operatör & Nöbetçi Durumu -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Sorumlu Ekip:</span>
+                                <span class="font-bold text-slate-300">${m.operator}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-slate-500"></i> Durum Notu:</span>
+                                <span class="font-bold ${m.status === 'active' ? 'text-sky-400' : 'text-amber-400'}">${m.downtime}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="focusOnSelectedMachine3D()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> 3D Yakınlaş
+                            </button>
+                            <button onclick="if (typeof showToast === 'function') showToast('${m.name} siklon ve hava kilidi debisi doğrulandı.', 'success')" class="flex-[2] py-2.5 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-black text-xs rounded-xl shadow-lg shadow-sky-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Mikronize Doğrula
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // 4. Mixer İstasyonları İçin Özel HUD Kartı
+            if (m.type === 'mixer') {
+                const statusBadge = m.status === 'active'
+                    ? '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> HARMANLAMA AKTİF</span>'
+                    : '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> BEKLEMEDE</span>';
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between border-b border-emerald-900/50 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-2xl font-black text-white tracking-wide">⚡ ${m.fullName || m.name}</h3>
+                                    <span class="text-[11px] text-emerald-300 font-semibold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">
+                                        Turbo Kombi Mikser Platformu
+                                    </span>
+                                </div>
+                                <p class="text-xs font-bold text-emerald-300/80 mt-1 flex items-center gap-1">
+                                    <i data-lucide="beaker" class="w-3.5 h-3.5 text-emerald-400"></i> ${m.product}
+                                </p>
+                            </div>
+                            ${statusBadge}
+                        </div>
+
+                        <!-- Canlı Mixer Metrikleri (2x2 Grid) -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-emerald-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="scale" class="w-3 h-3 text-emerald-400"></i> Toplam Karışım
+                                </span>
+                                <div class="text-xl font-mono font-black text-emerald-400 mt-1">
+                                    ${(m.prodKg || 0).toLocaleString('tr-TR')} <span class="text-xs text-slate-400 font-normal">kg</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">Ekstrüzyon Besleme Harmanı</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-emerald-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="layers" class="w-3 h-3 text-cyan-400"></i> Toplam Şarj Sayısı
+                                </span>
+                                <div class="text-xl font-mono font-black text-cyan-300 mt-1">
+                                    ${m.batchCount || 0} <span class="text-xs text-slate-400 font-normal">şarj</span>
+                                </div>
+                                <span class="text-[9.5px] text-slate-400 block mt-0.5">Ort. ${m.batchKg || 280} kg/şarj</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-emerald-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="flame" class="w-3 h-3 text-amber-400"></i> Sıcak Kazan Sıcaklığı
+                                </span>
+                                <div class="text-xl font-mono font-black text-amber-300 mt-1">
+                                    120°C
+                                </div>
+                                <span class="text-[9.5px] text-amber-400/90 font-bold block mt-0.5">Kızgın Yağ / Sürtünme</span>
+                            </div>
+
+                            <div class="bg-slate-950/80 p-3 rounded-xl border border-emerald-900/40 shadow-inner">
+                                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider block flex items-center gap-1">
+                                    <i data-lucide="snowflake" class="w-3 h-3 text-sky-400"></i> Soğutucu Kazan
+                                </span>
+                                <div class="text-xl font-mono font-black text-sky-300 mt-1">
+                                    40°C
+                                </div>
+                                <span class="text-[9.5px] text-sky-400/90 font-bold block mt-0.5">Chiller Sulu Ceket</span>
+                            </div>
+                        </div>
+
+                        <!-- Dozaj & Silo İletim Hattı -->
+                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="git-branch" class="w-3.5 h-3.5 text-emerald-400"></i> Pnömatik Sevk Hattı:</span>
+                                <span class="font-bold text-slate-200">Bölme Duvarı Üstü Borularla Hatlara Otomatik Besleme</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="check-square" class="w-3.5 h-3.5 text-cyan-400"></i> Dozajlama Ünitesi:</span>
+                                <span class="font-bold text-cyan-400">Otomatik Kalsiyum Karbonat (CaCO3) + CPE + Stabilizatör</span>
+                            </div>
+                        </div>
+
+                        <!-- Operatör & Nöbetçi Durumu -->
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i> Mikser Sorumlusu:</span>
+                                <span class="font-bold text-slate-300">${m.operator}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-slate-500"></i> Durum Notu:</span>
+                                <span class="font-bold ${m.status === 'active' ? 'text-emerald-400' : 'text-amber-400'}">${m.downtime}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="focusOnSelectedMachine3D()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="crosshair" class="w-4 h-4 text-cyan-400"></i> 3D Yakınlaş
+                            </button>
+                            <button onclick="if (typeof showToast === 'function') showToast('${m.name} sıcak/soğuk mikser harmanlama reçetesi ve şarj tartımları onaylandı.', 'success')" class="flex-[2] py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Mikser Reçetesini Doğrula
+                            </button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // 5. Standart Ekstrüzyon Hatları İçin HUD
             let statusBadge = '<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 24 SAAT TAM FAAL</span>';
             if (m.status === 'warning') {
                 statusBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-black bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> ${m.hours} SAAT KESİNTİLİ</span>`;

@@ -2,7 +2,7 @@
   {
     "id": "mld_1",
     "code": "KLP-104",
-    "name": "42x42 Masif Kapı Sereni Kalıbı",
+    "name": "38x45 WPC Kapı Sereni Kalıbı",
     "category": "seren",
     "heads": 2,
     "assigned_hat": "104",
@@ -19,7 +19,7 @@
   {
     "id": "mld_2",
     "code": "KLP-105",
-    "name": "42x42 Masif Kapı Sereni Kalıbı (Yedek)",
+    "name": "38x45 WPC Kapı Sereni Kalıbı (Yedek)",
     "category": "seren",
     "heads": 2,
     "assigned_hat": "105",

@@ -1760,8 +1760,10 @@
                     </div>
 
                     <!-- Tarih Seçici & Yeniden Tara Butonu -->
-                    <div class="flex items-center gap-2 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800">
-                        <select id="select-ai-day" onchange="loadAiDashboard()" class="bg-transparent text-xs text-white font-bold px-2 py-1 outline-none cursor-pointer"></select>
+                    <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                        <i data-lucide="calendar" class="w-4 h-4 text-purple-400"></i>
+                        <span class="text-xs font-bold text-slate-400">Analiz Günü:</span>
+                        <select id="select-ai-day" onchange="loadAiDashboard()" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2.5 py-1 text-xs font-bold focus:ring-2 focus:ring-purple-500 focus:outline-none cursor-pointer"></select>
                         <button onclick="loadAiDashboard()" class="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-600/30 cursor-pointer">
                             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span>Yeniden Tara</span>
                         </button>
@@ -4181,6 +4183,22 @@
                         dtSelect.value = currentDateKey;
                     } else if (dashboardData.latest_day_key) {
                         dtSelect.value = dashboardData.latest_day_key;
+                    }
+                }
+
+                // AI Radar tarih kutusunu da senkronize et (En güncel tarih en üstte)
+                const aiSelect = document.getElementById('select-ai-day');
+                if (aiSelect && dashboardData && dashboardData.available_dates && dashboardData.available_dates.length > 0) {
+                    const curAiVal = aiSelect.value;
+                    const sortedDates = [...dashboardData.available_dates].reverse();
+                    aiSelect.innerHTML = sortedDates.map(d => 
+                        `<option value="${d.key}" class="bg-slate-900 text-white font-bold py-1">${d.date || d.display || d.key}</option>`
+                    ).join('');
+                    const targetAiKey = String(curAiVal && curAiVal !== '1' ? curAiVal : (dashboardData.latest_day_key || sortedDates[0].key));
+                    if (sortedDates.some(d => String(d.key) === targetAiKey)) {
+                        aiSelect.value = targetAiKey;
+                    } else {
+                        aiSelect.value = String(sortedDates[0].key);
                     }
                 }
 
@@ -10895,7 +10913,6 @@
         async function loadAiDashboard() {
             try {
                 const selectEl = document.getElementById('select-ai-day');
-                let dayKey = selectEl ? selectEl.value : null;
 
                 if (selectEl && (!selectEl.options || selectEl.options.length === 0)) {
                     if (!dashboardData) {
@@ -10904,18 +10921,22 @@
                             if (dbRes.ok) dashboardData = await dbRes.json();
                         } catch(e) {}
                     }
-                    if (dashboardData && dashboardData.available_dates) {
-                        selectEl.innerHTML = dashboardData.available_dates.map(d => 
-                            `<option value="${d.key}">${d.date || d.display || d.key}</option>`
+                    if (dashboardData && dashboardData.available_dates && dashboardData.available_dates.length > 0) {
+                        // En son/güncel tarih en üstte olacak şekilde ters sırala
+                        const sortedDates = [...dashboardData.available_dates].reverse();
+                        selectEl.innerHTML = sortedDates.map(d => 
+                            `<option value="${d.key}" class="bg-slate-900 text-white font-bold py-1">${d.date || d.display || d.key}</option>`
                         ).join('');
-                        if (currentDateKey && dashboardData.available_dates.some(d => d.key === currentDateKey)) {
-                            selectEl.value = currentDateKey;
-                        } else if (dashboardData.latest_day_key) {
-                            selectEl.value = dashboardData.latest_day_key;
+                        
+                        const targetKey = String(dashboardData.latest_day_key || sortedDates[0].key);
+                        if (sortedDates.some(d => String(d.key) === targetKey)) {
+                            selectEl.value = targetKey;
+                        } else {
+                            selectEl.value = String(sortedDates[0].key);
                         }
                     }
                 }
-                dayKey = selectEl ? selectEl.value : null;
+                const dayKey = selectEl ? selectEl.value : null;
 
                 const url = dayKey ? `/api/ai/anomalies?date_key=${dayKey}` : '/api/ai/anomalies';
                 const res = await fetch(url);

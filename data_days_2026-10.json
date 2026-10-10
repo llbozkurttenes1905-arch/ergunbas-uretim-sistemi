@@ -3381,10 +3381,10 @@
             "speed": 0.54,
             "heads": 1.0,
             "hours": 4.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 3.8,
+            "fire_kg": 225.26,
+            "qty": 1,
+            "sets": 0.4
           },
           {
             "row": 0,
@@ -3474,10 +3474,10 @@
             "speed": 0.5,
             "heads": 2.0,
             "hours": 5.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 3.8,
+            "fire_kg": 539.06,
+            "qty": 1,
+            "sets": 0.3
           },
           {
             "row": 0,

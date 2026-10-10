@@ -3703,6 +3703,15 @@
           "down_reason": "Periyodik / Kalıp Bakımı",
           "down_min": 120.0,
           "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
+          "fire_reason": "Testere arızası.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
         }
       ],
       "kirim": [

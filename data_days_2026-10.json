@@ -3392,10 +3392,10 @@
             "product": "50X80 PERVAZ",
             "length": 2.5,
             "speed": 1.63,
-            "heads": 210.0,
+            "heads": 2.0,
             "hours": 8.0,
             "prod_kg": 578.0,
-            "fire_kg": 106427.87,
+            "fire_kg": 441.1,
             "qty": 355,
             "sets": 71.0
           }

@@ -3610,7 +3610,7 @@ def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Option
 def export_excel(month: Optional[str] = None):
     """
     E-Flow BPM ve ERP (Logo, Netsis, Canias, SAP vb.) Entegrasyonu için
-    Kurumsal 5 Sekmeli Master Veritabanı ve Üretim Rotaları Excel Aktarımı.
+    Ürün Bazında Ayrılmış, Kurumsal 10 Sekmeli Master Veritabanı ve Üretim Rotaları Excel Aktarımı.
     """
     data = load_data()
     daily_data = data.get("daily_data", {})
@@ -3626,7 +3626,6 @@ def export_excel(month: Optional[str] = None):
 
     thin_border_side = Side(style='thin', color='CBD5E1')
     border_cell = Border(left=thin_border_side, right=thin_border_side, top=thin_border_side, bottom=thin_border_side)
-
     double_bottom_side = Side(style='double', color='0F172A')
     top_thin_side = Side(style='thin', color='0F172A')
     border_total = Border(top=top_thin_side, bottom=double_bottom_side, left=thin_border_side, right=thin_border_side)
@@ -3634,104 +3633,34 @@ def export_excel(month: Optional[str] = None):
     fill_even = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
     fill_total = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
 
-    headers_config = {
-        "GUNLUK_URETIM_VERILERI": {
-            "fill": PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid"),
-            "cols": [
-                ("Kayit_ID", "@", 14),
-                ("Tarih", "YYYY-MM-DD", 13),
-                ("Ay_Yil", "@", 11),
-                ("Vardiya", "@", 11),
-                ("Tip", "@", 12),
-                ("Hat_Kodu", "@", 11),
-                ("Urun_Adi", "@", 28),
-                ("Operator", "@", 18),
-                ("Calisma_Saati", "#,##0.0", 14),
-                ("Adet", "#,##0", 12),
-                ("Net_Uretim_KG", "#,##0.00", 16),
-                ("Fire_KG", "#,##0.00", 14),
-                ("Brut_KG", "#,##0.00", 16),
-                ("Fire_Orani_%", "%0.00", 14),
-                ("Hiz_Kapasite_KG_Saat", "#,##0.00", 20)
-            ]
-        },
-        "DURUS_VE_ARIZALAR": {
-            "fill": PatternFill(start_color="991B1B", end_color="991B1B", fill_type="solid"),
-            "cols": [
-                ("Kayit_ID", "@", 14),
-                ("Tarih", "YYYY-MM-DD", 13),
-                ("Ay_Yil", "@", 11),
-                ("Vardiya", "@", 11),
-                ("Hat_Kodu", "@", 11),
-                ("Durus_Kategorisi", "@", 26),
-                ("Durus_Suresi_Dk", "#,##0", 16),
-                ("Durus_Suresi_Saat", "#,##0.00", 18),
-                ("Fire_Kaybi_KG", "#,##0.00", 14),
-                ("Fire_Sebebi", "@", 26),
-                ("Aciklama", "@", 34)
-            ]
-        },
-        "ERP_URETIM_ROTALARI": {
-            "fill": PatternFill(start_color="065F46", end_color="065F46", fill_type="solid"),
-            "cols": [
-                ("Rota_Kodu", "@", 14),
-                ("Rota_Adi", "@", 28),
-                ("Operasyon_No", "@", 14),
-                ("Operasyon_Adi", "@", 26),
-                ("Is_Merkezi_Kodu", "@", 16),
-                ("Is_Merkezi_Adi", "@", 28),
-                ("Standart_Hazirlik_Dk", "#,##0", 20),
-                ("Kapasite_Birim", "@", 14),
-                ("Standart_Hiz_Birim_Saat", "#,##0.0", 22),
-                ("Kalite_Kontrol_Noktasi", "@", 24),
-                ("Aciklama", "@", 36)
-            ]
-        },
-        "URUN_AGACI_BOM_RECETELER": {
-            "fill": PatternFill(start_color="4C1D95", end_color="4C1D95", fill_type="solid"),
-            "cols": [
-                ("Recete_Kodu", "@", 18),
-                ("Recete_Adi", "@", 24),
-                ("Bilesen_Sira", "#,##0", 12),
-                ("Hammadde_Kodu", "@", 16),
-                ("Hammadde_Adi", "@", 24),
-                ("Birim_Miktar_KG", "#,##0.00", 16),
-                ("Oran_%", "%0.00", 12),
-                ("Sarj_Toplam_KG", "#,##0.00", 16),
-                ("Depolama_Yeri", "@", 18),
-                ("Kullanim_Alani", "@", 26)
-            ]
-        },
-        "KALIP_VE_TAKIM_MASTER": {
-            "fill": PatternFill(start_color="C2410C", end_color="C2410C", fill_type="solid"),
-            "cols": [
-                ("Kalip_ID", "@", 12),
-                ("Kalip_Kodu", "@", 14),
-                ("Kalip_Adi", "@", 28),
-                ("Kategori", "@", 14),
-                ("Kafa_Sayisi", "#,##0", 12),
-                ("Atanan_Hat", "@", 12),
-                ("Bakim_Limiti_Ton", "#,##0.0", 16),
-                ("Son_Bakimdan_Beri_Ton", "#,##0.0", 20),
-                ("Toplam_Omur_Limiti_Ton", "#,##0.0", 22),
-                ("Toplam_Basilan_Ton", "#,##0.0", 18),
-                ("Durum", "@", 16),
-                ("Son_Bakim_Tarihi", "@", 16),
-                ("Bakim_Sayisi", "#,##0", 12),
-                ("Kalıp_Ayar_Suresi_Dk", "#,##0", 18)
-            ]
-        }
-    }
+    def categorize_product(prod_name: str, p_type: str = "Ekstrüder") -> str:
+        name_upper = (prod_name or "").upper()
+        if p_type == "Levha" or "LEVHA" in name_upper:
+            return "Levha"
+        if any(k in name_upper for k in ["PERVAZ", "ÇITA", "CITA", "KAPAMA"]):
+            return "Pervaz"
+        if any(k in name_upper for k in ["KASA", "KT10", "KT100", "KT102"]):
+            return "Kasa"
+        if "SEREN" in name_upper:
+            return "Seren"
+        return "Diğer Profil"
 
-    # 1. SEKME: GÜNLÜK ÜRETİM VERİLERİ
-    ws1 = wb.active
-    ws1.title = "GUNLUK_URETIM_VERILERI"
-    cfg1 = headers_config["GUNLUK_URETIM_VERILERI"]
-    ws1.views.sheetView[0].showGridLines = True
-    ws1.append([c[0] for c in cfg1["cols"]])
+    def make_product_code(prod_name: str, cat: str) -> str:
+        clean = "".join(c for c in prod_name.upper() if c.isalnum())
+        if cat == "Pervaz":
+            return f"PRV-{clean[:8]}"
+        elif cat == "Kasa":
+            return f"KSA-{clean[:8]}"
+        elif cat == "Seren":
+            return f"SRN-{clean[:8]}"
+        elif cat == "Levha":
+            return f"LEV-{clean[:8]}"
+        return f"MLZ-{clean[:8]}"
 
     sorted_keys = get_sorted_day_keys(daily_data)
-    row_count_1 = 1
+
+    all_rows = []
+    product_summary_map = {}
 
     for k in sorted_keys:
         d = daily_data[k]
@@ -3757,89 +3686,303 @@ def export_excel(month: Optional[str] = None):
             # Ekstrüder Hatları
             for e in shift_obj.get("extruders", []):
                 hat = str(e.get("hat", ""))
-                prod_name = e.get("product") or f"Hat {hat} Profili"
+                p_raw = e.get("product") or f"Hat {hat} Profili"
                 hrs = float(e.get("hours", 0) or 0)
                 qty = int(e.get("qty", 0) or 0)
                 prod_kg = float(e.get("prod_kg", 0) or 0)
                 fire_kg = float(e.get("fire_kg", 0) or 0)
                 brut_kg = prod_kg + fire_kg
+                if brut_kg == 0 and qty == 0 and hrs == 0:
+                    continue
+
+                cat = categorize_product(p_raw, "Ekstrüder")
                 fire_pct = (fire_kg / brut_kg) if brut_kg > 0 else 0.0
                 rate_kg_h = (prod_kg / hrs) if hrs > 0 else 0.0
                 rec_id = f"EXT-{k}-{shift[0].upper()}-{hat}"
 
-                ws1.append([
-                    rec_id, iso_date, month_key, shift_label, "Ekstrüder",
-                    hat, prod_name, op_name, hrs, qty, prod_kg, fire_kg, brut_kg,
-                    fire_pct, rate_kg_h
-                ])
-                row_count_1 += 1
+                row_dict = {
+                    "id": rec_id,
+                    "date": iso_date,
+                    "month": month_key,
+                    "shift": shift_label,
+                    "type": "Ekstrüder",
+                    "category": cat,
+                    "hat": hat,
+                    "product": p_raw,
+                    "operator": op_name,
+                    "hours": hrs,
+                    "qty": qty,
+                    "prod_kg": prod_kg,
+                    "fire_kg": fire_kg,
+                    "brut_kg": brut_kg,
+                    "fire_pct": fire_pct,
+                    "rate_kg_h": rate_kg_h
+                }
+                all_rows.append(row_dict)
+
+                p_sum = product_summary_map.setdefault(p_raw, {
+                    "product": p_raw,
+                    "category": cat,
+                    "code": make_product_code(p_raw, cat),
+                    "hats": set(),
+                    "days": set(),
+                    "hours": 0.0,
+                    "qty": 0,
+                    "prod_kg": 0.0,
+                    "fire_kg": 0.0
+                })
+                p_sum["hats"].add(f"Hat {hat}")
+                p_sum["days"].add(iso_date)
+                p_sum["hours"] += hrs
+                p_sum["qty"] += qty
+                p_sum["prod_kg"] += prod_kg
+                p_sum["fire_kg"] += fire_kg
 
             # Levha Hatları
             for l in shift_obj.get("levha", []):
                 hat = str(l.get("hat", "201"))
-                color_name = l.get("color") or "Standart Levha"
-                prod_name = f"WPC Kapı Levhası ({color_name})"
+                color_name = l.get("color") or "Standart"
+                prod_name = f"WPC Levha ({color_name})"
                 hrs = float(l.get("hours", 0) or 0)
                 qty = int(l.get("qty", 0) or 0)
                 prod_kg = float(l.get("total_kg", 0) or 0)
                 fire_kg = float(l.get("dead_fire_kg", 0) or 0)
                 brut_kg = prod_kg + fire_kg
+                if brut_kg == 0 and qty == 0 and hrs == 0:
+                    continue
+
+                cat = "Levha"
                 fire_pct = (fire_kg / brut_kg) if brut_kg > 0 else 0.0
                 rate_kg_h = (prod_kg / hrs) if hrs > 0 else 0.0
                 rec_id = f"LEV-{k}-{shift[0].upper()}-{hat}"
 
-                ws1.append([
-                    rec_id, iso_date, month_key, shift_label, "Levha",
-                    hat, prod_name, op_name, hrs, qty, prod_kg, fire_kg, brut_kg,
-                    fire_pct, rate_kg_h
-                ])
-                row_count_1 += 1
+                row_dict = {
+                    "id": rec_id,
+                    "date": iso_date,
+                    "month": month_key,
+                    "shift": shift_label,
+                    "type": "Levha",
+                    "category": cat,
+                    "hat": hat,
+                    "product": prod_name,
+                    "operator": op_name,
+                    "hours": hrs,
+                    "qty": qty,
+                    "prod_kg": prod_kg,
+                    "fire_kg": fire_kg,
+                    "brut_kg": brut_kg,
+                    "fire_pct": fire_pct,
+                    "rate_kg_h": rate_kg_h
+                }
+                all_rows.append(row_dict)
 
-    # Formatlama - Sayfa 1
-    for col_idx, (col_name, num_fmt, width) in enumerate(cfg1["cols"], 1):
+                p_sum = product_summary_map.setdefault(prod_name, {
+                    "product": prod_name,
+                    "category": cat,
+                    "code": make_product_code(color_name, cat),
+                    "hats": set(),
+                    "days": set(),
+                    "hours": 0.0,
+                    "qty": 0,
+                    "prod_kg": 0.0,
+                    "fire_kg": 0.0
+                })
+                p_sum["hats"].add(f"Hat {hat}")
+                p_sum["days"].add(iso_date)
+                p_sum["hours"] += hrs
+                p_sum["qty"] += qty
+                p_sum["prod_kg"] += prod_kg
+                p_sum["fire_kg"] += fire_kg
+
+    # 1. SEKME: URUN_BAZINDA_OZET (Her Ürünün Performans & Toplam Tablosu)
+    ws_prod = wb.active
+    ws_prod.title = "URUN_BAZINDA_OZET"
+    ws_prod.views.sheetView[0].showGridLines = True
+
+    prod_cols = [
+        ("Urun_Kodu", "@", 16),
+        ("Urun_Adi", "@", 28),
+        ("Kategori", "@", 14),
+        ("Uretilen_Hatlar", "@", 20),
+        ("Calisilan_Gun", "#,##0", 14),
+        ("Toplam_Saat", "#,##0.0", 14),
+        ("Toplam_Adet", "#,##0", 14),
+        ("Net_Uretim_KG", "#,##0.00", 16),
+        ("Fire_KG", "#,##0.00", 14),
+        ("Brut_KG", "#,##0.00", 16),
+        ("Fire_Orani_%", "%0.00", 14),
+        ("Ortalama_Hiz_KG_Saat", "#,##0.00", 20),
+        ("Tahmini_Kapi_Karsiligi", "#,##0", 20)
+    ]
+    ws_prod.append([c[0] for c in prod_cols])
+
+    cat_order = {"Pervaz": 1, "Kasa": 2, "Seren": 3, "Levha": 4, "Diğer Profil": 5}
+    sorted_products = sorted(
+        product_summary_map.values(),
+        key=lambda x: (cat_order.get(x["category"], 99), -x["prod_kg"])
+    )
+
+    r_count_prod = 1
+    for p in sorted_products:
+        hats_str = ", ".join(sorted(p["hats"]))
+        days_c = len(p["days"])
+        brut = p["prod_kg"] + p["fire_kg"]
+        fire_p = (p["fire_kg"] / brut) if brut > 0 else 0.0
+        avg_speed = (p["prod_kg"] / p["hours"]) if p["hours"] > 0 else 0.0
+
+        door_eq = 0
+        if p["category"] == "Pervaz":
+            door_eq = int(p["qty"] / 5.0)
+        elif p["category"] == "Kasa":
+            door_eq = int(p["qty"] / 2.5)
+        elif p["category"] == "Seren":
+            door_eq = int(p["qty"] / 3.5)
+        elif p["category"] == "Levha":
+            door_eq = int(p["qty"] / 2.0)
+
+        ws_prod.append([
+            p["code"], p["product"], p["category"], hats_str, days_c,
+            p["hours"], p["qty"], p["prod_kg"], p["fire_kg"], brut,
+            fire_p, avg_speed, door_eq
+        ])
+        r_count_prod += 1
+
+    fill_indigo = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
+    for col_idx, (col_name, num_fmt, width) in enumerate(prod_cols, 1):
         col_letter = get_column_letter(col_idx)
-        ws1.column_dimensions[col_letter].width = width
-        h_cell = ws1.cell(row=1, column=col_idx)
-        h_cell.fill = cfg1["fill"]
+        ws_prod.column_dimensions[col_letter].width = width
+        h_cell = ws_prod.cell(row=1, column=col_idx)
+        h_cell.fill = fill_indigo
         h_cell.font = font_header
         h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-        for r in range(2, row_count_1 + 1):
-            cell = ws1.cell(row=r, column=col_idx)
+        for r in range(2, r_count_prod + 1):
+            cell = ws_prod.cell(row=r, column=col_idx)
             cell.font = font_data
             cell.border = border_cell
             if num_fmt != "@":
                 cell.number_format = num_fmt
                 cell.alignment = Alignment(horizontal="right", vertical="center")
             else:
-                align_h = "center" if col_name in ["Kayit_ID", "Tarih", "Ay_Yil", "Vardiya", "Tip", "Hat_Kodu"] else "left"
+                align_h = "center" if col_name in ["Urun_Kodu", "Kategori"] else "left"
                 cell.alignment = Alignment(horizontal=align_h, vertical="center")
             if r % 2 == 1:
                 cell.fill = fill_even
 
-    if row_count_1 > 1:
-        total_row = row_count_1 + 1
-        ws1.cell(row=total_row, column=1, value="GENEL TOPLAM").font = font_total
-        for col_idx in range(1, len(cfg1["cols"]) + 1):
-            ws1.cell(row=total_row, column=col_idx).fill = fill_total
-            ws1.cell(row=total_row, column=col_idx).border = border_total
-        ws1.cell(row=total_row, column=9, value=f"=SUM(I2:I{row_count_1})").number_format = "#,##0.0"
-        ws1.cell(row=total_row, column=10, value=f"=SUM(J2:J{row_count_1})").number_format = "#,##0"
-        ws1.cell(row=total_row, column=11, value=f"=SUM(K2:K{row_count_1})").number_format = "#,##0.00"
-        ws1.cell(row=total_row, column=12, value=f"=SUM(L2:L{row_count_1})").number_format = "#,##0.00"
-        ws1.cell(row=total_row, column=13, value=f"=SUM(M2:M{row_count_1})").number_format = "#,##0.00"
-        ws1.cell(row=total_row, column=14, value=f"=L{total_row}/M{total_row}").number_format = "%0.00"
-        ws1.cell(row=total_row, column=15, value=f"=AVERAGE(O2:O{row_count_1})").number_format = "#,##0.00"
-        for col_idx in [9, 10, 11, 12, 13, 14, 15]:
-            ws1.cell(row=total_row, column=col_idx).font = font_total
+    if r_count_prod > 1:
+        tot_r = r_count_prod + 1
+        ws_prod.cell(row=tot_r, column=1, value="GENEL TOPLAM").font = font_total
+        for col_idx in range(1, len(prod_cols) + 1):
+            ws_prod.cell(row=tot_r, column=col_idx).fill = fill_total
+            ws_prod.cell(row=tot_r, column=col_idx).border = border_total
+        ws_prod.cell(row=tot_r, column=6, value=f"=SUM(F2:F{r_count_prod})").number_format = "#,##0.0"
+        ws_prod.cell(row=tot_r, column=7, value=f"=SUM(G2:G{r_count_prod})").number_format = "#,##0"
+        ws_prod.cell(row=tot_r, column=8, value=f"=SUM(H2:H{r_count_prod})").number_format = "#,##0.00"
+        ws_prod.cell(row=tot_r, column=9, value=f"=SUM(I2:I{r_count_prod})").number_format = "#,##0.00"
+        ws_prod.cell(row=tot_r, column=10, value=f"=SUM(J2:J{r_count_prod})").number_format = "#,##0.00"
+        ws_prod.cell(row=tot_r, column=11, value=f"=I{tot_r}/J{tot_r}").number_format = "%0.00"
+        ws_prod.cell(row=tot_r, column=12, value=f"=AVERAGE(L2:L{r_count_prod})").number_format = "#,##0.00"
+        ws_prod.cell(row=tot_r, column=13, value=f"=SUM(M2:M{r_count_prod})").number_format = "#,##0"
+        for col_idx in [6, 7, 8, 9, 10, 11, 12, 13]:
+            ws_prod.cell(row=tot_r, column=col_idx).font = font_total
 
-    # 2. SEKME: DURUS VE ARIZALAR
-    ws2 = wb.create_sheet(title="DURUS_VE_ARIZALAR")
-    cfg2 = headers_config["DURUS_VE_ARIZALAR"]
-    ws2.views.sheetView[0].showGridLines = True
-    ws2.append([c[0] for c in cfg2["cols"]])
+    # ÜRÜN KATEGORİ SEKME OLUŞTURUCU
+    def add_category_sheet(sheet_title, filter_cat, header_color):
+        ws = wb.create_sheet(title=sheet_title)
+        ws.views.sheetView[0].showGridLines = True
+        cols = [
+            ("Kayit_ID", "@", 14),
+            ("Tarih", "YYYY-MM-DD", 13),
+            ("Ay_Yil", "@", 11),
+            ("Vardiya", "@", 11),
+            ("Hat_Kodu", "@", 11),
+            ("Urun_Adi", "@", 28),
+            ("Operator", "@", 18),
+            ("Calisma_Saati", "#,##0.0", 14),
+            ("Adet", "#,##0", 12),
+            ("Net_Uretim_KG", "#,##0.00", 16),
+            ("Fire_KG", "#,##0.00", 14),
+            ("Brut_KG", "#,##0.00", 16),
+            ("Fire_Orani_%", "%0.00", 14),
+            ("Hiz_Kapasite_KG_Saat", "#,##0.00", 20)
+        ]
+        ws.append([c[0] for c in cols])
+        cat_rows = [r for r in all_rows if (r["category"] == filter_cat if filter_cat else True)]
 
-    row_count_2 = 1
+        r_cnt = 1
+        for row in cat_rows:
+            ws.append([
+                row["id"], row["date"], row["month"], row["shift"], row["hat"],
+                row["product"], row["operator"], row["hours"], row["qty"],
+                row["prod_kg"], row["fire_kg"], row["brut_kg"], row["fire_pct"],
+                row["rate_kg_h"]
+            ])
+            r_cnt += 1
+
+        fill_h = PatternFill(start_color=header_color, end_color=header_color, fill_type="solid")
+        for col_idx, (col_name, num_fmt, width) in enumerate(cols, 1):
+            col_letter = get_column_letter(col_idx)
+            ws.column_dimensions[col_letter].width = width
+            h_cell = ws.cell(row=1, column=col_idx)
+            h_cell.fill = fill_h
+            h_cell.font = font_header
+            h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+            for r in range(2, r_cnt + 1):
+                cell = ws.cell(row=r, column=col_idx)
+                cell.font = font_data
+                cell.border = border_cell
+                if num_fmt != "@":
+                    cell.number_format = num_fmt
+                    cell.alignment = Alignment(horizontal="right", vertical="center")
+                else:
+                    align_h = "center" if col_name in ["Kayit_ID", "Tarih", "Ay_Yil", "Vardiya", "Hat_Kodu"] else "left"
+                    cell.alignment = Alignment(horizontal=align_h, vertical="center")
+                if r % 2 == 1:
+                    cell.fill = fill_even
+
+        if r_cnt > 1:
+            tot_r = r_cnt + 1
+            ws.cell(row=tot_r, column=1, value="GENEL TOPLAM").font = font_total
+            for col_idx in range(1, len(cols) + 1):
+                ws.cell(row=tot_r, column=col_idx).fill = fill_total
+                ws.cell(row=tot_r, column=col_idx).border = border_total
+            ws.cell(row=tot_r, column=8, value=f"=SUM(H2:H{r_cnt})").number_format = "#,##0.0"
+            ws.cell(row=tot_r, column=9, value=f"=SUM(I2:I{r_cnt})").number_format = "#,##0"
+            ws.cell(row=tot_r, column=10, value=f"=SUM(J2:J{r_cnt})").number_format = "#,##0.00"
+            ws.cell(row=tot_r, column=11, value=f"=SUM(K2:K{r_cnt})").number_format = "#,##0.00"
+            ws.cell(row=tot_r, column=12, value=f"=SUM(L2:L{r_cnt})").number_format = "#,##0.00"
+            ws.cell(row=tot_r, column=13, value=f"=K{tot_r}/L{tot_r}").number_format = "%0.00"
+            ws.cell(row=tot_r, column=14, value=f"=AVERAGE(N2:N{r_cnt})").number_format = "#,##0.00"
+            for col_idx in [8, 9, 10, 11, 12, 13, 14]:
+                ws.cell(row=tot_r, column=col_idx).font = font_total
+
+    # Ürün Ayrılmış Sekmeler:
+    add_category_sheet("URETIM_PERVAZ", "Pervaz", "0369A1")       # Canlı Mavi
+    add_category_sheet("URETIM_KASA", "Kasa", "0284C7")           # Gökyüzü Mavisi
+    add_category_sheet("URETIM_SEREN", "Seren", "0F766E")         # Zümrüt / Teal
+    add_category_sheet("URETIM_LEVHA", "Levha", "6D28D9")         # Mor
+    add_category_sheet("GUNLUK_URETIM_KONSOLIDE", None, "1E3A8A") # Koyu Lacivert
+
+    # DURUŞ VE ARIZALAR
+    ws_dur = wb.create_sheet(title="DURUS_VE_ARIZALAR")
+    ws_dur.views.sheetView[0].showGridLines = True
+    dur_cols = [
+        ("Kayit_ID", "@", 14),
+        ("Tarih", "YYYY-MM-DD", 13),
+        ("Ay_Yil", "@", 11),
+        ("Vardiya", "@", 11),
+        ("Hat_Kodu", "@", 11),
+        ("Durus_Kategorisi", "@", 26),
+        ("Durus_Suresi_Dk", "#,##0", 16),
+        ("Durus_Suresi_Saat", "#,##0.00", 18),
+        ("Fire_Kaybi_KG", "#,##0.00", 14),
+        ("Fire_Sebebi", "@", 26),
+        ("Aciklama", "@", 34)
+    ]
+    ws_dur.append([c[0] for c in dur_cols])
+
+    row_count_dur = 1
     dt_counter = 1
     for k in sorted_keys:
         d = daily_data[k]
@@ -3857,8 +4000,7 @@ def export_excel(month: Optional[str] = None):
         if month and month_key and month_key != month:
             continue
 
-        downtimes = d.get("downtimes", [])
-        for dt in downtimes:
+        for dt in d.get("downtimes", []):
             s_val = dt.get("shift", "")
             s_label = "Gündüz" if s_val in ["gunduz", "Gündüz"] else ("Gece" if s_val in ["gece", "Gece"] else s_val)
             hat = str(dt.get("hat", "") or dt.get("machine_id", "") or "Tesis")
@@ -3871,22 +4013,23 @@ def export_excel(month: Optional[str] = None):
             rec_id = f"DUR-{dt_counter:04d}"
             dt_counter += 1
 
-            ws2.append([
+            ws_dur.append([
                 rec_id, iso_date, month_key, s_label, hat, down_reason,
                 down_min, down_hours, fire_kg, fire_reason, desc
             ])
-            row_count_2 += 1
+            row_count_dur += 1
 
-    for col_idx, (col_name, num_fmt, width) in enumerate(cfg2["cols"], 1):
+    fill_burgundy = PatternFill(start_color="991B1B", end_color="991B1B", fill_type="solid")
+    for col_idx, (col_name, num_fmt, width) in enumerate(dur_cols, 1):
         col_letter = get_column_letter(col_idx)
-        ws2.column_dimensions[col_letter].width = width
-        h_cell = ws2.cell(row=1, column=col_idx)
-        h_cell.fill = cfg2["fill"]
+        ws_dur.column_dimensions[col_letter].width = width
+        h_cell = ws_dur.cell(row=1, column=col_idx)
+        h_cell.fill = fill_burgundy
         h_cell.font = font_header
         h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-        for r in range(2, row_count_2 + 1):
-            cell = ws2.cell(row=r, column=col_idx)
+        for r in range(2, row_count_dur + 1):
+            cell = ws_dur.cell(row=r, column=col_idx)
             cell.font = font_data
             cell.border = border_cell
             if num_fmt != "@":
@@ -3898,32 +4041,44 @@ def export_excel(month: Optional[str] = None):
             if r % 2 == 1:
                 cell.fill = fill_even
 
-    if row_count_2 > 1:
-        total_row = row_count_2 + 1
-        ws2.cell(row=total_row, column=1, value="GENEL TOPLAM").font = font_total
-        for col_idx in range(1, len(cfg2["cols"]) + 1):
-            ws2.cell(row=total_row, column=col_idx).fill = fill_total
-            ws2.cell(row=total_row, column=col_idx).border = border_total
-        ws2.cell(row=total_row, column=7, value=f"=SUM(G2:G{row_count_2})").number_format = "#,##0"
-        ws2.cell(row=total_row, column=8, value=f"=SUM(H2:H{row_count_2})").number_format = "#,##0.00"
-        ws2.cell(row=total_row, column=9, value=f"=SUM(I2:I{row_count_2})").number_format = "#,##0.00"
+    if row_count_dur > 1:
+        tot_r = row_count_dur + 1
+        ws_dur.cell(row=tot_r, column=1, value="GENEL TOPLAM").font = font_total
+        for col_idx in range(1, len(dur_cols) + 1):
+            ws_dur.cell(row=tot_r, column=col_idx).fill = fill_total
+            ws_dur.cell(row=tot_r, column=col_idx).border = border_total
+        ws_dur.cell(row=tot_r, column=7, value=f"=SUM(G2:G{row_count_dur})").number_format = "#,##0"
+        ws_dur.cell(row=tot_r, column=8, value=f"=SUM(H2:H{row_count_dur})").number_format = "#,##0.00"
+        ws_dur.cell(row=tot_r, column=9, value=f"=SUM(I2:I{row_count_dur})").number_format = "#,##0.00"
         for col_idx in [7, 8, 9]:
-            ws2.cell(row=total_row, column=col_idx).font = font_total
+            ws_dur.cell(row=tot_r, column=col_idx).font = font_total
 
-    # 3. SEKME: ERP_URETIM_ROTALARI (BPM ROTA ŞABLONLARI)
-    ws3 = wb.create_sheet(title="ERP_URETIM_ROTALARI")
-    cfg3 = headers_config["ERP_URETIM_ROTALARI"]
-    ws3.views.sheetView[0].showGridLines = True
-    ws3.append([c[0] for c in cfg3["cols"]])
+    # ERP ÜRETİM ROTALARI
+    ws_rot = wb.create_sheet(title="ERP_URETIM_ROTALARI")
+    ws_rot.views.sheetView[0].showGridLines = True
+    rot_cols = [
+        ("Rota_Kodu", "@", 14),
+        ("Rota_Adi", "@", 28),
+        ("Operasyon_No", "@", 14),
+        ("Operasyon_Adi", "@", 26),
+        ("Is_Merkezi_Kodu", "@", 16),
+        ("Is_Merkezi_Adi", "@", 28),
+        ("Standart_Hazirlik_Dk", "#,##0", 20),
+        ("Kapasite_Birim", "@", 14),
+        ("Standart_Hiz_Birim_Saat", "#,##0.0", 22),
+        ("Kalite_Kontrol_Noktasi", "@", 24),
+        ("Aciklama", "@", 36)
+    ]
+    ws_rot.append([c[0] for c in rot_cols])
 
     routes_data = [
-        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-010", "Hammadde Dozaj & Tartım", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Hammadde Tartım Kontrolü", "PVC K67, Kalsit, Ahşap Unu, Katkılar reçete oranında tartılır."),
-        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-020", "Mikserleme & Jelifikasyon", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 10, "KG", 1000.0, "Sıcaklık (115-125°C) & Akışkanlık", "120°C jelleşme, ardından 40°C soğuk miksere aktarım ve dinlendirme."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-010", "Hammadde Dozaj & Tartım", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Hammadde Tartım Kontrolü", "PVC K67, Kalsit, Katkılar reçete oranında tartılır."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-020", "Mikserleme & Jelifikasyon", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 10, "KG", 1000.0, "Sıcaklık (115-125°C) & Akışkanlık", "120°C jelleşme, ardından 40°C soğuk miksere aktarım."),
         ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-030", "Ekstrüzyon Çekim & Şekillendirme", "WC-EXT-PRV", "Hat 101 / 103 / 109 Ekstrüder", 45, "KG", 85.0, "Kovan Sıcaklık (180-205°C), Basınç", "Çift vidalı ekstrüderde eriyik kalıptan geçirilerek şekillendirilir."),
-        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-040", "Vakumlu Soğutma & Kalibrasyon", "WC-EXT-PRV", "Soğutma & Vakum Kalibratörü", 15, "KG", 85.0, "Vakum Barı (-0.4 - -0.7 bar), Su Sıcaklığı", "Profil kalibratörde ölçüye oturtulur ve su havuzunda dondurulur."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-040", "Vakumlu Soğutma & Kalibrasyon", "WC-EXT-PRV", "Soğutma & Vakum Kalibratörü", 15, "KG", 85.0, "Vakum Barı (-0.4 - -0.7 bar)", "Profil kalibratörde ölçüye oturtulur ve su havuzunda dondurulur."),
         ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-050", "Paletli Çekici (Haul-off)", "WC-EXT-PRV", "Çekici Palet Ünitesi", 10, "M/DK", 1.2, "Çekme Hızı & Palet Basıncı", "Ezme yapmadan dengeli hızda profil hattan çekilir."),
         ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-060", "Otomatik Giyotin/Testere Kesim", "WC-CUT-01", "Otomatik Kesim Ünitesi", 5, "ADET", 120.0, "Boy Toleransı (+/- 2 mm)", "2.20 m standart boylarda çatlaksız otomatik kesim."),
-        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-070", "Kalite Kontrol, Paketleme & Sevk", "WC-QC-01", "Paketleme & Mamul Ambarı", 15, "BAG", 40.0, "Et Kalınlığı, Tırnak Geçme, Renk", "5'li / 10'lu bağlar halinde streçlenip mamul ambarına transfer edilir."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-070", "Kalite Kontrol, Paketleme & Sevk", "WC-QC-01", "Paketleme & Mamul Ambarı", 15, "BAG", 40.0, "Et Kalınlığı, Tırnak Geçme, Renk", "5'li / 10'lu bağlar halinde paketlenir."),
 
         ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-010", "Hammadde Dozaj & Mikser", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Hammadde Tartım & Nem Kontrolü", "Kasa reçetesi mikserlenir."),
         ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-020", "Ağır Ekstrüzyon Çekim", "WC-EXT-KSA", "Hat 102 / 106 / 107 / 108 Ekstrüder", 60, "KG", 120.0, "Kovan Isıtıcı Bölgeleri, Eriyik Basıncı", "Yüksek torklu çift vidada geniş kalıptan kasa profili çekilir."),
@@ -3946,18 +4101,19 @@ def export_excel(month: Optional[str] = None):
     ]
 
     for r in routes_data:
-        ws3.append(list(r))
+        ws_rot.append(list(r))
 
-    for col_idx, (col_name, num_fmt, width) in enumerate(cfg3["cols"], 1):
+    fill_emerald = PatternFill(start_color="065F46", end_color="065F46", fill_type="solid")
+    for col_idx, (col_name, num_fmt, width) in enumerate(rot_cols, 1):
         col_letter = get_column_letter(col_idx)
-        ws3.column_dimensions[col_letter].width = width
-        h_cell = ws3.cell(row=1, column=col_idx)
-        h_cell.fill = cfg3["fill"]
+        ws_rot.column_dimensions[col_letter].width = width
+        h_cell = ws_rot.cell(row=1, column=col_idx)
+        h_cell.fill = fill_emerald
         h_cell.font = font_header
         h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
         for r in range(2, len(routes_data) + 2):
-            cell = ws3.cell(row=r, column=col_idx)
+            cell = ws_rot.cell(row=r, column=col_idx)
             cell.font = font_data
             cell.border = border_cell
             if num_fmt != "@":
@@ -3969,13 +4125,24 @@ def export_excel(month: Optional[str] = None):
             if r % 2 == 1:
                 cell.fill = fill_even
 
-    # 4. SEKME: URUN_AGACI_BOM_RECETELER
-    ws4 = wb.create_sheet(title="URUN_AGACI_BOM_RECETELER")
-    cfg4 = headers_config["URUN_AGACI_BOM_RECETELER"]
-    ws4.views.sheetView[0].showGridLines = True
-    ws4.append([c[0] for c in cfg4["cols"]])
+    # ÜRÜN AĞACI BOM REÇETELER
+    ws_bom = wb.create_sheet(title="URUN_AGACI_BOM_RECETELER")
+    ws_bom.views.sheetView[0].showGridLines = True
+    bom_cols = [
+        ("Recete_Kodu", "@", 18),
+        ("Recete_Adi", "@", 24),
+        ("Bilesen_Sira", "#,##0", 12),
+        ("Hammadde_Kodu", "@", 16),
+        ("Hammadde_Adi", "@", 24),
+        ("Birim_Miktar_KG", "#,##0.00", 16),
+        ("Oran_%", "%0.00", 12),
+        ("Sarj_Toplam_KG", "#,##0.00", 16),
+        ("Depolama_Yeri", "@", 18),
+        ("Kullanim_Alani", "@", 26)
+    ]
+    ws_bom.append([c[0] for c in bom_cols])
 
-    row_count_4 = 1
+    row_count_bom = 1
     for rec in recipes:
         r_id = rec.get("id", "")
         r_name = rec.get("name", "")
@@ -3991,21 +4158,22 @@ def export_excel(month: Optional[str] = None):
             depo = "Silo 1 (PVC)" if "PVC" in mat_name or "HURDA" in mat_name else ("Silo 2 (Kalsit)" if "KALSİT" in mat_name or "KALS" in mat_name else "Katkı Ambarı")
             kullanim = "Ana Matris Polimer" if "PVC" in mat_name or "HURDA" in mat_name else ("Dolgu & Rijitlik" if "KALS" in mat_name else "Proses Yardımcısı / Kaydırıcı")
 
-            ws4.append([
+            ws_bom.append([
                 r_id, r_name, s_idx, mat_code, mat_name, ing_kg, pct, batch_kg, depo, kullanim
             ])
-            row_count_4 += 1
+            row_count_bom += 1
 
-    for col_idx, (col_name, num_fmt, width) in enumerate(cfg4["cols"], 1):
+    fill_purple = PatternFill(start_color="4C1D95", end_color="4C1D95", fill_type="solid")
+    for col_idx, (col_name, num_fmt, width) in enumerate(bom_cols, 1):
         col_letter = get_column_letter(col_idx)
-        ws4.column_dimensions[col_letter].width = width
-        h_cell = ws4.cell(row=1, column=col_idx)
-        h_cell.fill = cfg4["fill"]
+        ws_bom.column_dimensions[col_letter].width = width
+        h_cell = ws_bom.cell(row=1, column=col_idx)
+        h_cell.fill = fill_purple
         h_cell.font = font_header
         h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-        for r in range(2, row_count_4 + 1):
-            cell = ws4.cell(row=r, column=col_idx)
+        for r in range(2, row_count_bom + 1):
+            cell = ws_bom.cell(row=r, column=col_idx)
             cell.font = font_data
             cell.border = border_cell
             if num_fmt != "@":
@@ -4017,13 +4185,28 @@ def export_excel(month: Optional[str] = None):
             if r % 2 == 1:
                 cell.fill = fill_even
 
-    # 5. SEKME: KALIP_VE_TAKIM_MASTER
-    ws5 = wb.create_sheet(title="KALIP_VE_TAKIM_MASTER")
-    cfg5 = headers_config["KALIP_VE_TAKIM_MASTER"]
-    ws5.views.sheetView[0].showGridLines = True
-    ws5.append([c[0] for c in cfg5["cols"]])
+    # KALIP VE TAKIM MASTER
+    ws_klp = wb.create_sheet(title="KALIP_VE_TAKIM_MASTER")
+    ws_klp.views.sheetView[0].showGridLines = True
+    klp_cols = [
+        ("Kalip_ID", "@", 12),
+        ("Kalip_Kodu", "@", 14),
+        ("Kalip_Adi", "@", 28),
+        ("Kategori", "@", 14),
+        ("Kafa_Sayisi", "#,##0", 12),
+        ("Atanan_Hat", "@", 12),
+        ("Bakim_Limiti_Ton", "#,##0.0", 16),
+        ("Son_Bakimdan_Beri_Ton", "#,##0.0", 20),
+        ("Toplam_Omur_Limiti_Ton", "#,##0.0", 22),
+        ("Toplam_Basilan_Ton", "#,##0.0", 18),
+        ("Durum", "@", 16),
+        ("Son_Bakim_Tarihi", "@", 16),
+        ("Bakim_Sayisi", "#,##0", 12),
+        ("Kalıp_Ayar_Suresi_Dk", "#,##0", 18)
+    ]
+    ws_klp.append([c[0] for c in klp_cols])
 
-    row_count_5 = 1
+    row_count_klp = 1
     for m in molds:
         m_id = m.get("id", "")
         code = m.get("code", "")
@@ -4040,22 +4223,23 @@ def export_excel(month: Optional[str] = None):
         m_cnt = int(m.get("maintenance_count", 0) or 0)
         setup_min = int(m.get("setup_time_min", 45) or 45)
 
-        ws5.append([
+        ws_klp.append([
             m_id, code, name, cat.upper(), heads, hat, lim_t, cur_t, max_t, tot_t,
             status, last_dt, m_cnt, setup_min
         ])
-        row_count_5 += 1
+        row_count_klp += 1
 
-    for col_idx, (col_name, num_fmt, width) in enumerate(cfg5["cols"], 1):
+    fill_orange = PatternFill(start_color="C2410C", end_color="C2410C", fill_type="solid")
+    for col_idx, (col_name, num_fmt, width) in enumerate(klp_cols, 1):
         col_letter = get_column_letter(col_idx)
-        ws5.column_dimensions[col_letter].width = width
-        h_cell = ws5.cell(row=1, column=col_idx)
-        h_cell.fill = cfg5["fill"]
+        ws_klp.column_dimensions[col_letter].width = width
+        h_cell = ws_klp.cell(row=1, column=col_idx)
+        h_cell.fill = fill_orange
         h_cell.font = font_header
         h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-        for r in range(2, row_count_5 + 1):
-            cell = ws5.cell(row=r, column=col_idx)
+        for r in range(2, row_count_klp + 1):
+            cell = ws_klp.cell(row=r, column=col_idx)
             cell.font = font_data
             cell.border = border_cell
             if num_fmt != "@":
@@ -4079,6 +4263,7 @@ def export_excel(month: Optional[str] = None):
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers=headers
     )
+
 
 @app.get("/api/export_pdf")
 def export_pdf():

@@ -3614,7 +3614,6 @@ def export_excel(month: Optional[str] = None):
     """
     data = load_data()
     daily_data = data.get("daily_data", {})
-    molds = load_molds_data()
     recipes = data.get("mixer_recipes", [])
 
     wb = openpyxl.Workbook()
@@ -4181,72 +4180,6 @@ def export_excel(month: Optional[str] = None):
                 cell.alignment = Alignment(horizontal="right", vertical="center")
             else:
                 align_h = "center" if col_name in ["Recete_Kodu", "Bilesen_Sira", "Hammadde_Kodu"] else "left"
-                cell.alignment = Alignment(horizontal=align_h, vertical="center")
-            if r % 2 == 1:
-                cell.fill = fill_even
-
-    # KALIP VE TAKIM MASTER
-    ws_klp = wb.create_sheet(title="KALIP_VE_TAKIM_MASTER")
-    ws_klp.views.sheetView[0].showGridLines = True
-    klp_cols = [
-        ("Kalip_ID", "@", 12),
-        ("Kalip_Kodu", "@", 14),
-        ("Kalip_Adi", "@", 28),
-        ("Kategori", "@", 14),
-        ("Kafa_Sayisi", "#,##0", 12),
-        ("Atanan_Hat", "@", 12),
-        ("Bakim_Limiti_Ton", "#,##0.0", 16),
-        ("Son_Bakimdan_Beri_Ton", "#,##0.0", 20),
-        ("Toplam_Omur_Limiti_Ton", "#,##0.0", 22),
-        ("Toplam_Basilan_Ton", "#,##0.0", 18),
-        ("Durum", "@", 16),
-        ("Son_Bakim_Tarihi", "@", 16),
-        ("Bakim_Sayisi", "#,##0", 12),
-        ("Kalıp_Ayar_Suresi_Dk", "#,##0", 18)
-    ]
-    ws_klp.append([c[0] for c in klp_cols])
-
-    row_count_klp = 1
-    for m in molds:
-        m_id = m.get("id", "")
-        code = m.get("code", "")
-        name = m.get("name", "")
-        cat = m.get("category", "")
-        heads = int(m.get("heads", 1) or 1)
-        hat = m.get("assigned_hat") or "Boşta (Depo)"
-        lim_t = float(m.get("maintenance_limit_tons", 0) or 0)
-        cur_t = float(m.get("current_maintenance_tons", 0) or 0)
-        max_t = float(m.get("max_lifespan_tons", 0) or 0)
-        tot_t = float(m.get("total_tonnage", 0) or 0)
-        status = "Hatta Aktif" if m.get("assigned_hat") else "Kalıphanede (Stok)"
-        last_dt = m.get("last_maintenance_date", "")
-        m_cnt = int(m.get("maintenance_count", 0) or 0)
-        setup_min = int(m.get("setup_time_min", 45) or 45)
-
-        ws_klp.append([
-            m_id, code, name, cat.upper(), heads, hat, lim_t, cur_t, max_t, tot_t,
-            status, last_dt, m_cnt, setup_min
-        ])
-        row_count_klp += 1
-
-    fill_orange = PatternFill(start_color="C2410C", end_color="C2410C", fill_type="solid")
-    for col_idx, (col_name, num_fmt, width) in enumerate(klp_cols, 1):
-        col_letter = get_column_letter(col_idx)
-        ws_klp.column_dimensions[col_letter].width = width
-        h_cell = ws_klp.cell(row=1, column=col_idx)
-        h_cell.fill = fill_orange
-        h_cell.font = font_header
-        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-
-        for r in range(2, row_count_klp + 1):
-            cell = ws_klp.cell(row=r, column=col_idx)
-            cell.font = font_data
-            cell.border = border_cell
-            if num_fmt != "@":
-                cell.number_format = num_fmt
-                cell.alignment = Alignment(horizontal="right", vertical="center")
-            else:
-                align_h = "center" if col_name in ["Kalip_ID", "Kalip_Kodu", "Kategori", "Atanan_Hat", "Durum", "Son_Bakim_Tarihi"] else "left"
                 cell.alignment = Alignment(horizontal=align_h, vertical="center")
             if r % 2 == 1:
                 cell.fill = fill_even

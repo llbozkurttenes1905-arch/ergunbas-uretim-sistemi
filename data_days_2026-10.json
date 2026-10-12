@@ -4430,11 +4430,11 @@
             "length": 2.1,
             "speed": 0.58,
             "heads": 2.0,
-            "hours": 0.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "hours": 6.0,
+            "prod_kg": 3.52,
+            "fire_kg": 696.46,
+            "qty": 1,
+            "sets": 0.3
           },
           {
             "row": 0,

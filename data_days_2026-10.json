@@ -4578,6 +4578,15 @@
           "down_reason": "Mekanik Arıza / Onarım",
           "down_min": 180.0,
           "desc": "Testere arızası."
+        },
+        {
+          "shift": "Gece",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 180.0,
+          "desc": "Kalıp temizliği."
         }
       ],
       "kirim": [

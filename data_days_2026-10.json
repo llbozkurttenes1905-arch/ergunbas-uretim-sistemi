@@ -4524,7 +4524,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "102",
+          "fire_reason": "Hammadde kaynaklı kopmalar.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 60.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 120.0,
+          "desc": "Barrel arızası."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 120.0,
+          "desc": "Traktör arızası."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 180.0,
+          "desc": "Testere arızası."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

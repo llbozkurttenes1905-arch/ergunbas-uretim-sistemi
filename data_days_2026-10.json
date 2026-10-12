@@ -4592,19 +4592,19 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 3561,
+          "gunduz": 1908,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 2448,
+          "gunduz": 2484,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 5485,
+          "gunduz": 4201,
           "gece": 0,
           "status": "normal"
         },
@@ -4612,43 +4612,43 @@
           "hat": "Kırım 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         }
       ],
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 3182,
-          "gece": 3725,
+          "gunduz": 2226,
+          "gece": 3990,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 1231,
-          "gece": 1405,
+          "gunduz": 2216,
+          "gece": 1665,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 1213,
+          "gunduz": 476,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 1925,
+          "gunduz": 1988,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 1370,
+          "gunduz": 577,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 1190,
+          "gunduz": 1342,
           "gece": 0,
           "status": "normal"
         }
@@ -4658,31 +4658,31 @@
           "makine": "Mixer 1",
           "recipe": "Seren",
           "batch_kg": 291.15,
-          "gunduz_sarj": 18,
+          "gunduz_sarj": 13,
           "gece_sarj": 0,
-          "gunduz_kg": 5240.7,
+          "gunduz_kg": 3784.95,
           "gece_kg": 0,
-          "toplam_kg": 5240.7
+          "toplam_kg": 3784.95
         },
         {
           "makine": "Mixer 1",
           "recipe": "Kasa Pervaz",
           "batch_kg": 275.65,
-          "gunduz_sarj": 17,
+          "gunduz_sarj": 23,
           "gece_sarj": 0,
-          "gunduz_kg": 4686.049999999999,
+          "gunduz_kg": 6339.95,
           "gece_kg": 0,
-          "toplam_kg": 4686.049999999999
+          "toplam_kg": 6339.95
         },
         {
           "makine": "Mixer 2",
           "recipe": "Levha Renkli",
           "batch_kg": 334.3,
-          "gunduz_sarj": 27,
+          "gunduz_sarj": 22,
           "gece_sarj": 0,
-          "gunduz_kg": 9026.1,
+          "gunduz_kg": 7354.6,
           "gece_kg": 0,
-          "toplam_kg": 9026.1
+          "toplam_kg": 7354.6
         }
       ],
       "mixer_emp_gunduz": 11,

@@ -722,10 +722,10 @@
                 <!-- Right: Quick Actions, Date, User & Fullscreen -->
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Quick Excel/PDF Export Buttons -->
-                    <a href="/api/export_excel" download class="px-2.5 py-1.5 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-emerald-600/50">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <button onclick="openExcelExportModal()" class="px-2.5 py-1.5 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-emerald-600/50 cursor-pointer" title="Excel & ERP/E-Flow Veritabanı Dışa Aktar">
+                        <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">Excel</span>
-                    </a>
+                    </button>
                     <a href="/api/export_pdf" download class="px-2.5 py-1.5 bg-red-700/80 hover:bg-red-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-red-600/50">
                         <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">PDF</span>
@@ -2046,6 +2046,9 @@
 
                 <div class="flex items-center space-x-3">
                     <span class="text-sm font-black text-slate-300" id="current-day-label">01.08.2026</span>
+                    <button onclick="openExcelExportModal()" class="px-3.5 py-2 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-emerald-600/50 cursor-pointer" title="Günlük Verileri ve ERP Rotalarını Excele Aktar">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel'e Aktar (ERP)
+                    </button>
                     <button onclick="saveCurrentDay()" class="edit-action daily-edit-action px-6 py-2.5 bg-ergunbas-600 hover:bg-ergunbas-500 text-white font-extrabold text-sm rounded-xl transition flex items-center gap-2 shadow-lg shadow-ergunbas-600/30">
                         <i data-lucide="save" class="w-4.5 h-4.5"></i> Tüm Verileri Kaydet
                     </button>
@@ -3433,6 +3436,107 @@
             </div>
         </div>
     </main>
+        </div>
+    </div>
+
+    <!-- MODAL: E-FLOW & ERP EXCEL VERİTABANI VE ROTA AKTARIMI -->
+    <div id="modal-excel-export" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl space-y-6 relative overflow-hidden">
+            <!-- Arka Plan Parıltısı -->
+            <div class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg shadow-emerald-500/20">
+                        <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base font-black text-white">E-Flow & ERP Veritabanı ve Rota Aktarımı</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">.XLSX ENTEGRASYON</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">ERP (Logo, Netsis, Canias, SAP) ve E-Flow BPM için 5 sekmeli master veri paketi.</p>
+                    </div>
+                </div>
+                <button onclick="closeExcelExportModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Kapsam Açıklama Kartları -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                        <i data-lucide="table" class="w-3.5 h-3.5"></i> 1. Günlük Üretim & Duruşlar
+                    </span>
+                    <p class="text-slate-400 text-[11px]">Tüm hatların net kg, fire kg, çalışma saatleri, operatörler ve arıza kayıtları.</p>
+                </div>
+                <div class="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-cyan-400 flex items-center gap-1.5">
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i> 2. ERP Üretim Rotaları
+                    </span>
+                    <p class="text-slate-400 text-[11px]">Pervaz, Kasa, Seren ve Levha için iş merkezleri, standart hazırlık süreleri ve hızlar.</p>
+                </div>
+                <div class="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-purple-400 flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i> 3. BOM & Reçete Ağacı
+                    </span>
+                    <p class="text-slate-400 text-[11px]">Mikser şarjları, hammadde kodları, yüzdelik oranlar ve depo adresleri.</p>
+                </div>
+                <div class="bg-slate-950/70 p-3 rounded-2xl border border-slate-800 space-y-1">
+                    <span class="font-bold text-amber-400 flex items-center gap-1.5">
+                        <i data-lucide="tool" class="w-3.5 h-3.5"></i> 4. Kalıphane & Takım Ömrü
+                    </span>
+                    <p class="text-slate-400 text-[11px]">Kalıp kodları, kafa sayıları, tonaj sayaçları ve bakım limitleri.</p>
+                </div>
+            </div>
+
+            <!-- Filtreleme Seçenekleri -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                <label class="block text-xs font-bold text-slate-300">Dışa Aktarılacak Dönem:</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer transition">
+                        <input type="radio" name="excel-export-scope" value="all" checked onchange="toggleExcelMonthSelect(false)" class="text-emerald-500 focus:ring-emerald-500">
+                        <div>
+                            <span class="text-xs font-bold text-white block">Tüm Tarihçe (Tam Veritabanı)</span>
+                            <span class="text-[10px] text-slate-400">Ağustos, Eylül ve Ekim 2026 tüm kayıtlar</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer transition">
+                        <input type="radio" name="excel-export-scope" value="month" onchange="toggleExcelMonthSelect(true)" class="text-emerald-500 focus:ring-emerald-500">
+                        <div>
+                            <span class="text-xs font-bold text-white block">Belirli Bir Ayı Filtrele</span>
+                            <span class="text-[10px] text-slate-400">Yalnızca seçilen ayın verileri</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="excel-month-select-container" class="hidden pt-2 border-t border-slate-800/80 flex items-center gap-3">
+                    <span class="text-xs text-slate-400 font-bold">Ay Seçimi:</span>
+                    <select id="select-excel-month" class="bg-slate-900 border border-slate-700 text-white rounded-xl px-3 py-1.5 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <option value="2026-10">Ekim 2026</option>
+                        <option value="2026-09">Eylül 2026</option>
+                        <option value="2026-08">Ağustos 2026</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Modal Footer & Butonlar -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Formüllü SUM ve % kolonları hazır
+                </span>
+                <div class="flex items-center gap-3">
+                    <button onclick="closeExcelExportModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition cursor-pointer">
+                        Vazgeç
+                    </button>
+                    <button onclick="triggerExcelDownload()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-600/30 cursor-pointer">
+                        <i data-lucide="download" class="w-4 h-4"></i> Excel Dosyasını İndir (.xlsx)
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -11313,6 +11417,71 @@
             } catch(e) {
                 console.error(e);
             }
+        }
+
+        /* --------------------------------------------------------
+           E-FLOW & ERP EXCEL VERİTABANI & ROTA MODAL KONTROLCÜLERİ
+        -------------------------------------------------------- */
+        function openExcelExportModal() {
+            const m = document.getElementById('modal-excel-export');
+            if (m) {
+                m.classList.remove('hidden');
+                // Mevcut ay listesini dropdown'a senkronize et
+                if (dashboardData && dashboardData.months_chart_available) {
+                    const sel = document.getElementById('select-excel-month');
+                    if (sel && dashboardData.months_chart_available.length > 0) {
+                        sel.innerHTML = dashboardData.months_chart_available.map(mOpt => 
+                            `<option value="${mOpt.key}">${mOpt.label || mOpt.key}</option>`
+                        ).join('');
+                        if (dashboardData.current_month_key) {
+                            sel.value = dashboardData.current_month_key;
+                        }
+                    }
+                }
+                safeCreateIcons();
+            }
+        }
+
+        function closeExcelExportModal() {
+            const m = document.getElementById('modal-excel-export');
+            if (m) m.classList.add('hidden');
+        }
+
+        function toggleExcelMonthSelect(isMonthScope) {
+            const container = document.getElementById('excel-month-select-container');
+            if (container) {
+                if (isMonthScope) {
+                    container.classList.remove('hidden');
+                } else {
+                    container.classList.add('hidden');
+                }
+            }
+        }
+
+        function triggerExcelDownload() {
+            const scopeRadio = document.querySelector('input[name="excel-export-scope"]:checked');
+            const isMonth = scopeRadio && scopeRadio.value === 'month';
+            let url = '/api/export_excel';
+            if (isMonth) {
+                const monthVal = document.getElementById('select-excel-month')?.value;
+                if (monthVal) {
+                    url += `?month=${encodeURIComponent(monthVal)}`;
+                }
+            }
+            
+            if (typeof showToast === 'function') {
+                showToast('E-Flow / ERP 5 Sekmeli Master Excel paketi hazırlanıyor...', 'info');
+            }
+            
+            // Gizli indirme tetikleyici
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', '');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            closeExcelExportModal();
         }
 
         /* --------------------------------------------------------

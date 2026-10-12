@@ -26,6 +26,8 @@ def get_turkey_now() -> datetime:
             pass
     return datetime.now(timezone.utc) + timedelta(hours=3)
 import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -3605,43 +3607,478 @@ def update_daily_data(date_key: str, update: DailyDataUpdate, x_username: Option
 
 
 @app.get("/api/export_excel")
-def export_excel():
+def export_excel(month: Optional[str] = None):
+    """
+    E-Flow BPM ve ERP (Logo, Netsis, Canias, SAP vb.) Entegrasyonu için
+    Kurumsal 5 Sekmeli Master Veritabanı ve Üretim Rotaları Excel Aktarımı.
+    """
     data = load_data()
+    daily_data = data.get("daily_data", {})
+    molds = load_molds_data()
+    recipes = data.get("mixer_recipes", [])
+
     wb = openpyxl.Workbook()
-    
-    ws_summary = wb.active
-    ws_summary.title = "ERGUNBAS Yönetici Özeti"
-    ws_summary.append(["ERGUNBAS GROUP - EKSTRÜDER VE LEVHA ÜRETİM RAPORU"])
-    ws_summary.append([])
-    ws_summary.append(["Tarih Key", "Tarih", "Gündüz Çalışan", "Gece Çalışan", "Toplam Üretim (kg)", "Toplam Fire (kg)", "Fire Oranı (%)"])
 
-    sorted_keys = get_sorted_day_keys(data["daily_data"])
-    
+    # Font ve Stiller
+    font_header = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
+    font_data = Font(name="Calibri", size=10, color="0F172A")
+    font_total = Font(name="Calibri", size=10, bold=True, color="0F172A")
+
+    thin_border_side = Side(style='thin', color='CBD5E1')
+    border_cell = Border(left=thin_border_side, right=thin_border_side, top=thin_border_side, bottom=thin_border_side)
+
+    double_bottom_side = Side(style='double', color='0F172A')
+    top_thin_side = Side(style='thin', color='0F172A')
+    border_total = Border(top=top_thin_side, bottom=double_bottom_side, left=thin_border_side, right=thin_border_side)
+
+    fill_even = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
+    fill_total = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
+
+    headers_config = {
+        "GUNLUK_URETIM_VERILERI": {
+            "fill": PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid"),
+            "cols": [
+                ("Kayit_ID", "@", 14),
+                ("Tarih", "YYYY-MM-DD", 13),
+                ("Ay_Yil", "@", 11),
+                ("Vardiya", "@", 11),
+                ("Tip", "@", 12),
+                ("Hat_Kodu", "@", 11),
+                ("Urun_Adi", "@", 28),
+                ("Operator", "@", 18),
+                ("Calisma_Saati", "#,##0.0", 14),
+                ("Adet", "#,##0", 12),
+                ("Net_Uretim_KG", "#,##0.00", 16),
+                ("Fire_KG", "#,##0.00", 14),
+                ("Brut_KG", "#,##0.00", 16),
+                ("Fire_Orani_%", "%0.00", 14),
+                ("Hiz_Kapasite_KG_Saat", "#,##0.00", 20)
+            ]
+        },
+        "DURUS_VE_ARIZALAR": {
+            "fill": PatternFill(start_color="991B1B", end_color="991B1B", fill_type="solid"),
+            "cols": [
+                ("Kayit_ID", "@", 14),
+                ("Tarih", "YYYY-MM-DD", 13),
+                ("Ay_Yil", "@", 11),
+                ("Vardiya", "@", 11),
+                ("Hat_Kodu", "@", 11),
+                ("Durus_Kategorisi", "@", 26),
+                ("Durus_Suresi_Dk", "#,##0", 16),
+                ("Durus_Suresi_Saat", "#,##0.00", 18),
+                ("Fire_Kaybi_KG", "#,##0.00", 14),
+                ("Fire_Sebebi", "@", 26),
+                ("Aciklama", "@", 34)
+            ]
+        },
+        "ERP_URETIM_ROTALARI": {
+            "fill": PatternFill(start_color="065F46", end_color="065F46", fill_type="solid"),
+            "cols": [
+                ("Rota_Kodu", "@", 14),
+                ("Rota_Adi", "@", 28),
+                ("Operasyon_No", "@", 14),
+                ("Operasyon_Adi", "@", 26),
+                ("Is_Merkezi_Kodu", "@", 16),
+                ("Is_Merkezi_Adi", "@", 28),
+                ("Standart_Hazirlik_Dk", "#,##0", 20),
+                ("Kapasite_Birim", "@", 14),
+                ("Standart_Hiz_Birim_Saat", "#,##0.0", 22),
+                ("Kalite_Kontrol_Noktasi", "@", 24),
+                ("Aciklama", "@", 36)
+            ]
+        },
+        "URUN_AGACI_BOM_RECETELER": {
+            "fill": PatternFill(start_color="4C1D95", end_color="4C1D95", fill_type="solid"),
+            "cols": [
+                ("Recete_Kodu", "@", 18),
+                ("Recete_Adi", "@", 24),
+                ("Bilesen_Sira", "#,##0", 12),
+                ("Hammadde_Kodu", "@", 16),
+                ("Hammadde_Adi", "@", 24),
+                ("Birim_Miktar_KG", "#,##0.00", 16),
+                ("Oran_%", "%0.00", 12),
+                ("Sarj_Toplam_KG", "#,##0.00", 16),
+                ("Depolama_Yeri", "@", 18),
+                ("Kullanim_Alani", "@", 26)
+            ]
+        },
+        "KALIP_VE_TAKIM_MASTER": {
+            "fill": PatternFill(start_color="C2410C", end_color="C2410C", fill_type="solid"),
+            "cols": [
+                ("Kalip_ID", "@", 12),
+                ("Kalip_Kodu", "@", 14),
+                ("Kalip_Adi", "@", 28),
+                ("Kategori", "@", 14),
+                ("Kafa_Sayisi", "#,##0", 12),
+                ("Atanan_Hat", "@", 12),
+                ("Bakim_Limiti_Ton", "#,##0.0", 16),
+                ("Son_Bakimdan_Beri_Ton", "#,##0.0", 20),
+                ("Toplam_Omur_Limiti_Ton", "#,##0.0", 22),
+                ("Toplam_Basilan_Ton", "#,##0.0", 18),
+                ("Durum", "@", 16),
+                ("Son_Bakim_Tarihi", "@", 16),
+                ("Bakim_Sayisi", "#,##0", 12),
+                ("Kalıp_Ayar_Suresi_Dk", "#,##0", 18)
+            ]
+        }
+    }
+
+    # 1. SEKME: GÜNLÜK ÜRETİM VERİLERİ
+    ws1 = wb.active
+    ws1.title = "GUNLUK_URETIM_VERILERI"
+    cfg1 = headers_config["GUNLUK_URETIM_VERILERI"]
+    ws1.views.sheetView[0].showGridLines = True
+    ws1.append([c[0] for c in cfg1["cols"]])
+
+    sorted_keys = get_sorted_day_keys(daily_data)
+    row_count_1 = 1
+
     for k in sorted_keys:
-        d = data["daily_data"][k]
-        g_emp = d.get("gunduz", {}).get("employees", 0)
-        n_emp = d.get("gece", {}).get("employees", 0)
+        d = daily_data[k]
+        raw_date = d.get("date", k)
+        iso_date = raw_date
+        month_key = ""
+        try:
+            parts = raw_date.split(".")
+            if len(parts) == 3:
+                iso_date = f"{parts[2]}-{parts[1].zfill(2)}-{parts[0].zfill(2)}"
+                month_key = f"{parts[2]}-{parts[1].zfill(2)}"
+        except Exception:
+            pass
 
-        tot_prod = 0.0
-        tot_fire = 0.0
+        if month and month_key and month_key != month:
+            continue
 
         for shift in ["gunduz", "gece"]:
-            for e in d.get(shift, {}).get("extruders", []):
-                tot_prod += e.get("prod_kg", 0)
-                tot_fire += e.get("fire_kg", 0)
-            for l in d.get(shift, {}).get("levha", []):
-                tot_prod += l.get("total_kg", 0)
-                tot_fire += l.get("dead_fire_kg", 0)
+            shift_obj = d.get(shift, {})
+            shift_label = "Gündüz" if shift == "gunduz" else "Gece"
+            op_name = shift_obj.get("operator") or ""
 
-        fire_ratio = (tot_fire / (tot_prod + tot_fire) * 100) if (tot_prod + tot_fire) > 0 else 0
-        ws_summary.append([k, d.get("date", k), g_emp, n_emp, round(tot_prod, 2), round(tot_fire, 2), round(fire_ratio, 2)])
+            # Ekstrüder Hatları
+            for e in shift_obj.get("extruders", []):
+                hat = str(e.get("hat", ""))
+                prod_name = e.get("product") or f"Hat {hat} Profili"
+                hrs = float(e.get("hours", 0) or 0)
+                qty = int(e.get("qty", 0) or 0)
+                prod_kg = float(e.get("prod_kg", 0) or 0)
+                fire_kg = float(e.get("fire_kg", 0) or 0)
+                brut_kg = prod_kg + fire_kg
+                fire_pct = (fire_kg / brut_kg) if brut_kg > 0 else 0.0
+                rate_kg_h = (prod_kg / hrs) if hrs > 0 else 0.0
+                rec_id = f"EXT-{k}-{shift[0].upper()}-{hat}"
+
+                ws1.append([
+                    rec_id, iso_date, month_key, shift_label, "Ekstrüder",
+                    hat, prod_name, op_name, hrs, qty, prod_kg, fire_kg, brut_kg,
+                    fire_pct, rate_kg_h
+                ])
+                row_count_1 += 1
+
+            # Levha Hatları
+            for l in shift_obj.get("levha", []):
+                hat = str(l.get("hat", "201"))
+                color_name = l.get("color") or "Standart Levha"
+                prod_name = f"WPC Kapı Levhası ({color_name})"
+                hrs = float(l.get("hours", 0) or 0)
+                qty = int(l.get("qty", 0) or 0)
+                prod_kg = float(l.get("total_kg", 0) or 0)
+                fire_kg = float(l.get("dead_fire_kg", 0) or 0)
+                brut_kg = prod_kg + fire_kg
+                fire_pct = (fire_kg / brut_kg) if brut_kg > 0 else 0.0
+                rate_kg_h = (prod_kg / hrs) if hrs > 0 else 0.0
+                rec_id = f"LEV-{k}-{shift[0].upper()}-{hat}"
+
+                ws1.append([
+                    rec_id, iso_date, month_key, shift_label, "Levha",
+                    hat, prod_name, op_name, hrs, qty, prod_kg, fire_kg, brut_kg,
+                    fire_pct, rate_kg_h
+                ])
+                row_count_1 += 1
+
+    # Formatlama - Sayfa 1
+    for col_idx, (col_name, num_fmt, width) in enumerate(cfg1["cols"], 1):
+        col_letter = get_column_letter(col_idx)
+        ws1.column_dimensions[col_letter].width = width
+        h_cell = ws1.cell(row=1, column=col_idx)
+        h_cell.fill = cfg1["fill"]
+        h_cell.font = font_header
+        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        for r in range(2, row_count_1 + 1):
+            cell = ws1.cell(row=r, column=col_idx)
+            cell.font = font_data
+            cell.border = border_cell
+            if num_fmt != "@":
+                cell.number_format = num_fmt
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            else:
+                align_h = "center" if col_name in ["Kayit_ID", "Tarih", "Ay_Yil", "Vardiya", "Tip", "Hat_Kodu"] else "left"
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+            if r % 2 == 1:
+                cell.fill = fill_even
+
+    if row_count_1 > 1:
+        total_row = row_count_1 + 1
+        ws1.cell(row=total_row, column=1, value="GENEL TOPLAM").font = font_total
+        for col_idx in range(1, len(cfg1["cols"]) + 1):
+            ws1.cell(row=total_row, column=col_idx).fill = fill_total
+            ws1.cell(row=total_row, column=col_idx).border = border_total
+        ws1.cell(row=total_row, column=9, value=f"=SUM(I2:I{row_count_1})").number_format = "#,##0.0"
+        ws1.cell(row=total_row, column=10, value=f"=SUM(J2:J{row_count_1})").number_format = "#,##0"
+        ws1.cell(row=total_row, column=11, value=f"=SUM(K2:K{row_count_1})").number_format = "#,##0.00"
+        ws1.cell(row=total_row, column=12, value=f"=SUM(L2:L{row_count_1})").number_format = "#,##0.00"
+        ws1.cell(row=total_row, column=13, value=f"=SUM(M2:M{row_count_1})").number_format = "#,##0.00"
+        ws1.cell(row=total_row, column=14, value=f"=L{total_row}/M{total_row}").number_format = "%0.00"
+        ws1.cell(row=total_row, column=15, value=f"=AVERAGE(O2:O{row_count_1})").number_format = "#,##0.00"
+        for col_idx in [9, 10, 11, 12, 13, 14, 15]:
+            ws1.cell(row=total_row, column=col_idx).font = font_total
+
+    # 2. SEKME: DURUS VE ARIZALAR
+    ws2 = wb.create_sheet(title="DURUS_VE_ARIZALAR")
+    cfg2 = headers_config["DURUS_VE_ARIZALAR"]
+    ws2.views.sheetView[0].showGridLines = True
+    ws2.append([c[0] for c in cfg2["cols"]])
+
+    row_count_2 = 1
+    dt_counter = 1
+    for k in sorted_keys:
+        d = daily_data[k]
+        raw_date = d.get("date", k)
+        iso_date = raw_date
+        month_key = ""
+        try:
+            parts = raw_date.split(".")
+            if len(parts) == 3:
+                iso_date = f"{parts[2]}-{parts[1].zfill(2)}-{parts[0].zfill(2)}"
+                month_key = f"{parts[2]}-{parts[1].zfill(2)}"
+        except Exception:
+            pass
+
+        if month and month_key and month_key != month:
+            continue
+
+        downtimes = d.get("downtimes", [])
+        for dt in downtimes:
+            s_val = dt.get("shift", "")
+            s_label = "Gündüz" if s_val in ["gunduz", "Gündüz"] else ("Gece" if s_val in ["gece", "Gece"] else s_val)
+            hat = str(dt.get("hat", "") or dt.get("machine_id", "") or "Tesis")
+            down_reason = dt.get("down_reason") or dt.get("reason_category") or "Duruş"
+            down_min = float(dt.get("down_min", 0) or 0)
+            down_hours = down_min / 60.0
+            fire_kg = float(dt.get("fire_kg", 0) or 0)
+            fire_reason = dt.get("fire_reason") or ""
+            desc = dt.get("desc") or ""
+            rec_id = f"DUR-{dt_counter:04d}"
+            dt_counter += 1
+
+            ws2.append([
+                rec_id, iso_date, month_key, s_label, hat, down_reason,
+                down_min, down_hours, fire_kg, fire_reason, desc
+            ])
+            row_count_2 += 1
+
+    for col_idx, (col_name, num_fmt, width) in enumerate(cfg2["cols"], 1):
+        col_letter = get_column_letter(col_idx)
+        ws2.column_dimensions[col_letter].width = width
+        h_cell = ws2.cell(row=1, column=col_idx)
+        h_cell.fill = cfg2["fill"]
+        h_cell.font = font_header
+        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        for r in range(2, row_count_2 + 1):
+            cell = ws2.cell(row=r, column=col_idx)
+            cell.font = font_data
+            cell.border = border_cell
+            if num_fmt != "@":
+                cell.number_format = num_fmt
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            else:
+                align_h = "center" if col_name in ["Kayit_ID", "Tarih", "Ay_Yil", "Vardiya", "Hat_Kodu"] else "left"
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+            if r % 2 == 1:
+                cell.fill = fill_even
+
+    if row_count_2 > 1:
+        total_row = row_count_2 + 1
+        ws2.cell(row=total_row, column=1, value="GENEL TOPLAM").font = font_total
+        for col_idx in range(1, len(cfg2["cols"]) + 1):
+            ws2.cell(row=total_row, column=col_idx).fill = fill_total
+            ws2.cell(row=total_row, column=col_idx).border = border_total
+        ws2.cell(row=total_row, column=7, value=f"=SUM(G2:G{row_count_2})").number_format = "#,##0"
+        ws2.cell(row=total_row, column=8, value=f"=SUM(H2:H{row_count_2})").number_format = "#,##0.00"
+        ws2.cell(row=total_row, column=9, value=f"=SUM(I2:I{row_count_2})").number_format = "#,##0.00"
+        for col_idx in [7, 8, 9]:
+            ws2.cell(row=total_row, column=col_idx).font = font_total
+
+    # 3. SEKME: ERP_URETIM_ROTALARI (BPM ROTA ŞABLONLARI)
+    ws3 = wb.create_sheet(title="ERP_URETIM_ROTALARI")
+    cfg3 = headers_config["ERP_URETIM_ROTALARI"]
+    ws3.views.sheetView[0].showGridLines = True
+    ws3.append([c[0] for c in cfg3["cols"]])
+
+    routes_data = [
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-010", "Hammadde Dozaj & Tartım", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Hammadde Tartım Kontrolü", "PVC K67, Kalsit, Ahşap Unu, Katkılar reçete oranında tartılır."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-020", "Mikserleme & Jelifikasyon", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 10, "KG", 1000.0, "Sıcaklık (115-125°C) & Akışkanlık", "120°C jelleşme, ardından 40°C soğuk miksere aktarım ve dinlendirme."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-030", "Ekstrüzyon Çekim & Şekillendirme", "WC-EXT-PRV", "Hat 101 / 103 / 109 Ekstrüder", 45, "KG", 85.0, "Kovan Sıcaklık (180-205°C), Basınç", "Çift vidalı ekstrüderde eriyik kalıptan geçirilerek şekillendirilir."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-040", "Vakumlu Soğutma & Kalibrasyon", "WC-EXT-PRV", "Soğutma & Vakum Kalibratörü", 15, "KG", 85.0, "Vakum Barı (-0.4 - -0.7 bar), Su Sıcaklığı", "Profil kalibratörde ölçüye oturtulur ve su havuzunda dondurulur."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-050", "Paletli Çekici (Haul-off)", "WC-EXT-PRV", "Çekici Palet Ünitesi", 10, "M/DK", 1.2, "Çekme Hızı & Palet Basıncı", "Ezme yapmadan dengeli hızda profil hattan çekilir."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-060", "Otomatik Giyotin/Testere Kesim", "WC-CUT-01", "Otomatik Kesim Ünitesi", 5, "ADET", 120.0, "Boy Toleransı (+/- 2 mm)", "2.20 m standart boylarda çatlaksız otomatik kesim."),
+        ("ROTA-PRV", "WPC Pervaz Profili Üretimi", "OP-070", "Kalite Kontrol, Paketleme & Sevk", "WC-QC-01", "Paketleme & Mamul Ambarı", 15, "BAG", 40.0, "Et Kalınlığı, Tırnak Geçme, Renk", "5'li / 10'lu bağlar halinde streçlenip mamul ambarına transfer edilir."),
+
+        ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-010", "Hammadde Dozaj & Mikser", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Hammadde Tartım & Nem Kontrolü", "Kasa reçetesi mikserlenir."),
+        ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-020", "Ağır Ekstrüzyon Çekim", "WC-EXT-KSA", "Hat 102 / 106 / 107 / 108 Ekstrüder", 60, "KG", 120.0, "Kovan Isıtıcı Bölgeleri, Eriyik Basıncı", "Yüksek torklu çift vidada geniş kalıptan kasa profili çekilir."),
+        ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-030", "Çift Kademeli Vakum Soğutma", "WC-EXT-KSA", "Vakum Kalibrasyon & Su Havuzu", 20, "KG", 120.0, "Fitil Kanal Ölçüsü, Dış Et Kalınlığı", "Kasa fitil kanalları ve menteşe yuvaları kalibrasyonda donar."),
+        ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-040", "Paletli Çekici & Kesim", "WC-CUT-02", "Kasa Çekici & Kesim Masası", 10, "ADET", 80.0, "Boy (2.15 m / 2.20 m), Dik Kesim Açısı", "90 derece pürüzsüz boy kesim."),
+        ("ROTA-KSA", "WPC Kapı Kasası Üretimi", "OP-050", "Kalite Kontrol & Paletleme", "WC-QC-01", "Paketleme & Mamul Ambarı", 15, "PALET", 25.0, "Kasa Gönyesi, Fitil Yuvası Toleransı", "Paletlenerek stoklanır."),
+
+        ("ROTA-SRN", "38x45 Masif Kapı Sereni", "OP-010", "Dozaj & Yüksek Yoğunluklu Mikser", "WC-MIX-01", "Sıcak/Soğuk Mikser İstasyonu", 15, "KG", 1200.0, "Kalsit/Ahşap Unu Homojenliği", "Yüksek mukavemetli seren formülü mikserlenir."),
+        ("ROTA-SRN", "38x45 Masif Kapı Sereni", "OP-020", "Çift Kafa Yüksek Hızlı Ekstrüzyon", "WC-EXT-SRN", "Hat 104 / 105 Seren Ekstrüder", 45, "KG", 140.0, "Vida RPM, Eriyik Sıcaklığı", "Çift kafa kalıpta 2 hat aynı anda 38x45 seren çeker."),
+        ("ROTA-SRN", "38x45 Masif Kapı Sereni", "OP-030", "Hızlı Soğutma & Rijitlik Tüneli", "WC-EXT-SRN", "Yoğun Su Soğutma Havuzları", 15, "KG", 140.0, "İç Odacık Geometrisi, Vida Tutma Gücü", "Çift vida odacık yapısı donar."),
+        ("ROTA-SRN", "38x45 Masif Kapı Sereni", "OP-040", "Senkronize Çiftli Kesim", "WC-CUT-03", "Çiftli Otomatik Kesici", 10, "ADET", 150.0, "Boy Toleransı (+/- 2 mm)", "Kapı boylarına uygun seri kesim."),
+        ("ROTA-SRN", "38x45 Masif Kapı Sereni", "OP-050", "Bağlama & Stok Transferi", "WC-QC-01", "Seren Ambarı", 10, "BAG", 60.0, "Eğrilik (Sehim) Kontrolü", "Kapı imalatına hazır hale getirilir."),
+
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-010", "Geniş Hacimli Mikser Dozaj", "WC-MIX-02", "Levha Mikser Hattı", 20, "KG", 1500.0, "Renk Pigmenti Dağılımı, Nem", "Levha reçetesi ve renk pigmentleri karıştırılır."),
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-020", "T-Die Geniş Ağızlı Ekstrüzyon", "WC-EXT-201", "Hat 201 Levha Ekstrüder", 90, "KG", 280.0, "T-Die Dudak Açıklığı, Sıcaklık Profili", "T-Die kafadan 108 cm genişliğinde sıcak hamur çıkar."),
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-030", "3-Roll Kalender Silindirleri", "WC-EXT-201", "3-Roll Kalender Ünitesi", 30, "KG", 280.0, "Levha Kalınlığı (mm), Yüzey Deseni", "Kalender valsleri levhaya desen verir ve kalınlığı kalibre eder."),
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-040", "En Kenar Traşlama (Trimming)", "WC-EXT-201", "Kenar Kesici Dairesel Bıçak", 10, "M/DK", 2.5, "Net En Ölçüsü, Kenar Çapağı", "Kenar fireleri anında kırıma geri beslenir."),
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-050", "Otomatik En-Boy Ebatlama", "WC-CUT-201", "Levha Ebatlama Masası", 15, "PLAKA", 60.0, "Plaka Ebatı (85x205, 90x210 vb.)", "İstenilen kapı ölçüsünde plaka kesilir."),
+        ("ROTA-LEV", "WPC Kapı & Kompozit Levha", "OP-060", "Yüzey Kontrol & Paletli İstif", "WC-QC-01", "Levha Deposu & Paletleme", 20, "PALET", 15.0, "Renk Tonu, Çizik/Dalgalanma Yokluğu", "Yüzey koruyucu film çekilerek paletlenir.")
+    ]
+
+    for r in routes_data:
+        ws3.append(list(r))
+
+    for col_idx, (col_name, num_fmt, width) in enumerate(cfg3["cols"], 1):
+        col_letter = get_column_letter(col_idx)
+        ws3.column_dimensions[col_letter].width = width
+        h_cell = ws3.cell(row=1, column=col_idx)
+        h_cell.fill = cfg3["fill"]
+        h_cell.font = font_header
+        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        for r in range(2, len(routes_data) + 2):
+            cell = ws3.cell(row=r, column=col_idx)
+            cell.font = font_data
+            cell.border = border_cell
+            if num_fmt != "@":
+                cell.number_format = num_fmt
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            else:
+                align_h = "center" if col_name in ["Rota_Kodu", "Operasyon_No", "Is_Merkezi_Kodu", "Kapasite_Birim"] else "left"
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+            if r % 2 == 1:
+                cell.fill = fill_even
+
+    # 4. SEKME: URUN_AGACI_BOM_RECETELER
+    ws4 = wb.create_sheet(title="URUN_AGACI_BOM_RECETELER")
+    cfg4 = headers_config["URUN_AGACI_BOM_RECETELER"]
+    ws4.views.sheetView[0].showGridLines = True
+    ws4.append([c[0] for c in cfg4["cols"]])
+
+    row_count_4 = 1
+    for rec in recipes:
+        r_id = rec.get("id", "")
+        r_name = rec.get("name", "")
+        batch_kg = float(rec.get("batch_kg", 0) or 0)
+        ingredients = rec.get("ingredients", [])
+
+        for s_idx, ing in enumerate(ingredients, 1):
+            mat_name = ing.get("material", "")
+            ing_kg = float(ing.get("kg", 0) or 0)
+            pct = (ing_kg / batch_kg) if batch_kg > 0 else 0.0
+
+            mat_code = f"HAM-{mat_name[:6].upper().replace(' ', '')}"
+            depo = "Silo 1 (PVC)" if "PVC" in mat_name or "HURDA" in mat_name else ("Silo 2 (Kalsit)" if "KALSİT" in mat_name or "KALS" in mat_name else "Katkı Ambarı")
+            kullanim = "Ana Matris Polimer" if "PVC" in mat_name or "HURDA" in mat_name else ("Dolgu & Rijitlik" if "KALS" in mat_name else "Proses Yardımcısı / Kaydırıcı")
+
+            ws4.append([
+                r_id, r_name, s_idx, mat_code, mat_name, ing_kg, pct, batch_kg, depo, kullanim
+            ])
+            row_count_4 += 1
+
+    for col_idx, (col_name, num_fmt, width) in enumerate(cfg4["cols"], 1):
+        col_letter = get_column_letter(col_idx)
+        ws4.column_dimensions[col_letter].width = width
+        h_cell = ws4.cell(row=1, column=col_idx)
+        h_cell.fill = cfg4["fill"]
+        h_cell.font = font_header
+        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        for r in range(2, row_count_4 + 1):
+            cell = ws4.cell(row=r, column=col_idx)
+            cell.font = font_data
+            cell.border = border_cell
+            if num_fmt != "@":
+                cell.number_format = num_fmt
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            else:
+                align_h = "center" if col_name in ["Recete_Kodu", "Bilesen_Sira", "Hammadde_Kodu"] else "left"
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+            if r % 2 == 1:
+                cell.fill = fill_even
+
+    # 5. SEKME: KALIP_VE_TAKIM_MASTER
+    ws5 = wb.create_sheet(title="KALIP_VE_TAKIM_MASTER")
+    cfg5 = headers_config["KALIP_VE_TAKIM_MASTER"]
+    ws5.views.sheetView[0].showGridLines = True
+    ws5.append([c[0] for c in cfg5["cols"]])
+
+    row_count_5 = 1
+    for m in molds:
+        m_id = m.get("id", "")
+        code = m.get("code", "")
+        name = m.get("name", "")
+        cat = m.get("category", "")
+        heads = int(m.get("heads", 1) or 1)
+        hat = m.get("assigned_hat") or "Boşta (Depo)"
+        lim_t = float(m.get("maintenance_limit_tons", 0) or 0)
+        cur_t = float(m.get("current_maintenance_tons", 0) or 0)
+        max_t = float(m.get("max_lifespan_tons", 0) or 0)
+        tot_t = float(m.get("total_tonnage", 0) or 0)
+        status = "Hatta Aktif" if m.get("assigned_hat") else "Kalıphanede (Stok)"
+        last_dt = m.get("last_maintenance_date", "")
+        m_cnt = int(m.get("maintenance_count", 0) or 0)
+        setup_min = int(m.get("setup_time_min", 45) or 45)
+
+        ws5.append([
+            m_id, code, name, cat.upper(), heads, hat, lim_t, cur_t, max_t, tot_t,
+            status, last_dt, m_cnt, setup_min
+        ])
+        row_count_5 += 1
+
+    for col_idx, (col_name, num_fmt, width) in enumerate(cfg5["cols"], 1):
+        col_letter = get_column_letter(col_idx)
+        ws5.column_dimensions[col_letter].width = width
+        h_cell = ws5.cell(row=1, column=col_idx)
+        h_cell.fill = cfg5["fill"]
+        h_cell.font = font_header
+        h_cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+        for r in range(2, row_count_5 + 1):
+            cell = ws5.cell(row=r, column=col_idx)
+            cell.font = font_data
+            cell.border = border_cell
+            if num_fmt != "@":
+                cell.number_format = num_fmt
+                cell.alignment = Alignment(horizontal="right", vertical="center")
+            else:
+                align_h = "center" if col_name in ["Kalip_ID", "Kalip_Kodu", "Kategori", "Atanan_Hat", "Durum", "Son_Bakim_Tarihi"] else "left"
+                cell.alignment = Alignment(horizontal=align_h, vertical="center")
+            if r % 2 == 1:
+                cell.fill = fill_even
 
     output = BytesIO()
     wb.save(output)
     output.seek(0)
 
-    headers = {'Content-Disposition': 'attachment; filename="ERGUNBAS_Uretim_Raporu.xlsx"'}
-    return Response(content=output.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers=headers)
+    filename_suffix = f"_{month}" if month else "_TAM_VERITABANI"
+    filename = f"ERGUNBAS_ERP_EFLOW{filename_suffix}.xlsx"
+    headers = {'Content-Disposition': f'attachment; filename="{filename}"'}
+    return Response(
+        content=output.getvalue(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers
+    )
 
 @app.get("/api/export_pdf")
 def export_pdf():

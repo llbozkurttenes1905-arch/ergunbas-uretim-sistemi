@@ -3170,6 +3170,7 @@ class OrderCreateRequest(BaseModel):
     actual_produced: Optional[float] = 0.0
     status: Optional[str] = "ÜRETİMDE"
     note: Optional[str] = ""
+    sync_mode: Optional[str] = "auto"
 
 class OrderUpdateRequest(BaseModel):
     customer: Optional[str] = None
@@ -3184,6 +3185,7 @@ class OrderUpdateRequest(BaseModel):
     actual_produced: Optional[float] = None
     status: Optional[str] = None
     note: Optional[str] = None
+    sync_mode: Optional[str] = None
 
 PRODUCT_CATALOG = {
     "50X80 PERVAZ": {"unit_kg": 1.05, "hats": "Hat 103 (53 kg/s) & Hat 109 (74 kg/s)", "speed_kg_h": 73.6},
@@ -3211,16 +3213,171 @@ PRODUCT_CATALOG = {
     "U KAPAMA": {"unit_kg": 0.55, "hats": "Hat 102 (Extrüder 2)", "speed_kg_h": 40.7}
 }
 
+def normalize_text_order(t: str) -> str:
+    if not t: return ''
+    t = str(t).upper().replace('İ', 'I').replace('Ş', 'S').replace('Ğ', 'G').replace('Ü', 'U').replace('Ö', 'O').replace('Ç', 'C')
+    t = re.sub(r'[^A-Z0-9 ]', '', t)
+    return re.sub(r'\s+', ' ', t).strip()
+
+def match_product_daily(order_prod: str, order_cat: str, item_prod_or_color: str) -> bool:
+    norm_ord = normalize_text_order(order_prod)
+    norm_item = normalize_text_order(item_prod_or_color)
+    if not norm_ord or not norm_item: return False
+    
+    # Levha match
+    if 'LEVHA' in norm_ord or (order_cat and order_cat.lower() == 'levha'):
+        for color in ['BUDAK', 'TEAK', 'ANTRAS', 'GRI', 'BEYAZ TEAK', 'COCO', 'CEVIZ', 'SONOMO', 'VIZON']:
+            if color in norm_ord and color in norm_item:
+                return True
+        return norm_item in norm_ord or norm_ord in norm_item
+        
+    # Extrüder match
+    if norm_ord == norm_item: return True
+    if '50X80' in norm_ord and '50X80' in norm_item: return True
+    if '80X80' in norm_ord and '80X80' in norm_item: return True
+    if '35X100' in norm_ord and '35X100' in norm_item: return True
+    if '35X150' in norm_ord and '35X150' in norm_item: return True
+    if '35X80' in norm_ord and '35X80' in norm_item: return True
+    if '100 MM KASA' in norm_ord and '100 MM KASA' in norm_item: return True
+    if '140 MM KASA' in norm_ord and '140 MM KASA' in norm_item: return True
+    if '200 MM KASA' in norm_ord and '200 MM KASA' in norm_item: return True
+    if 'SEREN(39MM)' in norm_ord and 'SEREN(39MM)' in norm_item: return True
+    if 'SEREN' in norm_ord and '39MM' not in norm_ord and 'SEREN' in norm_item and '39MM' not in norm_item: return True
+    if 'CAM CITASI' in norm_ord and 'CAM CITASI' in norm_item: return True
+    if 'U KAPAMA' in norm_ord and 'U KAPAMA' in norm_item: return True
+    return False
+
+def parse_order_date(d_str: str):
+    if not d_str: return None
+    d_str = str(d_str).strip()
+    for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
+        try:
+            return datetime.strptime(d_str, fmt).date()
+        except ValueError:
+            pass
+    return None
+
 @app.get("/api/orders")
 def get_orders():
     orders = load_orders()
-    enriched = []
+    data = load_data()
+    daily_data = data.get("daily_data", {})
+
+    # Günlük üretim kayıtlarını kronolojik sıraya diz
+    day_entries = []
+    for k, d in daily_data.items():
+        dt = parse_order_date(d.get("date"))
+        if dt:
+            day_entries.append((dt, d))
+    day_entries.sort(key=lambda x: x[0])
+
+    # Sipariş takip durumları ve FIFO hazırlığı
+    order_states = []
     for o in orders:
         o_qty = float(o.get("order_qty", 0) or 0)
         s_qty = float(o.get("stock_qty", 0) or 0)
-        p_qty = float(o.get("actual_produced", 0) or 0)
+        net = max(0.0, o_qty - s_qty)
+        o_date = parse_order_date(o.get("order_date")) or parse_order_date("2026-10-01")
+        due = parse_order_date(o.get("due_date")) or parse_order_date("2026-12-31")
+        sync_mode = o.get("sync_mode", "auto")
+        
+        order_states.append({
+            "order": o,
+            "order_date": o_date,
+            "due_date": due,
+            "net_to_produce": net,
+            "sync_mode": sync_mode,
+            "allocated": 0.0,
+            "records": []
+        })
+
+    # Günlük üretimleri kronolojik sırayla siparişlere tahsis et (FIFO)
+    for dt, d in day_entries:
+        date_str = d.get("date", "")
+        for shift_name, shift_key in [("Gündüz", "gunduz"), ("Gece", "gece")]:
+            sh = d.get(shift_key, {})
+            # Extrüderler
+            for ext in sh.get("extruders", []):
+                p = ext.get("product", "")
+                q = float(ext.get("qty", 0) or 0)
+                if q <= 0: continue
+                hat_no = ext.get("hat", "")
+
+                # Bu ürün için sipariş tarihi bu gün veya öncesi olan, henüz dolmamış otomatik siparişleri bul
+                cands = [
+                    os for os in order_states
+                    if os["sync_mode"] == "auto"
+                    and os["order_date"] <= dt
+                    and match_product_daily(os["order"].get("product", ""), os["order"].get("category", ""), p)
+                    and os["allocated"] < os["net_to_produce"]
+                ]
+                cands.sort(key=lambda x: x["due_date"])
+
+                rem_q = q
+                for c in cands:
+                    need = c["net_to_produce"] - c["allocated"]
+                    take = min(rem_q, need)
+                    c["allocated"] += take
+                    c["records"].append({
+                        "date": date_str,
+                        "shift": shift_name,
+                        "hat": f"Hat {hat_no}" if str(hat_no).isdigit() else hat_no,
+                        "qty": take
+                    })
+                    rem_q -= take
+                    if rem_q <= 0:
+                        break
+
+            # Levha
+            for lev in sh.get("levha", []):
+                c_name = lev.get("color", "")
+                q = float(lev.get("qty", 0) or 0)
+                if q <= 0: continue
+                hat_no = lev.get("hat", "201")
+
+                cands = [
+                    os for os in order_states
+                    if os["sync_mode"] == "auto"
+                    and os["order_date"] <= dt
+                    and match_product_daily(os["order"].get("product", ""), os["order"].get("category", ""), c_name)
+                    and os["allocated"] < os["net_to_produce"]
+                ]
+                cands.sort(key=lambda x: x["due_date"])
+
+                rem_q = q
+                for c in cands:
+                    need = c["net_to_produce"] - c["allocated"]
+                    take = min(rem_q, need)
+                    c["allocated"] += take
+                    c["records"].append({
+                        "date": date_str,
+                        "shift": shift_name,
+                        "hat": f"Hat {hat_no}" if str(hat_no).isdigit() else hat_no,
+                        "qty": take
+                    })
+                    rem_q -= take
+                    if rem_q <= 0:
+                        break
+
+    enriched = []
+    for os in order_states:
+        o = os["order"]
+        o_qty = float(o.get("order_qty", 0) or 0)
+        s_qty = float(o.get("stock_qty", 0) or 0)
         prod = str(o.get("product", "")).strip()
         unit = str(o.get("unit", "")).strip()
+        sync_mode = os["sync_mode"]
+
+        if sync_mode == "auto":
+            p_qty = round(os["allocated"], 1)
+            auto_synced = True
+            shift_count = len(os["records"])
+            shift_logs = os["records"][-10:]
+        else:
+            p_qty = float(o.get("actual_produced", 0) or 0)
+            auto_synced = False
+            shift_count = 0
+            shift_logs = []
 
         # Katalog eşleşmesi
         cat_info = PRODUCT_CATALOG.get(prod, {"unit_kg": 1.0, "hats": o.get("assigned_hats") or "Hat Otomatik", "speed_kg_h": 70.0})
@@ -3228,7 +3385,7 @@ def get_orders():
         assigned_hats = o.get("assigned_hats") or cat_info["hats"]
         speed_kg_h = cat_info["speed_kg_h"]
 
-        net_to_produce = max(0.0, o_qty - s_qty)
+        net_to_produce = os["net_to_produce"]
         remaining_qty = max(0.0, net_to_produce - p_qty)
         completion_pct = min(100.0, round(((s_qty + p_qty) / o_qty * 100), 1)) if o_qty > 0 else 0.0
 
@@ -3248,6 +3405,7 @@ def get_orders():
 
         enriched.append({
             **o,
+            "actual_produced": p_qty,
             "net_to_produce": net_to_produce,
             "remaining_qty": remaining_qty,
             "completion_pct": completion_pct,
@@ -3257,7 +3415,11 @@ def get_orders():
             "speed_kg_h": speed_kg_h,
             "remaining_hours": remaining_hours,
             "remaining_shifts": remaining_shifts,
-            "status": status
+            "status": status,
+            "auto_sync": auto_synced,
+            "shift_count": shift_count,
+            "shift_logs": shift_logs,
+            "sync_mode": sync_mode
         })
     return {"orders": enriched}
 
@@ -3278,7 +3440,8 @@ def add_order(req: OrderCreateRequest):
         "assigned_hats": req.assigned_hats or "Hat Otomatik",
         "actual_produced": req.actual_produced or 0.0,
         "status": req.status or "ÜRETİMDE",
-        "note": req.note or ""
+        "note": req.note or "",
+        "sync_mode": req.sync_mode or "auto"
     }
     orders.append(new_order)
     save_orders(orders)

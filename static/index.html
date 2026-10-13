@@ -2561,8 +2561,11 @@
                             <div class="flex items-center gap-2">
                                 <h3 class="text-lg font-black text-white tracking-tight">Canlı Müşteri Sipariş Takip & Karşılama Paneli</h3>
                                 <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] font-black uppercase tracking-wider">Live Order Allocation</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Canlı Üretimle Entegre
+                                </span>
                             </div>
-                            <p class="text-xs text-slate-400">Müşterilerden gelen siparişler, atanan hatlar, hazır depo stoğu mahsubu ve canlı % tamamlanma çubuğu</p>
+                            <p class="text-xs text-slate-400">Müşterilerden gelen siparişler, atanan hatlar, hazır depo stoğu mahsubu ve günlük üretim verisinden canlı % tamamlanma</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2.5">
@@ -2691,6 +2694,12 @@
                     <div class="sm:col-span-2">
                         <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Atanan Hat / Not</label>
                         <input type="text" id="ord-inp-hat" placeholder="Örn: Hat 103 & Hat 109 veya Boş Bırakın" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div class="sm:col-span-2 flex items-center gap-2 pt-1 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                        <input type="checkbox" id="ord-inp-sync" checked class="w-4 h-4 rounded text-sky-600 bg-slate-900 border-slate-700 focus:ring-sky-500 cursor-pointer">
+                        <label for="ord-inp-sync" class="text-xs text-slate-300 font-semibold cursor-pointer">
+                            Günlük üretim verilerinden otomatik çek <span class="text-emerald-400 font-bold">(Hatlarda üretim yapıldıkça canlı tamamlansın)</span>
+                        </label>
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
@@ -16041,7 +16050,17 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                         </span>
                         <span class="text-[10px] text-emerald-400 font-bold block mt-0.5">${o.speed_kg_h || 70} kg/sa hız</span>
                     </td>
-                    <td class="p-3 text-right font-black text-emerald-400">${(o.actual_produced || 0).toLocaleString('tr-TR')}</td>
+                    <td class="p-3 text-right">
+                        <span class="font-black text-emerald-400 block">${(o.actual_produced || 0).toLocaleString('tr-TR')}</span>
+                        ${o.auto_sync ? `
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 text-[9px] text-emerald-300 font-bold border border-emerald-500/20 cursor-help" title="${(o.shift_logs || []).map(l => `${l.date} ${l.shift} ${l.hat}: +${l.qty}`).join('\n') || 'Günlük üretim verilerinden'}">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                ${o.shift_count || 0} Vardiya
+                            </span>
+                        ` : `
+                            <span class="text-[9px] text-slate-500 font-medium">Manuel</span>
+                        `}
+                    </td>
                     <td class="p-3 text-right">
                         <span class="font-bold text-amber-400 block">${(o.remaining_qty || 0).toLocaleString('tr-TR')}</span>
                         <span class="text-[10px] text-slate-400 font-mono block">≈ ${remKg.toLocaleString('tr-TR')} kg</span>
@@ -16115,6 +16134,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             const order_qty = parseFloat(document.getElementById('ord-inp-qty').value) || 0;
             const stock_qty = parseFloat(document.getElementById('ord-inp-stock').value) || 0;
             const assigned_hats = document.getElementById('ord-inp-hat').value;
+            const sync_mode = document.getElementById('ord-inp-sync')?.checked ? 'auto' : 'manual';
 
             if (!customer || !due_date || order_qty <= 0) {
                 alert('Lütfen Müşteri Firma, Termin Tarihi ve Geçerli bir Sipariş Miktarı girin!');
@@ -16126,7 +16146,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        customer, order_date, due_date, product, unit, order_qty, stock_qty, assigned_hats
+                        customer, order_date, due_date, product, unit, order_qty, stock_qty, assigned_hats, sync_mode
                     })
                 });
 

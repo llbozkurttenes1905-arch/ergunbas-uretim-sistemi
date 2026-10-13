@@ -5069,7 +5069,53 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "ELEKTRİK DALGALANMASI",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 60.0,
+          "desc": "Barrel arızası"
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 60.0,
+          "desc": "Hammadde değişimi yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 480.0,
+          "desc": "Soğutma su arıızası."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

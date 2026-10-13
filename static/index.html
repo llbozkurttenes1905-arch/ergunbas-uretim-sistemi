@@ -13961,6 +13961,11 @@
             // Akıllı Sipariş & Montaj Simülatörü
             runOrderSimulation();
 
+            // Canlı Müşteri Sipariş Takip Paneli
+            if (typeof loadOrdersTable === 'function') {
+                loadOrdersTable();
+            }
+
             safeCreateIcons();
         }
 

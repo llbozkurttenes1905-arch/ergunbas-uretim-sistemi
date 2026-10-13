@@ -2547,6 +2547,159 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ============================================================== -->
+            <!-- 📋 CANLI MÜŞTERİ SİPARİŞ TAKİP, HAT TAHSİS & KARŞILAMA PANELİ -->
+            <!-- ============================================================== -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl mt-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400">
+                            <i data-lucide="clipboard-list" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-black text-white tracking-tight">Canlı Müşteri Sipariş Takip & Karşılama Paneli</h3>
+                                <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] font-black uppercase tracking-wider">Live Order Allocation</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Müşterilerden gelen siparişler, atanan hatlar, hazır depo stoğu mahsubu ve canlı % tamamlanma çubuğu</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="openNewOrderModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-600/30 transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Yeni Sipariş Gir
+                        </button>
+                        <button onclick="loadOrdersTable()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-sky-400"></i> Yenile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sipariş Özet KPI Şeridi -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Toplam Aktif Sipariş</span>
+                        <span id="order-kpi-total" class="text-lg font-black text-white mt-0.5 block">0</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Üretimde Olanlar</span>
+                        <span id="order-kpi-in-prod" class="text-lg font-black text-amber-400 mt-0.5 block">0</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Tamamlanan Siparişler</span>
+                        <span id="order-kpi-completed" class="text-lg font-black text-emerald-400 mt-0.5 block">0</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-center">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Ortalama Karşılama Oranı</span>
+                        <span id="order-kpi-avg-pct" class="text-lg font-black text-sky-400 mt-0.5 block">%0</span>
+                    </div>
+                </div>
+
+                <!-- Sipariş Tablosu -->
+                <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950/90 text-[10px] text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Sipariş No</th>
+                                <th class="p-3">Müşteri Firma</th>
+                                <th class="p-3">Termin</th>
+                                <th class="p-3">Sipariş Kalemi</th>
+                                <th class="p-3 text-right">Sipariş (Adet / KG)</th>
+                                <th class="p-3 text-right">Depo Stok</th>
+                                <th class="p-3 text-right font-bold text-white">Net İmalat</th>
+                                <th class="p-3">Atanan Hat & Hız</th>
+                                <th class="p-3 text-right font-bold text-emerald-400">Üretilen</th>
+                                <th class="p-3 text-right font-bold text-amber-400">Kalan İhtiyaç</th>
+                                <th class="p-3 text-right text-sky-400">Kalan Süre (Vardiya)</th>
+                                <th class="p-3 min-w-[160px]">İlerleme (%)</th>
+                                <th class="p-3 text-center">Durum</th>
+                                <th class="p-3 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-tbody" class="divide-y divide-slate-800/60 bg-slate-950/40">
+                            <tr><td colspan="14" class="p-4 text-center text-slate-500">Siparişler yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- YENİ SİPARİŞ MODAL'I -->
+        <div id="modal-new-order" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl p-6 space-y-4 shadow-2xl animate-in fade-in duration-200">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-base font-black text-white flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-sky-400"></i> Yeni Müşteri Siparişi Kaydet
+                    </h3>
+                    <button onclick="closeNewOrderModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="sm:col-span-2">
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Müşteri Firma Adı</label>
+                        <input type="text" id="ord-inp-customer" placeholder="Örn: Özkan Yapı Sistemleri" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Sipariş Tarihi</label>
+                        <input type="date" id="ord-inp-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Termin Tarihi (Teslimat)</label>
+                        <input type="date" id="ord-inp-due" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Sipariş Kalemi (Ürün)</label>
+                        <select id="ord-inp-product" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                            <option value="50X80 PERVAZ">50X80 PERVAZ</option>
+                            <option value="80X80 PERVAZ">80X80 PERVAZ</option>
+                            <option value="35X100 PERVAZ">35X100 PERVAZ</option>
+                            <option value="35X150 PERVAZ">35X150 PERVAZ</option>
+                            <option value="100 mm KASA">100 mm KASA</option>
+                            <option value="140 mm KASA">140 mm KASA</option>
+                            <option value="200 mm KASA">200 mm KASA</option>
+                            <option value="KT100-220x24-ANT">KT100-220x24-ANT (Kasa)</option>
+                            <option value="KT102-219x26-ANT">KT102-219x26-ANT (Kasa)</option>
+                            <option value="SEREN (Çift Kafa)">SEREN (Çift Kafa - Hat 104)</option>
+                            <option value="SEREN(39mm)">SEREN(39mm) - Hat 107</option>
+                            <option value="SEREN">SEREN - Standart</option>
+                            <option value="DİŞBUDAK Levha">DİŞBUDAK Levha (Hat 201)</option>
+                            <option value="TEAK Levha">TEAK Levha (Hat 201)</option>
+                            <option value="BEYAZ TEAK Levha">BEYAZ TEAK Levha (Hat 201)</option>
+                            <option value="VIZON Levha">VIZON Levha (Hat 201)</option>
+                            <option value="CAM ÇITASI">CAM ÇITASI</option>
+                            <option value="U KAPAMA">U KAPAMA</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Ölçü Birimi</label>
+                        <select id="ord-inp-unit" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                            <option value="Boy (Adet)">Boy (Adet)</option>
+                            <option value="Takım">Takım</option>
+                            <option value="Adet (Plaka)">Adet (Plaka)</option>
+                            <option value="KG">Kilogram (KG)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Sipariş Miktarı</label>
+                        <input type="number" id="ord-inp-qty" value="1000" min="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Depodaki Hazır Stok (Düşülecek)</label>
+                        <input type="number" id="ord-inp-stock" value="0" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Atanan Hat / Not</label>
+                        <input type="text" id="ord-inp-hat" placeholder="Örn: Hat 103 & Hat 109 veya Boş Bırakın" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button onclick="closeNewOrderModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">İptal</button>
+                    <button onclick="saveNewOrder()" class="px-5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-black text-xs rounded-xl shadow-lg shadow-sky-600/30 transition flex items-center gap-1.5">
+                        <i data-lucide="check" class="w-4 h-4"></i> Siparişi Kaydet
+                    </button>
+                </div>
+            </div>
         </div>
 
 
@@ -15812,6 +15965,196 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 alert("Panoya kopyalanamadı.");
             });
         }
+
+        /* =====================================================================
+           3. CANLI MÜŞTERİ SİPARİŞ TAKİP & KARŞILAMA JAVASCRIPT MOTORU
+           ===================================================================== */
+        let ordersData = [];
+
+        async function loadOrdersTable() {
+            try {
+                const res = await fetch('/api/orders');
+                if (!res.ok) return;
+                const data = await res.json();
+                ordersData = data.orders || [];
+                renderOrdersTable();
+            } catch(e) {
+                console.error('loadOrdersTable error:', e);
+            }
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-table-tbody');
+            if (!tbody) return;
+
+            if (ordersData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-slate-500">Kayıtlı aktif sipariş bulunmamaktadır. "Yeni Sipariş Gir" butonuyla ekleyebilirsiniz.</td></tr>';
+                return;
+            }
+
+            let totalCount = ordersData.length;
+            let inProdCount = 0;
+            let compCount = 0;
+            let sumPct = 0;
+
+            const rowsHtml = ordersData.map(o => {
+                const pct = o.completion_pct || 0;
+                sumPct += pct;
+                if (pct >= 100 || o.status === 'TAMAMLANDI') compCount++;
+                else if (o.actual_produced > 0) inProdCount++;
+
+                let badgeClass = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+                if (pct >= 100 || o.status === 'TAMAMLANDI') badgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+                else if (pct === 0) badgeClass = 'bg-slate-800 text-slate-400 border-slate-700';
+
+                const remHrs = o.remaining_hours || 0;
+                const remShifts = o.remaining_shifts || 0;
+                const orderKg = o.order_kg || 0;
+                const remKg = o.remaining_kg || 0;
+
+                return `
+                <tr class="hover:bg-slate-900/60 transition group">
+                    <td class="p-3 font-mono font-bold text-sky-400">${o.id}</td>
+                    <td class="p-3 font-semibold text-white">
+                        ${o.customer}
+                        <span class="text-[10px] text-slate-500 block">${o.note || ''}</span>
+                    </td>
+                    <td class="p-3 text-slate-400 font-mono text-[11px]">${o.due_date || '—'}</td>
+                    <td class="p-3 font-medium text-slate-200">
+                        ${o.product}
+                        <span class="text-[10px] text-slate-400 block">${o.category || 'Profil'} · ${o.unit || 'Boy'}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                        <span class="font-black text-white block">${(o.order_qty || 0).toLocaleString('tr-TR')} <span class="text-[10px] font-normal text-slate-400">${o.unit || ''}</span></span>
+                        <span class="text-[10px] text-slate-400 font-mono block">≈ ${orderKg.toLocaleString('tr-TR')} kg</span>
+                    </td>
+                    <td class="p-3 text-right text-slate-400">${(o.stock_qty || 0).toLocaleString('tr-TR')}</td>
+                    <td class="p-3 text-right font-bold text-sky-300">${(o.net_to_produce || 0).toLocaleString('tr-TR')}</td>
+                    <td class="p-3 text-slate-300">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700/80 text-[10px] font-bold text-slate-300 block truncate max-w-[180px]" title="${o.assigned_hats}">
+                            ${o.assigned_hats || 'Otomatik'}
+                        </span>
+                        <span class="text-[10px] text-emerald-400 font-bold block mt-0.5">${o.speed_kg_h || 70} kg/sa hız</span>
+                    </td>
+                    <td class="p-3 text-right font-black text-emerald-400">${(o.actual_produced || 0).toLocaleString('tr-TR')}</td>
+                    <td class="p-3 text-right">
+                        <span class="font-bold text-amber-400 block">${(o.remaining_qty || 0).toLocaleString('tr-TR')}</span>
+                        <span class="text-[10px] text-slate-400 font-mono block">≈ ${remKg.toLocaleString('tr-TR')} kg</span>
+                    </td>
+                    <td class="p-3 text-right font-mono">
+                        ${remShifts > 0 ? `<span class="font-bold text-sky-400 block">${remShifts} Vardiya</span><span class="text-[10px] text-slate-500 block">${remHrs} saat</span>` : `<span class="text-emerald-400 font-bold">Tamam</span>`}
+                    </td>
+                    <td class="p-3">
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[10px] font-bold">
+                                <span class="${pct >= 100 ? 'text-emerald-400' : 'text-sky-400'}">%${pct}</span>
+                                <span class="text-slate-500">${((o.stock_qty || 0) + (o.actual_produced || 0)).toLocaleString('tr-TR')} / ${(o.order_qty || 0).toLocaleString('tr-TR')}</span>
+                            </div>
+                            <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-500 ${pct >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-sky-500 to-indigo-500'}" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center">
+                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-black border ${badgeClass}">
+                            ${o.status}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteOrder('${o.id}')" title="Siparişi Sil" class="text-slate-500 hover:text-red-400 p-1 rounded transition opacity-50 group-hover:opacity-100">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rowsHtml;
+
+            // KPI güncelle
+            const kpiTot = document.getElementById('order-kpi-total');
+            const kpiIn = document.getElementById('order-kpi-in-prod');
+            const kpiComp = document.getElementById('order-kpi-completed');
+            const kpiAvg = document.getElementById('order-kpi-avg-pct');
+
+            if (kpiTot) kpiTot.textContent = totalCount;
+            if (kpiIn) kpiIn.textContent = inProdCount;
+            if (kpiComp) kpiComp.textContent = compCount;
+            if (kpiAvg) kpiAvg.textContent = `%${Math.round(sumPct / (totalCount || 1))}`;
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function openNewOrderModal() {
+            const m = document.getElementById('modal-new-order');
+            if (m) {
+                m.classList.remove('hidden');
+                // varsayılan bugünün tarihi
+                const d = new Date().toISOString().split('T')[0];
+                const dInput = document.getElementById('ord-inp-date');
+                if (dInput) dInput.value = d;
+            }
+        }
+
+        function closeNewOrderModal() {
+            const m = document.getElementById('modal-new-order');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function saveNewOrder() {
+            const customer = document.getElementById('ord-inp-customer').value;
+            const order_date = document.getElementById('ord-inp-date').value;
+            const due_date = document.getElementById('ord-inp-due').value;
+            const product = document.getElementById('ord-inp-product').value;
+            const unit = document.getElementById('ord-inp-unit').value;
+            const order_qty = parseFloat(document.getElementById('ord-inp-qty').value) || 0;
+            const stock_qty = parseFloat(document.getElementById('ord-inp-stock').value) || 0;
+            const assigned_hats = document.getElementById('ord-inp-hat').value;
+
+            if (!customer || !due_date || order_qty <= 0) {
+                alert('Lütfen Müşteri Firma, Termin Tarihi ve Geçerli bir Sipariş Miktarı girin!');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer, order_date, due_date, product, unit, order_qty, stock_qty, assigned_hats
+                    })
+                });
+
+                if (res.ok) {
+                    closeNewOrderModal();
+                    await loadOrdersTable();
+                    if (typeof showToast === 'function') showToast('Sipariş başarıyla kaydedildi!');
+                } else {
+                    alert('Sipariş kaydedilirken hata oluştu.');
+                }
+            } catch(e) {
+                console.error('saveNewOrder error:', e);
+                alert('Sunucu hatası!');
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm(`Sipariş No: ${orderId} silinsin mi?`)) return;
+            try {
+                const res = await fetch(`/api/orders/${orderId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await loadOrdersTable();
+                    if (typeof showToast === 'function') showToast('Sipariş silindi.');
+                }
+            } catch(e) {
+                console.error('deleteOrder error:', e);
+            }
+        }
+
+        // Sayfa açıldığında sipariş tablosunu otomatik yükle
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrdersTable();
+        });
     </script>
 </body>
 </html>

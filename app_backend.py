@@ -3139,6 +3139,178 @@ def simulate_order(req: OrderSimulationRequest):
 
 
 # =====================================================================
+# ORDER MANAGEMENT & PRODUCTION ALLOCATION ENDPOINTS
+# =====================================================================
+
+ORDERS_FILE = "orders.json"
+
+def load_orders() -> List[Dict[str, Any]]:
+    if not os.path.exists(ORDERS_FILE):
+        return []
+    try:
+        with open(ORDERS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def save_orders(orders: List[Dict[str, Any]]):
+    with open(ORDERS_FILE, "w", encoding="utf-8") as f:
+        json.dump(orders, f, ensure_ascii=False, indent=2)
+
+class OrderCreateRequest(BaseModel):
+    customer: str
+    order_date: str
+    due_date: str
+    product: str
+    category: Optional[str] = "Pervaz"
+    unit: Optional[str] = "Boy (Adet)"
+    order_qty: float
+    stock_qty: Optional[float] = 0.0
+    assigned_hats: Optional[str] = ""
+    actual_produced: Optional[float] = 0.0
+    status: Optional[str] = "ÜRETİMDE"
+    note: Optional[str] = ""
+
+class OrderUpdateRequest(BaseModel):
+    customer: Optional[str] = None
+    order_date: Optional[str] = None
+    due_date: Optional[str] = None
+    product: Optional[str] = None
+    category: Optional[str] = None
+    unit: Optional[str] = None
+    order_qty: Optional[float] = None
+    stock_qty: Optional[float] = None
+    assigned_hats: Optional[str] = None
+    actual_produced: Optional[float] = None
+    status: Optional[str] = None
+    note: Optional[str] = None
+
+PRODUCT_CATALOG = {
+    "50X80 PERVAZ": {"unit_kg": 1.05, "hats": "Hat 103 (53 kg/s) & Hat 109 (74 kg/s)", "speed_kg_h": 73.6},
+    "80X80 PERVAZ": {"unit_kg": 1.15, "hats": "Hat 101 (47 kg/s) & Hat 109 (85 kg/s)", "speed_kg_h": 46.5},
+    "35X100 PERVAZ": {"unit_kg": 0.95, "hats": "Hat 101 (Extrüder 1)", "speed_kg_h": 63.8},
+    "35X150 PERVAZ": {"unit_kg": 1.25, "hats": "Hat 101 (Extrüder 1)", "speed_kg_h": 41.2},
+    "35X80 PERVAZ": {"unit_kg": 0.85, "hats": "Hat 101 (Extrüder 1)", "speed_kg_h": 44.2},
+    "100 mm KASA": {"unit_kg": 2.10, "hats": "Hat 102 (63 kg/s) & Hat 108 (70 kg/s)", "speed_kg_h": 69.5},
+    "140 mm KASA": {"unit_kg": 2.45, "hats": "Hat 106 (74 kg/s) & Hat 108 (65 kg/s)", "speed_kg_h": 74.1},
+    "200 mm KASA": {"unit_kg": 2.90, "hats": "Hat 107 (85 kg/s)", "speed_kg_h": 84.6},
+    "KT100-220x24-ANT": {"unit_kg": 3.10, "hats": "Hat 107 (Extrüder 7)", "speed_kg_h": 84.7},
+    "KT102-219x26-ANT": {"unit_kg": 3.00, "hats": "Hat 107 (Extrüder 7)", "speed_kg_h": 108.2},
+    "KT102-219x26-KAH": {"unit_kg": 3.00, "hats": "Hat 107 (Extrüder 7)", "speed_kg_h": 115.8},
+    "SEREN (Çift Kafa)": {"unit_kg": 0.85, "hats": "Hat 104 (Çift Kafa 99 kg/s)", "speed_kg_h": 99.2},
+    "SEREN(39mm)": {"unit_kg": 0.88, "hats": "Hat 107 (Özel 96 kg/s)", "speed_kg_h": 96.1},
+    "SEREN": {"unit_kg": 0.85, "hats": "Hat 105 (92 kg/s)", "speed_kg_h": 92.2},
+    "DİŞBUDAK Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 187.9},
+    "TEAK Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 145.5},
+    "BEYAZ TEAK Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 148.4},
+    "VIZON Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 116.2},
+    "AY GRİ Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 144.9},
+    "ANTRASİT Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 111.8},
+    "SONOMO Levha": {"unit_kg": 4.80, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1},
+    "CAM ÇITASI": {"unit_kg": 0.45, "hats": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0},
+    "U KAPAMA": {"unit_kg": 0.55, "hats": "Hat 102 (Extrüder 2)", "speed_kg_h": 40.7}
+}
+
+@app.get("/api/orders")
+def get_orders():
+    orders = load_orders()
+    enriched = []
+    for o in orders:
+        o_qty = float(o.get("order_qty", 0) or 0)
+        s_qty = float(o.get("stock_qty", 0) or 0)
+        p_qty = float(o.get("actual_produced", 0) or 0)
+        prod = str(o.get("product", "")).strip()
+        unit = str(o.get("unit", "")).strip()
+
+        # Katalog eşleşmesi
+        cat_info = PRODUCT_CATALOG.get(prod, {"unit_kg": 1.0, "hats": o.get("assigned_hats") or "Hat Otomatik", "speed_kg_h": 70.0})
+        unit_weight = cat_info["unit_kg"] if "KG" not in unit.upper() else 1.0
+        assigned_hats = o.get("assigned_hats") or cat_info["hats"]
+        speed_kg_h = cat_info["speed_kg_h"]
+
+        net_to_produce = max(0.0, o_qty - s_qty)
+        remaining_qty = max(0.0, net_to_produce - p_qty)
+        completion_pct = min(100.0, round(((s_qty + p_qty) / o_qty * 100), 1)) if o_qty > 0 else 0.0
+
+        # KG ve İmalat Süresi Hesapları
+        order_kg = round(o_qty * unit_weight, 1)
+        remaining_kg = round(remaining_qty * unit_weight, 1)
+        remaining_hours = round(remaining_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
+        remaining_shifts = round(remaining_hours / 12.0, 1)
+
+        status = o.get("status", "ÜRETİMDE")
+        if completion_pct >= 100.0 or remaining_qty <= 0:
+            status = "TAMAMLANDI"
+        elif p_qty > 0 or s_qty > 0:
+            status = "ÜRETİMDE"
+        else:
+            status = "SIRADA"
+
+        enriched.append({
+            **o,
+            "net_to_produce": net_to_produce,
+            "remaining_qty": remaining_qty,
+            "completion_pct": completion_pct,
+            "order_kg": order_kg,
+            "remaining_kg": remaining_kg,
+            "assigned_hats": assigned_hats,
+            "speed_kg_h": speed_kg_h,
+            "remaining_hours": remaining_hours,
+            "remaining_shifts": remaining_shifts,
+            "status": status
+        })
+    return {"orders": enriched}
+
+@app.post("/api/orders")
+def add_order(req: OrderCreateRequest):
+    orders = load_orders()
+    new_id = f"SIP-{len(orders) + 101}"
+    new_order = {
+        "id": new_id,
+        "customer": req.customer.strip(),
+        "order_date": req.order_date.strip(),
+        "due_date": req.due_date.strip(),
+        "product": req.product.strip(),
+        "category": req.category or "Profil",
+        "unit": req.unit or "Boy (Adet)",
+        "order_qty": req.order_qty,
+        "stock_qty": req.stock_qty or 0.0,
+        "assigned_hats": req.assigned_hats or "Hat Otomatik",
+        "actual_produced": req.actual_produced or 0.0,
+        "status": req.status or "ÜRETİMDE",
+        "note": req.note or ""
+    }
+    orders.append(new_order)
+    save_orders(orders)
+    return {"status": "ok", "order": new_order}
+
+@app.put("/api/orders/{order_id}")
+def update_order(order_id: str, req: OrderUpdateRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+        
+    for k, v in req.dict(exclude_unset=True).items():
+        if v is not None:
+            target[k] = v
+            
+    save_orders(orders)
+    return {"status": "ok", "order": target}
+
+@app.delete("/api/orders/{order_id}")
+def delete_order(order_id: str):
+    orders = load_orders()
+    orders = [o for o in orders if o.get("id") != order_id]
+    save_orders(orders)
+    return {"status": "ok", "deleted_id": order_id}
+
+
+# =====================================================================
 # USER MANAGEMENT ENDPOINTS
 # =====================================================================
 

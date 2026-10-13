@@ -2649,11 +2649,11 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Termin Tarihi (Teslimat)</label>
-                        <input type="date" id="ord-inp-due" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <input type="date" id="ord-inp-due" onchange="updateHatRecommendation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Sipariş Kalemi (Ürün)</label>
-                        <select id="ord-inp-product" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <select id="ord-inp-product" onchange="updateHatRecommendation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
                             <option value="50X80 PERVAZ">50X80 PERVAZ</option>
                             <option value="80X80 PERVAZ">80X80 PERVAZ</option>
                             <option value="35X100 PERVAZ">35X100 PERVAZ</option>
@@ -2685,15 +2685,42 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Sipariş Miktarı</label>
-                        <input type="number" id="ord-inp-qty" value="1000" min="1" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-sky-500">
+                        <input type="number" id="ord-inp-qty" value="1000" min="1" oninput="updateHatRecommendation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-sky-500">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Depodaki Hazır Stok (Düşülecek)</label>
-                        <input type="number" id="ord-inp-stock" value="0" min="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <input type="number" id="ord-inp-stock" value="0" min="0" oninput="updateHatRecommendation()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
                     </div>
+
+                    <!-- 🤖 AKILLI & DİNAMİK HAT ATAMA MOTORU PANELİ -->
+                    <div class="sm:col-span-2 bg-slate-950/80 border border-sky-500/30 rounded-2xl p-4 space-y-3 shadow-inner">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-black text-xs">
+                                    <i data-lucide="cpu" class="w-4 h-4 text-sky-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-white tracking-tight">Akıllı Hat & Kalıp Öneri Motoru</h4>
+                                    <span class="text-[10px] text-slate-400 block">Kalıp durumu, değişim süresi ve hat hızına göre otomatik puanlama</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-xl">
+                                <label for="ord-inp-setup-time" class="text-[11px] text-slate-400 font-semibold cursor-pointer">Kalıp Değişim Süresi:</label>
+                                <input type="number" id="ord-inp-setup-time" placeholder="Oto" min="0" step="5" oninput="updateHatRecommendation()"
+                                    class="w-14 bg-slate-950 border border-slate-700 rounded-lg px-2 py-0.5 text-xs text-amber-400 text-center font-black focus:outline-none focus:border-sky-400" title="Kalıp değişim süresini değiştirmek isterseniz dakika girin (Örn: 45)">
+                                <span class="text-[10px] text-slate-500 font-mono">dk</span>
+                            </div>
+                        </div>
+
+                        <!-- Öneri Kartları Alanı -->
+                        <div id="hat-recommend-container" class="space-y-2">
+                            <div class="text-xs text-slate-500 italic py-2 text-center">Ürün ve miktar seçildiğinde en ideal hat analiz edilecek...</div>
+                        </div>
+                    </div>
+
                     <div class="sm:col-span-2">
-                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Atanan Hat / Not</label>
-                        <input type="text" id="ord-inp-hat" placeholder="Örn: Hat 103 & Hat 109 veya Boş Bırakın" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-sky-500">
+                        <label class="block font-bold text-slate-400 uppercase text-[10px] mb-1">Atanan Hat / Hatlar</label>
+                        <input type="text" id="ord-inp-hat" placeholder="Örn: Hat 103 (53 kg/s) veya Hat 109" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-sky-500">
                     </div>
                     <div class="sm:col-span-2 flex items-center gap-2 pt-1 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
                         <input type="checkbox" id="ord-inp-sync" checked class="w-4 h-4 rounded text-sky-600 bg-slate-900 border-slate-700 focus:ring-sky-500 cursor-pointer">
@@ -16117,6 +16144,147 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 const d = new Date().toISOString().split('T')[0];
                 const dInput = document.getElementById('ord-inp-date');
                 if (dInput) dInput.value = d;
+
+                // termin varsayılan 7 gün sonra
+                const dueInp = document.getElementById('ord-inp-due');
+                if (dueInp && !dueInp.value) {
+                    const due = new Date();
+                    due.setDate(due.getDate() + 7);
+                    dueInp.value = due.toISOString().split('T')[0];
+                }
+
+                updateHatRecommendation();
+            }
+        }
+
+        let recommendDebounce = null;
+        async function updateHatRecommendation() {
+            clearTimeout(recommendDebounce);
+            recommendDebounce = setTimeout(async () => {
+                const product = document.getElementById('ord-inp-product')?.value;
+                const order_qty = parseFloat(document.getElementById('ord-inp-qty')?.value) || 0;
+                const stock_qty = parseFloat(document.getElementById('ord-inp-stock')?.value) || 0;
+                const unit = document.getElementById('ord-inp-unit')?.value || 'Boy (Adet)';
+                const due_date = document.getElementById('ord-inp-due')?.value || '';
+                const customSetupRaw = document.getElementById('ord-inp-setup-time')?.value;
+                const custom_setup_min = customSetupRaw !== '' && !isNaN(customSetupRaw) ? parseFloat(customSetupRaw) : null;
+
+                const container = document.getElementById('hat-recommend-container');
+                if (!container || !product || order_qty <= 0) return;
+
+                container.innerHTML = '<div class="text-xs text-sky-400 italic py-1 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span> Hatlar ve kalıp süreleri analiz ediliyor...</div>';
+
+                try {
+                    const res = await fetch('/api/orders/recommend_hat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product, order_qty, stock_qty, unit, due_date, custom_setup_min })
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    renderHatRecommendations(data);
+                } catch(e) {
+                    console.error('updateHatRecommendation error:', e);
+                }
+            }, 120);
+        }
+
+        function renderHatRecommendations(data) {
+            const container = document.getElementById('hat-recommend-container');
+            if (!container) return;
+
+            const recs = data.recommendations || [];
+            if (recs.length === 0) {
+                container.innerHTML = '<div class="text-xs text-slate-500 italic py-1">Bu ürün için uygun hat bulunamadı.</div>';
+                return;
+            }
+
+            const best = recs[0];
+            const others = recs.slice(1);
+            const multi = data.multi_hat;
+
+            // En iyi hat kartı
+            let html = `
+            <div class="bg-slate-900 border ${best.score >= 80 ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-sky-500/40'} rounded-xl p-3 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-md ${best.score >= 80 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'} text-[11px] font-black uppercase tracking-wider">
+                            🥇 En İdeal Hat: ${best.hat}
+                        </span>
+                        <span class="text-xs font-black ${best.score >= 80 ? 'text-emerald-400' : 'text-sky-400'}">Uygunluk: ${best.score}/100</span>
+                    </div>
+                    <button type="button" onclick="applyRecommendedHat('${best.hat}', ${best.speed_kg_h}, ${best.shifts})" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Bu Hattı Ata
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pt-1.5 border-t border-slate-800">
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Kalıp Durumu:</span>
+                        <span class="font-bold ${best.is_mounted ? 'text-emerald-400' : 'text-amber-400'}">
+                            ${best.is_mounted ? '🟢 Hatta Takılı (0 dk)' : `🟡 Değişim Gerekli (+${Math.round(best.setup_min)} dk)`}
+                        </span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Hat Hızı:</span>
+                        <span class="font-bold text-white">${best.speed_kg_h} kg/sa</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Tahmini İmalat:</span>
+                        <span class="font-bold text-sky-400">${best.shifts} Vardiya (${best.total_lead_hrs} sa)</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Hattaki Bekleyen İş:</span>
+                        <span class="font-medium text-slate-300">${best.queue_hrs > 0 ? `${best.queue_hrs} sa` : 'Boşta (Hemen)'}</span>
+                    </div>
+                </div>
+
+                ${best.pros && best.pros.length > 0 ? `
+                    <div class="text-[10px] text-emerald-300/90 flex flex-wrap gap-x-3 gap-y-0.5 pt-0.5 font-medium">
+                        ${best.pros.map(p => `<span>✓ ${p}</span>`).join('')}
+                    </div>
+                ` : ''}
+                ${best.cons && best.cons.length > 0 ? `
+                    <div class="text-[10px] text-amber-400/90 flex flex-wrap gap-x-3 gap-y-0.5 font-medium">
+                        ${best.cons.map(c => `<span>⚠ ${c}</span>`).join('')}
+                    </div>
+                ` : ''}
+            </div>
+            `;
+
+            // Alternatif ve Çift Hat Seçenekleri
+            if (others.length > 0 || multi) {
+                html += `<div class="flex flex-wrap items-center gap-2 pt-1">`;
+                others.forEach(alt => {
+                    html += `
+                    <button type="button" onclick="applyRecommendedHat('${alt.hat}', ${alt.speed_kg_h}, ${alt.shifts})" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-[10px] font-bold text-slate-300 transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🥈 Alternatif: ${alt.hat}</span>
+                        <span class="text-slate-400">(${alt.speed_kg_h} kg/s · ${alt.is_mounted ? '0 dk setup' : '+' + Math.round(alt.setup_min) + ' dk'})</span>
+                    </button>
+                    `;
+                });
+
+                if (multi) {
+                    html += `
+                    <button type="button" onclick="applyRecommendedHat('${multi.hats}', ${multi.combined_speed}, ${multi.shifts})" class="px-2.5 py-1.5 bg-sky-950/80 hover:bg-sky-900 border border-sky-600/50 rounded-xl text-[10px] font-black text-sky-300 transition flex items-center gap-1.5 cursor-pointer" title="${multi.explanation}">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span>⚡ Çift Hat Dağıt: ${multi.hats} (${multi.shifts} Vardiya)</span>
+                    </button>
+                    `;
+                }
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function applyRecommendedHat(hatText, speed, shifts) {
+            const hatInp = document.getElementById('ord-inp-hat');
+            if (hatInp) {
+                hatInp.value = `${hatText} (${speed} kg/sa - ${shifts} Vardiya)`;
+                hatInp.classList.add('ring-2', 'ring-emerald-500');
+                setTimeout(() => hatInp.classList.remove('ring-2', 'ring-emerald-500'), 1200);
             }
         }
 

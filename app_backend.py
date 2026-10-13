@@ -3472,6 +3472,227 @@ def delete_order(order_id: str):
     save_orders(orders)
     return {"status": "ok", "deleted_id": order_id}
 
+class HatRecommendRequest(BaseModel):
+    product: str
+    order_qty: float
+    stock_qty: Optional[float] = 0.0
+    due_date: Optional[str] = ""
+    unit: Optional[str] = "Boy (Adet)"
+    custom_setup_min: Optional[float] = None
+
+HAT_CAPABILITIES = {
+    "50X80 PERVAZ": [
+        {"hat": "109", "name": "Hat 109 (Extrüder 9)", "speed_kg_h": 74.0, "mold_code": "KLP-PRV-50", "default_setup": 35},
+        {"hat": "103", "name": "Hat 103 (Extrüder 3)", "speed_kg_h": 53.0, "mold_code": "KLP-PRV-50", "default_setup": 35},
+        {"hat": "101", "name": "Hat 101 (Extrüder 1)", "speed_kg_h": 47.0, "mold_code": "KLP-PRV-50", "default_setup": 45}
+    ],
+    "80X80 PERVAZ": [
+        {"hat": "109", "name": "Hat 109 (Extrüder 9)", "speed_kg_h": 85.0, "mold_code": "KLP-103", "default_setup": 45},
+        {"hat": "101", "name": "Hat 101 (Extrüder 1)", "speed_kg_h": 46.5, "mold_code": "KLP-101", "default_setup": 40}
+    ],
+    "35X100 PERVAZ": [
+        {"hat": "101", "name": "Hat 101 (Extrüder 1)", "speed_kg_h": 63.8, "mold_code": "KLP-101", "default_setup": 40}
+    ],
+    "35X150 PERVAZ": [
+        {"hat": "101", "name": "Hat 101 (Extrüder 1)", "speed_kg_h": 41.2, "mold_code": "KLP-101", "default_setup": 40}
+    ],
+    "35X80 PERVAZ": [
+        {"hat": "101", "name": "Hat 101 (Extrüder 1)", "speed_kg_h": 44.2, "mold_code": "KLP-101", "default_setup": 40}
+    ],
+    "100 mm KASA": [
+        {"hat": "108", "name": "Hat 108 (Extrüder 8)", "speed_kg_h": 69.5, "mold_code": "KLP-106", "default_setup": 55},
+        {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 63.0, "mold_code": "KLP-102", "default_setup": 65}
+    ],
+    "140 mm KASA": [
+        {"hat": "106", "name": "Hat 106 (Extrüder 6)", "speed_kg_h": 74.1, "mold_code": "KLP-106", "default_setup": 55},
+        {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 65.0, "mold_code": "KLP-102", "default_setup": 65},
+        {"hat": "108", "name": "Hat 108 (Extrüder 8)", "speed_kg_h": 65.0, "mold_code": "KLP-106", "default_setup": 55}
+    ],
+    "200 mm KASA": [
+        {"hat": "107", "name": "Hat 107 (Extrüder 7)", "speed_kg_h": 84.6, "mold_code": "KLP-107", "default_setup": 60}
+    ],
+    "SEREN (Çift Kafa)": [
+        {"hat": "104", "name": "Hat 104 (Çift Kafa Extrüder 4)", "speed_kg_h": 99.2, "mold_code": "KLP-104", "default_setup": 45},
+        {"hat": "105", "name": "Hat 105 (Extrüder 5)", "speed_kg_h": 92.2, "mold_code": "KLP-105", "default_setup": 50}
+    ],
+    "SEREN": [
+        {"hat": "104", "name": "Hat 104 (Çift Kafa Extrüder 4)", "speed_kg_h": 99.2, "mold_code": "KLP-104", "default_setup": 45},
+        {"hat": "105", "name": "Hat 105 (Extrüder 5)", "speed_kg_h": 92.2, "mold_code": "KLP-105", "default_setup": 50}
+    ],
+    "SEREN(39mm)": [
+        {"hat": "107", "name": "Hat 107 (Özel Kalıp)", "speed_kg_h": 96.1, "mold_code": "KLP-107", "default_setup": 60}
+    ],
+    "DİŞBUDAK Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 187.9, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "TEAK Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 145.5, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "BEYAZ TEAK Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 148.4, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "VIZON Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 116.2, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "AY GRİ Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 144.9, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "ANTRASİT Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 111.8, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "SONOMO Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}
+    ],
+    "CAM ÇITASI": [
+        {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0, "mold_code": "KLP-102", "default_setup": 40}
+    ],
+    "U KAPAMA": [
+        {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 40.7, "mold_code": "KLP-102", "default_setup": 40}
+    ]
+}
+
+@app.post("/api/orders/recommend_hat")
+def recommend_hat(req: HatRecommendRequest):
+    data = load_data()
+    daily = data.get("daily_data", {})
+    molds = load_molds_data()
+    molds_by_code = {m.get("code"): m for m in molds}
+    orders = load_orders()
+
+    # Son vardiyada her hatta takılı olan kalıp / ürün
+    latest_mounted = {}
+    if daily:
+        sorted_days = sorted(daily.values(), key=lambda d: parse_order_date(d.get("date")) or datetime.min.date())
+        if sorted_days:
+            last_day = sorted_days[-1]
+            for sh in ["gunduz", "gece"]:
+                for e in last_day.get(sh, {}).get("extruders", []):
+                    if e.get("product") and float(e.get("qty", 0) or 0) > 0:
+                        latest_mounted[str(e.get("hat"))] = e.get("product")
+                for l in last_day.get(sh, {}).get("levha", []):
+                    if l.get("color") and float(l.get("qty", 0) or 0) > 0:
+                        latest_mounted[str(l.get("hat", "201"))] = l.get("color") + " Levha"
+
+    # Her hattın mevcut aktif siparişlerden gelen bekleyen iş yükü (saat)
+    hat_backlog = {}
+    for o in orders:
+        if o.get("status") != "TAMAMLANDI":
+            assigned = str(o.get("assigned_hats", ""))
+            rem_hrs = float(o.get("remaining_hours", 0) or 0)
+            if rem_hrs > 0:
+                for h_num in ["101", "102", "103", "104", "105", "106", "107", "108", "109", "201"]:
+                    if h_num in assigned:
+                        hat_backlog[h_num] = hat_backlog.get(h_num, 0.0) + rem_hrs
+
+    prod = req.product.strip()
+    candidates = HAT_CAPABILITIES.get(prod)
+    if not candidates:
+        for k, v in HAT_CAPABILITIES.items():
+            if match_product_daily(prod, "", k):
+                candidates = v
+                break
+    if not candidates:
+        candidates = [{"hat": "101", "name": "Hat 101", "speed_kg_h": 60.0, "mold_code": "KLP-101", "default_setup": 45}]
+
+    cat_info = PRODUCT_CATALOG.get(prod, {"unit_kg": 1.0})
+    unit_kg = cat_info.get("unit_kg", 1.0) if "KG" not in (req.unit or "").upper() else 1.0
+    net_qty = max(0.0, req.order_qty - (req.stock_qty or 0.0))
+    net_kg = net_qty * unit_kg
+
+    recommendations = []
+    for c in candidates:
+        h = str(c["hat"])
+        cur_prod = latest_mounted.get(h, "Boş / Beklemede")
+        is_mounted = match_product_daily(prod, "", cur_prod)
+        
+        mold = molds_by_code.get(c["mold_code"], {})
+        mold_setup = float(mold.get("setup_time_min") or c["default_setup"])
+        
+        base_setup_min = float(req.custom_setup_min) if req.custom_setup_min is not None and req.custom_setup_min >= 0 else mold_setup
+        effective_setup_min = 0.0 if is_mounted else base_setup_min
+        setup_hrs = round(effective_setup_min / 60.0, 2)
+
+        speed = float(c["speed_kg_h"])
+        prod_hrs = round(net_kg / speed, 1) if speed > 0 else 0.0
+        queue_hrs = round(hat_backlog.get(h, 0.0), 1)
+        total_lead_hrs = round(queue_hrs + setup_hrs + prod_hrs, 1)
+        shifts = round(total_lead_hrs / 12.0, 1)
+
+        score = 80
+        pros = []
+        cons = []
+
+        if is_mounted:
+            score += 15
+            pros.append("Kalıp şu an makinede takılı (0 dk değişim süresi, 0 ayar firesi)")
+        else:
+            score -= 10
+            cons.append(f"Kalıp değişimi gerekli (+{int(effective_setup_min)} dk setup süresi)")
+
+        if mold.get("status") == "maintenance_due":
+            score -= 15
+            cons.append("Kalıp bakım tonaj limitine ulaşmış (Kalıphane uyarısı)")
+        elif mold:
+            pros.append("Kalıp aktif ve çalışmaya hazır")
+
+        if queue_hrs > 0:
+            score -= min(15, int(queue_hrs / 5))
+            cons.append(f"Hatta bekleyen iş yükü var ({queue_hrs} saat / {round(queue_hrs/12, 1)} vardiya)")
+        else:
+            pros.append("Hat şu an boşta, hemen üretime girebilir")
+
+        if speed >= 70.0:
+            score += 5
+            pros.append(f"Yüksek hat çekim hızı ({speed} kg/sa)")
+
+        score = max(15, min(99, score))
+
+        recommendations.append({
+            "hat": f"Hat {h}",
+            "hat_num": h,
+            "hat_name": c["name"],
+            "score": score,
+            "is_mounted": is_mounted,
+            "current_product": cur_prod,
+            "setup_min": effective_setup_min,
+            "base_setup_min": base_setup_min,
+            "speed_kg_h": speed,
+            "prod_hrs": prod_hrs,
+            "queue_hrs": queue_hrs,
+            "total_lead_hrs": total_lead_hrs,
+            "shifts": shifts,
+            "mold_code": c.get("mold_code"),
+            "pros": pros,
+            "cons": cons
+        })
+
+    recommendations.sort(key=lambda x: x["score"], reverse=True)
+
+    multi_hat = None
+    if len(recommendations) >= 2 and net_qty >= 2000:
+        h1 = recommendations[0]
+        h2 = recommendations[1]
+        comb_speed = h1["speed_kg_h"] + h2["speed_kg_h"]
+        comb_lead_hrs = round((net_kg / comb_speed) + max(h1["setup_min"], h2["setup_min"])/60.0, 1)
+        comb_shifts = round(comb_lead_hrs / 12.0, 1)
+        multi_hat = {
+            "hats": f"{h1['hat']} & {h2['hat']}",
+            "combined_speed": comb_speed,
+            "shifts": comb_shifts,
+            "hours": comb_lead_hrs,
+            "explanation": f"İşi {h1['hat']} ve {h2['hat']} arasında bölüştürerek süreyi {comb_shifts} vardiyaya düşürür."
+        }
+
+    return {
+        "status": "ok",
+        "product": prod,
+        "net_qty": net_qty,
+        "net_kg": net_kg,
+        "recommendations": recommendations,
+        "best_hat": recommendations[0] if recommendations else None,
+        "multi_hat": multi_hat
+    }
+
 
 # =====================================================================
 # USER MANAGEMENT ENDPOINTS

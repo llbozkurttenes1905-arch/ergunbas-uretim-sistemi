@@ -5553,7 +5553,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "102",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 0.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "Hammadde denemesi yapıldı.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 0.0,
+          "desc": "Vakum motoru kontaktör arızası."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Sehpa yukarı aşağı hareket mekanizması arıza yaptı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 180.0,
+          "desc": "Kalıp temizliği yapıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

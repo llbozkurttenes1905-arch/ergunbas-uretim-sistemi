@@ -1503,14 +1503,6 @@
   },
   "raw_materials_stock": [
     {
-      "material": "PVC",
-      "current_stock_kg": 400000.0,
-      "min_stock_kg": 15000.0,
-      "silo_capacity_kg": 60000.0,
-      "lead_time_days": 3,
-      "unit": "kg"
-    },
-    {
       "material": "ASMIX 42555-2FB",
       "current_stock_kg": 1200.0,
       "min_stock_kg": 600.0,
@@ -1571,6 +1563,14 @@
       "current_stock_kg": 4000.0,
       "min_stock_kg": 400.0,
       "silo_capacity_kg": 2500.0,
+      "lead_time_days": 3,
+      "unit": "kg"
+    },
+    {
+      "material": "PVC",
+      "current_stock_kg": 150000.0,
+      "min_stock_kg": 15000.0,
+      "silo_capacity_kg": 60000.0,
       "lead_time_days": 3,
       "unit": "kg"
     },

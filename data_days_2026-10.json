@@ -6010,7 +6010,17 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 0.0,
+          "desc": "Hammadde değişimi yapıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

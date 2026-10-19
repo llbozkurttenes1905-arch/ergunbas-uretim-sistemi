@@ -60,7 +60,7 @@
             border-radius: 3px;
         }
 
-        /* ==== Silo & Stok Radarı Stilleri ==== */
+        /* ==== Hammadde Deposu & Stok Radarı Stilleri ==== */
         .silo-cylinder {
             position: relative;
             width: 100%;
@@ -2434,7 +2434,7 @@
                                 <h3 class="text-lg font-black text-white tracking-tight">Akıllı Sipariş & Montaj Simülatörü (Tersine Planlayıcı)</h3>
                                 <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-[10px] font-black uppercase tracking-wider">Reverse MRP Engine</span>
                             </div>
-                            <p class="text-xs text-slate-400">Müşteri siparişi veya hedef kapı adedini girin; sistem bileşen ihtiyaçlarını, devir mahsuplarını, hat sürelerini, darboğazı ve hammadde silo yeterliliğini anında hesaplasın</p>
+                            <p class="text-xs text-slate-400">Müşteri siparişi veya hedef kapı adedini girin; sistem bileşen ihtiyaçlarını, devir mahsuplarını, hat sürelerini, darboğazı ve hammadde depo stok yeterliliğini anında hesaplasın</p>
                         </div>
                     </div>
                 </div>
@@ -2513,11 +2513,11 @@
                         </div>
                     </div>
 
-                    <!-- Tablo 2: Tersine Hammadde Tüketimi & Silo Yeterliliği -->
+                    <!-- Tablo 2: Tersine Hammadde Tüketimi & Depo Stok Yeterliliği -->
                     <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <h4 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
-                                <i data-lucide="boxes" class="w-4 h-4 text-sky-400"></i> Tersine Hammadde & Silo Yeterliliği
+                                <i data-lucide="boxes" class="w-4 h-4 text-sky-400"></i> Tersine Hammadde & Depo Stok Yeterliliği
                             </h4>
                             <span id="sim-stock-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">Durum</span>
                         </div>
@@ -2527,7 +2527,7 @@
                                     <tr>
                                         <th class="p-2">Hammadde</th>
                                         <th class="p-2 text-right">Gereken (kg)</th>
-                                        <th class="p-2 text-right">Silodaki Mevcut</th>
+                                        <th class="p-2 text-right">Depodaki Mevcut</th>
                                         <th class="p-2 text-right">Fark / Durum</th>
                                     </tr>
                                 </thead>
@@ -2569,6 +2569,9 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2.5">
+                        <button onclick="openAllOrdersMaterialsModal()" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="boxes" class="w-4 h-4"></i> Tüm Siparişlerin Depo İhtiyacı
+                        </button>
                         <button onclick="openNewOrderModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-600/30 transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="plus" class="w-4 h-4"></i> Yeni Sipariş Gir
                         </button>
@@ -2738,6 +2741,154 @@
             </div>
         </div>
 
+        <!-- SİPARİŞ REÇETE & DEPO ANALİZİ MODAL'I -->
+        <div id="modal-order-recipe" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl p-6 space-y-4 shadow-2xl animate-in fade-in duration-200">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            <i data-lucide="flask-conical" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-white flex items-center gap-2">
+                                <span id="ord-recipe-modal-title">Sipariş Reçete & Depo Analizi</span>
+                                <span id="ord-recipe-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase"></span>
+                            </h3>
+                            <p class="text-xs text-slate-400" id="ord-recipe-modal-subtitle">Gereken mikser şarjları, hammadde ihtiyaçları ve depodaki mevcut stok yeterliliği</p>
+                        </div>
+                    </div>
+                    <button onclick="closeOrderRecipeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Sipariş & Reçete Özet Kartları -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Kalan İmalat Tonajı</span>
+                        <span id="ord-recipe-kpi-kg" class="text-base font-black text-white mt-0.5 block">0 kg</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Atanan Reçete</span>
+                        <span id="ord-recipe-kpi-name" class="text-xs font-black text-sky-400 mt-1 block truncate" title="">—</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Mikser Şarj Ağırlığı</span>
+                        <span id="ord-recipe-kpi-batch-kg" class="text-base font-black text-amber-400 mt-0.5 block">0 kg/şarj</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Gereken Şarj Adedi</span>
+                        <span id="ord-recipe-kpi-batches" class="text-base font-black text-emerald-400 mt-0.5 block">0 Şarj</span>
+                    </div>
+                </div>
+
+                <!-- Hammadde Yeterlilik Tablosu -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-300">
+                        <span>Reçete Bileşenleri & Depo Stok Kontrolü:</span>
+                        <span id="ord-recipe-summary-note" class="text-[11px] font-normal text-slate-400"></span>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800 max-h-72">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] sticky top-0 border-b border-slate-800">
+                                <tr>
+                                    <th class="p-2.5">Hammadde Adı</th>
+                                    <th class="p-2.5 text-right">Reçete Oranı (%)</th>
+                                    <th class="p-2.5 text-right font-bold text-white">Bu Siparişe Gereken</th>
+                                    <th class="p-2.5 text-right">Depodaki Mevcut</th>
+                                    <th class="p-2.5 text-right">Kalan Depo Stoğu</th>
+                                    <th class="p-2.5 text-center">Depo Durumu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ord-recipe-tbody" class="divide-y divide-slate-800/60 bg-slate-950/40 font-mono">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Alt İşlem Butonları -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-800">
+                    <div id="ord-recipe-alert-info" class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="closeOrderRecipeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                            Kapat
+                        </button>
+                        <button id="btn-deduct-materials" onclick="executeDeductMaterials()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i> Hammaddeyi Depodan Düş (Üretime Çık)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TÜM SİPARİŞLERİN TOPLU DEPO İHTİYACI MODAL'I -->
+        <div id="modal-all-orders-materials" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl p-6 space-y-4 shadow-2xl animate-in fade-in duration-200">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
+                            <i data-lucide="boxes" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-black text-white flex items-center gap-2">
+                                Tüm Aktif Siparişlerin Toplu Depo İhtiyacı
+                                <span id="all-orders-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase"></span>
+                            </h3>
+                            <p class="text-xs text-slate-400">Fabrikadaki tüm bekleyen ve üretimdeki siparişler için toplam hammadde ihtiyacı ve depo rezerv dengesi</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAllOrdersMaterialsModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Üst KPI -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 text-center">
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Kapsanan Aktif Sipariş</span>
+                        <span id="all-orders-kpi-count" class="text-lg font-black text-sky-400 mt-0.5 block">0 Adet</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Toplam İmal Edilecek Tonaj</span>
+                        <span id="all-orders-kpi-kg" class="text-lg font-black text-white mt-0.5 block">0 kg</span>
+                    </div>
+                    <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 col-span-2 sm:col-span-1">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase block">Genel Depo Karşılama</span>
+                        <span id="all-orders-kpi-cov" class="text-lg font-black text-emerald-400 mt-0.5 block">%100</span>
+                    </div>
+                </div>
+
+                <!-- Toplu Tablo -->
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-slate-300">Fabrika Geneli Hammadde Rezerv Tablosu:</span>
+                    <div class="overflow-x-auto custom-scrollbar rounded-xl border border-slate-800 max-h-80">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] sticky top-0 border-b border-slate-800">
+                                <tr>
+                                    <th class="p-2.5">Hammadde Deposu</th>
+                                    <th class="p-2.5 text-right font-bold text-white">Toplam Gereken (kg)</th>
+                                    <th class="p-2.5 text-right">Depodaki Mevcut (kg)</th>
+                                    <th class="p-2.5 text-right">Kalan Net Stok (kg)</th>
+                                    <th class="p-2.5 text-right">Karşılama Oranı</th>
+                                    <th class="p-2.5 text-center">Durum / Tedarik Tavsiyesi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-orders-materials-tbody" class="divide-y divide-slate-800/60 bg-slate-950/40 font-mono">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-xs text-slate-400">
+                    <span>Depo stokları canlı envanter kayıtlarından alınmıştır.</span>
+                    <button onclick="closeAllOrdersMaterialsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl transition">
+                        Kapat
+                    </button>
+                </div>
+            </div>
+        </div>
+
 
         <!-- TAB: MİKSER & GERİ DÖNÜŞÜM -->
         <div id="view-mixer" class="space-y-6 hidden">
@@ -2834,7 +2985,7 @@
                 <!-- Kütle Dengesi -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2 shadow-sm">
                     <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
-                        <span>Kütle Dengesi & Silo</span>
+                        <span>Kütle Dengesi & Depo Stoğu</span>
                         <i data-lucide="scale" class="w-4 h-4 text-violet-400"></i>
                     </div>
                     <div class="text-2xl font-black text-violet-400" id="mixer-kpi-balance">0 kg</div>
@@ -2849,7 +3000,7 @@
             </div>
 
             <!-- ============================================================== -->
-            <!-- 🚨 HAMMADDE KRİTİK STOK RADARI & SİLO ERKEN UYARISI -->
+            <!-- 🚨 HAMMADDE KRİTİK STOK RADARI & DEPO ERKEN UYARISI -->
             <!-- ============================================================== -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-lg">
                 <!-- Erken Uyarı Alarm Bandı (Eğer kritik/uyarı varsa görünür) -->
@@ -2864,10 +3015,10 @@
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="text-lg font-black text-white tracking-tight">Hammadde Kritik Stok Radarı & Silo Erken Uyarısı</h3>
+                                <h3 class="text-lg font-black text-white tracking-tight">Hammadde Kritik Stok Radarı & Depo Erken Uyarısı</h3>
                                 <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-bold border border-slate-700">Canlı Telemetri</span>
                             </div>
-                            <p class="text-xs text-slate-400">Günlük tüketim hızına (run-rate) göre silo tükenme süreleri, güvenlik stokları ve tahmini sipariş tarihleri</p>
+                            <p class="text-xs text-slate-400">Günlük tüketim hızına (run-rate) göre depo stok tükenme süreleri, güvenlik stokları ve tahmini sipariş tarihleri</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -2880,7 +3031,7 @@
                     </div>
                 </div>
 
-                <!-- Silo Kartları Grid'i -->
+                <!-- Hammadde Depo Kartları Grid'i -->
                 <div id="silo-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     <!-- Dinamik doldurulacak -->
                 </div>
@@ -3541,7 +3692,7 @@
                             <i data-lucide="edit-3" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-black text-white">Hammadde Stok & Silo Miktarlarını Güncelle</h3>
+                            <h3 class="text-lg font-black text-white">Hammadde Depo Stok Miktarlarını Güncelle</h3>
                             <p class="text-xs text-slate-400">Depo sayımı veya yeni hammadde irsaliyelerini sisteme işleyin</p>
                         </div>
                     </div>
@@ -3559,7 +3710,7 @@
                                     <th class="p-2.5">Hammadde</th>
                                     <th class="p-2.5">Mevcut Stok (kg)</th>
                                     <th class="p-2.5">Kritik Eşik (kg)</th>
-                                    <th class="p-2.5">Silo Kapasitesi (kg)</th>
+                                    <th class="p-2.5">Depo Kapasitesi (kg)</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-update-stock-tbody" class="divide-y divide-slate-800"></tbody>
@@ -3677,7 +3828,7 @@
                     <span class="font-bold text-purple-400 flex items-center gap-1.5">
                         <i data-lucide="boxes" class="w-3.5 h-3.5"></i> 4. BOM & Mikser Reçeteleri
                     </span>
-                    <p class="text-slate-400 text-[11px]">Mikser hammadde formülleri, PVC, Kalsit, Katkı oranları (%) ve silo depolama adresleri.</p>
+                    <p class="text-slate-400 text-[11px]">Mikser hammadde formülleri, PVC, Kalsit, Katkı oranları (%) ve hammadde ambar adresleri.</p>
                 </div>
             </div>
 
@@ -7908,7 +8059,7 @@
             xferPipe.position.set(0.4, legH + 0.85, 0);
             group.add(xferPipe);
 
-            // Arka Hammadde Ara Stok Silosu (Buffer Silo)
+            // Arka Hammadde Ara Stok Deposu (Buffer Ambarı)
             const siloBody = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 3.6, 24), siloMat);
             siloBody.position.set(-0.6, legH + 4.0, -1.8);
             siloBody.castShadow = true;
@@ -9997,7 +10148,7 @@
                             </div>
                             <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1.5"><i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i> Malzeme Çıkışı:</span>
-                                <span class="font-bold text-cyan-400">Pnömatik Fan + Big-Bag / Silo Sevk</span>
+                                <span class="font-bold text-cyan-400">Pnömatik Fan + Big-Bag / Depo Sevk</span>
                             </div>
                             <div class="flex items-center justify-between text-slate-400 pt-1.5 border-t border-slate-800/80">
                                 <span class="flex items-center gap-1.5"><i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i> İSG / Ses İzolasyonu:</span>
@@ -10205,7 +10356,7 @@
                             </div>
                         </div>
 
-                        <!-- Dozaj & Silo İletim Hattı -->
+                        <!-- Dozaj & Depo İletim Hattı -->
                         <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
                             <div class="flex items-center justify-between text-slate-400">
                                 <span class="flex items-center gap-1.5"><i data-lucide="git-branch" class="w-3.5 h-3.5 text-emerald-400"></i> Pnömatik Sevk Hattı:</span>
@@ -14417,7 +14568,7 @@
                 // 7. Günlük Detaylı Özet ve Gün Seçici
                 initMixerDailySection(mixerDashboardData.daily_details || []);
 
-                // 8. Hammadde Kritik Stok Radarı & Silo Erken Uyarısı
+                // 8. Hammadde Kritik Stok Radarı & Depo Erken Uyarısı
                 await loadRawMaterialsStock();
 
                 safeCreateIcons();
@@ -15657,13 +15808,13 @@
                     alertBanner.className = "p-3 rounded-xl border border-emerald-500/30 bg-emerald-950/20 text-emerald-300 flex items-center gap-2.5 text-xs font-semibold";
                     alertBanner.innerHTML = `
                         <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                        <span>🟢 Tüm hammadde ve silo stokları güvenli çalışma seviyesinde. Acil sipariş ihtiyacı bulunmuyor.</span>
+                        <span>🟢 Tüm hammadde ve depo stokları güvenli çalışma seviyesinde. Acil sipariş ihtiyacı bulunmuyor.</span>
                     `;
                     alertBanner.classList.remove('hidden');
                 }
             }
 
-            // 2. Silo Kartları
+            // 2. Depo Kartları
             const container = document.getElementById('silo-cards-container');
             if (!container) return;
 
@@ -15704,7 +15855,7 @@
                                 </div>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none drop-shadow">
                                     <span class="text-xl font-black text-white">%${item.fill_pct.toFixed(0)}</span>
-                                    <span class="text-[10px] font-bold text-slate-300">Silo Doluluk</span>
+                                    <span class="text-[10px] font-bold text-slate-300">Depo Doluluk</span>
                                 </div>
                             </div>
 
@@ -15901,9 +16052,9 @@
                     </div>
 
                     <div class="bg-slate-950 border ${statusBg} rounded-xl p-3.5">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Silo & Stok Durumu</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Depo Stok Durumu</span>
                         <div class="text-base font-black ${statusColor} mt-1">${statusLabel}</div>
-                        <span class="text-[10px] text-slate-400 mt-0.5 block">${sim.is_ready_for_production ? 'Tüm hammaddeler siloda tam' : 'Eksik hammadde için sipariş verilmeli'}</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">${sim.is_ready_for_production ? 'Tüm hammaddeler depoda mevcut' : 'Eksik hammadde için sipariş verilmeli'}</span>
                     </div>
                 `;
             }
@@ -15947,7 +16098,7 @@
                 compTbody.innerHTML = rows;
             }
 
-            // 4. Hammadde ve Silo Yeterlilik Tablosu
+            // 4. Hammadde ve Depo Stok Yeterlilik Tablosu
             const matTbody = document.getElementById('sim-materials-tbody');
             const matBadge = document.getElementById('sim-stock-status-badge');
             if (matBadge) {
@@ -15995,8 +16146,8 @@ Mikser Toplam Şarj İhtiyacı: ${s.mixer.total_sarj} Şarj
 - Seren: ${s.components.seren.net_produce.toLocaleString('tr-TR')} adet (${s.components.seren.est_kg.toLocaleString('tr-TR')} kg)
 - Levha: ${s.components.levha.net_produce.toLocaleString('tr-TR')} plaka (${s.components.levha.est_kg.toLocaleString('tr-TR')} kg)
 
-[HAMMADDE SİLO DURUMU]
-${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString('tr-TR')} kg | Silo ${m.available_stock_kg.toLocaleString('tr-TR')} kg | ${m.is_sufficient ? 'YETERLİ' : 'EKSİK (' + m.shortage_kg.toLocaleString('tr-TR') + ' kg SİPARİŞ VERİLMELİ)'}`).join('\n')}
+[HAMMADDE DEPO DURUMU]
+${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString('tr-TR')} kg | Depo ${m.available_stock_kg.toLocaleString('tr-TR')} kg | ${m.is_sufficient ? 'YETERLİ' : 'EKSİK (' + m.shortage_kg.toLocaleString('tr-TR') + ' kg SİPARİŞ VERİLMELİ)'}`).join('\n')}
 ======================================================
             `.trim();
 
@@ -16111,7 +16262,11 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                             ${o.status}
                         </span>
                     </td>
-                    <td class="p-3 text-center">
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="openOrderRecipeModal('${o.id}')" title="Reçete & Depo Analizi" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 hover:text-white border border-indigo-500/30 text-[11px] font-bold transition mr-1.5 cursor-pointer">
+                            <i data-lucide="flask-conical" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>Reçete & Depo</span>
+                        </button>
                         <button onclick="deleteOrder('${o.id}')" title="Siparişi Sil" class="text-slate-500 hover:text-red-400 p-1 rounded transition opacity-50 group-hover:opacity-100">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
@@ -16342,6 +16497,174 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             } catch(e) {
                 console.error('deleteOrder error:', e);
             }
+        }
+
+        /* =====================================================================
+           4. SİPARİŞ REÇETE & HAMMADDE DEPO DÜŞÜM MODAL FONKSİYONLARI
+           ===================================================================== */
+        let currentRecipeModalOrderId = null;
+
+        async function openOrderRecipeModal(orderId) {
+            currentRecipeModalOrderId = orderId;
+            const m = document.getElementById('modal-order-recipe');
+            if (!m) return;
+            m.classList.remove('hidden');
+
+            const titleEl = document.getElementById('ord-recipe-modal-title');
+            const badgeEl = document.getElementById('ord-recipe-status-badge');
+            const tbody = document.getElementById('ord-recipe-tbody');
+            const alertInfo = document.getElementById('ord-recipe-alert-info');
+            
+            tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Reçete ve depo verileri hesaplanıyor...</td></tr>';
+            
+            try {
+                const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}/recipe_materials`);
+                if (!res.ok) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-rose-400">Veri yüklenemedi.</td></tr>';
+                    return;
+                }
+                const data = await res.json();
+                
+                titleEl.textContent = `${data.order_id} • ${data.customer} (${data.product})`;
+                document.getElementById('ord-recipe-kpi-kg').textContent = `${(data.target_kg || 0).toLocaleString('tr-TR')} kg`;
+                document.getElementById('ord-recipe-kpi-name').textContent = data.recipe_name || 'Standart Reçete';
+                document.getElementById('ord-recipe-kpi-name').title = data.recipe_name || '';
+                document.getElementById('ord-recipe-kpi-batch-kg').textContent = `${data.batch_kg} kg/şarj`;
+                document.getElementById('ord-recipe-kpi-batches').textContent = `${data.needed_batches} Şarj`;
+
+                if (data.overall_sufficient) {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                    badgeEl.textContent = 'Depo Stoğu Yeterli';
+                    alertInfo.innerHTML = '<span class="text-emerald-400 flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i> Tüm hammaddeler depoda tam mevcuttur. Sipariş doğrudan üretime çıkabilir.</span>';
+                } else {
+                    badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse';
+                    badgeEl.textContent = 'Eksik Hammadde Var';
+                    const shortNames = (data.critical_shortages || []).map(s => `${s.material} (-${s.shortage_kg} kg)`).join(', ');
+                    alertInfo.innerHTML = `<span class="text-rose-400 flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Tedarik Gerekli: ${shortNames}</span>`;
+                }
+
+                let rows = '';
+                (data.ingredients || []).forEach(ing => {
+                    const suffClass = ing.is_sufficient ? 'text-emerald-400' : 'text-rose-400 font-bold';
+                    const suffBadge = ing.is_sufficient 
+                        ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">🟢 Yeterli</span>'
+                        : `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-black">🔴 -${ing.shortage_kg.toLocaleString('tr-TR')} kg Eksik</span>`;
+
+                    rows += `
+                        <tr class="hover:bg-slate-900/60 transition">
+                            <td class="p-2.5 font-bold text-white">
+                                ${ing.material}
+                                <span class="text-[10px] text-slate-500 block font-normal">Depo Kartı: ${ing.stock_material_name}</span>
+                            </td>
+                            <td class="p-2.5 text-right text-slate-400">%${ing.recipe_ratio_pct}</td>
+                            <td class="p-2.5 text-right font-black text-white">${ing.required_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-right text-slate-300">${ing.available_stock_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-right ${suffClass}">${ing.remaining_stock_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-center">${suffBadge}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rows;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } catch(err) {
+                console.error('openOrderRecipeModal error:', err);
+            }
+        }
+
+        function closeOrderRecipeModal() {
+            const m = document.getElementById('modal-order-recipe');
+            if (m) m.classList.add('hidden');
+            currentRecipeModalOrderId = null;
+        }
+
+        async function executeDeductMaterials() {
+            if (!currentRecipeModalOrderId) return;
+            if (!confirm(`${currentRecipeModalOrderId} siparişi için gereken hammadde miktarları depodaki mevcut stoktan düşülecektir. Onaylıyor musunuz?`)) {
+                return;
+            }
+            try {
+                const res = await fetch(`/api/orders/${encodeURIComponent(currentRecipeModalOrderId)}/deduct_materials`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const d = await res.json();
+                if (res.ok) {
+                    if (typeof showToast === 'function') showToast(`${currentRecipeModalOrderId} siparişinin hammaddeleri depodan başarıyla düşüldü.`);
+                    await openOrderRecipeModal(currentRecipeModalOrderId);
+                    if (typeof loadRawMaterialsStock === 'function') loadRawMaterialsStock(false);
+                    if (typeof loadOrdersTable === 'function') loadOrdersTable();
+                } else {
+                    alert(d.detail || "Hammadde düşümü başarısız oldu.");
+                }
+            } catch(e) {
+                alert("Bağlantı hatası: " + e);
+            }
+        }
+
+        async function openAllOrdersMaterialsModal() {
+            const m = document.getElementById('modal-all-orders-materials');
+            if (!m) return;
+            m.classList.remove('hidden');
+
+            const tbody = document.getElementById('all-orders-materials-tbody');
+            const badge = document.getElementById('all-orders-status-badge');
+            tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Tüm siparişlerin depo ihtiyaçları hesaplanıyor...</td></tr>';
+
+            try {
+                const res = await fetch('/api/orders/all_materials_demand');
+                if (!res.ok) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-rose-400">Veri yüklenemedi.</td></tr>';
+                    return;
+                }
+                const data = await res.json();
+
+                document.getElementById('all-orders-kpi-count').textContent = `${data.active_orders_count || 0} Sipariş`;
+                document.getElementById('all-orders-kpi-kg').textContent = `${(data.total_production_kg || 0).toLocaleString('tr-TR')} kg`;
+
+                if (data.all_sufficient) {
+                    badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                    badge.textContent = 'Fabrika Deposu Yeterli';
+                    document.getElementById('all-orders-kpi-cov').textContent = '%100';
+                    document.getElementById('all-orders-kpi-cov').className = 'text-lg font-black text-emerald-400 mt-0.5 block';
+                } else {
+                    badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse';
+                    badge.textContent = 'Eksik Hammadde Var';
+                    document.getElementById('all-orders-kpi-cov').textContent = 'Kritik Açık';
+                    document.getElementById('all-orders-kpi-cov').className = 'text-lg font-black text-rose-400 mt-0.5 block';
+                }
+
+                let rows = '';
+                (data.materials || []).forEach(m => {
+                    const isSuff = m.is_sufficient;
+                    const diffClass = isSuff ? 'text-emerald-400' : 'text-rose-400 font-bold';
+                    const badgeHtml = isSuff
+                        ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold">🟢 Yeterli (Stok Güvende)</span>'
+                        : `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-black animate-pulse">🔴 ${m.shortage_kg.toLocaleString('tr-TR')} kg Satın Alınmalı</span>`;
+
+                    rows += `
+                        <tr class="hover:bg-slate-900/60 transition">
+                            <td class="p-2.5 font-bold text-white">
+                                ${m.material}
+                                <span class="text-[10px] text-slate-500 block font-normal">${m.orders_count} siparişte kullanılıyor</span>
+                            </td>
+                            <td class="p-2.5 text-right font-black text-white">${m.total_needed_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-right text-slate-300">${m.available_stock_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-right ${diffClass}">${m.balance_kg.toLocaleString('tr-TR')} kg</td>
+                            <td class="p-2.5 text-right font-bold text-sky-300">%${m.coverage_pct}</td>
+                            <td class="p-2.5 text-center">${badgeHtml}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rows;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            } catch(err) {
+                console.error('openAllOrdersMaterialsModal error:', err);
+            }
+        }
+
+        function closeAllOrdersMaterialsModal() {
+            const m = document.getElementById('modal-all-orders-materials');
+            if (m) m.classList.add('hidden');
         }
 
         // Sayfa açıldığında sipariş tablosunu otomatik yükle

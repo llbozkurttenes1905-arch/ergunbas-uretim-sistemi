@@ -3697,6 +3697,284 @@ def recommend_hat(req: HatRecommendRequest):
 
 
 # =====================================================================
+# SİPARİŞ REÇETE & HAMMADDE DEPO DÜŞÜM / ANALİZ ENDPOINTS
+# =====================================================================
+
+MATERIAL_STOCK_MAP = {
+    "HURDA": "40 AMBAR",
+    "40 AMBAR": "40 AMBAR",
+    "KALSİT": "KALSİT 5K",
+    "KALSIT": "KALSİT 5K",
+    "KALSİT 5K": "KALSİT 5K",
+    "KALSIT 5K": "KALSİT 5K",
+    "KALSİT 1K": "KALSİT 1K",
+    "KALSIT 1K": "KALSİT 1K",
+    "GERİ DÖNÜŞÜM": "GERİ DÖNÜŞÜM",
+    "GERI DONUSUM": "GERİ DÖNÜŞÜM",
+    "TALAŞ": "TALAŞ",
+    "TALAS": "TALAŞ",
+    "ASC 1010A": "ASC 1010A",
+    "PVC": "PVC",
+    "CPE": "CPE",
+    "CPE-135": "CPE",
+    "PE WAX": "PE WAX",
+    "LEVHA ÇAPAK": "GERİ DÖNÜŞÜM",
+    "LEVHA CAPAK": "GERİ DÖNÜŞÜM",
+    "KIRIK AMBAR": "GERİ DÖNÜŞÜM",
+    "ASMIX 42555-2FB": "ASMIX 42555-2FB",
+    "ASMIX 42555 FX": "ASMIX 42555-2FB"
+}
+
+def resolve_order_recipe(order: dict, recipes: list):
+    prod = (order.get("product") or "").upper()
+    cat = (order.get("category") or "").lower()
+    recipes_by_id = {r.get("id"): r for r in recipes}
+
+    if cat == "levha" or "LEVHA" in prod:
+        if "BEYAZ" in prod:
+            return recipes_by_id.get("rec_levha_beyaz") or recipes_by_id.get("rec_levha_renkli")
+        return recipes_by_id.get("rec_levha_renkli") or recipes_by_id.get("rec_levha_renkli_9")
+    if cat == "seren" or "SEREN" in prod:
+        return recipes_by_id.get("rec_seren")
+    if "DECK" in prod:
+        if any(w in prod for w in ["ANTRASIT", "ANTRASİT", "SIYAH", "SİYAH"]):
+            return recipes_by_id.get("rec_deck_antrasit")
+        return recipes_by_id.get("rec_deck_kahve")
+    if "KITKAT" in prod or "KİTKAT" in prod or "KIT KAT" in prod:
+        if any(w in prod for w in ["ANTRASIT", "ANTRASİT", "SIYAH", "SİYAH"]):
+            return recipes_by_id.get("rec_kitkat_antrasit")
+        return recipes_by_id.get("rec_kitkat_kahve")
+    return recipes_by_id.get("rec_kasa_pervaz") or (recipes[0] if recipes else None)
+
+
+@app.get("/api/orders/{order_id}/recipe_materials")
+def get_order_recipe_materials(order_id: str):
+    orders_res = get_orders()
+    order = next((o for o in orders_res.get("orders", []) if str(o.get("id")) == str(order_id)), None)
+    if not order:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    data = load_data()
+    recipes = data.get("mixer_recipes", [])
+    raw_stocks = data.get("raw_materials_stock", [])
+    stock_dict = {s["material"].strip(): float(s.get("current_stock_kg", 0) or 0) for s in raw_stocks}
+
+    recipe = resolve_order_recipe(order, recipes)
+    if not recipe:
+        raise HTTPException(status_code=400, detail="Bu sipariş için uygun reçete tanımlı değil")
+
+    target_kg = float(order.get("remaining_kg", 0) or 0)
+    if target_kg <= 0 and order.get("status") == "TAMAMLANDI":
+        target_kg = float(order.get("order_kg", 0) or 0)
+
+    batch_kg = float(recipe.get("batch_kg", 250.0) or 250.0)
+    needed_batches = math.ceil(target_kg / batch_kg) if target_kg > 0 else 0
+
+    ingredients_res = []
+    overall_sufficient = True
+    critical_shortages = []
+
+    for ing in recipe.get("ingredients", []):
+        mat_raw = ing.get("material", "").strip()
+        ing_kg = float(ing.get("kg", 0) or 0)
+        ratio_pct = round((ing_kg / batch_kg) * 100, 2)
+        required_kg = round(target_kg * (ing_kg / batch_kg), 1)
+
+        mapped_stock_key = MATERIAL_STOCK_MAP.get(mat_raw, mat_raw)
+        avail_stock = stock_dict.get(mapped_stock_key, stock_dict.get(mat_raw, 5000.0))
+        rem_stock = round(avail_stock - required_kg, 1)
+        is_suff = (avail_stock >= required_kg)
+        shortage = round(max(0.0, required_kg - avail_stock), 1)
+
+        if not is_suff:
+            overall_sufficient = False
+            critical_shortages.append({
+                "material": mat_raw,
+                "stock_name": mapped_stock_key,
+                "shortage_kg": shortage
+            })
+
+        ingredients_res.append({
+            "material": mat_raw,
+            "stock_material_name": mapped_stock_key,
+            "recipe_ratio_pct": ratio_pct,
+            "unit_batch_kg": ing_kg,
+            "required_kg": required_kg,
+            "available_stock_kg": avail_stock,
+            "remaining_stock_kg": rem_stock,
+            "is_sufficient": is_suff,
+            "shortage_kg": shortage
+        })
+
+    return {
+        "order_id": order.get("id"),
+        "customer": order.get("customer"),
+        "product": order.get("product"),
+        "status": order.get("status"),
+        "target_kg": target_kg,
+        "recipe_id": recipe.get("id"),
+        "recipe_name": recipe.get("name"),
+        "batch_kg": batch_kg,
+        "needed_batches": needed_batches,
+        "ingredients": ingredients_res,
+        "overall_sufficient": overall_sufficient,
+        "critical_shortages": critical_shortages
+    }
+
+
+class DeductMaterialsRequest(BaseModel):
+    custom_kg: Optional[float] = None
+
+@app.post("/api/orders/{order_id}/deduct_materials")
+def deduct_order_materials(order_id: str, req: Optional[DeductMaterialsRequest] = None):
+    orders_res = get_orders()
+    order = next((o for o in orders_res.get("orders", []) if str(o.get("id")) == str(order_id)), None)
+    if not order:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    data = load_data()
+    recipes = data.get("mixer_recipes", [])
+    raw_stocks = data.get("raw_materials_stock", [])
+
+    recipe = resolve_order_recipe(order, recipes)
+    if not recipe:
+        raise HTTPException(status_code=400, detail="Reçete bulunamadı")
+
+    target_kg = req.custom_kg if (req and req.custom_kg and req.custom_kg > 0) else float(order.get("remaining_kg", 0) or 0)
+    if target_kg <= 0:
+        target_kg = float(order.get("order_kg", 0) or 0)
+
+    batch_kg = float(recipe.get("batch_kg", 250.0) or 250.0)
+    deducted_details = []
+
+    for ing in recipe.get("ingredients", []):
+        mat_raw = ing.get("material", "").strip()
+        ing_kg = float(ing.get("kg", 0) or 0)
+        req_kg = round(target_kg * (ing_kg / batch_kg), 1)
+        mapped_key = MATERIAL_STOCK_MAP.get(mat_raw, mat_raw)
+
+        found = False
+        for s in raw_stocks:
+            if s.get("material", "").strip() == mapped_key or s.get("material", "").strip() == mat_raw:
+                cur = float(s.get("current_stock_kg", 0) or 0)
+                new_val = max(0.0, round(cur - req_kg, 1))
+                s["current_stock_kg"] = new_val
+                deducted_details.append({
+                    "material": s["material"],
+                    "deducted_kg": req_kg,
+                    "previous_stock_kg": cur,
+                    "new_stock_kg": new_val
+                })
+                found = True
+                break
+        if not found:
+            new_s = {
+                "material": mapped_key,
+                "current_stock_kg": max(0.0, 5000.0 - req_kg),
+                "min_stock_kg": 1000.0,
+                "silo_capacity_kg": 30000.0,
+                "lead_time_days": 3,
+                "unit": "kg"
+            }
+            raw_stocks.append(new_s)
+            deducted_details.append({
+                "material": mapped_key,
+                "deducted_kg": req_kg,
+                "previous_stock_kg": 5000.0,
+                "new_stock_kg": new_s["current_stock_kg"]
+            })
+
+    data["raw_materials_stock"] = raw_stocks
+    save_data(data)
+
+    return {
+        "status": "success",
+        "order_id": order_id,
+        "deducted_kg_target": target_kg,
+        "recipe_name": recipe.get("name"),
+        "deductions": deducted_details,
+        "message": f"{order_id} için {target_kg} kg üretime ait hammadde miktarları depodan başarıyla düşüldü."
+    }
+
+
+@app.get("/api/orders/all_materials_demand")
+def get_all_orders_materials_demand():
+    orders_res = get_orders()
+    orders = orders_res.get("orders", [])
+
+    data = load_data()
+    recipes = data.get("mixer_recipes", [])
+    raw_stocks = data.get("raw_materials_stock", [])
+    stock_dict = {s["material"].strip(): float(s.get("current_stock_kg", 0) or 0) for s in raw_stocks}
+
+    aggregated_demand = {}
+    active_orders_count = 0
+    total_production_kg = 0.0
+
+    for o in orders:
+        if o.get("status") == "TAMAMLANDI":
+            continue
+        rem_kg = float(o.get("remaining_kg", 0) or 0)
+        if rem_kg <= 0:
+            continue
+
+        active_orders_count += 1
+        total_production_kg += rem_kg
+        recipe = resolve_order_recipe(o, recipes)
+        if not recipe:
+            continue
+
+        batch_kg = float(recipe.get("batch_kg", 250.0) or 250.0)
+        for ing in recipe.get("ingredients", []):
+            mat_raw = ing.get("material", "").strip()
+            mapped = MATERIAL_STOCK_MAP.get(mat_raw, mat_raw)
+            ing_kg = float(ing.get("kg", 0) or 0)
+            req_kg = rem_kg * (ing_kg / batch_kg)
+
+            if mapped not in aggregated_demand:
+                aggregated_demand[mapped] = {
+                    "material": mapped,
+                    "total_needed_kg": 0.0,
+                    "orders_affecting": 0
+                }
+            aggregated_demand[mapped]["total_needed_kg"] += req_kg
+            aggregated_demand[mapped]["orders_affecting"] += 1
+
+    summary_list = []
+    all_sufficient = True
+    for mat_name, d in aggregated_demand.items():
+        needed = round(d["total_needed_kg"], 1)
+        avail = stock_dict.get(mat_name, 5000.0)
+        balance = round(avail - needed, 1)
+        is_suff = (avail >= needed)
+        shortage = round(max(0.0, needed - avail), 1)
+        cov_pct = min(999.0, round((avail / needed * 100), 1)) if needed > 0 else 100.0
+
+        if not is_suff:
+            all_sufficient = False
+
+        summary_list.append({
+            "material": mat_name,
+            "total_needed_kg": needed,
+            "available_stock_kg": avail,
+            "balance_kg": balance,
+            "is_sufficient": is_suff,
+            "shortage_kg": shortage,
+            "coverage_pct": cov_pct,
+            "orders_count": d["orders_affecting"]
+        })
+
+    summary_list.sort(key=lambda x: (x["is_sufficient"], -x["total_needed_kg"]))
+
+    return {
+        "active_orders_count": active_orders_count,
+        "total_production_kg": round(total_production_kg, 1),
+        "all_sufficient": all_sufficient,
+        "materials": summary_list
+    }
+
+
+# =====================================================================
 # USER MANAGEMENT ENDPOINTS
 # =====================================================================
 
@@ -4719,7 +4997,7 @@ def export_excel(month: Optional[str] = None):
             pct = (ing_kg / batch_kg) if batch_kg > 0 else 0.0
 
             mat_code = f"HAM-{mat_name[:6].upper().replace(' ', '')}"
-            depo = "Silo 1 (PVC)" if "PVC" in mat_name or "HURDA" in mat_name else ("Silo 2 (Kalsit)" if "KALSİT" in mat_name or "KALS" in mat_name else "Katkı Ambarı")
+            depo = "Ana Depo 1 (PVC/Hurda)" if "PVC" in mat_name or "HURDA" in mat_name else ("Kalsit Deposu (Kalsit)" if "KALSİT" in mat_name or "KALS" in mat_name else "Katkı Ambarı")
             kullanim = "Ana Matris Polimer" if "PVC" in mat_name or "HURDA" in mat_name else ("Dolgu & Rijitlik" if "KALS" in mat_name else "Proses Yardımcısı / Kaydırıcı")
 
             ws_bom.append([

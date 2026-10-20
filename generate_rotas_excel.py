@@ -10,45 +10,45 @@ if APP_DIR not in sys.path:
 import app_backend
 
 PRODUCT_DIMENSIONS = {
-    # Pervazlar
-    "50X80 PERVAZ": {"dim": "50 x 80 mm (L=2.20 m)", "unit_name": "Boy", "desc": "50x80 Oval/Düz Kulaklı Pervaz Profili"},
-    "80X80 PERVAZ": {"dim": "80 x 80 mm (L=2.20 m)", "unit_name": "Boy", "desc": "80x80 Geniş Kulaklı Pervaz Profili"},
-    "35X100 PERVAZ": {"dim": "35 x 100 mm (L=2.20 m)", "unit_name": "Boy", "desc": "35x100 Düz Pervaz Profili"},
-    "35X150 PERVAZ": {"dim": "35 x 150 mm (L=2.20 m)", "unit_name": "Boy", "desc": "35x150 Ekstra Geniş Pervaz"},
-    "35X80 PERVAZ": {"dim": "35 x 80 mm (L=2.20 m)", "unit_name": "Boy", "desc": "35x80 Standart Pervaz Profili"},
+    # Pervazlar (Standart Boy: 2.20 Metre)
+    "50X80 PERVAZ": {"boy": "2.20 Metre", "kesit": "50 x 80 mm", "unit_name": "Boy", "desc": "50x80 Oval/Düz Kulaklı Pervaz Profili"},
+    "80X80 PERVAZ": {"boy": "2.20 Metre", "kesit": "80 x 80 mm", "unit_name": "Boy", "desc": "80x80 Geniş Kulaklı Pervaz Profili"},
+    "35X100 PERVAZ": {"boy": "2.20 Metre", "kesit": "35 x 100 mm", "unit_name": "Boy", "desc": "35x100 Düz Pervaz Profili"},
+    "35X150 PERVAZ": {"boy": "2.20 Metre", "kesit": "35 x 150 mm", "unit_name": "Boy", "desc": "35x150 Ekstra Geniş Pervaz"},
+    "35X80 PERVAZ": {"boy": "2.20 Metre", "kesit": "35 x 80 mm", "unit_name": "Boy", "desc": "35x80 Standart Pervaz Profili"},
     
-    # Kasalar
-    "100 mm KASA": {"dim": "100 mm Duvar (3 Parça)", "unit_name": "Takım", "desc": "100 mm Ayarlı WPC Kapı Kasası"},
-    "140 mm KASA": {"dim": "140 mm Duvar (3 Parça)", "unit_name": "Takım", "desc": "140 mm Ayarlı WPC Kapı Kasası"},
-    "200 mm KASA": {"dim": "200 mm Duvar (3 Parça)", "unit_name": "Takım", "desc": "200 mm Geniş Ayarlı WPC Kapı Kasası"},
+    # Kasalar (Standart Takım: 2 Adet 2.20 m Yan Direk + 1 Adet 1.05 m Üst Başlık = Toplam 5.45 m Profil)
+    "100 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "100 mm Duvar", "unit_name": "Takım", "desc": "100 mm Ayarlı WPC Kapı Kasası"},
+    "140 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "140 mm Duvar", "unit_name": "Takım", "desc": "140 mm Ayarlı WPC Kapı Kasası"},
+    "200 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "200 mm Duvar", "unit_name": "Takım", "desc": "200 mm Geniş Ayarlı WPC Kapı Kasası"},
 
-    # Serenler
-    "SEREN": {"dim": "38 x 45 mm (L=2.10 m)", "unit_name": "Boy", "desc": "38x45 Standart Masif WPC Kapı Sereni"},
-    "SEREN (Çift Kafa)": {"dim": "38 x 45 mm (L=2.10 m)", "unit_name": "Boy", "desc": "38x45 Çift Çıkışlı Yüksek Hızlı Seren"},
-    "SEREN(39mm)": {"dim": "39 x 45 mm (L=2.10 m)", "unit_name": "Boy", "desc": "39x45 Özel Kalın Masif Kapı Sereni"},
+    # Serenler (Standart Boy: 2.10 Metre)
+    "SEREN": {"boy": "2.10 Metre", "kesit": "38 x 45 mm", "unit_name": "Boy", "desc": "38x45 Standart Masif WPC Kapı Sereni"},
+    "SEREN (Çift Kafa)": {"boy": "2.10 Metre", "kesit": "38 x 45 mm", "unit_name": "Boy", "desc": "38x45 Çift Çıkışlı Yüksek Hızlı Seren"},
+    "SEREN(39mm)": {"boy": "2.10 Metre", "kesit": "39 x 45 mm", "unit_name": "Boy", "desc": "39x45 Özel Kalın Masif Kapı Sereni"},
 
-    # Levhalar
-    "DİŞBUDAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Desenli WPC Kapı Yüzey Levhası"},
-    "DIŞBUDAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Desenli WPC Kapı Yüzey Levhası"},
-    "TEAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Teak Desenli Kapı Levhası"},
-    "BEYAZ TEAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Beyaz Teak Kapı Levhası"},
-    "VIZON Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Vizon Renkli Kapı Levhası"},
-    "AY GRİ Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Ay Gri Kapı Levhası"},
-    "ANTRASİT Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Antrasit Kapı Levhası"},
-    "SONOMO Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Sonomo Meşe Kapı Levhası"},
-    "MIX TEAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Mix Teak Kapı Levhası"},
-    "MIX BEYAZ TEAK Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Mix Beyaz Teak Kapı Levhası"},
-    "KOYU CEVİZ Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Koyu Ceviz Kapı Levhası"},
-    "COCO Levha": {"dim": "94 x 207 cm (d=2.0 mm)", "unit_name": "Plaka", "desc": "940x2070 mm Coco Kahve Kapı Levhası"},
+    # Levhalar (Standart Boy: 207 cm / 2.07 Metre, En: 94 cm)
+    "DİŞBUDAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Desenli WPC Kapı Yüzey Levhası"},
+    "DIŞBUDAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Desenli WPC Kapı Yüzey Levhası"},
+    "TEAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Teak Desenli Kapı Levhası"},
+    "BEYAZ TEAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Beyaz Teak Kapı Levhası"},
+    "VIZON Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Vizon Renkli Kapı Levhası"},
+    "AY GRİ Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Ay Gri Kapı Levhası"},
+    "ANTRASİT Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Antrasit Kapı Levhası"},
+    "SONOMO Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Sonomo Meşe Kapı Levhası"},
+    "MIX TEAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Mix Teak Kapı Levhası"},
+    "MIX BEYAZ TEAK Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Mix Beyaz Teak Kapı Levhası"},
+    "KOYU CEVİZ Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Koyu Ceviz Kapı Levhası"},
+    "COCO Levha": {"boy": "207 cm (2.07 m)", "kesit": "En: 94 cm (2 mm)", "unit_name": "Plaka", "desc": "94x207 cm Coco Kahve Kapı Levhası"},
 
-    # Deck / WPC Zemin
-    "KT100-220x24-ANT": {"dim": "220 x 24 mm (L=3.00 m)", "unit_name": "Boy", "desc": "220x24 mm Antrasit WPC Zemin Deck Profili"},
-    "KT102-219x26-ANT": {"dim": "219 x 26 mm (L=3.00 m)", "unit_name": "Boy", "desc": "219x26 mm Antrasit Ağır Hizmet Deck Profili"},
-    "KT102-219x26-KAH": {"dim": "219 x 26 mm (L=3.00 m)", "unit_name": "Boy", "desc": "219x26 mm Kahverengi Ağır Hizmet Deck"},
+    # Deck / WPC Zemin (Standart Boy: 3.00 Metre)
+    "KT100-220x24-ANT": {"boy": "3.00 Metre", "kesit": "220 x 24 mm", "unit_name": "Boy", "desc": "220x24 mm Antrasit WPC Zemin Deck Profili"},
+    "KT102-219x26-ANT": {"boy": "3.00 Metre", "kesit": "219 x 26 mm", "unit_name": "Boy", "desc": "219x26 mm Antrasit Ağır Hizmet Deck Profili"},
+    "KT102-219x26-KAH": {"boy": "3.00 Metre", "kesit": "219 x 26 mm", "unit_name": "Boy", "desc": "219x26 mm Kahverengi Ağır Hizmet Deck"},
 
-    # Yardımcı Profiller
-    "CAM ÇITASI": {"dim": "15 x 20 mm (L=2.20 m)", "unit_name": "Boy", "desc": "WPC Fitilli Cam Tutucu Çıta Profili"},
-    "U KAPAMA": {"dim": "30 x 15 mm (L=2.20 m)", "unit_name": "Boy", "desc": "WPC Duvar / Kasa U Kapama Profili"}
+    # Yardımcı Profiller (Standart Boy: 2.20 Metre)
+    "CAM ÇITASI": {"boy": "2.20 Metre", "kesit": "15 x 20 mm", "unit_name": "Boy", "desc": "WPC Fitilli Cam Tutucu Çıta Profili"},
+    "U KAPAMA": {"boy": "2.20 Metre", "kesit": "30 x 15 mm", "unit_name": "Boy", "desc": "WPC Duvar / Kasa U Kapama Profili"}
 }
 
 def create_product_rotas_excel_wb():
@@ -164,14 +164,14 @@ def create_product_rotas_excel_wb():
         unit_kg = cat_info.get("unit_kg", 1.0) if cat_info else 1.0
         category = get_product_category(p)
 
-        # Ölçü ve birim detayı bul
         dim_info = PRODUCT_DIMENSIONS.get(p)
         if not dim_info:
             for kp, kv in PRODUCT_DIMENSIONS.items():
                 if app_backend.match_product_daily(kp, "", p):
                     dim_info = kv
                     break
-        dim_str = dim_info["dim"] if dim_info else "Standart Profil Ölçüsü"
+        boy_str = dim_info["boy"] if dim_info else "2.20 m"
+        kesit_str = dim_info["kesit"] if dim_info else "Standart Profil"
         unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else ("Takım" if "Kasa" in category else "Boy"))
 
         caps = hat_caps.get(p)
@@ -261,23 +261,19 @@ def create_product_rotas_excel_wb():
                 ydk1_act_speed = round(ydk1_kg / ydk1_hours, 1) if ydk1_hours > 0 else 0.0
                 ydk1_tek_speed = ana_tek_speed * 0.9
 
-        # Hızları adet/ölçü olarak hesapla
+        # Hızları boy/ölçü olarak hesapla
         ana_act_qty_speed = round(ana_act_speed / unit_kg, 1) if unit_kg > 0 and ana_act_speed > 0 else 0.0
         ana_tek_qty_speed = round(ana_tek_speed / unit_kg, 1) if unit_kg > 0 and ana_tek_speed > 0 else 0.0
         ydk1_act_qty_speed = round(ydk1_act_speed / unit_kg, 1) if unit_kg > 0 and ydk1_act_speed > 0 else 0.0
         ydk1_tek_qty_speed = round(ydk1_tek_speed / unit_kg, 1) if unit_kg > 0 and ydk1_tek_speed > 0 else 0.0
 
-        # Kullanıcı dostu hız ifadeleri: "Saatte ~42 Boy (65,9 kg/sa)"
         ana_act_speed_text = f"Saatte ~{int(round(ana_act_qty_speed))} {unit_label}" if ana_act_qty_speed > 0 else "—"
         ana_tek_speed_text = f"Saatte ~{int(round(ana_tek_qty_speed))} {unit_label}" if ana_tek_qty_speed > 0 else "—"
         ydk1_act_speed_text = f"Saatte ~{int(round(ydk1_act_qty_speed))} {unit_label}" if ydk1_act_qty_speed > 0 else "—"
         ydk1_tek_speed_text = f"Saatte ~{int(round(ydk1_tek_qty_speed))} {unit_label}" if ydk1_tek_qty_speed > 0 else "—"
 
         ana_daily_act = round(ana_act_speed * 24.0, 1) if ana_act_speed > 0 else 0.0
-        ana_daily_act_qty = int(round(ana_act_qty_speed * 24.0)) if ana_act_qty_speed > 0 else 0
         ana_daily_tek = round(ana_tek_speed * 24.0, 1) if ana_tek_speed > 0 else 0.0
-        ana_daily_tek_qty = int(round(ana_tek_qty_speed * 24.0)) if ana_tek_qty_speed > 0 else 0
-
         ana_eff_pct = round((ana_act_speed / ana_tek_speed * 100), 1) if ana_tek_speed > 0 and ana_act_speed > 0 else (100.0 if ana_act_speed > 0 else 0.0)
 
         strategy = ""
@@ -295,7 +291,8 @@ def create_product_rotas_excel_wb():
         product_rows.append({
             "product": p,
             "category": category,
-            "dimension": dim_str,
+            "boy": boy_str,
+            "kesit": kesit_str,
             "unit_label": unit_label,
             "unit_kg": unit_kg,
             "total_kg": sum(v["kg"] for v in act_h.values()),
@@ -306,14 +303,10 @@ def create_product_rotas_excel_wb():
             "ana_kg": ana_kg,
             "ana_act_speed": ana_act_speed,
             "ana_act_speed_text": ana_act_speed_text,
-            "ana_act_qty_speed": ana_act_qty_speed,
             "ana_tek_speed": ana_tek_speed,
             "ana_tek_speed_text": ana_tek_speed_text,
-            "ana_tek_qty_speed": ana_tek_qty_speed,
             "ana_daily_act": ana_daily_act,
-            "ana_daily_act_qty": ana_daily_act_qty,
             "ana_daily_tek": ana_daily_tek,
-            "ana_daily_tek_qty": ana_daily_tek_qty,
             "ana_eff_pct": ana_eff_pct,
             "ana_setup": ana_setup,
             "ana_mold": ana_mold,
@@ -326,8 +319,6 @@ def create_product_rotas_excel_wb():
             "ydk1_tek_speed_text": ydk1_tek_speed_text,
             "ydk2_hat": ydk2_hat_str,
             "ydk2_hours": ydk2_hours,
-            "ydk2_act_speed": ydk2_act_speed,
-            "ydk2_tek_speed": ydk2_tek_speed,
             "strategy": strategy
         })
 
@@ -345,11 +336,13 @@ def create_product_rotas_excel_wb():
     font_green = Font(name="Segoe UI", size=9.5, bold=True, color="047857")
     font_amber = Font(name="Segoe UI", size=9.5, bold=True, color="B45309")
     font_blue = Font(name="Segoe UI", size=9.5, bold=True, color="0369A1")
+    font_highlight_boy = Font(name="Segoe UI", size=9.5, bold=True, color="0F766E")
 
     fill_brand = PatternFill(start_color="0F172A", end_color="0F172A", fill_type="solid")
     fill_ana = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
     fill_ydk = PatternFill(start_color="0F766E", end_color="0F766E", fill_type="solid")
     fill_info = PatternFill(start_color="334155", end_color="334155", fill_type="solid")
+    fill_boy = PatternFill(start_color="ECFDF5", end_color="ECFDF5", fill_type="solid") # Hafif yeşil boy vurgusu
     fill_zebra = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
     fill_total = PatternFill(start_color="E2E8F0", end_color="E2E8F0", fill_type="solid")
 
@@ -377,26 +370,26 @@ def create_product_rotas_excel_wb():
     ws1.title = "Ürün Rotaları & Kapasite"
     ws1.views.sheetView[0].showGridLines = True
 
-    ws1.merge_cells("A1:W1")
-    ws1["A1"] = "ERGUNBAS GROUP — ÜRÜN MAKİNE ROTALARI, ÇALIŞMA SAATLERİ VE TEKNİK KAPASİTE MATRİSİ"
+    ws1.merge_cells("A1:X1")
+    ws1["A1"] = "ERGUNBAS GROUP — ÜRÜN MAKİNE ROTALARI, BOY/KESİM ÖLÇÜLERİ VE KAPASİTE MATRİSİ"
     ws1["A1"].font = font_title
     ws1["A1"].fill = fill_brand
     ws1["A1"].alignment = align_center
     ws1.row_dimensions[1].height = 36
 
-    ws1.merge_cells("A2:W2")
-    ws1["A2"] = "70 Günlük Fiili Fabrika Üretim Kayıtları | Ana Rota vs Yedek Rota | Fiili Çekim Hızı (kg/sa ve Saatteki Boy/Adet/Plaka) | Teknik Kapasite & Ölçü Detayı"
+    ws1.merge_cells("A2:X2")
+    ws1["A2"] = "Standart Boy Ölçüleri (2.20m Pervaz, 2.10m Seren, 207cm Levha) | Saatteki Boy/Adet Hızları | Ana Rota vs Yedek Rota Kapasiteleri"
     ws1["A2"].font = font_subtitle
     ws1["A2"].fill = fill_brand
     ws1["A2"].alignment = align_center
     ws1.row_dimensions[2].height = 20
 
     group_headers = [
-        ("A3:E3", "ÜRÜN & ÖLÇÜ BİLGİLERİ", fill_info),
-        ("F3:O3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
-        ("P3:T3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
-        ("U3:V3", "YEDEK ROTA 2 & KALIP", fill_info),
-        ("W3:W3", "STRATEJİ", fill_info),
+        ("A3:F3", "ÜRÜN & BOY - KESİM ÖLÇÜLERİ", fill_info),
+        ("G3:P3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
+        ("Q3:U3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
+        ("V3:W3", "YEDEK ROTA 2 & KALIP", fill_info),
+        ("X3:X3", "STRATEJİ", fill_info),
     ]
     for cell_range, title, fill_color in group_headers:
         ws1.merge_cells(cell_range)
@@ -410,23 +403,24 @@ def create_product_rotas_excel_wb():
     headers_s1 = [
         ("Ürün Kodu & Adı", align_left, 24),
         ("Kategori", align_left, 16),
-        ("Ölçü & Kesit Detayı", align_left, 24),
+        ("Standart Boy (Uzunluk)", align_center, 22), # ÖZEL BOY KOLONU
+        ("Kesit Ölçüsü", align_left, 18),
         ("Birim Ağırlık", align_right, 14),
         ("70G Toplam KG", align_right, 15),
         ("Ana Rota Hat", align_center, 14),
         ("Fiili Çalışma (Saat)", align_right, 15),
         ("Vardiya Sayısı", align_right, 13),
         ("Fiili Hız (kg/sa)", align_right, 14),
-        ("Fiili Çekim Hızı (Ölçü/Saat)", align_center, 22),
+        ("Fiili Hız (Saatteki Boy/Adet)", align_center, 24), # BOY BAZLI HIZ
         ("24s Fiili Kapasite (kg/gün)", align_right, 18),
         ("Teknik Kapasite (kg/sa)", align_right, 16),
-        ("Teknik Hız (Ölçü/Saat)", align_center, 22),
+        ("Teknik Hız (Saatteki Boy/Adet)", align_center, 24), # TEKNİK BOY BAZLI HIZ
         ("Verim / OEE (%)", align_right, 14),
         ("Kalıp Kodu", align_center, 13),
         ("Yedek Rota 1 Hat", align_center, 15),
         ("Yedek 1 Fiili Saat", align_right, 14),
         ("Yedek 1 Fiili Hız (kg/sa)", align_right, 16),
-        ("Yedek 1 Fiili Hız (Ölçü/Saat)", align_center, 22),
+        ("Yedek 1 Hız (Saatteki Boy)", align_center, 24),
         ("Yedek 1 Teknik Hız (kg/sa)", align_right, 16),
         ("Yedek Rota 2 Hat", align_center, 14),
         ("Setup Süresi (dk)", align_right, 13),
@@ -459,7 +453,8 @@ def create_product_rotas_excel_wb():
         vals = [
             (r["product"], font_bold, align_left, "@"),
             (r["category"], font_regular, align_left, "@"),
-            (r["dimension"], font_regular, align_left, "@"),
+            (r["boy"], font_highlight_boy, align_center, "@"), # BOY KOLONU
+            (r["kesit"], font_regular, align_left, "@"),
             (unit_weight_str, font_regular, align_right, "@"),
             (r["total_kg"], font_bold, align_right, "#,##0"),
             (r["ana_hat"], font_blue, align_center, "@"),
@@ -487,7 +482,10 @@ def create_product_rotas_excel_wb():
             cell.font = c_font
             cell.alignment = c_align
             cell.border = thin_border
-            if row_fill.fill_type: cell.fill = row_fill
+            if col_idx == 3:
+                cell.fill = fill_boy
+            elif row_fill.fill_type:
+                cell.fill = row_fill
             if num_fmt and num_fmt != "@": cell.number_format = num_fmt
 
         ws1.row_dimensions[row_num].height = 20
@@ -495,14 +493,14 @@ def create_product_rotas_excel_wb():
 
     ws1.cell(row=row_num, column=1, value="GENEL TOPLAM / FABRİKA").font = font_bold
     ws1.cell(row=row_num, column=1).alignment = align_left
-    ws1.cell(row=row_num, column=5, value=tot_produced_kg).font = font_bold
-    ws1.cell(row=row_num, column=5).number_format = "#,##0"
-    ws1.cell(row=row_num, column=7, value=tot_ana_hours).font = font_bold
-    ws1.cell(row=row_num, column=7).number_format = "#,##0.0"
-    ws1.cell(row=row_num, column=17, value=tot_ydk_hours).font = font_bold
-    ws1.cell(row=row_num, column=17).number_format = "#,##0.0"
+    ws1.cell(row=row_num, column=6, value=tot_produced_kg).font = font_bold
+    ws1.cell(row=row_num, column=6).number_format = "#,##0"
+    ws1.cell(row=row_num, column=8, value=tot_ana_hours).font = font_bold
+    ws1.cell(row=row_num, column=8).number_format = "#,##0.0"
+    ws1.cell(row=row_num, column=18, value=tot_ydk_hours).font = font_bold
+    ws1.cell(row=row_num, column=18).number_format = "#,##0.0"
 
-    for c in range(1, 24):
+    for c in range(1, 25):
         cell = ws1.cell(row=row_num, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border
@@ -643,15 +641,15 @@ def create_product_rotas_excel_wb():
     ws3 = wb.create_sheet(title="Ürün x Hat Fiili Üretim")
     ws3.views.sheetView[0].showGridLines = True
 
-    ws3.merge_cells("A1:M1")
+    ws3.merge_cells("A1:N1")
     ws3["A1"] = "ERGUNBAS GROUP — ÜRÜNLERİN HANGİ HATLARDA KAÇ SAAT ÇALIŞTIĞININ AYRINTILI LİSTESİ"
     ws3["A1"].font = font_title
     ws3["A1"].fill = fill_brand
     ws3["A1"].alignment = align_center
     ws3.row_dimensions[1].height = 36
 
-    ws3.merge_cells("A2:M2")
-    ws3["A2"] = "Her bir ürünün çalıştığı tüm makineler, çekilen toplam boy/plaka adetleri, net tonajlar ve gerçekleşen çekim hızları (kg/sa ve Saatteki Boy/Adet)"
+    ws3.merge_cells("A2:N2")
+    ws3["A2"] = "Her bir ürünün çalıştığı tüm makineler, kesim boyları, çekilen toplam boy/plaka adetleri, net tonajlar ve saatteki net boy hızları"
     ws3["A2"].font = font_subtitle
     ws3["A2"].fill = fill_brand
     ws3["A2"].alignment = align_center
@@ -660,7 +658,8 @@ def create_product_rotas_excel_wb():
     headers_s3 = [
         ("Ürün Adı", align_left, 24),
         ("Kategori", align_left, 16),
-        ("Ölçü Detayı", align_left, 24),
+        ("Standart Boy (Uzunluk)", align_center, 22),
+        ("Kesit Detayı", align_left, 18),
         ("Çalışılan Hat", align_center, 14),
         ("Rota Sınıfı", align_center, 15),
         ("Fiili Çalışma (Saat)", align_right, 17),
@@ -669,7 +668,7 @@ def create_product_rotas_excel_wb():
         ("Birim Ağırlık", align_right, 14),
         ("Toplam Üretim (kg)", align_right, 17),
         ("Fiili Hız (kg/sa)", align_right, 15),
-        ("Fiili Hız (Ölçü/Saat)", align_center, 22),
+        ("Fiili Hız (Saatteki Boy/Adet)", align_center, 24),
         ("Kapasite Payı (%)", align_right, 15)
     ]
 
@@ -700,7 +699,8 @@ def create_product_rotas_excel_wb():
                 if app_backend.match_product_daily(kp, "", p):
                     dim_info = kv
                     break
-        dim_str = dim_info["dim"] if dim_info else "Standart Profil Ölçüsü"
+        boy_str = dim_info["boy"] if dim_info else "2.20 Metre"
+        kesit_str = dim_info["kesit"] if dim_info else "Standart Profil"
         unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else ("Takım" if "Kasa" in category else "Boy"))
 
         p_total_kg = sum(v["kg"] for v in hats.values())
@@ -716,7 +716,8 @@ def create_product_rotas_excel_wb():
             flat_pairs.append({
                 "product": p,
                 "category": cat,
-                "dimension": dim_str,
+                "boy": boy_str,
+                "kesit": kesit_str,
                 "unit_label": unit_label,
                 "hat": h,
                 "role": role,
@@ -748,7 +749,8 @@ def create_product_rotas_excel_wb():
         s3_vals = [
             (item["product"], font_bold, align_left, "@"),
             (item["category"], font_regular, align_left, "@"),
-            (item["dimension"], font_regular, align_left, "@"),
+            (item["boy"], font_highlight_boy, align_center, "@"),
+            (item["kesit"], font_regular, align_left, "@"),
             (item["hat"], font_bold, align_center, "@"),
             (item["role"], role_font, align_center, "@"),
             (item["hours"], font_bold, align_right, "#,##0.0"),
@@ -766,21 +768,24 @@ def create_product_rotas_excel_wb():
             cell.font = c_font
             cell.alignment = c_align
             cell.border = thin_border
-            if row_fill.fill_type: cell.fill = row_fill
+            if col_idx == 3:
+                cell.fill = fill_boy
+            elif row_fill.fill_type:
+                cell.fill = row_fill
             if num_fmt and num_fmt != "@": cell.number_format = num_fmt
 
         ws3.row_dimensions[row_s3].height = 20
         row_s3 += 1
 
     ws3.cell(row=row_s3, column=1, value="GENEL TOPLAM").font = font_bold
-    ws3.cell(row=row_s3, column=6, value=tot_s3_hours).font = font_bold
-    ws3.cell(row=row_s3, column=6).number_format = "#,##0.0"
-    ws3.cell(row=row_s3, column=8, value=tot_s3_qty).font = font_bold
-    ws3.cell(row=row_s3, column=8).number_format = "#,##0"
-    ws3.cell(row=row_s3, column=10, value=tot_s3_kg).font = font_bold
-    ws3.cell(row=row_s3, column=10).number_format = "#,##0"
+    ws3.cell(row=row_s3, column=7, value=tot_s3_hours).font = font_bold
+    ws3.cell(row=row_s3, column=7).number_format = "#,##0.0"
+    ws3.cell(row=row_s3, column=9, value=tot_s3_qty).font = font_bold
+    ws3.cell(row=row_s3, column=9).number_format = "#,##0"
+    ws3.cell(row=row_s3, column=11, value=tot_s3_kg).font = font_bold
+    ws3.cell(row=row_s3, column=11).number_format = "#,##0"
 
-    for c in range(1, 14):
+    for c in range(1, 15):
         cell = ws3.cell(row=row_s3, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border
@@ -801,7 +806,13 @@ def create_product_rotas_excel():
         wb.save(dest_path_desktop)
         print(f"Excel Masaüstüne kaydedildi: {dest_path_desktop}")
     except Exception as e:
-        print(f"Desktop save error: {e}")
+        print(f"Desktop save error (muhtemelen Excel açık): {e}")
+        try:
+            alt_path = os.path.join(desktop_dir, "Ergunbas_Urun_Hat_Rotalari_ve_Kapasite_Analizi_Guncel.xlsx")
+            wb.save(alt_path)
+            print(f"Alternatif dosya kaydedildi: {alt_path}")
+        except Exception as e2:
+            print(f"Alt save error: {e2}")
 
     try:
         wb.save(dest_path_static)

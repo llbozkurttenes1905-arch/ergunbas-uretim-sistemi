@@ -1466,7 +1466,7 @@
           "kg": 1.0
         },
         {
-          "material": "CPE",
+          "material": "CPE 35A",
           "kg": 9.0
         },
         {
@@ -1480,6 +1480,10 @@
         {
           "material": "CARBON BLACK",
           "kg": 0.1
+        },
+        {
+          "material": "PEN ÇAPAK",
+          "kg": 150.0
         }
       ]
     }

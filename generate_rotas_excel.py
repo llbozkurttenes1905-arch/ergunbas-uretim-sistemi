@@ -98,11 +98,13 @@ def create_product_rotas_excel_wb():
                 machine_totals[hat_name]["hours"] += 12.0
                 machine_totals[hat_name]["products"].add(p)
 
-                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0})
+                hd = float(ext.get("heads", 1.0) or 1.0)
+                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0, "heads_counts": {}})
                 actual_runs[p][hat_name]["shifts"] += 1
                 actual_runs[p][hat_name]["hours"] += 12.0
                 actual_runs[p][hat_name]["qty"] += qty
                 actual_runs[p][hat_name]["kg"] += kg
+                actual_runs[p][hat_name]["heads_counts"][hd] = actual_runs[p][hat_name]["heads_counts"].get(hd, 0) + 1
 
             # Levha
             for lev in sh.get("levha", []):
@@ -135,11 +137,12 @@ def create_product_rotas_excel_wb():
                 machine_totals[hat_name]["hours"] += 12.0
                 machine_totals[hat_name]["products"].add(p)
 
-                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0})
+                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0, "heads_counts": {1.0: 1}})
                 actual_runs[p][hat_name]["shifts"] += 1
                 actual_runs[p][hat_name]["hours"] += 12.0
                 actual_runs[p][hat_name]["qty"] += qty
                 actual_runs[p][hat_name]["kg"] += kg
+                actual_runs[p][hat_name]["heads_counts"][1.0] = actual_runs[p][hat_name]["heads_counts"].get(1.0, 0) + 1
 
     all_products_set = set(prod_catalog.keys()) | set(hat_caps.keys()) | set(actual_runs.keys())
 
@@ -153,6 +156,39 @@ def create_product_rotas_excel_wb():
         if "ÇITA" in p_up or "CITA" in p_up: return "Cam Çıtası"
         if "KAPAMA" in p_up: return "U Kapama / Lambiri"
         return "Özel Profil"
+
+    def get_heads_info(p_name, hat_name, act_counts=None):
+        if act_counts:
+            dom = max(act_counts.items(), key=lambda x: x[1])[0]
+            if dom >= 2.0:
+                return 2.0, "2 Göz (Çift Çıkış)"
+            return 1.0, "1 Göz (Tek Çıkış)"
+        p_up = p_name.upper()
+        if "LEVHA" in p_up:
+            return 1.0, "1 Göz (Düz Dudak)"
+        if "109" in hat_name and ("50X80" in p_up or "80X80" in p_up):
+            return 2.0, "2 Göz (Çift Çıkış)"
+        if "103" in hat_name and "50X80" in p_up:
+            return 2.0, "2 Göz (Çift Çıkış)"
+        if ("104" in hat_name or "105" in hat_name or "103" in hat_name) and "SEREN" in p_up:
+            return 2.0, "2 Göz (Çift Çıkış)"
+        return 1.0, "1 Göz (Tek Çıkış)"
+
+    def get_calibrated_tek_speed(p_name, hat_name, base_tek_speed, heads_num):
+        p_up = p_name.upper()
+        if "80X80" in p_up and "109" in hat_name and heads_num >= 2.0:
+            return 140.0
+        if "50X80" in p_up and "109" in hat_name and heads_num >= 2.0:
+            return 88.0
+        if "50X80" in p_up and "103" in hat_name and heads_num >= 2.0:
+            return 55.0
+        if "SEREN" in p_up and "104" in hat_name and heads_num >= 2.0:
+            return 110.0
+        if "SEREN" in p_up and "105" in hat_name and heads_num >= 2.0:
+            return 105.0
+        if "SEREN" in p_up and "103" in hat_name and heads_num >= 2.0:
+            return 115.0
+        return base_tek_speed
 
     product_rows = []
 
@@ -188,6 +224,7 @@ def create_product_rotas_excel_wb():
         act_h = actual_runs.get(p, {})
 
         ana_hat_str = ""
+        ana_heads_label = "1 Göz (Tek Çıkış)"
         ana_hours = 0.0
         ana_shifts = 0
         ana_qty = 0.0
@@ -198,6 +235,7 @@ def create_product_rotas_excel_wb():
         ana_mold = "—"
 
         ydk1_hat_str = ""
+        ydk1_heads_label = "1 Göz (Tek Çıkış)"
         ydk1_hours = 0.0
         ydk1_shifts = 0
         ydk1_qty = 0.0
@@ -223,13 +261,16 @@ def create_product_rotas_excel_wb():
 
             top_cap = next((c for c in caps if f"Hat {c.get('hat')}" == top_h), None)
             if top_cap:
-                ana_tek_speed = float(top_cap.get("speed_kg_h", 0.0))
+                base_tek_speed = float(top_cap.get("speed_kg_h", 0.0))
                 ana_setup = top_cap.get("default_setup", 45)
                 ana_mold = top_cap.get("mold_code", "—")
             else:
-                ana_tek_speed = cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0
+                base_tek_speed = cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0
                 ana_setup = 45
                 ana_mold = "—"
+
+            ana_h_num, ana_heads_label = get_heads_info(p, ana_hat_str, top_v.get("heads_counts"))
+            ana_tek_speed = get_calibrated_tek_speed(p, ana_hat_str, base_tek_speed, ana_h_num)
 
             # Yedek Rota 1
             if len(sorted_acts) > 1:
@@ -241,13 +282,17 @@ def create_product_rotas_excel_wb():
                 ydk1_kg = ydk1_v["kg"]
                 ydk1_act_speed = round(ydk1_kg / ydk1_hours, 1) if ydk1_hours > 0 else 0.0
                 c1 = next((c for c in caps if f"Hat {c.get('hat')}" == ydk1_h), None)
-                ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0)) if c1 else (ana_tek_speed * 0.9)
+                base_ydk1_tek = float(c1.get("speed_kg_h", 0.0)) if c1 else (ana_tek_speed * 0.9)
+                ydk1_h_num, ydk1_heads_label = get_heads_info(p, ydk1_hat_str, ydk1_v.get("heads_counts"))
+                ydk1_tek_speed = get_calibrated_tek_speed(p, ydk1_hat_str, base_ydk1_tek, ydk1_h_num)
             elif len(caps) > 1:
                 c1_candidates = [c for c in caps if f"Hat {c.get('hat')}" != top_h]
                 if c1_candidates:
                     c1 = c1_candidates[0]
                     ydk1_hat_str = f"Hat {c1['hat']}"
-                    ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0))
+                    base_ydk1_tek = float(c1.get("speed_kg_h", 0.0))
+                    ydk1_h_num, ydk1_heads_label = get_heads_info(p, ydk1_hat_str)
+                    ydk1_tek_speed = get_calibrated_tek_speed(p, ydk1_hat_str, base_ydk1_tek, ydk1_h_num)
 
             # Yedek Rota 2
             if len(sorted_acts) > 2:
@@ -266,13 +311,17 @@ def create_product_rotas_excel_wb():
         elif caps:
             c0 = caps[0]
             ana_hat_str = f"Hat {c0['hat']}"
-            ana_tek_speed = float(c0.get("speed_kg_h", 0.0))
+            base_tek_speed = float(c0.get("speed_kg_h", 0.0))
             ana_setup = c0.get("default_setup", 45)
             ana_mold = c0.get("mold_code", "—")
+            ana_h_num, ana_heads_label = get_heads_info(p, ana_hat_str)
+            ana_tek_speed = get_calibrated_tek_speed(p, ana_hat_str, base_tek_speed, ana_h_num)
             if len(caps) > 1:
                 c1 = caps[1]
                 ydk1_hat_str = f"Hat {c1['hat']}"
-                ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0))
+                base_ydk1_tek = float(c1.get("speed_kg_h", 0.0))
+                ydk1_h_num, ydk1_heads_label = get_heads_info(p, ydk1_hat_str)
+                ydk1_tek_speed = get_calibrated_tek_speed(p, ydk1_hat_str, base_ydk1_tek, ydk1_h_num)
 
         # Hızları boy/ölçü olarak hesapla
         ana_act_qty_speed = round(ana_act_speed / unit_kg, 1) if unit_kg > 0 and ana_act_speed > 0 else 0.0
@@ -310,6 +359,7 @@ def create_product_rotas_excel_wb():
             "unit_kg": unit_kg,
             "total_kg": sum(v["kg"] for v in act_h.values()),
             "ana_hat": ana_hat_str,
+            "ana_heads_label": ana_heads_label,
             "ana_hours": ana_hours,
             "ana_shifts": ana_shifts,
             "ana_qty": ana_qty,
@@ -324,6 +374,7 @@ def create_product_rotas_excel_wb():
             "ana_setup": ana_setup,
             "ana_mold": ana_mold,
             "ydk1_hat": ydk1_hat_str,
+            "ydk1_heads_label": ydk1_heads_label,
             "ydk1_hours": ydk1_hours,
             "ydk1_shifts": ydk1_shifts,
             "ydk1_act_speed": ydk1_act_speed,
@@ -352,12 +403,14 @@ def create_product_rotas_excel_wb():
     font_amber = Font(name="Segoe UI", size=9.5, bold=True, color="B45309")
     font_blue = Font(name="Segoe UI", size=9.5, bold=True, color="0369A1")
     font_highlight_boy = Font(name="Segoe UI", size=9.5, bold=True, color="0F766E")
+    font_dual = Font(name="Segoe UI", size=9.5, bold=True, color="0369A1")
 
     fill_brand = PatternFill(start_color="0F172A", end_color="0F172A", fill_type="solid")
     fill_ana = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
     fill_ydk = PatternFill(start_color="0F766E", end_color="0F766E", fill_type="solid")
     fill_info = PatternFill(start_color="334155", end_color="334155", fill_type="solid")
     fill_boy = PatternFill(start_color="ECFDF5", end_color="ECFDF5", fill_type="solid") # Hafif yeşil boy vurgusu
+    fill_dual = PatternFill(start_color="E0F2FE", end_color="E0F2FE", fill_type="solid") # Çift kafa / 2 göz açık mavi
     fill_zebra = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
     fill_total = PatternFill(start_color="E2E8F0", end_color="E2E8F0", fill_type="solid")
 
@@ -385,15 +438,15 @@ def create_product_rotas_excel_wb():
     ws1.title = "Ürün Rotaları & Kapasite"
     ws1.views.sheetView[0].showGridLines = True
 
-    ws1.merge_cells("A1:X1")
+    ws1.merge_cells("A1:Z1")
     ws1["A1"] = "ERGUNBAS GROUP — ÜRÜN MAKİNE ROTALARI, BOY/KESİM ÖLÇÜLERİ VE KAPASİTE MATRİSİ"
     ws1["A1"].font = font_title
     ws1["A1"].fill = fill_brand
     ws1["A1"].alignment = align_center
     ws1.row_dimensions[1].height = 36
 
-    ws1.merge_cells("A2:X2")
-    ws1["A2"] = "Standart Boy Ölçüleri (2.20m Pervaz, 2.10m Seren, 207cm Levha) | Saatteki Boy/Adet Hızları | Ana Rota vs Yedek Rota Kapasiteleri"
+    ws1.merge_cells("A2:Z2")
+    ws1["A2"] = "Standart Boy Ölçüleri (2.20m Pervaz, 2.10m Seren, 207cm Levha) | Kalıp Göz Sayıları (1 Göz / 2 Göz) | Saatteki Boy Hızları | Rota Kapasiteleri"
     ws1["A2"].font = font_subtitle
     ws1["A2"].fill = fill_brand
     ws1["A2"].alignment = align_center
@@ -401,10 +454,10 @@ def create_product_rotas_excel_wb():
 
     group_headers = [
         ("A3:F3", "ÜRÜN & BOY - KESİM ÖLÇÜLERİ", fill_info),
-        ("G3:P3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
-        ("Q3:U3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
-        ("V3:W3", "YEDEK ROTA 2 & KALIP", fill_info),
-        ("X3:X3", "STRATEJİ", fill_info),
+        ("G3:Q3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
+        ("R3:W3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
+        ("X3:Y3", "YEDEK ROTA 2 & KALIP", fill_info),
+        ("Z3:Z3", "STRATEJİ", fill_info),
     ]
     for cell_range, title, fill_color in group_headers:
         ws1.merge_cells(cell_range)
@@ -423,6 +476,7 @@ def create_product_rotas_excel_wb():
         ("Birim Ağırlık", align_right, 14),
         ("70G Toplam KG", align_right, 15),
         ("Ana Rota Hat", align_center, 14),
+        ("Kalıp Göz Sayısı", align_center, 18), # GÖZ SAYISI KOLONU
         ("Fiili Çalışma (Saat)", align_right, 15),
         ("Vardiya Sayısı", align_right, 13),
         ("Fiili Hız (kg/sa)", align_right, 14),
@@ -433,6 +487,7 @@ def create_product_rotas_excel_wb():
         ("Verim / OEE (%)", align_right, 14),
         ("Kalıp Kodu", align_center, 13),
         ("Yedek Rota 1 Hat", align_center, 15),
+        ("Yedek 1 Göz Sayısı", align_center, 18), # YEDEK 1 GÖZ SAYISI
         ("Yedek 1 Fiili Saat", align_right, 14),
         ("Yedek 1 Fiili Hız (kg/sa)", align_right, 16),
         ("Yedek 1 Hız (Saatteki Boy)", align_center, 24),
@@ -465,6 +520,9 @@ def create_product_rotas_excel_wb():
         row_fill = fill_zebra if row_num % 2 == 0 else PatternFill(fill_type=None)
         unit_weight_str = f"{r['unit_kg']:.2f} kg/{r['unit_label'].lower()}"
 
+        ana_heads_font = font_dual if "2 Göz" in r["ana_heads_label"] else font_regular
+        ydk1_heads_font = font_dual if "2 Göz" in r["ydk1_heads_label"] else font_regular
+
         vals = [
             (r["product"], font_bold, align_left, "@"),
             (r["category"], font_regular, align_left, "@"),
@@ -473,6 +531,7 @@ def create_product_rotas_excel_wb():
             (unit_weight_str, font_regular, align_right, "@"),
             (r["total_kg"], font_bold, align_right, "#,##0"),
             (r["ana_hat"], font_blue, align_center, "@"),
+            (r["ana_heads_label"], ana_heads_font, align_center, "@"),
             (r["ana_hours"], font_bold, align_right, "#,##0.0"),
             (r["ana_shifts"], font_regular, align_right, "#,##0"),
             (r["ana_act_speed"], font_green if r["ana_act_speed"] > 0 else font_muted, align_right, "#,##0.0"),
@@ -483,6 +542,7 @@ def create_product_rotas_excel_wb():
             (r["ana_eff_pct"] / 100.0 if r["ana_eff_pct"] > 0 else 0, font_green if r["ana_eff_pct"] >= 80 else (font_amber if r["ana_eff_pct"] > 0 else font_muted), align_right, "0.0%"),
             (r["ana_mold"], font_regular, align_center, "@"),
             (r["ydk1_hat"] or "—", font_amber if r["ydk1_hat"] else font_muted, align_center, "@"),
+            (r["ydk1_heads_label"] if r["ydk1_hat"] else "—", ydk1_heads_font, align_center, "@"),
             (r["ydk1_hours"] if r["ydk1_hours"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_hours"] > 0 else "@"),
             (r["ydk1_act_speed"] if r["ydk1_act_speed"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_act_speed"] > 0 else "@"),
             (r["ydk1_act_speed_text"], font_regular, align_center, "@"),
@@ -499,6 +559,8 @@ def create_product_rotas_excel_wb():
             cell.border = thin_border
             if col_idx == 3:
                 cell.fill = fill_boy
+            elif col_idx in (8, 19) and "2 Göz" in str(val):
+                cell.fill = fill_dual
             elif row_fill.fill_type:
                 cell.fill = row_fill
             if num_fmt and num_fmt != "@": cell.number_format = num_fmt
@@ -510,12 +572,12 @@ def create_product_rotas_excel_wb():
     ws1.cell(row=row_num, column=1).alignment = align_left
     ws1.cell(row=row_num, column=6, value=tot_produced_kg).font = font_bold
     ws1.cell(row=row_num, column=6).number_format = "#,##0"
-    ws1.cell(row=row_num, column=8, value=tot_ana_hours).font = font_bold
-    ws1.cell(row=row_num, column=8).number_format = "#,##0.0"
-    ws1.cell(row=row_num, column=18, value=tot_ydk_hours).font = font_bold
-    ws1.cell(row=row_num, column=18).number_format = "#,##0.0"
+    ws1.cell(row=row_num, column=9, value=tot_ana_hours).font = font_bold
+    ws1.cell(row=row_num, column=9).number_format = "#,##0.0"
+    ws1.cell(row=row_num, column=20, value=tot_ydk_hours).font = font_bold
+    ws1.cell(row=row_num, column=20).number_format = "#,##0.0"
 
-    for c in range(1, 25):
+    for c in range(1, 27):
         cell = ws1.cell(row=row_num, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border
@@ -656,15 +718,15 @@ def create_product_rotas_excel_wb():
     ws3 = wb.create_sheet(title="Ürün x Hat Fiili Üretim")
     ws3.views.sheetView[0].showGridLines = True
 
-    ws3.merge_cells("A1:N1")
-    ws3["A1"] = "ERGUNBAS GROUP — ÜRÜNLERİN HANGİ HATLARDA KAÇ SAAT ÇALIŞTIĞININ AYRINTILI LİSTESİ"
+    ws3.merge_cells("A1:O1")
+    ws3["A1"] = "ERGUNBAS GROUP — ÜRÜN BAZINDA HAT ÜRETİM DAĞILIMI, KALIP GÖZ SAYILARI VE KAPASİTE PERFORMANSI"
     ws3["A1"].font = font_title
     ws3["A1"].fill = fill_brand
     ws3["A1"].alignment = align_center
     ws3.row_dimensions[1].height = 36
 
-    ws3.merge_cells("A2:N2")
-    ws3["A2"] = "Her bir ürünün çalıştığı tüm makineler, kesim boyları, çekilen toplam boy/plaka adetleri, net tonajlar ve saatteki net boy hızları"
+    ws3.merge_cells("A2:O2")
+    ws3["A2"] = "Her bir ürünün çalıştığı makineler, kalıp göz sayıları (1 Göz / 2 Göz Çift Çıkış), kesim boyları, çekilen boy adetleri ve net hızlar"
     ws3["A2"].font = font_subtitle
     ws3["A2"].fill = fill_brand
     ws3["A2"].alignment = align_center
@@ -676,10 +738,11 @@ def create_product_rotas_excel_wb():
         ("Standart Boy (Uzunluk)", align_center, 22),
         ("Kesit Detayı", align_left, 18),
         ("Çalışılan Hat", align_center, 14),
+        ("Kalıp Göz Sayısı (Kafa)", align_center, 20),
         ("Rota Sınıfı", align_center, 15),
         ("Fiili Çalışma (Saat)", align_right, 17),
         ("Vardiya Sayısı", align_right, 14),
-        ("Üretilen Miktar (Adet)", align_right, 18),
+        ("Üretilen Miktar (Adet/Boy)", align_right, 18),
         ("Birim Ağırlık", align_right, 14),
         ("Toplam Üretim (kg)", align_right, 17),
         ("Fiili Hız (kg/sa)", align_right, 15),
@@ -728,6 +791,8 @@ def create_product_rotas_excel_wb():
             act_qty_spd = round(v["qty"] / v["hours"], 1) if v["hours"] > 0 else 0.0
             act_speed_text = f"Saatte ~{int(round(act_qty_spd))} {unit_label}" if act_qty_spd > 0 else "—"
 
+            h_heads_num, h_heads_label = get_heads_info(p, h, v.get("heads_counts"))
+
             flat_pairs.append({
                 "product": p,
                 "category": cat,
@@ -735,6 +800,7 @@ def create_product_rotas_excel_wb():
                 "kesit": kesit_str,
                 "unit_label": unit_label,
                 "hat": h,
+                "heads_label": h_heads_label,
                 "role": role,
                 "hours": v["hours"],
                 "shifts": v["shifts"],
@@ -760,6 +826,7 @@ def create_product_rotas_excel_wb():
         row_fill = fill_zebra if row_s3 % 2 == 0 else PatternFill(fill_type=None)
         role_font = font_blue if "ANA" in item["role"] else font_amber
         unit_weight_str = f"{item['unit_kg']:.2f} kg/{item['unit_label'].lower()}"
+        heads_font = font_dual if "2 Göz" in item["heads_label"] else font_regular
 
         s3_vals = [
             (item["product"], font_bold, align_left, "@"),
@@ -767,6 +834,7 @@ def create_product_rotas_excel_wb():
             (item["boy"], font_highlight_boy, align_center, "@"),
             (item["kesit"], font_regular, align_left, "@"),
             (item["hat"], font_bold, align_center, "@"),
+            (item["heads_label"], heads_font, align_center, "@"),
             (item["role"], role_font, align_center, "@"),
             (item["hours"], font_bold, align_right, "#,##0.0"),
             (item["shifts"], font_regular, align_right, "#,##0"),
@@ -785,6 +853,8 @@ def create_product_rotas_excel_wb():
             cell.border = thin_border
             if col_idx == 3:
                 cell.fill = fill_boy
+            elif col_idx == 6 and "2 Göz" in str(val):
+                cell.fill = fill_dual
             elif row_fill.fill_type:
                 cell.fill = row_fill
             if num_fmt and num_fmt != "@": cell.number_format = num_fmt
@@ -793,14 +863,14 @@ def create_product_rotas_excel_wb():
         row_s3 += 1
 
     ws3.cell(row=row_s3, column=1, value="GENEL TOPLAM").font = font_bold
-    ws3.cell(row=row_s3, column=7, value=tot_s3_hours).font = font_bold
-    ws3.cell(row=row_s3, column=7).number_format = "#,##0.0"
-    ws3.cell(row=row_s3, column=9, value=tot_s3_qty).font = font_bold
-    ws3.cell(row=row_s3, column=9).number_format = "#,##0"
-    ws3.cell(row=row_s3, column=11, value=tot_s3_kg).font = font_bold
-    ws3.cell(row=row_s3, column=11).number_format = "#,##0"
+    ws3.cell(row=row_s3, column=8, value=tot_s3_hours).font = font_bold
+    ws3.cell(row=row_s3, column=8).number_format = "#,##0.0"
+    ws3.cell(row=row_s3, column=10, value=tot_s3_qty).font = font_bold
+    ws3.cell(row=row_s3, column=10).number_format = "#,##0"
+    ws3.cell(row=row_s3, column=12, value=tot_s3_kg).font = font_bold
+    ws3.cell(row=row_s3, column=12).number_format = "#,##0"
 
-    for c in range(1, 15):
+    for c in range(1, 16):
         cell = ws3.cell(row=row_s3, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border

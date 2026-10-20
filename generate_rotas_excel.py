@@ -210,58 +210,69 @@ def create_product_rotas_excel_wb():
         ydk2_act_speed = 0.0
         ydk2_tek_speed = 0.0
 
-        if caps:
+        sorted_acts = sorted(act_h.items(), key=lambda x: -x[1]["kg"]) if act_h else []
+
+        if sorted_acts:
+            top_h, top_v = sorted_acts[0]
+            ana_hat_str = top_h
+            ana_hours = top_v["hours"]
+            ana_shifts = top_v["shifts"]
+            ana_qty = top_v["qty"]
+            ana_kg = top_v["kg"]
+            ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
+
+            top_cap = next((c for c in caps if f"Hat {c.get('hat')}" == top_h), None)
+            if top_cap:
+                ana_tek_speed = float(top_cap.get("speed_kg_h", 0.0))
+                ana_setup = top_cap.get("default_setup", 45)
+                ana_mold = top_cap.get("mold_code", "—")
+            else:
+                ana_tek_speed = cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0
+                ana_setup = 45
+                ana_mold = "—"
+
+            # Yedek Rota 1
+            if len(sorted_acts) > 1:
+                ydk1_h, ydk1_v = sorted_acts[1]
+                ydk1_hat_str = ydk1_h
+                ydk1_hours = ydk1_v["hours"]
+                ydk1_shifts = ydk1_v["shifts"]
+                ydk1_qty = ydk1_v["qty"]
+                ydk1_kg = ydk1_v["kg"]
+                ydk1_act_speed = round(ydk1_kg / ydk1_hours, 1) if ydk1_hours > 0 else 0.0
+                c1 = next((c for c in caps if f"Hat {c.get('hat')}" == ydk1_h), None)
+                ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0)) if c1 else (ana_tek_speed * 0.9)
+            elif len(caps) > 1:
+                c1_candidates = [c for c in caps if f"Hat {c.get('hat')}" != top_h]
+                if c1_candidates:
+                    c1 = c1_candidates[0]
+                    ydk1_hat_str = f"Hat {c1['hat']}"
+                    ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0))
+
+            # Yedek Rota 2
+            if len(sorted_acts) > 2:
+                ydk2_h, ydk2_v = sorted_acts[2]
+                ydk2_hat_str = ydk2_h
+                ydk2_hours = ydk2_v["hours"]
+                ydk2_act_speed = round(ydk2_v["kg"] / ydk2_hours, 1) if ydk2_hours > 0 else 0.0
+                c2 = next((c for c in caps if f"Hat {c.get('hat')}" == ydk2_h), None)
+                ydk2_tek_speed = float(c2.get("speed_kg_h", 0.0)) if c2 else 0.0
+            elif len(caps) > 2:
+                remain_caps = [c for c in caps if f"Hat {c.get('hat')}" not in [ana_hat_str, ydk1_hat_str]]
+                if remain_caps:
+                    c2 = remain_caps[0]
+                    ydk2_hat_str = f"Hat {c2['hat']}"
+                    ydk2_tek_speed = float(c2.get("speed_kg_h", 0.0))
+        elif caps:
             c0 = caps[0]
             ana_hat_str = f"Hat {c0['hat']}"
             ana_tek_speed = float(c0.get("speed_kg_h", 0.0))
             ana_setup = c0.get("default_setup", 45)
             ana_mold = c0.get("mold_code", "—")
-            if ana_hat_str in act_h:
-                ana_hours = act_h[ana_hat_str]["hours"]
-                ana_shifts = act_h[ana_hat_str]["shifts"]
-                ana_qty = act_h[ana_hat_str]["qty"]
-                ana_kg = act_h[ana_hat_str]["kg"]
-                ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
-
             if len(caps) > 1:
                 c1 = caps[1]
                 ydk1_hat_str = f"Hat {c1['hat']}"
                 ydk1_tek_speed = float(c1.get("speed_kg_h", 0.0))
-                if ydk1_hat_str in act_h:
-                    ydk1_hours = act_h[ydk1_hat_str]["hours"]
-                    ydk1_shifts = act_h[ydk1_hat_str]["shifts"]
-                    ydk1_qty = act_h[ydk1_hat_str]["qty"]
-                    ydk1_kg = act_h[ydk1_hat_str]["kg"]
-                    ydk1_act_speed = round(ydk1_kg / ydk1_hours, 1) if ydk1_hours > 0 else 0.0
-
-            if len(caps) > 2:
-                c2 = caps[2]
-                ydk2_hat_str = f"Hat {c2['hat']}"
-                ydk2_tek_speed = float(c2.get("speed_kg_h", 0.0))
-                if ydk2_hat_str in act_h:
-                    ydk2_hours = act_h[ydk2_hat_str]["hours"]
-                    ydk2_act_speed = round(act_h[ydk2_hat_str]["kg"] / ydk2_hours, 1) if ydk2_hours > 0 else 0.0
-        else:
-            sorted_acts = sorted(act_h.items(), key=lambda x: -x[1]["kg"])
-            if sorted_acts:
-                h_name, val = sorted_acts[0]
-                ana_hat_str = h_name
-                ana_hours = val["hours"]
-                ana_shifts = val["shifts"]
-                ana_qty = val["qty"]
-                ana_kg = val["kg"]
-                ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
-                ana_tek_speed = cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0
-
-            if len(sorted_acts) > 1:
-                h_name, val = sorted_acts[1]
-                ydk1_hat_str = h_name
-                ydk1_hours = val["hours"]
-                ydk1_shifts = val["shifts"]
-                ydk1_qty = val["qty"]
-                ydk1_kg = val["kg"]
-                ydk1_act_speed = round(ydk1_kg / ydk1_hours, 1) if ydk1_hours > 0 else 0.0
-                ydk1_tek_speed = ana_tek_speed * 0.9
 
         # Hızları boy/ölçü olarak hesapla
         ana_act_qty_speed = round(ana_act_speed / unit_kg, 1) if unit_kg > 0 and ana_act_speed > 0 else 0.0

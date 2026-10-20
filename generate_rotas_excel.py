@@ -107,11 +107,13 @@ def create_product_rotas_excel_wb():
             # Levha
             for lev in sh.get("levha", []):
                 c = lev.get("color", "").strip()
-                p = f"{c} Levha" if not c.lower().endswith("levha") else c
-                h_raw = str(lev.get("hat", "201")).strip()
                 qty = float(lev.get("qty", 0) or 0)
                 if not c or qty <= 0:
                     continue
+                if "BUDAK" in c.upper():
+                    c = "DİŞBUDAK"
+                p = f"{c} Levha" if not c.lower().endswith("levha") else c
+                h_raw = str(lev.get("hat", "201")).strip()
 
                 u_kg = 4.77
                 matched_cat = prod_catalog.get(p)
@@ -322,6 +324,8 @@ def create_product_rotas_excel_wb():
             "strategy": strategy
         })
 
+    # Sadece 70 günlük fiili üretimde gerçek kaydı olan ürünleri al (0 kg olan mükerrer ve hayalet satırları temizle)
+    product_rows = [r for r in product_rows if r["total_kg"] > 0]
     product_rows.sort(key=lambda x: -x["total_kg"])
 
     # 3. OpenPyXL Workbook Oluştur

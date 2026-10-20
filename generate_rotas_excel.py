@@ -17,10 +17,10 @@ PRODUCT_DIMENSIONS = {
     "35X150 PERVAZ": {"boy": "2.20 Metre", "kesit": "35 x 150 mm", "unit_name": "Boy", "desc": "35x150 Ekstra Geniş Pervaz"},
     "35X80 PERVAZ": {"boy": "2.20 Metre", "kesit": "35 x 80 mm", "unit_name": "Boy", "desc": "35x80 Standart Pervaz Profili"},
     
-    # Kasalar (Standart Takım: 2 Adet 2.20 m Yan Direk + 1 Adet 1.05 m Üst Başlık = Toplam 5.45 m Profil)
-    "100 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "100 mm Duvar", "unit_name": "Takım", "desc": "100 mm Ayarlı WPC Kapı Kasası"},
-    "140 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "140 mm Duvar", "unit_name": "Takım", "desc": "140 mm Ayarlı WPC Kapı Kasası"},
-    "200 mm KASA": {"boy": "2.20 m Yan + 1.05 m Üst (Takım)", "kesit": "200 mm Duvar", "unit_name": "Takım", "desc": "200 mm Geniş Ayarlı WPC Kapı Kasası"},
+    # Kasalar (Standart Ebatlama / Kesme Boyu: 2.15 Metre - 2150 mm)
+    "100 mm KASA": {"boy": "2.15 Metre (215 cm)", "kesit": "100 x 36 mm", "unit_name": "Boy", "desc": "100x36 mm Düz WPC Kapı Kasası (Standart Boy: 2.15 m)"},
+    "140 mm KASA": {"boy": "2.15 Metre (215 cm)", "kesit": "140 x 36 mm", "unit_name": "Boy", "desc": "140x36 mm Düz WPC Kapı Kasası (Standart Boy: 2.15 m)"},
+    "200 mm KASA": {"boy": "2.15 Metre (215 cm)", "kesit": "200 x 36 mm", "unit_name": "Boy", "desc": "200x36 mm Geniş WPC Kapı Kasası (Standart Boy: 2.15 m)"},
 
     # Serenler (Standart Boy: 2.10 Metre)
     "SEREN": {"boy": "2.10 Metre", "kesit": "38 x 45 mm", "unit_name": "Boy", "desc": "38x45 Standart Masif WPC Kapı Sereni"},
@@ -172,7 +172,7 @@ def create_product_rotas_excel_wb():
                     break
         boy_str = dim_info["boy"] if dim_info else "2.20 m"
         kesit_str = dim_info["kesit"] if dim_info else "Standart Profil"
-        unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else ("Takım" if "Kasa" in category else "Boy"))
+        unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else "Boy")
 
         caps = hat_caps.get(p)
         if not caps:
@@ -701,7 +701,7 @@ def create_product_rotas_excel_wb():
                     break
         boy_str = dim_info["boy"] if dim_info else "2.20 Metre"
         kesit_str = dim_info["kesit"] if dim_info else "Standart Profil"
-        unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else ("Takım" if "Kasa" in category else "Boy"))
+        unit_label = dim_info["unit_name"] if dim_info else ("Plaka" if "Levha" in category else "Boy")
 
         p_total_kg = sum(v["kg"] for v in hats.values())
 

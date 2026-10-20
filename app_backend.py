@@ -5041,6 +5041,31 @@ def export_excel(month: Optional[str] = None):
     )
 
 
+@app.get("/api/reports/product_rotas_excel")
+def export_product_rotas_excel():
+    """
+    Üretilen ürünlerin hangi hatlarda çalıştığı (Ana Rota ve Yedek Rota),
+    fiili çalışma saatleri, gerçekleşen çekim hızları ve teknik tasarım kapasitelerinin
+    3 sekmeli kurumsal Excel raporu aktarımı.
+    """
+    try:
+        import generate_rotas_excel
+        wb = generate_rotas_excel.create_product_rotas_excel_wb()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Excel oluşturulamadı: {str(e)}")
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    filename = "Ergunbas_Urun_Hat_Rotalari_ve_Kapasite_Analizi.xlsx"
+    headers = {'Content-Disposition': f'attachment; filename="{filename}"'}
+    return Response(
+        content=output.getvalue(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers=headers
+    )
+
+
 @app.get("/api/export_pdf")
 def export_pdf():
     """Yönetime sunulacak, Genel Toplam / Aylık Kırılım / Hat Bazında Performans /

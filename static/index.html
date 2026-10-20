@@ -722,6 +722,10 @@
                 <!-- Right: Quick Actions, Date, User & Fullscreen -->
                 <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                     <!-- Quick Excel/PDF Export Buttons -->
+                    <a href="/api/reports/product_rotas_excel" download class="px-2.5 py-1.5 bg-blue-700/80 hover:bg-blue-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-blue-600/50" title="Ürün Rotaları, Çalışma Saatleri ve Kapasite Excelini İndir">
+                        <i data-lucide="network" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">Rotalar & Kapasite</span>
+                    </a>
                     <button onclick="openExcelExportModal()" class="px-2.5 py-1.5 bg-emerald-700/80 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-sm border border-emerald-600/50 cursor-pointer" title="Excel & ERP/E-Flow Veritabanı Dışa Aktar">
                         <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">Excel</span>
@@ -2569,6 +2573,9 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2.5">
+                        <a href="/api/reports/product_rotas_excel" download class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center gap-1.5 cursor-pointer" title="Ürünlerin Hat Rotaları, Fiili Saatleri ve Teknik Kapasite Exceli">
+                            <i data-lucide="network" class="w-4 h-4"></i> Rota & Kapasite Excel
+                        </a>
                         <button onclick="openAllOrdersMaterialsModal()" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer">
                             <i data-lucide="boxes" class="w-4 h-4"></i> Tüm Siparişlerin Depo İhtiyacı
                         </button>

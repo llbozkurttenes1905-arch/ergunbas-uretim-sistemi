@@ -8108,7 +8108,71 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "HAMMADDE FORMÜL DENEMESİ YAPILDI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Planlı Kapalı / Üretim Planı Yok",
+          "down_min": 720.0,
+          "desc": "Burgu ve kovan değişimi yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 240.0,
+          "desc": "Kalıp bakım ve temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 240.0,
+          "desc": "Kalıp bakım ve temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "102",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 180.0,
+          "desc": "Hammadde değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Planlı Kapalı / Üretim Planı Yok",
+          "down_min": 720.0,
+          "desc": "Burgu ve kovan değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp bakım ve temizliği yapıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

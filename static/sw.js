@@ -1,4 +1,4 @@
-// ERGUNBAS Üretim Sistemi - Minimal Service Worker v2.4.2
+// ERGUNBAS Üretim Sistemi - Minimal Service Worker v2.5.0 (Planlama Modülü Eklendi)
 // Amaç: "Ana Ekrana Ekle" (PWA) yüklenebilirliğini sağlamak.
 // Tüm eski cache'leri temizler ve canlı ağı kullanır.
 

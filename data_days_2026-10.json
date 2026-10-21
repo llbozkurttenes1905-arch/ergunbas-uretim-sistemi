@@ -8178,7 +8178,7 @@
           "hat": "Kırım 1",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         },
         {
           "hat": "Kırım 2",
@@ -8196,7 +8196,7 @@
           "hat": "Kırım 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         }
       ],
       "mikronize": [

@@ -6547,6 +6547,561 @@ def get_ai_anomalies(date_key: Optional[str] = None):
         "executive_summary": summary_text
     }
 
+# ============================================================================
+# ENDÜSTRİYEL ÜRETİM PLANLAMA & SIFIR RİSK ÇİZELGELEME MOTORU (PLANNING ENGINE)
+# ============================================================================
+
+class PlanSimulationRequest(BaseModel):
+    product: str
+    order_qty: float
+    stock_qty: Optional[float] = 0.0
+    due_date: Optional[str] = None
+    preferred_hat: Optional[str] = None
+
+class LineAssignRequest(BaseModel):
+    order_id: str
+    assigned_hat: str
+
+PLANNING_ROTAS = {
+    "50X80 PERVAZ": {
+        "category": "Pervaz",
+        "unit_kg": 1.55,
+        "standard_length": "2.10 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 109", "heads": 2, "speed_kg_h": 75.0, "speed_boy_h": 50.0, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Çift Göz - 50 boy/sa)"},
+            {"hat": "Hat 103", "heads": 2, "speed_kg_h": 52.0, "speed_boy_h": 31.0, "fire_rate": 0.280, "rank": 2, "note": "Alternatif Hat (Çift Göz - 31 boy/sa)"},
+            {"hat": "Hat 109", "heads": 1, "speed_kg_h": 65.6, "speed_boy_h": 44.0, "fire_rate": 0.110, "rank": 3, "note": "Düşük Fireli Hat (Tek Göz - %11 Fire)"}
+        ]
+    },
+    "80X80 PERVAZ": {
+        "category": "Pervaz",
+        "unit_kg": 2.20,
+        "standard_length": "2.10 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 109", "heads": 2, "speed_kg_h": 85.1, "speed_boy_h": 58.0, "fire_rate": 0.236, "rank": 1, "note": "Yüksek Kapasite (Çift Göz - 58 boy/sa)"},
+            {"hat": "Hat 101", "heads": 1, "speed_kg_h": 51.1, "speed_boy_h": 22.0, "fire_rate": 0.190, "rank": 2, "note": "Standart Hat (Tek Göz - 22 boy/sa)"}
+        ]
+    },
+    "35X100 PERVAZ": {
+        "category": "Pervaz",
+        "unit_kg": 2.08,
+        "standard_length": "2.10 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 101", "heads": 1, "speed_kg_h": 63.8, "speed_boy_h": 30.0, "fire_rate": 0.125, "rank": 1, "note": "Tek Göz (30 boy/sa)"}
+        ]
+    },
+    "35X150 PERVAZ": {
+        "category": "Pervaz",
+        "unit_kg": 2.97,
+        "standard_length": "2.10 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 101", "heads": 1, "speed_kg_h": 41.2, "speed_boy_h": 14.0, "fire_rate": 0.177, "rank": 1, "note": "Tek Göz (14 boy/sa)"}
+        ]
+    },
+    "35X80 PERVAZ": {
+        "category": "Pervaz",
+        "unit_kg": 2.94,
+        "standard_length": "2.10 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 101", "heads": 1, "speed_kg_h": 44.2, "speed_boy_h": 15.0, "fire_rate": 0.113, "rank": 1, "note": "Tek Göz (15 boy/sa)"}
+        ]
+    },
+    "100 mm KASA": {
+        "category": "Kasa",
+        "unit_kg": 4.00,
+        "standard_length": "2.15 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 108", "heads": 1, "speed_kg_h": 70.0, "speed_boy_h": 17.5, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Tek Göz - 17.5 boy/sa)"},
+            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 63.2, "speed_boy_h": 15.8, "fire_rate": 0.300, "rank": 2, "note": "Alternatif Hat (Tek Göz - 15.8 boy/sa)"}
+        ]
+    },
+    "140 mm KASA": {
+        "category": "Kasa",
+        "unit_kg": 4.95,
+        "standard_length": "2.15 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 106", "heads": 1, "speed_kg_h": 74.1, "speed_boy_h": 15.0, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Tek Göz - 15 boy/sa)"},
+            {"hat": "Hat 108", "heads": 1, "speed_kg_h": 65.0, "speed_boy_h": 13.1, "fire_rate": 0.300, "rank": 2, "note": "Alternatif Hat (Tek Göz - 13.1 boy/sa)"}
+        ]
+    },
+    "200 mm KASA": {
+        "category": "Kasa",
+        "unit_kg": 6.66,
+        "standard_length": "2.15 Metre",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 107", "heads": 1, "speed_kg_h": 84.6, "speed_boy_h": 12.7, "fire_rate": 0.300, "rank": 1, "note": "Ana Hat (Tek Göz - 12.7 boy/sa)"}
+        ]
+    },
+    "SEREN (Çift Kafa)": {
+        "category": "Seren",
+        "unit_kg": 3.39,
+        "standard_length": "3.00 Metre",
+        "recipe": "Seren",
+        "routes": [
+            {"hat": "Hat 104", "heads": 2, "speed_kg_h": 96.5, "speed_boy_h": 28.5, "fire_rate": 0.260, "rank": 1, "note": "Öncelikli Hat (Çift Göz - 28.5 boy/sa)"},
+            {"hat": "Hat 105", "heads": 2, "speed_kg_h": 90.1, "speed_boy_h": 26.5, "fire_rate": 0.260, "rank": 2, "note": "Alternatif Hat (Çift Göz - 26.5 boy/sa)"}
+        ]
+    },
+    "SEREN": {
+        "category": "Seren",
+        "unit_kg": 3.39,
+        "standard_length": "3.00 Metre",
+        "recipe": "Seren",
+        "routes": [
+            {"hat": "Hat 105", "heads": 2, "speed_kg_h": 90.1, "speed_boy_h": 26.5, "fire_rate": 0.260, "rank": 1, "note": "Çift Göz (26.5 boy/sa)"},
+            {"hat": "Hat 104", "heads": 2, "speed_kg_h": 96.5, "speed_boy_h": 28.5, "fire_rate": 0.260, "rank": 2, "note": "Çift Göz (28.5 boy/sa)"}
+        ]
+    },
+    "SEREN(39mm)": {
+        "category": "Seren",
+        "unit_kg": 3.81,
+        "standard_length": "3.00 Metre",
+        "recipe": "Seren",
+        "routes": [
+            {"hat": "Hat 107", "heads": 1, "speed_kg_h": 107.8, "speed_boy_h": 28.3, "fire_rate": 0.220, "rank": 1, "note": "Tek Göz Özel (28.3 boy/sa)"}
+        ]
+    },
+    "DÜŞBUDAK Levha": {
+        "category": "Levha",
+        "unit_kg": 4.77,
+        "standard_length": "Standart Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 187.9, "speed_boy_h": 39.4, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (39.4 plaka/sa)"}
+        ]
+    },
+    "TEAK Levha": {
+        "category": "Levha",
+        "unit_kg": 4.25,
+        "standard_length": "Standart Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 145.5, "speed_boy_h": 34.2, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (34.2 plaka/sa)"}
+        ]
+    },
+    "BEYAZ TEAK Levha": {
+        "category": "Levha",
+        "unit_kg": 4.41,
+        "standard_length": "Standart Levha",
+        "recipe": "Levha Beyaz",
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 148.4, "speed_boy_h": 33.6, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (33.6 plaka/sa)"}
+        ]
+    },
+    "CAM ÇITASI": {
+        "category": "Çıta",
+        "unit_kg": 1.50,
+        "standard_length": "Standart Boy",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 50.0, "speed_boy_h": 33.3, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz"}
+        ]
+    },
+    "U KAPAMA": {
+        "category": "Profil",
+        "unit_kg": 0.48,
+        "standard_length": "Standart Boy",
+        "recipe": "Kasa Pervaz",
+        "routes": [
+            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 40.7, "speed_boy_h": 84.8, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz"}
+        ]
+    }
+}
+
+@app.get("/api/planning/master")
+def get_planning_master_data():
+    orders = load_orders()
+    data = load_data()
+    molds = load_molds_data()
+    raw_stock_list = data.get('raw_materials_stock', [])
+
+    now = get_turkey_now()
+
+    all_hats = [f"Hat {i}" for i in range(101, 110)] + ["Hat 201"]
+    lines_state = {
+        h: {
+            "hat": h,
+            "assigned_orders": [],
+            "queue_hours": 0.0,
+            "active_product": None,
+            "installed_mold": None
+        } for h in all_hats
+    }
+
+    for m in molds:
+        ahat = m.get('assigned_hat')
+        if ahat:
+            norm_hat = f"Hat {ahat}" if str(ahat).isdigit() else ahat
+            if norm_hat in lines_state:
+                lines_state[norm_hat]["installed_mold"] = {
+                    "code": m.get('code'),
+                    "name": m.get('name'),
+                    "heads": m.get('heads', 1),
+                    "setup_time_min": m.get('setup_time_min', 45),
+                    "current_maintenance_tons": m.get('current_maintenance_tons', 0.0),
+                    "maintenance_limit_tons": m.get('maintenance_limit_tons', 60.0),
+                    "status": m.get('status', 'active')
+                }
+
+    planned_orders = []
+    mixer_demands = {}
+
+    for o in orders:
+        o_id = o.get("id")
+        cust = o.get("customer", "Genel Müşteri")
+        prod = str(o.get("product", "")).strip()
+        unit = o.get("unit", "Boy (Adet)")
+        o_qty = float(o.get("order_qty", 0) or 0)
+        s_qty = float(o.get("stock_qty", 0) or 0)
+        act_qty = float(o.get("actual_produced", 0) or 0)
+        net_qty = max(0.0, o_qty - s_qty - act_qty)
+
+        matched_rota = None
+        for r_name, r_data in PLANNING_ROTAS.items():
+            if r_name.upper() in prod.upper() or prod.upper() in r_name.upper():
+                matched_rota = r_data
+                break
+
+        if not matched_rota:
+            matched_rota = {
+                "category": o.get("category", "Profil"),
+                "unit_kg": 2.0,
+                "standard_length": "Standart Boy",
+                "recipe": "Kasa Pervaz",
+                "routes": [
+                    {"hat": "Hat 101", "heads": 1, "speed_kg_h": 60.0, "speed_boy_h": 25.0, "fire_rate": 0.200, "rank": 1, "note": "Standart"}
+                ]
+            }
+
+        assigned_str = o.get("assigned_hats", "")
+        chosen_route = matched_rota["routes"][0]
+        for r in matched_rota["routes"]:
+            if r["hat"] in assigned_str:
+                chosen_route = r
+                break
+        target_hat = chosen_route["hat"]
+
+        fire_rate = chosen_route["fire_rate"]
+        gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
+        unit_kg = matched_rota["unit_kg"]
+        gross_kg = round(gross_needed * unit_kg, 1)
+        net_kg = round(net_qty * unit_kg, 1)
+
+        speed_boy_h = chosen_route["speed_boy_h"]
+        speed_kg_h = chosen_route["speed_kg_h"]
+
+        prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
+        setup_hours = 0.75 if net_qty > 0 and act_qty == 0 else 0.0
+        line_hours = round(prod_hours + setup_hours, 1)
+        shifts = round(line_hours / 12.0, 1)
+
+        prev_queue = lines_state[target_hat]["queue_hours"] if target_hat in lines_state else 0.0
+        start_time = now + timedelta(hours=prev_queue)
+        finish_time = start_time + timedelta(hours=line_hours)
+
+        if target_hat in lines_state and net_qty > 0:
+            lines_state[target_hat]["queue_hours"] += line_hours
+            if not lines_state[target_hat]["active_product"]:
+                lines_state[target_hat]["active_product"] = prod
+            lines_state[target_hat]["assigned_orders"].append({
+                "order_id": o_id,
+                "customer": cust,
+                "product": prod,
+                "gross_needed": gross_needed,
+                "line_hours": line_hours,
+                "finish_time": finish_time.strftime("%d.%m.%Y %H:%M")
+            })
+
+        due_str = o.get("due_date", "")
+        due_dt = None
+        if due_str:
+            for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
+                try:
+                    due_dt = datetime.strptime(due_str, fmt).replace(hour=23, minute=59)
+                    break
+                except Exception:
+                    pass
+        if not due_dt:
+            due_dt = now + timedelta(days=7)
+
+        # Remove timezone comparison issues by stripping tz if present
+        if hasattr(now, "tzinfo") and now.tzinfo and due_dt.tzinfo is None:
+            now_naive = now.replace(tzinfo=None)
+        else:
+            now_naive = now
+        
+        finish_naive = start_time.replace(tzinfo=None) if hasattr(start_time, "tzinfo") and start_time.tzinfo else start_time
+        due_naive = due_dt.replace(tzinfo=None) if hasattr(due_dt, "tzinfo") and due_dt.tzinfo else due_dt
+
+        margin_hours = round((due_naive - finish_naive).total_seconds() / 3600.0, 1)
+
+        if net_qty <= 0:
+            risk_status = "TAMAMLANDI"
+            risk_color = "emerald"
+            risk_label = "Tamamlandı"
+            risk_badge = "✅ Tamamlandı"
+            risk_desc = "Sipariş ve stok hedefine ulaşıldı."
+        elif margin_hours >= 24.0:
+            risk_status = "SIFIR_RISK"
+            risk_color = "emerald"
+            risk_label = "Sıfır Risk"
+            risk_badge = f"🟢 Sıfır Risk (+{margin_hours:.0f} sa)"
+            risk_desc = f"Terminden {margin_hours:.0f} saat önce hazır. Güvenli plan."
+        elif margin_hours >= 0.0:
+            risk_status = "KRITIK"
+            risk_color = "amber"
+            risk_label = "Kritik"
+            risk_badge = f"🟡 Kritik (+{margin_hours:.0f} sa)"
+            risk_desc = f"Termine sadece {margin_hours:.0f} saat kala bitiyor. Ek duruş olmamalı."
+        else:
+            risk_status = "GECIKME_RISKI"
+            risk_color = "rose"
+            risk_label = "Gecikme Riski"
+            risk_badge = f"🔴 Gecikme Riski (-{abs(margin_hours):.0f} sa)"
+            risk_desc = f"Tahmini bitiş termin tarihini {abs(margin_hours):.0f} saat aşıyor! Alternatif hat önerilir."
+
+        recipe_name = matched_rota.get("recipe", "Kasa Pervaz")
+        batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
+        if recipe_name not in mixer_demands:
+            mixer_demands[recipe_name] = {"recipe": recipe_name, "total_kg": 0.0, "batches": 0.0, "orders_count": 0}
+        mixer_demands[recipe_name]["total_kg"] += gross_kg
+        mixer_demands[recipe_name]["batches"] += batches
+        mixer_demands[recipe_name]["orders_count"] += 1
+
+        alt_routes = []
+        for r in matched_rota.get("routes", []):
+            is_cur = (r["hat"] == target_hat and r["heads"] == chosen_route["heads"])
+            alt_r_hours = round((gross_kg / r["speed_kg_h"]) + setup_hours, 1) if r["speed_kg_h"] > 0 else 0.0
+            alt_routes.append({
+                "hat": r["hat"],
+                "heads": r["heads"],
+                "heads_label": f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)",
+                "speed_kg_h": r["speed_kg_h"],
+                "speed_boy_h": r["speed_boy_h"],
+                "fire_rate_pct": round(r["fire_rate"] * 100, 1),
+                "line_hours": alt_r_hours,
+                "is_current": is_cur,
+                "note": r.get("note", "")
+            })
+
+        planned_orders.append({
+            "order_id": o_id,
+            "customer": cust,
+            "product": prod,
+            "category": matched_rota.get("category", "Profil"),
+            "unit": unit,
+            "standard_length": matched_rota.get("standard_length", "Standart"),
+            "order_qty": o_qty,
+            "stock_qty": s_qty,
+            "actual_produced": act_qty,
+            "net_needed_qty": net_qty,
+            "fire_rate_pct": round(fire_rate * 100, 1),
+            "gross_needed_qty": gross_needed,
+            "gross_kg": gross_kg,
+            "net_kg": net_kg,
+            "assigned_hat": target_hat,
+            "heads": chosen_route["heads"],
+            "heads_label": f"{chosen_route['heads']} Göz ({'Tek' if chosen_route['heads']==1 else 'Çift'} Kafa)",
+            "speed_kg_h": speed_kg_h,
+            "speed_boy_h": speed_boy_h,
+            "setup_hours": setup_hours,
+            "line_hours": line_hours,
+            "shifts_needed": shifts,
+            "start_time": start_time.strftime("%d.%m.%Y %H:%M"),
+            "finish_time": finish_time.strftime("%d.%m.%Y %H:%M"),
+            "due_date": due_dt.strftime("%d.%m.%Y"),
+            "margin_hours": margin_hours,
+            "risk_status": risk_status,
+            "risk_color": risk_color,
+            "risk_label": risk_label,
+            "risk_badge": risk_badge,
+            "risk_desc": risk_desc,
+            "recipe_name": recipe_name,
+            "batches_needed": batches,
+            "routes": alt_routes,
+            "status": o.get("status", "SIRADA")
+        })
+
+    tot_orders = len(planned_orders)
+    active_orders = [p for p in planned_orders if p["net_needed_qty"] > 0]
+    tot_gross_kg = sum(p["gross_kg"] for p in active_orders)
+    tot_net_kg = sum(p["net_kg"] for p in active_orders)
+    tot_hours = sum(p["line_hours"] for p in active_orders)
+    tot_shifts = round(tot_hours / 12.0, 1)
+    zero_risk_c = sum(1 for p in active_orders if p["risk_status"] == "SIFIR_RISK")
+    crit_c = sum(1 for p in active_orders if p["risk_status"] == "KRITIK")
+    delay_c = sum(1 for p in active_orders if p["risk_status"] == "GECIKME_RISKI")
+    tot_batches = sum(p["batches_needed"] for p in active_orders)
+    active_lines_count = sum(1 for h, s in lines_state.items() if s["queue_hours"] > 0)
+
+    raw_demand = []
+    bom_pct = {
+        "40 AMBAR": 0.40,
+        "KALSİT 5K": 0.20,
+        "GERİ DÖNÜŞÜM": 0.25,
+        "TALAŞ": 0.10,
+        "ASC 1010A": 0.05
+    }
+    for item in raw_stock_list:
+        mat_name = item.get("material", "").strip()
+        cur_stock = float(item.get("current_stock_kg", 0.0) or 0.0)
+        req_pct = 0.0
+        for b_name, b_ratio in bom_pct.items():
+            if b_name.upper() in mat_name.upper() or mat_name.upper() in b_name.upper():
+                req_pct = b_ratio
+                break
+        req_kg = round(tot_gross_kg * req_pct, 1) if req_pct > 0 else 0.0
+        rem_stock = round(cur_stock - req_kg, 1)
+        shortage = max(0.0, req_kg - cur_stock)
+        raw_demand.append({
+            "material": mat_name,
+            "current_stock_kg": cur_stock,
+            "required_kg": req_kg,
+            "remaining_stock_kg": rem_stock,
+            "shortage_kg": shortage,
+            "status": "Yeterli" if shortage <= 0 else "KRİTİK EKSİK"
+        })
+
+    return {
+        "summary": {
+            "total_orders": tot_orders,
+            "active_orders_count": len(active_orders),
+            "total_gross_kg": round(tot_gross_kg, 1),
+            "total_net_kg": round(tot_net_kg, 1),
+            "total_line_hours": round(tot_hours, 1),
+            "total_shifts": tot_shifts,
+            "zero_risk_count": zero_risk_c,
+            "critical_count": crit_c,
+            "delayed_count": delay_c,
+            "total_mixer_batches": round(tot_batches, 1),
+            "active_lines_count": active_lines_count,
+            "total_lines": len(all_hats)
+        },
+        "planned_orders": planned_orders,
+        "line_schedules": list(lines_state.values()),
+        "mixer_demands": list(mixer_demands.values()),
+        "raw_materials_demand": raw_demand,
+        "available_rotas": PLANNING_ROTAS
+    }
+
+@app.post("/api/planning/simulate")
+def simulate_planning_job(req: PlanSimulationRequest):
+    prod = req.product.strip()
+    matched_rota = None
+    for r_name, r_data in PLANNING_ROTAS.items():
+        if r_name.upper() in prod.upper() or prod.upper() in r_name.upper():
+            matched_rota = r_data
+            break
+
+    if not matched_rota:
+        raise HTTPException(status_code=404, detail="Seçilen ürün için kalıp ve hat rotası bulunamadı.")
+
+    o_qty = float(req.order_qty)
+    s_qty = float(req.stock_qty or 0.0)
+    net_qty = max(0.0, o_qty - s_qty)
+
+    now = get_turkey_now()
+    if hasattr(now, "tzinfo") and now.tzinfo:
+        now_naive = now.replace(tzinfo=None)
+    else:
+        now_naive = now
+
+    due_dt = None
+    if req.due_date:
+        for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
+            try:
+                due_dt = datetime.strptime(req.due_date, fmt).replace(hour=23, minute=59)
+                break
+            except Exception:
+                pass
+    if not due_dt:
+        due_dt = now_naive + timedelta(days=7)
+
+    route_evaluations = []
+    for r in matched_rota["routes"]:
+        fire_rate = r["fire_rate"]
+        gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
+        unit_kg = matched_rota["unit_kg"]
+        gross_kg = round(gross_needed * unit_kg, 1)
+        speed_kg_h = r["speed_kg_h"]
+        speed_boy_h = r["speed_boy_h"]
+        prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
+        setup_hours = 0.75
+        total_hours = round(prod_hours + setup_hours, 1)
+        shifts = round(total_hours / 12.0, 1)
+
+        finish_dt = now_naive + timedelta(hours=total_hours)
+        margin_hours = round((due_dt - finish_dt).total_seconds() / 3600.0, 1)
+
+        if margin_hours >= 24.0:
+            risk_badge = f"🟢 Sıfır Risk (+{margin_hours:.0f} sa)"
+            risk_status = "SIFIR_RISK"
+        elif margin_hours >= 0.0:
+            risk_badge = f"🟡 Kritik (+{margin_hours:.0f} sa)"
+            risk_status = "KRITIK"
+        else:
+            risk_badge = f"🔴 Gecikme Riski (-{abs(margin_hours):.0f} sa)"
+            risk_status = "GECIKME_RISKI"
+
+        mixer_batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
+
+        route_evaluations.append({
+            "hat": r["hat"],
+            "heads": r["heads"],
+            "heads_label": f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)",
+            "speed_kg_h": speed_kg_h,
+            "speed_boy_h": speed_boy_h,
+            "fire_rate_pct": round(fire_rate * 100, 1),
+            "gross_needed_qty": gross_needed,
+            "gross_kg": gross_kg,
+            "line_hours": total_hours,
+            "shifts": shifts,
+            "finish_time": finish_dt.strftime("%d.%m.%Y %H:%M"),
+            "margin_hours": margin_hours,
+            "risk_status": risk_status,
+            "risk_badge": risk_badge,
+            "mixer_batches": mixer_batches,
+            "note": r.get("note", "")
+        })
+
+    # Sort route evaluations: preference is SIFIR_RISK first, then shortest line hours
+    best_route = sorted(route_evaluations, key=lambda x: (0 if x["risk_status"]=="SIFIR_RISK" else 1, x["line_hours"]))[0]
+
+    return {
+        "product": prod,
+        "category": matched_rota["category"],
+        "order_qty": o_qty,
+        "stock_qty": s_qty,
+        "net_needed_qty": net_qty,
+        "unit_kg": matched_rota["unit_kg"],
+        "recipe": matched_rota["recipe"],
+        "recommended_route": best_route,
+        "all_routes": route_evaluations
+    }
+
+@app.post("/api/planning/assign_line")
+def assign_order_line(req: LineAssignRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == req.order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    target["assigned_hats"] = req.assigned_hat
+    save_orders(orders)
+    return {"status": "ok", "order_id": req.order_id, "assigned_hat": req.assigned_hat}
+
 # Mount static files
 static_dir = os.path.join(APP_DIR, "static")
 os.makedirs(static_dir, exist_ok=True)

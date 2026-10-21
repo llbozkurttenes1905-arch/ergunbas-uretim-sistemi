@@ -1486,6 +1486,33 @@
           "kg": 150.0
         }
       ]
+    },
+    {
+      "id": "rec_deneme_10",
+      "name": "deneme",
+      "batch_kg": 220.0,
+      "ingredients": [
+        {
+          "material": "HURDA",
+          "kg": 135.0
+        },
+        {
+          "material": "KALSİT 1K(Calsıum Carbonat) NİĞTAŞ",
+          "kg": 80.0
+        },
+        {
+          "material": "LRF 8194(STAB)",
+          "kg": 3.5
+        },
+        {
+          "material": "PA140",
+          "kg": 0.2
+        },
+        {
+          "material": "FNL 200 (PEWAX)",
+          "kg": 0.75
+        }
+      ]
     }
   ],
   "monthly_targets": {

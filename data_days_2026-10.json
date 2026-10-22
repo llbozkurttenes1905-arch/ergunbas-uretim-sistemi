@@ -8600,7 +8600,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 720.0,
+          "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 240.0,
+          "desc": "Kalıp bakım yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 720.0,
+          "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Operatör / Eleman Yetersizliği",
+          "down_min": 720.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "Hammadde denemesi yapıldı.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",
@@ -8698,13 +8753,13 @@
         },
         {
           "makine": "Mixer 2",
-          "recipe": "Levha Renkli(YENİ)",
-          "batch_kg": 469.3,
+          "recipe": "Levha Renkli (ÇAPAK)",
+          "batch_kg": 334.3,
           "gunduz_sarj": 23,
           "gece_sarj": 0,
-          "gunduz_kg": 10793.9,
+          "gunduz_kg": 7688.900000000001,
           "gece_kg": 0,
-          "toplam_kg": 10793.9
+          "toplam_kg": 7688.900000000001
         }
       ],
       "mixer_emp_gunduz": 11,

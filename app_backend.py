@@ -3142,7 +3142,7 @@ def simulate_order(req: OrderSimulationRequest):
 # ORDER MANAGEMENT & PRODUCTION ALLOCATION ENDPOINTS
 # =====================================================================
 
-ORDERS_FILE = "orders.json"
+ORDERS_FILE = os.path.join(APP_DIR, "orders.json")
 
 def load_orders() -> List[Dict[str, Any]]:
     if not os.path.exists(ORDERS_FILE):
@@ -6557,17 +6557,40 @@ class PlanSimulationRequest(BaseModel):
     stock_qty: Optional[float] = 0.0
     due_date: Optional[str] = None
     preferred_hat: Optional[str] = None
+    dim: Optional[str] = None
 
 class LineAssignRequest(BaseModel):
     order_id: str
     assigned_hat: str
 
+class PauseToggleRequest(BaseModel):
+    order_id: str
+
+class PrioritySetRequest(BaseModel):
+    order_id: str
+    priority: str  # 'URGENT', 'HIGH', 'NORMAL', 'LOW'
+
+class OrderDimUpdateRequest(BaseModel):
+    order_id: str
+    dim: str
+
+class QueueReorderRequest(BaseModel):
+    order_id: str
+    direction: str  # 'up' or 'down'
+
 PLANNING_ROTAS = {
+    # PERVAZLAR
     "50X80 PERVAZ": {
         "category": "Pervaz",
-        "unit_kg": 1.55,
-        "standard_length": "2.10 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.20 m (220 cm)",
+        "dims": {
+            "2.20 m (220 cm)": {"unit_kg": 1.54, "ratio": 0.81},
+            "2.50 m (250 cm)": {"unit_kg": 1.61, "ratio": 0.10},
+            "2.80 m (280 cm)": {"unit_kg": 1.75, "ratio": 0.04},
+            "2.10 m (210 cm)": {"unit_kg": 1.50, "ratio": 0.03},
+            "2.26 m (226 cm)": {"unit_kg": 1.55, "ratio": 0.02}
+        },
         "routes": [
             {"hat": "Hat 109", "heads": 2, "speed_kg_h": 75.0, "speed_boy_h": 50.0, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Çift Göz - 50 boy/sa)"},
             {"hat": "Hat 103", "heads": 2, "speed_kg_h": 52.0, "speed_boy_h": 31.0, "fire_rate": 0.280, "rank": 2, "note": "Alternatif Hat (Çift Göz - 31 boy/sa)"},
@@ -6576,9 +6599,12 @@ PLANNING_ROTAS = {
     },
     "80X80 PERVAZ": {
         "category": "Pervaz",
-        "unit_kg": 2.20,
-        "standard_length": "2.10 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.24 m (224 cm)",
+        "dims": {
+            "2.24 m (224 cm)": {"unit_kg": 2.28, "ratio": 0.93},
+            "2.20 m (220 cm)": {"unit_kg": 2.20, "ratio": 0.07}
+        },
         "routes": [
             {"hat": "Hat 109", "heads": 2, "speed_kg_h": 85.1, "speed_boy_h": 58.0, "fire_rate": 0.236, "rank": 1, "note": "Yüksek Kapasite (Çift Göz - 58 boy/sa)"},
             {"hat": "Hat 101", "heads": 1, "speed_kg_h": 51.1, "speed_boy_h": 22.0, "fire_rate": 0.190, "rank": 2, "note": "Standart Hat (Tek Göz - 22 boy/sa)"}
@@ -6586,36 +6612,48 @@ PLANNING_ROTAS = {
     },
     "35X100 PERVAZ": {
         "category": "Pervaz",
-        "unit_kg": 2.08,
-        "standard_length": "2.10 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.20 m (220 cm)",
+        "dims": {
+            "2.20 m (220 cm)": {"unit_kg": 2.08, "ratio": 1.0}
+        },
         "routes": [
             {"hat": "Hat 101", "heads": 1, "speed_kg_h": 63.8, "speed_boy_h": 30.0, "fire_rate": 0.125, "rank": 1, "note": "Tek Göz (30 boy/sa)"}
         ]
     },
     "35X150 PERVAZ": {
         "category": "Pervaz",
-        "unit_kg": 2.97,
-        "standard_length": "2.10 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.20 m (220 cm)",
+        "dims": {
+            "2.20 m (220 cm)": {"unit_kg": 2.97, "ratio": 1.0}
+        },
         "routes": [
             {"hat": "Hat 101", "heads": 1, "speed_kg_h": 41.2, "speed_boy_h": 14.0, "fire_rate": 0.177, "rank": 1, "note": "Tek Göz (14 boy/sa)"}
         ]
     },
     "35X80 PERVAZ": {
         "category": "Pervaz",
-        "unit_kg": 2.94,
-        "standard_length": "2.10 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.20 m (220 cm)",
+        "dims": {
+            "2.20 m (220 cm)": {"unit_kg": 2.94, "ratio": 1.0}
+        },
         "routes": [
             {"hat": "Hat 101", "heads": 1, "speed_kg_h": 44.2, "speed_boy_h": 15.0, "fire_rate": 0.113, "rank": 1, "note": "Tek Göz (15 boy/sa)"}
         ]
     },
+
+    # KASALAR
     "100 mm KASA": {
         "category": "Kasa",
-        "unit_kg": 4.00,
-        "standard_length": "2.15 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.15 m (215 cm)",
+        "dims": {
+            "2.15 m (215 cm)": {"unit_kg": 3.98, "ratio": 0.96},
+            "2.22 m (222 cm)": {"unit_kg": 4.10, "ratio": 0.02},
+            "2.45 m (245 cm)": {"unit_kg": 4.50, "ratio": 0.02}
+        },
         "routes": [
             {"hat": "Hat 108", "heads": 1, "speed_kg_h": 70.0, "speed_boy_h": 17.5, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Tek Göz - 17.5 boy/sa)"},
             {"hat": "Hat 102", "heads": 1, "speed_kg_h": 63.2, "speed_boy_h": 15.8, "fire_rate": 0.300, "rank": 2, "note": "Alternatif Hat (Tek Göz - 15.8 boy/sa)"}
@@ -6623,9 +6661,13 @@ PLANNING_ROTAS = {
     },
     "140 mm KASA": {
         "category": "Kasa",
-        "unit_kg": 4.95,
-        "standard_length": "2.15 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.15 m (215 cm)",
+        "dims": {
+            "2.15 m (215 cm)": {"unit_kg": 5.07, "ratio": 0.65},
+            "2.45 m (245 cm)": {"unit_kg": 4.63, "ratio": 0.23},
+            "2.22 m (222 cm)": {"unit_kg": 5.26, "ratio": 0.12}
+        },
         "routes": [
             {"hat": "Hat 106", "heads": 1, "speed_kg_h": 74.1, "speed_boy_h": 15.0, "fire_rate": 0.300, "rank": 1, "note": "Öncelikli Hat (Tek Göz - 15 boy/sa)"},
             {"hat": "Hat 108", "heads": 1, "speed_kg_h": 65.0, "speed_boy_h": 13.1, "fire_rate": 0.300, "rank": 2, "note": "Alternatif Hat (Tek Göz - 13.1 boy/sa)"}
@@ -6633,87 +6675,306 @@ PLANNING_ROTAS = {
     },
     "200 mm KASA": {
         "category": "Kasa",
-        "unit_kg": 6.66,
-        "standard_length": "2.15 Metre",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.15 m (215 cm)",
+        "dims": {
+            "2.15 m (215 cm)": {"unit_kg": 6.43, "ratio": 0.68},
+            "2.45 m (245 cm)": {"unit_kg": 7.44, "ratio": 0.26},
+            "2.22 m (222 cm)": {"unit_kg": 6.70, "ratio": 0.06}
+        },
         "routes": [
             {"hat": "Hat 107", "heads": 1, "speed_kg_h": 84.6, "speed_boy_h": 12.7, "fire_rate": 0.300, "rank": 1, "note": "Ana Hat (Tek Göz - 12.7 boy/sa)"}
         ]
     },
-    "SEREN (Çift Kafa)": {
+
+    # SERENLER
+    "SEREN": {
         "category": "Seren",
-        "unit_kg": 3.39,
-        "standard_length": "3.00 Metre",
         "recipe": "Seren",
+        "dominant_dim": "2.10 m (210 cm)",
+        "dims": {
+            "2.10 m (210 cm)": {"unit_kg": 3.41, "ratio": 0.93},
+            "2.20 m (220 cm)": {"unit_kg": 3.32, "ratio": 0.07}
+        },
         "routes": [
             {"hat": "Hat 104", "heads": 2, "speed_kg_h": 96.5, "speed_boy_h": 28.5, "fire_rate": 0.260, "rank": 1, "note": "Öncelikli Hat (Çift Göz - 28.5 boy/sa)"},
             {"hat": "Hat 105", "heads": 2, "speed_kg_h": 90.1, "speed_boy_h": 26.5, "fire_rate": 0.260, "rank": 2, "note": "Alternatif Hat (Çift Göz - 26.5 boy/sa)"}
         ]
     },
-    "SEREN": {
+    "SEREN (Çift Kafa)": {
         "category": "Seren",
-        "unit_kg": 3.39,
-        "standard_length": "3.00 Metre",
         "recipe": "Seren",
+        "dominant_dim": "2.10 m (210 cm)",
+        "dims": {
+            "2.10 m (210 cm)": {"unit_kg": 3.41, "ratio": 0.93},
+            "2.20 m (220 cm)": {"unit_kg": 3.32, "ratio": 0.07}
+        },
         "routes": [
-            {"hat": "Hat 105", "heads": 2, "speed_kg_h": 90.1, "speed_boy_h": 26.5, "fire_rate": 0.260, "rank": 1, "note": "Çift Göz (26.5 boy/sa)"},
-            {"hat": "Hat 104", "heads": 2, "speed_kg_h": 96.5, "speed_boy_h": 28.5, "fire_rate": 0.260, "rank": 2, "note": "Çift Göz (28.5 boy/sa)"}
+            {"hat": "Hat 104", "heads": 2, "speed_kg_h": 96.5, "speed_boy_h": 28.5, "fire_rate": 0.260, "rank": 1, "note": "Öncelikli Hat (Çift Göz - 28.5 boy/sa)"},
+            {"hat": "Hat 105", "heads": 2, "speed_kg_h": 90.1, "speed_boy_h": 26.5, "fire_rate": 0.260, "rank": 2, "note": "Alternatif Hat (Çift Göz - 26.5 boy/sa)"}
         ]
     },
     "SEREN(39mm)": {
         "category": "Seren",
-        "unit_kg": 3.81,
-        "standard_length": "3.00 Metre",
         "recipe": "Seren",
+        "dominant_dim": "2.10 m (210 cm)",
+        "dims": {
+            "2.10 m (210 cm)": {"unit_kg": 3.81, "ratio": 1.0}
+        },
         "routes": [
             {"hat": "Hat 107", "heads": 1, "speed_kg_h": 107.8, "speed_boy_h": 28.3, "fire_rate": 0.220, "rank": 1, "note": "Tek Göz Özel (28.3 boy/sa)"}
         ]
     },
-    "DÜŞBUDAK Levha": {
-        "category": "Levha",
-        "unit_kg": 4.77,
-        "standard_length": "Standart Levha",
-        "recipe": "Levha Renkli (Takoz)",
+
+    # DECKLER
+    "KT100-220x24-ANT": {
+        "category": "Deck",
+        "recipe": "Deck Antrasit",
+        "dominant_dim": "3.00 m (300 cm)",
+        "dims": {
+            "3.00 m (300 cm)": {"unit_kg": 10.14, "ratio": 0.50},
+            "4.00 m (400 cm)": {"unit_kg": 13.20, "ratio": 0.27},
+            "3.40 m (340 cm)": {"unit_kg": 11.45, "ratio": 0.10},
+            "5.00 m (500 cm)": {"unit_kg": 16.50, "ratio": 0.07},
+            "2.80 m (280 cm)": {"unit_kg": 9.40, "ratio": 0.06}
+        },
         "routes": [
-            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 187.9, "speed_boy_h": 39.4, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (39.4 plaka/sa)"}
+            {"hat": "Hat 107", "heads": 1, "speed_kg_h": 85.0, "speed_boy_h": 8.4, "fire_rate": 0.250, "rank": 1, "note": "Tek Göz (8.4 boy/sa)"}
         ]
     },
-    "TEAK Levha": {
-        "category": "Levha",
-        "unit_kg": 4.25,
-        "standard_length": "Standart Levha",
-        "recipe": "Levha Renkli (Takoz)",
+    "KT102-219x26-ANT": {
+        "category": "Deck",
+        "recipe": "Deck Antrasit",
+        "dominant_dim": "3.00 m (300 cm)",
+        "dims": {
+            "3.00 m (300 cm)": {"unit_kg": 10.07, "ratio": 0.50},
+            "3.70 m (370 cm)": {"unit_kg": 12.48, "ratio": 0.33},
+            "4.00 m (400 cm)": {"unit_kg": 13.50, "ratio": 0.17}
+        },
         "routes": [
-            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 145.5, "speed_boy_h": 34.2, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (34.2 plaka/sa)"}
+            {"hat": "Hat 107", "heads": 1, "speed_kg_h": 85.0, "speed_boy_h": 8.4, "fire_rate": 0.250, "rank": 1, "note": "Tek Göz (8.4 boy/sa)"}
         ]
     },
-    "BEYAZ TEAK Levha": {
-        "category": "Levha",
-        "unit_kg": 4.41,
-        "standard_length": "Standart Levha",
-        "recipe": "Levha Beyaz",
+    "KT102-219x26-KAH": {
+        "category": "Deck",
+        "recipe": "Deck Kahverengi",
+        "dominant_dim": "3.00 m (300 cm)",
+        "dims": {
+            "3.00 m (300 cm)": {"unit_kg": 9.26, "ratio": 0.85},
+            "3.70 m (370 cm)": {"unit_kg": 11.50, "ratio": 0.15}
+        },
         "routes": [
-            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 148.4, "speed_boy_h": 33.6, "fire_rate": 0.050, "rank": 1, "note": "Levha Makinesi 1 (33.6 plaka/sa)"}
+            {"hat": "Hat 107", "heads": 1, "speed_kg_h": 85.0, "speed_boy_h": 9.2, "fire_rate": 0.250, "rank": 1, "note": "Tek Göz (9.2 boy/sa)"}
         ]
     },
+
+    # ÇITA VE PROFİL
     "CAM ÇITASI": {
         "category": "Çıta",
-        "unit_kg": 1.50,
-        "standard_length": "Standart Boy",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.20 m (220 cm)",
+        "dims": {
+            "2.20 m (220 cm)": {"unit_kg": 1.50, "ratio": 1.0}
+        },
         "routes": [
-            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 50.0, "speed_boy_h": 33.3, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz"}
+            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 50.0, "speed_boy_h": 33.3, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz (33.3 boy/sa)"}
         ]
     },
     "U KAPAMA": {
         "category": "Profil",
-        "unit_kg": 0.48,
-        "standard_length": "Standart Boy",
         "recipe": "Kasa Pervaz",
+        "dominant_dim": "2.30 m (230 cm)",
+        "dims": {
+            "2.30 m (230 cm)": {"unit_kg": 0.49, "ratio": 0.87},
+            "2.15 m (215 cm)": {"unit_kg": 0.42, "ratio": 0.13}
+        },
         "routes": [
-            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 40.7, "speed_boy_h": 84.8, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz"}
+            {"hat": "Hat 102", "heads": 1, "speed_kg_h": 40.7, "speed_boy_h": 84.8, "fire_rate": 0.150, "rank": 1, "note": "Tek Göz (84.8 boy/sa)"}
+        ]
+    },
+
+    # LEVHALAR (HAT 201 - LEVHA KALIBI)
+    "DIŞBUDAK Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x207 cm",
+        "dims": {
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.52},
+            "93x208 cm": {"unit_kg": 4.75, "ratio": 0.20},
+            "94x208 cm": {"unit_kg": 4.78, "ratio": 0.16},
+            "93x211 cm": {"unit_kg": 4.80, "ratio": 0.09},
+            "94x250 cm": {"unit_kg": 5.75, "ratio": 0.03}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 187.9, "speed_boy_h": 39.4, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (39.4 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "TEAK Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "85x210 cm",
+        "dims": {
+            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.21},
+            "75x210 cm": {"unit_kg": 3.86, "ratio": 0.16},
+            "75x215 cm": {"unit_kg": 3.95, "ratio": 0.13},
+            "75x211 cm": {"unit_kg": 3.88, "ratio": 0.12},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.09}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 145.5, "speed_boy_h": 34.2, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (34.2 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "BEYAZ TEAK Levha": {
+        "category": "Levha",
+        "recipe": "Levha Beyaz",
+        "dominant_dim": "75x210 cm",
+        "dims": {
+            "75x210 cm": {"unit_kg": 3.86, "ratio": 0.26},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.26},
+            "93x208 cm": {"unit_kg": 4.75, "ratio": 0.17},
+            "94x210 cm": {"unit_kg": 4.82, "ratio": 0.17}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 148.4, "speed_boy_h": 33.6, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (33.6 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "MIX TEAK Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "85x210 cm",
+        "dims": {
+            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.50},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.50}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 145.5, "speed_boy_h": 34.2, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (34.2 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "MIX BEYAZ TEAK Levha": {
+        "category": "Levha",
+        "recipe": "Levha Beyaz",
+        "dominant_dim": "75x210 cm",
+        "dims": {
+            "75x210 cm": {"unit_kg": 3.86, "ratio": 0.50},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.50}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 148.4, "speed_boy_h": 33.6, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (33.6 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "VIZON Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x207 cm",
+        "dims": {
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.61},
+            "94x208 cm": {"unit_kg": 4.78, "ratio": 0.29},
+            "94x210 cm": {"unit_kg": 4.82, "ratio": 0.10}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 170.0, "speed_boy_h": 36.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (36.0 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "SONOMO Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "85x210 cm",
+        "dims": {
+            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.61},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.13},
+            "80x209 cm": {"unit_kg": 4.18, "ratio": 0.11},
+            "75x208 cm": {"unit_kg": 3.85, "ratio": 0.10}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 160.0, "speed_boy_h": 37.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (37.0 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "AY GRİ Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x207 cm",
+        "dims": {
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.29},
+            "80x217 cm": {"unit_kg": 4.25, "ratio": 0.28},
+            "90x215 cm": {"unit_kg": 4.65, "ratio": 0.27},
+            "94x208 cm": {"unit_kg": 4.78, "ratio": 0.16}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 165.0, "speed_boy_h": 35.5, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (35.5 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "ANTRASİT Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x207 cm",
+        "dims": {
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.97},
+            "94x208 cm": {"unit_kg": 4.78, "ratio": 0.03}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 175.0, "speed_boy_h": 36.7, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (36.7 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "KOYU CEVİZ Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x207 cm",
+        "dims": {
+            "94x207 cm": {"unit_kg": 4.79, "ratio": 0.46},
+            "93x210 cm": {"unit_kg": 4.78, "ratio": 0.20},
+            "93x211 cm": {"unit_kg": 4.80, "ratio": 0.19},
+            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.15}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 165.0, "speed_boy_h": 34.5, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (34.5 plaka/sa - %5 Fire)"}
+        ]
+    },
+    "COCO Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "94x208 cm",
+        "dims": {
+            "94x208 cm": {"unit_kg": 4.79, "ratio": 0.52},
+            "94x215 cm": {"unit_kg": 4.90, "ratio": 0.35},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.13}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 168.0, "speed_boy_h": 35.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (35.0 plaka/sa - %5 Fire)"}
         ]
     }
+}
+
+def find_planning_rota(prod_name):
+    if not prod_name:
+        return None, None
+    p_raw = str(prod_name).strip()
+    def norm_s(s):
+        return s.upper().replace('İ', 'I').replace('I', 'I').replace('Ü', 'U').replace('Ö', 'O').replace('Ç', 'C').replace('Ş', 'S').replace('Ğ', 'G').strip()
+    pn = norm_s(p_raw)
+
+    if 'DUSB' in pn or 'DISB' in pn:
+        return 'DIŞBUDAK Levha', PLANNING_ROTAS.get('DIŞBUDAK Levha')
+
+    for k, v in PLANNING_ROTAS.items():
+        if norm_s(k) == pn:
+            return k, v
+    for k, v in PLANNING_ROTAS.items():
+        if norm_s(k) in pn or pn in norm_s(k):
+            return k, v
+    return None, None
+
+PRIORITY_RANKS = {
+    "URGENT": 0,
+    "HIGH": 1,
+    "NORMAL": 2,
+    "LOW": 3
+}
+
+PRIORITY_META = {
+    "URGENT": {"label": "ACİL (VIP)", "badge": "🚨 ACİL", "color": "rose", "order": 0},
+    "HIGH": {"label": "Yüksek", "badge": "⚡ Yüksek", "color": "amber", "order": 1},
+    "NORMAL": {"label": "Normal", "badge": "🔵 Normal", "color": "sky", "order": 2},
+    "LOW": {"label": "Düşük", "badge": "⚪ Düşük", "color": "slate", "order": 3}
 }
 
 @app.get("/api/planning/master")
@@ -6724,6 +6985,7 @@ def get_planning_master_data():
     raw_stock_list = data.get('raw_materials_stock', [])
 
     now = get_turkey_now()
+    now_naive = now.replace(tzinfo=None) if hasattr(now, "tzinfo") and now.tzinfo else now
 
     all_hats = [f"Hat {i}" for i in range(101, 110)] + ["Hat 201"]
     lines_state = {
@@ -6732,14 +6994,17 @@ def get_planning_master_data():
             "assigned_orders": [],
             "queue_hours": 0.0,
             "active_product": None,
-            "installed_mold": None
+            "installed_mold": None,
+            "paused_count": 0,
+            "urgent_count": 0,
+            "next_product": None
         } for h in all_hats
     }
 
     for m in molds:
         ahat = m.get('assigned_hat')
         if ahat:
-            norm_hat = f"Hat {ahat}" if str(ahat).isdigit() else ahat
+            norm_hat = f"Hat {ahat}" if str(ahat).isdigit() else str(ahat)
             if norm_hat in lines_state:
                 lines_state[norm_hat]["installed_mold"] = {
                     "code": m.get('code'),
@@ -6751,8 +7016,9 @@ def get_planning_master_data():
                     "status": m.get('status', 'active')
                 }
 
-    planned_orders = []
-    mixer_demands = {}
+    # Group orders by assigned hat for queue scheduling
+    hat_to_orders = {h: [] for h in all_hats}
+    order_computed = {}
 
     for o in orders:
         o_id = o.get("id")
@@ -6764,23 +7030,30 @@ def get_planning_master_data():
         act_qty = float(o.get("actual_produced", 0) or 0)
         net_qty = max(0.0, o_qty - s_qty - act_qty)
 
-        matched_rota = None
-        for r_name, r_data in PLANNING_ROTAS.items():
-            if r_name.upper() in prod.upper() or prod.upper() in r_name.upper():
-                matched_rota = r_data
-                break
-
+        matched_name, matched_rota = find_planning_rota(prod)
         if not matched_rota:
+            matched_name = prod
             matched_rota = {
                 "category": o.get("category", "Profil"),
-                "unit_kg": 2.0,
-                "standard_length": "Standart Boy",
                 "recipe": "Kasa Pervaz",
+                "dominant_dim": "2.20 m (220 cm)",
+                "dims": {"2.20 m (220 cm)": {"unit_kg": 2.0, "ratio": 1.0}},
                 "routes": [
-                    {"hat": "Hat 101", "heads": 1, "speed_kg_h": 60.0, "speed_boy_h": 25.0, "fire_rate": 0.200, "rank": 1, "note": "Standart"}
+                    {"hat": "Hat 101", "heads": 1, "speed_kg_h": 60.0, "speed_boy_h": 25.0, "fire_rate": 0.200, "rank": 1, "note": "Standart Hat"}
                 ]
             }
 
+        # Selected cut dimension
+        selected_dim = o.get("dim") or matched_rota.get("dominant_dim")
+        dim_info = matched_rota.get("dims", {}).get(selected_dim)
+        if not dim_info:
+            first_dim_key = list(matched_rota.get("dims", {}).keys())[0] if matched_rota.get("dims") else "Standart"
+            selected_dim = first_dim_key
+            dim_info = matched_rota.get("dims", {}).get(selected_dim, {"unit_kg": 2.0})
+
+        unit_kg = float(dim_info.get("unit_kg", 2.0))
+
+        # Hat assignment
         assigned_str = o.get("assigned_hats", "")
         chosen_route = matched_rota["routes"][0]
         for r in matched_rota["routes"]:
@@ -6788,10 +7061,11 @@ def get_planning_master_data():
                 chosen_route = r
                 break
         target_hat = chosen_route["hat"]
+        if target_hat not in hat_to_orders:
+            target_hat = all_hats[0]
 
         fire_rate = chosen_route["fire_rate"]
         gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
-        unit_kg = matched_rota["unit_kg"]
         gross_kg = round(gross_needed * unit_kg, 1)
         net_kg = round(net_qty * unit_kg, 1)
 
@@ -6803,23 +7077,6 @@ def get_planning_master_data():
         line_hours = round(prod_hours + setup_hours, 1)
         shifts = round(line_hours / 12.0, 1)
 
-        prev_queue = lines_state[target_hat]["queue_hours"] if target_hat in lines_state else 0.0
-        start_time = now + timedelta(hours=prev_queue)
-        finish_time = start_time + timedelta(hours=line_hours)
-
-        if target_hat in lines_state and net_qty > 0:
-            lines_state[target_hat]["queue_hours"] += line_hours
-            if not lines_state[target_hat]["active_product"]:
-                lines_state[target_hat]["active_product"] = prod
-            lines_state[target_hat]["assigned_orders"].append({
-                "order_id": o_id,
-                "customer": cust,
-                "product": prod,
-                "gross_needed": gross_needed,
-                "line_hours": line_hours,
-                "finish_time": finish_time.strftime("%d.%m.%Y %H:%M")
-            })
-
         due_str = o.get("due_date", "")
         due_dt = None
         if due_str:
@@ -6830,52 +7087,20 @@ def get_planning_master_data():
                 except Exception:
                     pass
         if not due_dt:
-            due_dt = now + timedelta(days=7)
-
-        # Remove timezone comparison issues by stripping tz if present
-        if hasattr(now, "tzinfo") and now.tzinfo and due_dt.tzinfo is None:
-            now_naive = now.replace(tzinfo=None)
-        else:
-            now_naive = now
-        
-        finish_naive = start_time.replace(tzinfo=None) if hasattr(start_time, "tzinfo") and start_time.tzinfo else start_time
+            due_dt = now_naive + timedelta(days=7)
         due_naive = due_dt.replace(tzinfo=None) if hasattr(due_dt, "tzinfo") and due_dt.tzinfo else due_dt
 
-        margin_hours = round((due_naive - finish_naive).total_seconds() / 3600.0, 1)
-
-        if net_qty <= 0:
-            risk_status = "TAMAMLANDI"
-            risk_color = "emerald"
-            risk_label = "Tamamlandı"
-            risk_badge = "✅ Tamamlandı"
-            risk_desc = "Sipariş ve stok hedefine ulaşıldı."
-        elif margin_hours >= 24.0:
-            risk_status = "SIFIR_RISK"
-            risk_color = "emerald"
-            risk_label = "Sıfır Risk"
-            risk_badge = f"🟢 Sıfır Risk (+{margin_hours:.0f} sa)"
-            risk_desc = f"Terminden {margin_hours:.0f} saat önce hazır. Güvenli plan."
-        elif margin_hours >= 0.0:
-            risk_status = "KRITIK"
-            risk_color = "amber"
-            risk_label = "Kritik"
-            risk_badge = f"🟡 Kritik (+{margin_hours:.0f} sa)"
-            risk_desc = f"Termine sadece {margin_hours:.0f} saat kala bitiyor. Ek duruş olmamalı."
-        else:
-            risk_status = "GECIKME_RISKI"
-            risk_color = "rose"
-            risk_label = "Gecikme Riski"
-            risk_badge = f"🔴 Gecikme Riski (-{abs(margin_hours):.0f} sa)"
-            risk_desc = f"Tahmini bitiş termin tarihini {abs(margin_hours):.0f} saat aşıyor! Alternatif hat önerilir."
+        # Priority & Pause flags
+        is_paused = bool(o.get("is_paused", False))
+        priority = str(o.get("priority", "NORMAL")).upper()
+        if priority not in PRIORITY_RANKS:
+            priority = "NORMAL"
+        queue_order = int(o.get("queue_order", 999))
 
         recipe_name = matched_rota.get("recipe", "Kasa Pervaz")
         batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
-        if recipe_name not in mixer_demands:
-            mixer_demands[recipe_name] = {"recipe": recipe_name, "total_kg": 0.0, "batches": 0.0, "orders_count": 0}
-        mixer_demands[recipe_name]["total_kg"] += gross_kg
-        mixer_demands[recipe_name]["batches"] += batches
-        mixer_demands[recipe_name]["orders_count"] += 1
 
+        # Alternative routes
         alt_routes = []
         for r in matched_rota.get("routes", []):
             is_cur = (r["hat"] == target_hat and r["heads"] == chosen_route["heads"])
@@ -6892,13 +7117,27 @@ def get_planning_master_data():
                 "note": r.get("note", "")
             })
 
-        planned_orders.append({
+        # Available cut dimensions for dropdown
+        available_dims_list = []
+        for d_key, d_val in matched_rota.get("dims", {}).items():
+            pct = round(d_val.get("ratio", 0.0) * 100)
+            available_dims_list.append({
+                "dim": d_key,
+                "unit_kg": d_val.get("unit_kg", 2.0),
+                "pct": pct,
+                "label": f"{d_key} (~{d_val.get('unit_kg', 2.0)} kg/boy) [%{pct}]" if pct > 0 else f"{d_key} (~{d_val.get('unit_kg', 2.0)} kg/boy)"
+            })
+
+        order_item = {
             "order_id": o_id,
             "customer": cust,
-            "product": prod,
+            "product": matched_name or prod,
+            "raw_product": prod,
             "category": matched_rota.get("category", "Profil"),
             "unit": unit,
-            "standard_length": matched_rota.get("standard_length", "Standart"),
+            "dim": selected_dim,
+            "unit_kg": unit_kg,
+            "available_dims": available_dims_list,
             "order_qty": o_qty,
             "stock_qty": s_qty,
             "actual_produced": act_qty,
@@ -6909,37 +7148,166 @@ def get_planning_master_data():
             "net_kg": net_kg,
             "assigned_hat": target_hat,
             "heads": chosen_route["heads"],
-            "heads_label": f"{chosen_route['heads']} Göz ({'Tek' if chosen_route['heads']==1 else 'Çift'} Kafa)",
+            "heads_label": f"{chosen_route['heads']} Göz ({'Tek' if chosen_route['heads']==1 else 'Çift'} Kafa)" if matched_rota.get("category") != "Levha" else "Levha Kalıbı",
             "speed_kg_h": speed_kg_h,
             "speed_boy_h": speed_boy_h,
             "setup_hours": setup_hours,
             "line_hours": line_hours,
             "shifts_needed": shifts,
-            "start_time": start_time.strftime("%d.%m.%Y %H:%M"),
-            "finish_time": finish_time.strftime("%d.%m.%Y %H:%M"),
-            "due_date": due_dt.strftime("%d.%m.%Y"),
-            "margin_hours": margin_hours,
-            "risk_status": risk_status,
-            "risk_color": risk_color,
-            "risk_label": risk_label,
-            "risk_badge": risk_badge,
-            "risk_desc": risk_desc,
+            "due_date": due_naive.strftime("%d.%m.%Y"),
+            "due_naive": due_naive,
             "recipe_name": recipe_name,
             "batches_needed": batches,
             "routes": alt_routes,
+            "is_paused": is_paused,
+            "priority": priority,
+            "priority_meta": PRIORITY_META[priority],
+            "queue_order": queue_order,
             "status": o.get("status", "SIRADA")
-        })
+        }
+
+        hat_to_orders[target_hat].append(order_item)
+
+    # Dynamic line scheduling & preemption engine
+    planned_orders = []
+    mixer_demands = {}
+
+    for hat_id, line_orders in hat_to_orders.items():
+        # Separate paused vs active
+        active_orders = [o for o in line_orders if not o["is_paused"]]
+        paused_orders = [o for o in line_orders if o["is_paused"]]
+
+        # Sort active: Priority first (URGENT -> HIGH -> NORMAL -> LOW), then queue_order
+        active_orders.sort(key=lambda x: (PRIORITY_RANKS.get(x["priority"], 2), x["queue_order"], x["order_id"]))
+
+        lines_state[hat_id]["paused_count"] = len(paused_orders)
+        lines_state[hat_id]["urgent_count"] = sum(1 for o in active_orders if o["priority"] == "URGENT")
+
+        if active_orders:
+            lines_state[hat_id]["active_product"] = f"{active_orders[0]['product']} ({active_orders[0]['dim']})"
+            if len(active_orders) > 1:
+                lines_state[hat_id]["next_product"] = f"{active_orders[1]['product']} ({active_orders[1]['dim']})"
+        elif paused_orders:
+            lines_state[hat_id]["active_product"] = "⏸️ Hat Boşta (Siparişler Donduruldu)"
+
+        # Process active orders sequentially on the line
+        for idx, o in enumerate(active_orders):
+            prev_queue = lines_state[hat_id]["queue_hours"]
+            start_time = now_naive + timedelta(hours=prev_queue)
+            finish_time = start_time + timedelta(hours=o["line_hours"])
+
+            lines_state[hat_id]["queue_hours"] = round(lines_state[hat_id]["queue_hours"] + o["line_hours"], 1)
+
+            margin_hours = round((o["due_naive"] - finish_time).total_seconds() / 3600.0, 1)
+
+            if o["net_needed_qty"] <= 0:
+                risk_status = "TAMAMLANDI"
+                risk_color = "blue"
+                risk_label = "Tamamlandı"
+                risk_badge = "✅ Tamamlandı"
+                risk_desc = "Sipariş ve stok hedefine ulaşıldı."
+            elif margin_hours >= 24.0:
+                risk_status = "SIFIR_RISK"
+                risk_color = "emerald"
+                risk_label = "Sıfır Risk"
+                risk_badge = f"🟢 Sıfır Risk (+{margin_hours:.0f} sa)"
+                risk_desc = f"Terminden {margin_hours:.0f} saat önce hazır. Güvenli plan."
+            elif margin_hours >= 0.0:
+                risk_status = "KRITIK"
+                risk_color = "amber"
+                risk_label = "Kritik"
+                risk_badge = f"🟡 Kritik (+{margin_hours:.0f} sa)"
+                risk_desc = f"Termine sadece {margin_hours:.0f} saat kala bitiyor. Ek duruş olmamalı."
+            else:
+                risk_status = "GECIKME_RISKI"
+                risk_color = "rose"
+                risk_label = "Gecikme Riski"
+                risk_badge = f"🔴 Gecikme Riski (-{abs(margin_hours):.0f} sa)"
+                risk_desc = f"Tahmini bitiş termin tarihini {abs(margin_hours):.0f} saat aşıyor! Alternatif hat önerilir."
+
+            o["start_time"] = start_time.strftime("%d.%m.%Y %H:%M")
+            o["finish_time"] = finish_time.strftime("%d.%m.%Y %H:%M")
+            o["margin_hours"] = margin_hours
+            o["risk_status"] = risk_status
+            o["risk_color"] = risk_color
+            o["risk_label"] = risk_label
+            o["risk_badge"] = risk_badge
+            o["risk_desc"] = risk_desc
+            o["line_queue_position"] = idx + 1
+
+            lines_state[hat_id]["assigned_orders"].append({
+                "order_id": o["order_id"],
+                "customer": o["customer"],
+                "product": o["product"],
+                "dim": o["dim"],
+                "gross_needed": o["gross_needed_qty"],
+                "line_hours": o["line_hours"],
+                "finish_time": o["finish_time"],
+                "priority": o["priority"],
+                "is_paused": False
+            })
+
+            # Recipe demands
+            rname = o["recipe_name"]
+            if rname not in mixer_demands:
+                mixer_demands[rname] = {"recipe": rname, "total_kg": 0.0, "batches": 0.0, "orders_count": 0}
+            mixer_demands[rname]["total_kg"] += o["gross_kg"]
+            mixer_demands[rname]["batches"] += o["batches_needed"]
+            mixer_demands[rname]["orders_count"] += 1
+
+            planned_orders.append(o)
+
+        # Process paused orders (DO NOT CONSUME LINE HOURS)
+        for p_idx, o in enumerate(paused_orders):
+            o["start_time"] = "⏸️ Donduruldu"
+            o["finish_time"] = "⏸️ Hat Boşaltıldı"
+            o["margin_hours"] = 0.0
+            o["risk_status"] = "DURDURULDU"
+            o["risk_color"] = "slate"
+            o["risk_label"] = "Durduruldu"
+            o["risk_badge"] = "⏸️ Donduruldu (Hat Boşaltıldı)"
+            o["risk_desc"] = "Sipariş donduruldu. Ekstrüder hattı diğer acil işler için serbest bırakıldı."
+            o["line_queue_position"] = 99
+
+            lines_state[hat_id]["assigned_orders"].append({
+                "order_id": o["order_id"],
+                "customer": o["customer"],
+                "product": o["product"],
+                "dim": o["dim"],
+                "gross_needed": o["gross_needed_qty"],
+                "line_hours": o["line_hours"],
+                "finish_time": "Donduruldu",
+                "priority": o["priority"],
+                "is_paused": True
+            })
+
+            planned_orders.append(o)
+
+    # Sort final planned orders:
+    # 1. Active first, Paused last
+    # 2. Priority rank (URGENT first)
+    # 3. Risk status (GECIKME_RISKI -> KRITIK -> SIFIR_RISK)
+    def plan_sort_key(x):
+        pause_val = 1 if x["is_paused"] else 0
+        prio_val = PRIORITY_RANKS.get(x["priority"], 2)
+        risk_map = {"GECIKME_RISKI": 0, "KRITIK": 1, "SIFIR_RISK": 2, "TAMAMLANDI": 3, "DURDURULDU": 4}
+        return (pause_val, prio_val, risk_map.get(x["risk_status"], 5))
+
+    planned_orders.sort(key=plan_sort_key)
 
     tot_orders = len(planned_orders)
-    active_orders = [p for p in planned_orders if p["net_needed_qty"] > 0]
-    tot_gross_kg = sum(p["gross_kg"] for p in active_orders)
-    tot_net_kg = sum(p["net_kg"] for p in active_orders)
-    tot_hours = sum(p["line_hours"] for p in active_orders)
+    active_unpaused = [p for p in planned_orders if not p["is_paused"] and p["net_needed_qty"] > 0]
+    tot_gross_kg = sum(p["gross_kg"] for p in active_unpaused)
+    tot_net_kg = sum(p["net_kg"] for p in active_unpaused)
+    tot_hours = sum(p["line_hours"] for p in active_unpaused)
     tot_shifts = round(tot_hours / 12.0, 1)
-    zero_risk_c = sum(1 for p in active_orders if p["risk_status"] == "SIFIR_RISK")
-    crit_c = sum(1 for p in active_orders if p["risk_status"] == "KRITIK")
-    delay_c = sum(1 for p in active_orders if p["risk_status"] == "GECIKME_RISKI")
-    tot_batches = sum(p["batches_needed"] for p in active_orders)
+
+    zero_risk_c = sum(1 for p in active_unpaused if p["risk_status"] == "SIFIR_RISK")
+    crit_c = sum(1 for p in active_unpaused if p["risk_status"] == "KRITIK")
+    delay_c = sum(1 for p in active_unpaused if p["risk_status"] == "GECIKME_RISKI")
+    paused_c = sum(1 for p in planned_orders if p["is_paused"])
+    urgent_c = sum(1 for p in planned_orders if p["priority"] == "URGENT")
+    tot_batches = sum(p["batches_needed"] for p in active_unpaused)
     active_lines_count = sum(1 for h, s in lines_state.items() if s["queue_hours"] > 0)
 
     raw_demand = []
@@ -6973,7 +7341,9 @@ def get_planning_master_data():
     return {
         "summary": {
             "total_orders": tot_orders,
-            "active_orders_count": len(active_orders),
+            "active_orders_count": len(active_unpaused),
+            "paused_orders_count": paused_c,
+            "urgent_orders_count": urgent_c,
             "total_gross_kg": round(tot_gross_kg, 1),
             "total_net_kg": round(tot_net_kg, 1),
             "total_line_hours": round(tot_hours, 1),
@@ -6995,11 +7365,7 @@ def get_planning_master_data():
 @app.post("/api/planning/simulate")
 def simulate_planning_job(req: PlanSimulationRequest):
     prod = req.product.strip()
-    matched_rota = None
-    for r_name, r_data in PLANNING_ROTAS.items():
-        if r_name.upper() in prod.upper() or prod.upper() in r_name.upper():
-            matched_rota = r_data
-            break
+    matched_name, matched_rota = find_planning_rota(prod)
 
     if not matched_rota:
         raise HTTPException(status_code=404, detail="Seçilen ürün için kalıp ve hat rotası bulunamadı.")
@@ -7008,11 +7374,18 @@ def simulate_planning_job(req: PlanSimulationRequest):
     s_qty = float(req.stock_qty or 0.0)
     net_qty = max(0.0, o_qty - s_qty)
 
+    # Dimension selection
+    selected_dim = req.dim or matched_rota.get("dominant_dim")
+    dim_info = matched_rota.get("dims", {}).get(selected_dim)
+    if not dim_info:
+        first_k = list(matched_rota.get("dims", {}).keys())[0] if matched_rota.get("dims") else "Standart"
+        selected_dim = first_k
+        dim_info = matched_rota.get("dims", {}).get(selected_dim, {"unit_kg": 2.0})
+
+    unit_kg = float(dim_info.get("unit_kg", 2.0))
+
     now = get_turkey_now()
-    if hasattr(now, "tzinfo") and now.tzinfo:
-        now_naive = now.replace(tzinfo=None)
-    else:
-        now_naive = now
+    now_naive = now.replace(tzinfo=None) if hasattr(now, "tzinfo") and now.tzinfo else now
 
     due_dt = None
     if req.due_date:
@@ -7029,7 +7402,6 @@ def simulate_planning_job(req: PlanSimulationRequest):
     for r in matched_rota["routes"]:
         fire_rate = r["fire_rate"]
         gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
-        unit_kg = matched_rota["unit_kg"]
         gross_kg = round(gross_needed * unit_kg, 1)
         speed_kg_h = r["speed_kg_h"]
         speed_boy_h = r["speed_boy_h"]
@@ -7053,10 +7425,12 @@ def simulate_planning_job(req: PlanSimulationRequest):
 
         mixer_batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
 
+        heads_label = f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)" if matched_rota.get("category") != "Levha" else "Levha Kalıbı"
+
         route_evaluations.append({
             "hat": r["hat"],
             "heads": r["heads"],
-            "heads_label": f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)",
+            "heads_label": heads_label,
             "speed_kg_h": speed_kg_h,
             "speed_boy_h": speed_boy_h,
             "fire_rate_pct": round(fire_rate * 100, 1),
@@ -7076,12 +7450,13 @@ def simulate_planning_job(req: PlanSimulationRequest):
     best_route = sorted(route_evaluations, key=lambda x: (0 if x["risk_status"]=="SIFIR_RISK" else 1, x["line_hours"]))[0]
 
     return {
-        "product": prod,
+        "product": matched_name or prod,
         "category": matched_rota["category"],
         "order_qty": o_qty,
         "stock_qty": s_qty,
         "net_needed_qty": net_qty,
-        "unit_kg": matched_rota["unit_kg"],
+        "dim": selected_dim,
+        "unit_kg": unit_kg,
         "recipe": matched_rota["recipe"],
         "recommended_route": best_route,
         "all_routes": route_evaluations
@@ -7101,6 +7476,103 @@ def assign_order_line(req: LineAssignRequest):
     target["assigned_hats"] = req.assigned_hat
     save_orders(orders)
     return {"status": "ok", "order_id": req.order_id, "assigned_hat": req.assigned_hat}
+
+@app.post("/api/planning/toggle_pause")
+def toggle_order_pause(req: PauseToggleRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == req.order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    current_pause = bool(target.get("is_paused", False))
+    target["is_paused"] = not current_pause
+    save_orders(orders)
+    return {"status": "ok", "order_id": req.order_id, "is_paused": target["is_paused"]}
+
+@app.post("/api/planning/set_priority")
+def set_order_priority(req: PrioritySetRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == req.order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    prio = req.priority.upper()
+    if prio not in PRIORITY_RANKS:
+        raise HTTPException(status_code=400, detail="Geçersiz öncelik seviyesi")
+
+    target["priority"] = prio
+    if prio == "URGENT":
+        target["queue_order"] = 0
+        target["is_paused"] = False  # Auto unpause if urgent
+
+    save_orders(orders)
+    return {"status": "ok", "order_id": req.order_id, "priority": prio}
+
+@app.post("/api/planning/update_order_dim")
+def update_order_dim(req: OrderDimUpdateRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == req.order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    target["dim"] = req.dim
+    save_orders(orders)
+    return {"status": "ok", "order_id": req.order_id, "dim": req.dim}
+
+@app.post("/api/planning/reorder_queue")
+def reorder_line_queue(req: QueueReorderRequest):
+    orders = load_orders()
+    target = None
+    for o in orders:
+        if o.get("id") == req.order_id:
+            target = o
+            break
+    if not target:
+        raise HTTPException(status_code=404, detail="Sipariş bulunamadı")
+
+    cur_hat = target.get("assigned_hats", "")
+    # Find orders on the same hat
+    same_line = [o for o in orders if o.get("assigned_hats") == cur_hat]
+    same_line.sort(key=lambda x: (PRIORITY_RANKS.get(str(x.get("priority", "NORMAL")).upper(), 2), int(x.get("queue_order", 999))))
+
+    try:
+        idx = same_line.index(target)
+        if req.direction == "up" and idx > 0:
+            swap_target = same_line[idx - 1]
+            t_order = target.get("queue_order", 999)
+            s_order = swap_target.get("queue_order", 999)
+            if t_order == s_order:
+                target["queue_order"] = idx - 1
+                swap_target["queue_order"] = idx
+            else:
+                target["queue_order"], swap_target["queue_order"] = s_order, t_order
+        elif req.direction == "down" and idx < len(same_line) - 1:
+            swap_target = same_line[idx + 1]
+            t_order = target.get("queue_order", 999)
+            s_order = swap_target.get("queue_order", 999)
+            if t_order == s_order:
+                target["queue_order"] = idx + 1
+                swap_target["queue_order"] = idx
+            else:
+                target["queue_order"], swap_target["queue_order"] = s_order, t_order
+    except ValueError:
+        pass
+
+    save_orders(orders)
+    return {"status": "ok", "order_id": req.order_id}
+
 
 # Mount static files
 static_dir = os.path.join(APP_DIR, "static")

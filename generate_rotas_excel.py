@@ -161,7 +161,7 @@ def create_product_rotas_excel_wb():
                 heads_breakdown[(p, hat_name, hd)]["qty"] += qty
                 heads_breakdown[(p, hat_name, hd)]["shifts"] += 1
 
-            # Levha (Düz dudak tek göz)
+            # Levha (Levha Kalıbı tek göz)
             for lev in sh.get("levha", []):
                 c = lev.get("color", "").strip()
                 qty = float(lev.get("qty", 0) or 0)
@@ -675,7 +675,7 @@ def create_product_rotas_excel_wb():
         ("Hat 107", "Geniş Kasa & Deck Ekstrüder 7", "Profil Ekstrüzyon", "Tek Göz (1 Kafa)", "200 mm Kasa, Zemin Deck (KT100/102)"),
         ("Hat 108", "Kasa Ekstrüder 8", "Profil Ekstrüzyon", "Tek Göz (1 Kafa)", "100 mm & 140 mm Kasa"),
         ("Hat 109", "Yüksek Hızlı Pervaz Ekstrüder 9", "Profil Ekstrüzyon", "Tek Göz & Çift Göz (2 Kafa)", "50x80 Pervaz (Çift Göz), 80x80 Pervaz"),
-        ("Hat 201", "WPC Levha Makinesi 1", "Levha Ekstrüzyon", "Tek Göz (Geniş Düz Dudak)", "WPC Kapı Yüzey Levhaları (Tüm Renkler)"),
+        ("Hat 201", "WPC Levha Makinesi 1", "Levha Ekstrüzyon", "Levha Kalıbı (Tek Kafa)", "WPC Kapı Yüzey Levhaları (Tüm Renkler)"),
     ]
 
     for m_key, m_type_name, dept, head_cap, main_prods in active_hats:

@@ -331,6 +331,9 @@ def create_product_rotas_excel_wb():
             # Antrasit Levha veya tekil numune testleri fabrika seri hızını yansıtmadığında standart hıza (~40 plaka/sa = 190.8 kg/sa) kalibre et
             if "ANTRASİT" in p.upper() and "LEVHA" in p.upper() and ana_act_speed < 150.0:
                 ana_act_speed = 190.8
+            # COCO Levha 19 Ağustos 530 plaka (12 saat) dahil edildiğinde fiili seri hızı: 41.4 plaka/sa = 198.2 kg/sa
+            if "COCO" in p.upper() and "LEVHA" in p.upper():
+                ana_act_speed = 198.2
             ana_tek_speed = get_standard_capacity(ana_hat_str, p, cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0)
 
             top_cap = next((c for c in caps if f"Hat {c.get('hat')}" == top_h), None)

@@ -7073,8 +7073,8 @@ def get_planning_master_data():
         speed_kg_h = chosen_route["speed_kg_h"]
 
         prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
-        setup_hours = 0.75 if net_qty > 0 and act_qty == 0 else 0.0
-        line_hours = round(prod_hours + setup_hours, 1)
+        setup_hours = 0.0
+        line_hours = prod_hours
         shifts = round(line_hours / 12.0, 1)
 
         due_str = o.get("due_date", "")
@@ -7104,7 +7104,7 @@ def get_planning_master_data():
         alt_routes = []
         for r in matched_rota.get("routes", []):
             is_cur = (r["hat"] == target_hat and r["heads"] == chosen_route["heads"])
-            alt_r_hours = round((gross_kg / r["speed_kg_h"]) + setup_hours, 1) if r["speed_kg_h"] > 0 else 0.0
+            alt_r_hours = round(gross_kg / r["speed_kg_h"], 1) if r["speed_kg_h"] > 0 else 0.0
             alt_routes.append({
                 "hat": r["hat"],
                 "heads": r["heads"],
@@ -7406,8 +7406,8 @@ def simulate_planning_job(req: PlanSimulationRequest):
         speed_kg_h = r["speed_kg_h"]
         speed_boy_h = r["speed_boy_h"]
         prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
-        setup_hours = 0.75
-        total_hours = round(prod_hours + setup_hours, 1)
+        setup_hours = 0.0
+        total_hours = prod_hours
         shifts = round(total_hours / 12.0, 1)
 
         finish_dt = now_naive + timedelta(hours=total_hours)

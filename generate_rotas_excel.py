@@ -473,14 +473,14 @@ def create_product_rotas_excel_wb():
     ws1.title = "Ürün Rotaları & Kapasite"
     ws1.views.sheetView[0].showGridLines = True
 
-    ws1.merge_cells("A1:Y1")
+    ws1.merge_cells("A1:X1")
     ws1["A1"] = "ERGUNBAS GROUP — ÜRÜN MAKİNE ROTALARI, BOY/KESİM ÖLÇÜLERİ VE KAPASİTE MATRİSİ"
     ws1["A1"].font = font_title
     ws1["A1"].fill = fill_brand
     ws1["A1"].alignment = align_center
     ws1.row_dimensions[1].height = 36
 
-    ws1.merge_cells("A2:Y2")
+    ws1.merge_cells("A2:X2")
     ws1["A2"] = "Standart Boy Ölçüleri (2.20m Pervaz, 2.10m Seren, 207cm Levha) | Kalıp Çıkışları (Tek Göz / Çift Göz) | Saatteki Boy Hızları | Rota Kapasiteleri"
     ws1["A2"].font = font_subtitle
     ws1["A2"].fill = fill_brand
@@ -489,10 +489,10 @@ def create_product_rotas_excel_wb():
 
     group_headers = [
         ("A3:F3", "ÜRÜN & BOY - KESİM ÖLÇÜLERİ", fill_info),
-        ("G3:Q3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
-        ("R3:W3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
-        ("X3:X3", "YEDEK ROTA 2", fill_info),
-        ("Y3:Y3", "STRATEJİ", fill_info),
+        ("G3:P3", "ANA ROTA (BİRİNCİL MAKİNE)", fill_ana),
+        ("Q3:V3", "YEDEK ROTA 1 (İKİNCİL MAKİNE)", fill_ydk),
+        ("W3:W3", "YEDEK ROTA 2", fill_info),
+        ("X3:X3", "STRATEJİ", fill_info),
     ]
     for cell_range, title, fill_color in group_headers:
         ws1.merge_cells(cell_range)
@@ -520,7 +520,6 @@ def create_product_rotas_excel_wb():
         ("Standart Kapasite (kg/sa)", align_right, 16),
         ("Standart Hız (Saatte ~X Boy)", align_center, 24),
         ("Kapasite Gerçekleşme (%)", align_right, 15),
-        ("Setup Süresi (dk)", align_right, 13),
         ("Yedek Rota 1 Hat", align_center, 15),
         ("Yedek 1 Kalıp Çıkışı", align_center, 18), # YEDEK 1 GÖZ
         ("Yedek 1 Fiili Saat", align_right, 14),
@@ -573,7 +572,6 @@ def create_product_rotas_excel_wb():
             (r["ana_tek_speed"], font_bold, align_right, "#,##0.0"),
             (r["ana_tek_speed_text"], font_regular, align_center, "@"),
             (r["ana_eff_pct"] / 100.0 if r["ana_eff_pct"] > 0 else 0, font_green if 80 <= r["ana_eff_pct"] <= 120 else (font_amber if r["ana_eff_pct"] > 0 else font_muted), align_right, "0.0%"),
-            (r["ana_setup"], font_regular, align_right, "#,##0"),
             (r["ydk1_hat"] or "—", font_amber if r["ydk1_hat"] else font_muted, align_center, "@"),
             (r["ydk1_heads"], ydk1_heads_f, align_center, "@"),
             (r["ydk1_hours"] if r["ydk1_hours"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_hours"] > 0 else "@"),
@@ -609,7 +607,7 @@ def create_product_rotas_excel_wb():
     ws1.cell(row=row_num, column=20, value=tot_ydk_hours).font = font_bold
     ws1.cell(row=row_num, column=20).number_format = "#,##0.0"
 
-    for c in range(1, 26):
+    for c in range(1, 25):
         cell = ws1.cell(row=row_num, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border

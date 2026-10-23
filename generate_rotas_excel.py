@@ -81,18 +81,18 @@ STD_SPEEDS = {
     ("Hat 108", "200 mm KASA"): 78.5,
     ("Hat 109", "50X80 PERVAZ"): 73.6,
     ("Hat 109", "80X80 PERVAZ"): 85.1,
-    ("Hat 201", "DIŞBUDAK Levha"): 187.9,
-    ("Hat 201", "DİŞBUDAK Levha"): 187.9,
-    ("Hat 201", "TEAK Levha"): 145.5,
-    ("Hat 201", "BEYAZ TEAK Levha"): 148.4,
-    ("Hat 201", "MIX TEAK Levha"): 131.5,
-    ("Hat 201", "VIZON Levha"): 116.2,
-    ("Hat 201", "SONOMO Levha"): 113.1,
-    ("Hat 201", "AY GRİ Levha"): 144.9,
-    ("Hat 201", "ANTRASİT Levha"): 111.8,
-    ("Hat 201", "MIX BEYAZ TEAK Levha"): 118.6,
-    ("Hat 201", "KOYU CEVİZ Levha"): 79.2,
-    ("Hat 201", "COCO Levha"): 273.6,
+    ("Hat 201", "DIŞBUDAK Levha"): 190.0,
+    ("Hat 201", "DİŞBUDAK Levha"): 190.0,
+    ("Hat 201", "TEAK Levha"): 190.0,
+    ("Hat 201", "BEYAZ TEAK Levha"): 190.0,
+    ("Hat 201", "MIX TEAK Levha"): 190.0,
+    ("Hat 201", "VIZON Levha"): 190.0,
+    ("Hat 201", "SONOMO Levha"): 190.0,
+    ("Hat 201", "AY GRİ Levha"): 190.0,
+    ("Hat 201", "ANTRASİT Levha"): 190.0,
+    ("Hat 201", "MIX BEYAZ TEAK Levha"): 190.0,
+    ("Hat 201", "KOYU CEVİZ Levha"): 190.0,
+    ("Hat 201", "COCO Levha"): 190.0,
 }
 
 def create_product_rotas_excel_wb():
@@ -162,13 +162,26 @@ def create_product_rotas_excel_wb():
                 heads_breakdown[(p, hat_name, hd)]["shifts"] += 1
 
             # Levha (Levha Kalıbı tek göz)
-            for lev in sh.get("levha", []):
+            lev_list = sh.get("levha", [])
+            valid_levs = [r for r in lev_list if r.get("color") and float(r.get("qty", 0) or 0) > 0]
+            tot_lev_shift_qty = sum(float(r.get("qty", 0)) for r in valid_levs)
+
+            for lev in valid_levs:
                 c = lev.get("color", "").strip()
                 qty = float(lev.get("qty", 0) or 0)
-                hrs = float(lev.get("hours", 0) or 0)
-                hrs = hrs if hrs > 0 else 12.0
-                if not c or qty <= 0:
-                    continue
+                h_raw_val = lev.get("hours")
+                has_real_hour = (h_raw_val is not None and float(h_raw_val or 0) > 0)
+                h_val = float(h_raw_val or 0) if has_real_hour else 0.0
+                if h_val > 12.0: h_val = 10.0 # fix operator typo
+                
+                # Standart vardiya süresi
+                if has_real_hour:
+                    hrs = h_val
+                elif tot_lev_shift_qty > 0:
+                    hrs = 12.0 * (qty / tot_lev_shift_qty)
+                else:
+                    hrs = 12.0
+                
                 if "BUDAK" in c.upper():
                     c = "DİŞBUDAK"
                 p = f"{c} Levha" if not c.lower().endswith("levha") else c
@@ -192,11 +205,14 @@ def create_product_rotas_excel_wb():
                     machine_totals[hat_name]["hours"] += hrs
                     machine_totals[hat_name]["products"].add(p)
 
-                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0, "heads": {1.0: 1}})
+                actual_runs.setdefault(p, {}).setdefault(hat_name, {"shifts": 0, "hours": 0.0, "qty": 0.0, "kg": 0.0, "real_hours": 0.0, "real_qty": 0.0, "heads": {1.0: 1}})
                 actual_runs[p][hat_name]["shifts"] += 1
                 actual_runs[p][hat_name]["hours"] += hrs
                 actual_runs[p][hat_name]["qty"] += qty
                 actual_runs[p][hat_name]["kg"] += kg
+                if has_real_hour:
+                    actual_runs[p][hat_name]["real_hours"] += h_val
+                    actual_runs[p][hat_name]["real_qty"] += qty
                 actual_runs[p][hat_name]["heads"][1.0] = actual_runs[p][hat_name]["heads"].get(1.0, 0) + 1
 
                 heads_breakdown.setdefault((p, hat_name, 1.0), {"hrs": 0.0, "kg": 0.0, "qty": 0.0, "shifts": 0})
@@ -307,7 +323,11 @@ def create_product_rotas_excel_wb():
             ana_shifts = top_v["shifts"]
             ana_qty = top_v["qty"]
             ana_kg = top_v["kg"]
-            ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
+            # Levha için saat girilen gerçek dönemden hızı hesapla
+            if "Levha" in category and top_v.get("real_hours", 0) > 0:
+                ana_act_speed = round((top_v["real_qty"] * unit_kg) / top_v["real_hours"], 1)
+            else:
+                ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
             ana_tek_speed = get_standard_capacity(ana_hat_str, p, cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0)
 
             top_cap = next((c for c in caps if f"Hat {c.get('hat')}" == top_h), None)
@@ -515,10 +535,10 @@ def create_product_rotas_excel_wb():
         ("Fiili Çalışma (Saat)", align_right, 15),
         ("Vardiya Sayısı", align_right, 13),
         ("Fiili Hız (kg/sa)", align_right, 14),
-        ("Fiili Hız (Saatte ~X Boy)", align_center, 24),
+        ("Fiili Hız (Saatte ~X Boy/Plaka)", align_center, 24),
         ("24s Fiili Kapasite (kg/gün)", align_right, 18),
         ("Standart Kapasite (kg/sa)", align_right, 16),
-        ("Standart Hız (Saatte ~X Boy)", align_center, 24),
+        ("Standart Hız (Saatte ~X Boy/Plaka)", align_center, 24),
         ("Kapasite Gerçekleşme (%)", align_right, 15),
         ("Yedek Rota 1 Hat", align_center, 15),
         ("Yedek 1 Kalıp Çıkışı", align_center, 18), # YEDEK 1 GÖZ
@@ -767,7 +787,7 @@ def create_product_rotas_excel_wb():
         ("Birim Ağırlık", align_right, 14),
         ("Toplam Üretim (kg)", align_right, 17),
         ("Fiili Hız (kg/sa)", align_right, 15),
-        ("Fiili Hız (Saatte ~X Boy)", align_center, 24),
+        ("Fiili Hız (Saatte ~X Boy/Plaka)", align_center, 24),
         ("Kapasite Payı (%)", align_right, 15)
     ]
 

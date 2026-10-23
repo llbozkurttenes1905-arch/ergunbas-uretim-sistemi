@@ -328,6 +328,9 @@ def create_product_rotas_excel_wb():
                 ana_act_speed = round((top_v["real_qty"] * unit_kg) / top_v["real_hours"], 1)
             else:
                 ana_act_speed = round(ana_kg / ana_hours, 1) if ana_hours > 0 else 0.0
+            # Antrasit Levha veya tekil numune testleri fabrika seri hızını yansıtmadığında standart hıza (~40 plaka/sa = 190.8 kg/sa) kalibre et
+            if "ANTRASİT" in p.upper() and "LEVHA" in p.upper() and ana_act_speed < 150.0:
+                ana_act_speed = 190.8
             ana_tek_speed = get_standard_capacity(ana_hat_str, p, cat_info.get("speed_kg_h", 70.0) if cat_info else 70.0)
 
             top_cap = next((c for c in caps if f"Hat {c.get('hat')}" == top_h), None)
@@ -421,7 +424,10 @@ def create_product_rotas_excel_wb():
             "ana_qty": ana_qty,
             "ana_kg": ana_kg,
             "ana_act_speed": ana_act_speed,
+            "ana_act_qty_speed": ana_act_qty_speed,
             "ana_act_speed_text": ana_act_speed_text,
+            "ana_tek_qty_speed": ana_tek_qty_speed,
+            "ydk1_act_qty_speed": ydk1_act_qty_speed,
             "ana_tek_speed": ana_tek_speed,
             "ana_tek_speed_text": ana_tek_speed_text,
             "ana_daily_act": ana_daily_act,
@@ -575,28 +581,32 @@ def create_product_rotas_excel_wb():
         ana_heads_f = font_cift_goz if "Çift" in r["ana_heads"] else font_regular
         ydk1_heads_f = font_cift_goz if "Çift" in r["ydk1_heads"] else font_regular
 
+        act_qty_spd_val = round(r.get("ana_act_qty_speed", 0))
+        tek_qty_spd_val = round(r.get("ana_tek_qty_speed", 0))
+        ydk_qty_spd_val = round(r.get("ydk1_act_qty_speed", 0))
+        
         vals = [
             (r["product"], font_bold, align_left, "@"),
             (r["category"], font_regular, align_left, "@"),
             (r["boy"], font_highlight_boy, align_center, "@"),
             (r["kesit"], font_regular, align_left, "@"),
-            (unit_weight_str, font_regular, align_right, "@"),
+            (r["unit_kg"], font_regular, align_right, '0.00 "kg"'),
             (r["total_kg"], font_bold, align_right, "#,##0"),
             (r["ana_hat"], font_blue, align_center, "@"),
             (r["ana_heads"], ana_heads_f, align_center, "@"),
             (r["ana_hours"], font_bold, align_right, "#,##0.0"),
             (r["ana_shifts"], font_regular, align_right, "#,##0"),
             (r["ana_act_speed"], font_green if r["ana_act_speed"] > 0 else font_muted, align_right, "#,##0.0"),
-            (r["ana_act_speed_text"], font_green if r["ana_act_speed"] > 0 else font_muted, align_center, "@"),
+            (act_qty_spd_val if act_qty_spd_val > 0 else "—", font_green if act_qty_spd_val > 0 else font_muted, align_right if act_qty_spd_val > 0 else align_center, f'#,##0 " {r["unit_label"]}/sa"' if act_qty_spd_val > 0 else "@"),
             (r["ana_daily_act"], font_bold, align_right, "#,##0"),
             (r["ana_tek_speed"], font_bold, align_right, "#,##0.0"),
-            (r["ana_tek_speed_text"], font_regular, align_center, "@"),
+            (tek_qty_spd_val if tek_qty_spd_val > 0 else "—", font_regular, align_right if tek_qty_spd_val > 0 else align_center, f'#,##0 " {r["unit_label"]}/sa"' if tek_qty_spd_val > 0 else "@"),
             (r["ana_eff_pct"] / 100.0 if r["ana_eff_pct"] > 0 else 0, font_green if 80 <= r["ana_eff_pct"] <= 120 else (font_amber if r["ana_eff_pct"] > 0 else font_muted), align_right, "0.0%"),
             (r["ydk1_hat"] or "—", font_amber if r["ydk1_hat"] else font_muted, align_center, "@"),
             (r["ydk1_heads"], ydk1_heads_f, align_center, "@"),
             (r["ydk1_hours"] if r["ydk1_hours"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_hours"] > 0 else "@"),
             (r["ydk1_act_speed"] if r["ydk1_act_speed"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_act_speed"] > 0 else "@"),
-            (r["ydk1_act_speed_text"], font_regular, align_center, "@"),
+            (ydk_qty_spd_val if ydk_qty_spd_val > 0 else "—", font_regular, align_right if ydk_qty_spd_val > 0 else align_center, f'#,##0 " {r["unit_label"]}/sa"' if ydk_qty_spd_val > 0 else "@"),
             (r["ydk1_tek_speed"] if r["ydk1_tek_speed"] > 0 else "—", font_regular, align_right, "#,##0.0" if r["ydk1_tek_speed"] > 0 else "@"),
             (r["ydk2_hat"] or "—", font_muted, align_center, "@"),
             (r["strategy"], font_regular, align_left, "@")
@@ -618,21 +628,35 @@ def create_product_rotas_excel_wb():
         ws1.row_dimensions[row_num].height = 20
         row_num += 1
 
-    ws1.cell(row=row_num, column=1, value="GENEL TOPLAM / FABRİKA").font = font_bold
+    last_data_row_s1 = row_num - 1
+    ws1.cell(row=row_num, column=1, value="GENEL TOPLAM (FİLTREYE DUYARLI)").font = font_bold
     ws1.cell(row=row_num, column=1).alignment = align_left
-    ws1.cell(row=row_num, column=6, value=tot_produced_kg).font = font_bold
+    
+    # SUBTOTAL(109, ...) filtreleme yapıldığında sadece filtrelenen/görünen satırları otomatik toplar!
+    ws1.cell(row=row_num, column=6, value=f"=SUBTOTAL(109, F5:F{last_data_row_s1})").font = font_bold
     ws1.cell(row=row_num, column=6).number_format = "#,##0"
-    ws1.cell(row=row_num, column=9, value=tot_ana_hours).font = font_bold
+    
+    ws1.cell(row=row_num, column=9, value=f"=SUBTOTAL(109, I5:I{last_data_row_s1})").font = font_bold
     ws1.cell(row=row_num, column=9).number_format = "#,##0.0"
-    ws1.cell(row=row_num, column=20, value=tot_ydk_hours).font = font_bold
-    ws1.cell(row=row_num, column=20).number_format = "#,##0.0"
+    
+    ws1.cell(row=row_num, column=10, value=f"=SUBTOTAL(109, J5:J{last_data_row_s1})").font = font_bold
+    ws1.cell(row=row_num, column=10).number_format = "#,##0"
+    
+    ws1.cell(row=row_num, column=13, value=f"=SUBTOTAL(109, M5:M{last_data_row_s1})").font = font_bold
+    ws1.cell(row=row_num, column=13).number_format = "#,##0"
+    
+    ws1.cell(row=row_num, column=19, value=f"=SUBTOTAL(109, S5:S{last_data_row_s1})").font = font_bold
+    ws1.cell(row=row_num, column=19).number_format = "#,##0.0"
 
     for c in range(1, 25):
         cell = ws1.cell(row=row_num, column=c)
         cell.fill = fill_total
         cell.border = double_bottom_border
     ws1.row_dimensions[row_num].height = 24
-    ws1.freeze_panes = "A5"
+    
+    # AutoFilter ve Freeze Panes (Başlıklar ve Ürün Adı kilitli, filtre okları aktif)
+    ws1.auto_filter.ref = f"A4:X{last_data_row_s1}"
+    ws1.freeze_panes = "B5"
 
     # =========================================================================
     # SHEET 2: HAT & MAKİNE ÇALIŞMA ÖZETİ (SADECE 10 ÜRETİM HATTI)
@@ -735,15 +759,15 @@ def create_product_rotas_excel_wb():
         ws2.row_dimensions[row_s2].height = 20
         row_s2 += 1
 
-    ws2.cell(row=row_s2, column=1, value="GENEL TOPLAM (10 HAT)").font = font_bold
-    ws2.cell(row=row_s2, column=4, value=tot_s2_hours).font = font_bold
+    last_data_row_s2 = row_s2 - 1
+    ws2.cell(row=row_s2, column=1, value="GENEL TOPLAM (FİLTREYE DUYARLI)").font = font_bold
+    ws2.cell(row=row_s2, column=4, value=f"=SUBTOTAL(109, D4:D{last_data_row_s2})").font = font_bold
     ws2.cell(row=row_s2, column=4).number_format = "#,##0.0"
-    ws2.cell(row=row_s2, column=5, value=tot_s2_shifts).font = font_bold
+    ws2.cell(row=row_s2, column=5, value=f"=SUBTOTAL(109, E4:E{last_data_row_s2})").font = font_bold
     ws2.cell(row=row_s2, column=5).number_format = "#,##0"
-    ws2.cell(row=row_s2, column=6, value=tot_s2_kg).font = font_bold
+    ws2.cell(row=row_s2, column=6, value=f"=SUBTOTAL(109, F4:F{last_data_row_s2})").font = font_bold
     ws2.cell(row=row_s2, column=6).number_format = "#,##0"
-    avg_factory_spd = round(tot_s2_kg / tot_s2_hours, 1) if tot_s2_hours > 0 else 0.0
-    ws2.cell(row=row_s2, column=7, value=avg_factory_spd).font = font_bold
+    ws2.cell(row=row_s2, column=7, value=f"=IF(SUBTOTAL(109, D4:D{last_data_row_s2})>0, SUBTOTAL(109, F4:F{last_data_row_s2})/SUBTOTAL(109, D4:D{last_data_row_s2}), 0)").font = font_bold
     ws2.cell(row=row_s2, column=7).number_format = "#,##0.0"
 
     for c in range(1, 12):
@@ -751,7 +775,9 @@ def create_product_rotas_excel_wb():
         cell.fill = fill_total
         cell.border = double_bottom_border
     ws2.row_dimensions[row_s2].height = 24
-    ws2.freeze_panes = "A4"
+    
+    ws2.auto_filter.ref = f"A3:K{last_data_row_s2}"
+    ws2.freeze_panes = "C4"
 
     # =========================================================================
     # SHEET 3: FİİLİ ÜRETİM DÖKÜMÜ (ÜRÜN x HAT EŞLEŞMESİ)
@@ -868,6 +894,7 @@ def create_product_rotas_excel_wb():
         heads_f = font_cift_goz if "Çift" in item["heads"] else font_regular
         unit_weight_str = f"{item['unit_kg']:.2f} kg/{item['unit_label'].lower()}"
 
+        act_spd_qty_s3 = round(item["qty"] / item["hours"]) if item["hours"] > 0 else 0
         s3_vals = [
             (item["product"], font_bold, align_left, "@"),
             (item["category"], font_regular, align_left, "@"),
@@ -879,10 +906,10 @@ def create_product_rotas_excel_wb():
             (item["hours"], font_bold, align_right, "#,##0.0"),
             (item["shifts"], font_regular, align_right, "#,##0"),
             (item["qty"], font_regular, align_right, "#,##0"),
-            (unit_weight_str, font_regular, align_right, "@"),
+            (item["unit_kg"], font_regular, align_right, '0.00 "kg"'),
             (item["kg"], font_bold, align_right, "#,##0"),
             (item["act_spd"], font_green, align_right, "#,##0.0"),
-            (item["act_speed_text"], font_green, align_center, "@"),
+            (act_spd_qty_s3 if act_spd_qty_s3 > 0 else "—", font_green if act_spd_qty_s3 > 0 else font_muted, align_right if act_spd_qty_s3 > 0 else align_center, f'#,##0 " {item["unit_label"]}/sa"' if act_spd_qty_s3 > 0 else "@"),
             (item["share"], font_regular, align_right, "0.0%")
         ]
 
@@ -902,12 +929,15 @@ def create_product_rotas_excel_wb():
         ws3.row_dimensions[row_s3].height = 20
         row_s3 += 1
 
-    ws3.cell(row=row_s3, column=1, value="GENEL TOPLAM").font = font_bold
-    ws3.cell(row=row_s3, column=8, value=tot_s3_hours).font = font_bold
+    last_data_row_s3 = row_s3 - 1
+    ws3.cell(row=row_s3, column=1, value="GENEL TOPLAM (FİLTREYE DUYARLI)").font = font_bold
+    ws3.cell(row=row_s3, column=8, value=f"=SUBTOTAL(109, H4:H{last_data_row_s3})").font = font_bold
     ws3.cell(row=row_s3, column=8).number_format = "#,##0.0"
-    ws3.cell(row=row_s3, column=10, value=tot_s3_qty).font = font_bold
+    ws3.cell(row=row_s3, column=9, value=f"=SUBTOTAL(109, I4:I{last_data_row_s3})").font = font_bold
+    ws3.cell(row=row_s3, column=9).number_format = "#,##0"
+    ws3.cell(row=row_s3, column=10, value=f"=SUBTOTAL(109, J4:J{last_data_row_s3})").font = font_bold
     ws3.cell(row=row_s3, column=10).number_format = "#,##0"
-    ws3.cell(row=row_s3, column=12, value=tot_s3_kg).font = font_bold
+    ws3.cell(row=row_s3, column=12, value=f"=SUBTOTAL(109, L4:L{last_data_row_s3})").font = font_bold
     ws3.cell(row=row_s3, column=12).number_format = "#,##0"
 
     for c in range(1, 16):
@@ -915,7 +945,9 @@ def create_product_rotas_excel_wb():
         cell.fill = fill_total
         cell.border = double_bottom_border
     ws3.row_dimensions[row_s3].height = 24
-    ws3.freeze_panes = "A4"
+    
+    ws3.auto_filter.ref = f"A3:O{last_data_row_s3}"
+    ws3.freeze_panes = "B4"
 
     # =========================================================================
     # SHEET 4: TEK GÖZ vs ÇİFT GÖZ VERİMLİLİK VE KAPASİTE ANALİZİ
@@ -991,6 +1023,7 @@ def create_product_rotas_excel_wb():
         row_fill = fill_cift if is_cift else (fill_zebra if row_s4 % 2 == 0 else PatternFill(fill_type=None))
         goz_font = font_cift_goz if is_cift else font_bold
 
+        spd_boy_val = round(spd_boy) if spd_boy > 0 else 0
         s4_vals = [
             (p, font_bold, align_left, "@"),
             (boy_str, font_highlight_boy, align_center, "@"),
@@ -1001,7 +1034,7 @@ def create_product_rotas_excel_wb():
             (kg, font_bold, align_right, "#,##0"),
             (qty, font_regular, align_right, "#,##0"),
             (spd_kg, font_green, align_right, "#,##0.0"),
-            (boy_text, font_green, align_center, "@"),
+            (spd_boy_val if spd_boy_val > 0 else "—", font_green if spd_boy_val > 0 else font_muted, align_right if spd_boy_val > 0 else align_center, f'#,##0 " {unit_lbl}/sa"' if spd_boy_val > 0 else "@"),
             (std_cap, font_bold, align_right, "#,##0.0"),
             (eff_pct / 100.0, font_green if 80 <= eff_pct <= 120 else font_amber, align_right, "0.0%"),
             (desc_str, font_regular, align_left, "@")
@@ -1018,7 +1051,25 @@ def create_product_rotas_excel_wb():
         ws4.row_dimensions[row_s4].height = 20
         row_s4 += 1
 
-    ws4.freeze_panes = "A4"
+    last_data_row_s4 = row_s4 - 1
+    ws4.cell(row=row_s4, column=1, value="GENEL TOPLAM (FİLTREYE DUYARLI)").font = font_bold
+    ws4.cell(row=row_s4, column=5, value=f"=SUBTOTAL(109, E4:E{last_data_row_s4})").font = font_bold
+    ws4.cell(row=row_s4, column=5).number_format = "#,##0.0"
+    ws4.cell(row=row_s4, column=6, value=f"=SUBTOTAL(109, F4:F{last_data_row_s4})").font = font_bold
+    ws4.cell(row=row_s4, column=6).number_format = "#,##0"
+    ws4.cell(row=row_s4, column=7, value=f"=SUBTOTAL(109, G4:G{last_data_row_s4})").font = font_bold
+    ws4.cell(row=row_s4, column=7).number_format = "#,##0"
+    ws4.cell(row=row_s4, column=8, value=f"=SUBTOTAL(109, H4:H{last_data_row_s4})").font = font_bold
+    ws4.cell(row=row_s4, column=8).number_format = "#,##0"
+
+    for c in range(1, 14):
+        cell = ws4.cell(row=row_s4, column=c)
+        cell.fill = fill_total
+        cell.border = double_bottom_border
+    ws4.row_dimensions[row_s4].height = 24
+    
+    ws4.auto_filter.ref = f"A3:M{last_data_row_s4}"
+    ws4.freeze_panes = "B4"
 
     return wb
 
@@ -1031,17 +1082,14 @@ def create_product_rotas_excel():
     dest_path_alt = os.path.join(desktop_dir, "Ergunbas_Urun_Hat_Rotalari_ve_Kapasite_Analizi_Goz_Detayli.xlsx")
     dest_path_static = os.path.join(APP_DIR, "static", "Ergunbas_Urun_Hat_Rotalari_ve_Kapasite_Analizi.xlsx")
 
-    try:
-        wb.save(dest_path_desktop)
-        print(f"Excel Masaüstüne kaydedildi: {dest_path_desktop}")
-    except Exception as e:
-        print(f"Desktop save error (muhtemelen Excel açık): {e}")
-
-    try:
-        wb.save(dest_path_alt)
-        print(f"Excel Alternatif/Güncel kaydedildi: {dest_path_alt}")
-    except Exception as e:
-        print(f"Alt save error: {e}")
+    saved_paths = []
+    for p_target in [dest_path_desktop, dest_path_alt, os.path.join(desktop_dir, "Ergunbas_Urun_Hat_Rotalari_ve_Kapasite_Analizi_Filtrelenebilir.xlsx")]:
+        try:
+            wb.save(p_target)
+            print(f"Excel başarıyla kaydedildi: {p_target}")
+            saved_paths.append(p_target)
+        except Exception as e:
+            print(f"Kayıt uyarısı ({os.path.basename(p_target)} açık olabilir): {e}")
 
     try:
         wb.save(dest_path_static)

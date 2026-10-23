@@ -8914,7 +8914,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 9,
         "hours": 12.0,
         "operator": "Aykut YALÇIN",
         "extruders": [
@@ -9061,8 +9061,8 @@
       "downtimes": [
         {
           "shift": "Gündüz",
-          "hat": "101",
-          "fire_reason": "",
+          "hat": "105",
+          "fire_reason": "HAMMADDE DENEMESİ YAPILDI.",
           "fire_kg": 0.0,
           "down_reason": "",
           "down_min": 0.0,

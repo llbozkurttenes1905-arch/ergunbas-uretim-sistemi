@@ -9553,7 +9553,7 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
-          "down_min": 0.0,
+          "down_min": 720.0,
           "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
         },
         {
@@ -9562,7 +9562,7 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
-          "down_min": 0.0,
+          "down_min": 720.0,
           "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
         },
         {

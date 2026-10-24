@@ -9195,6 +9195,23 @@
       ],
       "mixer_emp_gunduz": 11,
       "mixer_emp_gece": 1
+    },
+    "82": {
+      "day": "82",
+      "date": "23.10.2026",
+      "gunduz": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "gece": {
+        "employees": 10,
+        "hours": 12,
+        "extruders": [],
+        "levha": []
+      },
+      "downtimes": []
     }
   }
 }

@@ -9364,7 +9364,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 9,
         "hours": 12.0,
         "operator": "Aykut YALÇIN",
         "extruders": [
@@ -9546,7 +9546,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "HAMMADDE DENEMESİ YAPILDI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "HAMMADDE DENEMESİ YAPILDI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 180.0,
+          "desc": "Kalıp temizliği yapıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

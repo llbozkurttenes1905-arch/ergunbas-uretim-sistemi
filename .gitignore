@@ -1,3 +1,6 @@
 __pycache__/
 scratch/
 
+
+*_backup.html
+*.bak

@@ -298,29 +298,9 @@ def build_clean_manager_excel():
         ("Hat 109", "20:30 / 08:30", 720, 720, 1, 1, False,
          "80X80 PERVAZ", "Pervaz Profili", "2.20 m", "80 x 80 mm", 2.20, "Boy", 57.5, 5.0, "Kapı", "Yüksek Kapasite"),
 
-        # HAT 201 (LEVHA MAKİNESİ) - 2.07 m
+        # HAT 201 (LEVHA MAKİNESİ) - 2.07 m (TEK GENEL ORTALAMA)
         ("Hat 201 (Levha)", "08:30 / 20:30 (2V)", 720, 720, 2, 2, True,
-         "DIŞBUDAK Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.77, "Plaka", 42.7, 2.0, "Kapı", "En Yüksek Hacim"),
-        ("Hat 201 (Levha)", "20:30 / 08:30", 720, 720, 2, 2, False,
-         "TEAK Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.25, "Plaka", 38.6, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "MIX TEAK Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.25, "Plaka", 40.1, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "BEYAZ TEAK Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.41, "Plaka", 40.6, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "MIX BEYAZ TEAK Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.25, "Plaka", 44.1, 2.0, "Kapı", "Yüksek Hızlı"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "AY GRİ Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.64, "Plaka", 40.0, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "SONOMO Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.33, "Plaka", 38.4, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "COCO Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.79, "Plaka", 41.4, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "ANTRASİT Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.77, "Plaka", 40.0, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "VIZON Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.77, "Plaka", 34.0, 2.0, "Kapı", "Seri Üretim"),
-        ("Hat 201 (Levha)", "—", 720, 720, 2, 2, False,
-         "KOYU CEVİZ Levha", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.79, "Plaka", 28.8, 2.0, "Kapı", "Seri Üretim"),
+         "WPC Kapı Levhası (Genel Ortalama)", "WPC Levha Plaka", "2.07 m", "En: 94 cm (2 mm)", 4.58, "Plaka", 41.7, 2.0, "Kapı", "Tüm Renkler Genel Ortalaması"),
 
         # KALİTE KONTROL
         ("KALİTE KONTROL", "08:30 / 20:30 (2V)", 720, 720, 3, 3, True,
@@ -333,7 +313,7 @@ def build_clean_manager_excel():
          prod_name, cat, boy, kesit, unit_kg, unit_lbl, spd_h, kapi_factor, kapi_unit, plan_notu) = r
 
         cap_12s = round(spd_h * 12.0)
-        cap_24s = round(spd_h * 24.0)
+        cap_24s = cap_12s * 2
         daily_tonaj = round(cap_24s * unit_kg, 1) if unit_kg > 0 else 0.0
         kapi_24s = round(cap_24s / kapi_factor) if kapi_factor > 0 else 0
         kapi_str = f"{kapi_24s} Kapı/Gün" if kapi_factor > 0 else (kapi_unit if kapi_unit != "—" else "—")
@@ -397,6 +377,7 @@ def build_clean_manager_excel():
     # Save to desktop and static
     dest_desktop = r"C:\Users\llboz\OneDrive\Desktop\Ergunbas_Ekstruzyon_ve_Kalite_Kontrol_Vardiya_Kapasite_Matrisi.xlsx"
     dest_alt = r"C:\Users\llboz\OneDrive\Desktop\Ergunbas_Ekstruzyon_ve_Kalite_Kontrol_Vardiya_Kapasite_Matrisi (Sade_Metre).xlsx"
+    dest_tek = r"C:\Users\llboz\OneDrive\Desktop\Ergunbas_Ekstruzyon_ve_Kalite_Kontrol_Vardiya_Kapasite_Matrisi (Tek_Levha).xlsx"
     dest_static = r"C:\Users\llboz\OneDrive\Desktop\ergunbas-uretim-sistemi\static\Ergunbas_Ekstruzyon_ve_Kalite_Kontrol_Vardiya_Kapasite_Matrisi.xlsx"
 
     try:
@@ -410,6 +391,12 @@ def build_clean_manager_excel():
         print(f"Saved: {dest_alt}")
     except Exception as e:
         print(f"Alt dosya ({e})")
+
+    try:
+        wb.save(dest_tek)
+        print(f"Saved: {dest_tek}")
+    except Exception as e:
+        print(f"Tek Levha dosya ({e})")
 
     try:
         wb.save(dest_static)

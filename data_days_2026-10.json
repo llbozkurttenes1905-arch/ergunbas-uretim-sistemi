@@ -10045,6 +10045,15 @@
           "down_reason": "Hammadde Yokluğu (Hammadde Yok)",
           "down_min": 120.0,
           "desc": "Hammadde olmadığı için kapatıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "Elektrik dalgalanması.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
         }
       ],
       "kirim": [

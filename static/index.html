@@ -181,7 +181,6 @@
             animation: hologram-pulse 2.4s infinite ease-in-out;
         }
     </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col font-sans antialiased bg-slate-950 text-slate-100 select-none">
 
@@ -457,12 +456,7 @@
                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                     </button>
 
-                    <button onclick="switchTab('doors')" id="tab-doors"
-                    <button onclick="switchTab('ordersplit')" id="tab-ordersplit" title="Sipariş Ayırma & Akıllı Hat Dağıtımı" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-amber-400 hover:bg-slate-800/80 relative group">
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                        <i data-lucide="split" class="w-5 h-5 text-amber-400"></i>
-                    </button>
- title="Kapı & Stok Takibi" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/80">
+                    <button onclick="switchTab('doors')" id="tab-doors" title="Kapı & Stok Takibi" class="w-10 h-10 rounded-xl flex items-center justify-center transition-all text-slate-400 hover:text-slate-100 hover:bg-slate-800/80">
                         <i data-lucide="door-open" class="w-5 h-5"></i>
                     </button>
 
@@ -524,15 +518,6 @@
                             <i data-lucide="home" class="w-3.5 h-3.5 text-ergunbas-500"></i>
                             <span>Home</span>
                         </div>
-                    <!-- Tree Siparis Ayirma & Akilli Hat Link -->
-                    <div onclick="switchTab('ordersplit')" class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-amber-300 hover:text-white hover:bg-amber-950/40 border border-amber-500/30 cursor-pointer font-bold transition my-1.5 shadow-sm shadow-amber-900/20">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="split" class="w-3.5 h-3.5 text-amber-400"></i>
-                            <span>Sipariş Ayırma & Akıllı Hat</span>
-                        </div>
-                        <span class="text-[9px] px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded font-mono font-bold">YENİ</span>
-                    </div>
-
                         <span class="text-[10px] text-slate-500 font-mono">&lt;</span>
                     </div>
 
@@ -2733,113 +2718,7 @@
             </div>
 
 
-            
-        <!-- ========================================================
-             VIEW: SİPARİŞ AYIRMA & AKILLI HAT DAĞITIM MOTORU (ORDERSPLIT)
-        ======================================================== -->
-        <div id="view-ordersplit" class="space-y-6 hidden">
-            <!-- Top Header Banner -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 border border-amber-500/30 p-6 shadow-2xl">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2.5">
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                                ERGÜNBAŞ AKILLI HAT SİSTEMİ
-                            </span>
-                            <span class="text-xs text-slate-400 font-mono">2026 Profil Kapasite & Ağırlık Motoru</span>
-                        </div>
-                        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
-                            <i data-lucide="split" class="w-7 h-7 text-amber-400"></i>
-                            Sipariş Ayırma & Çoklu Hat Parçalama Paneli
-                        </h2>
-                        <p class="text-xs text-slate-300 max-w-3xl leading-relaxed">
-                            Sipariş PDF'i yükleyin veya metnini yapıştırın; Kanat, Kasa, Pervaz ve Aksesuar otomatik ayrılsın.
-                            Sistem fabrikadaki hat hızlarını kıyaslayarak <b>en ideal 2 hattı</b> önerir ve siparişi makineler arasında eşzamanlı tamamlanacak şekilde paylaştırır.
-                        </p>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        <button onclick="exportSplitCsv()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-2">
-                            <i data-lucide="download" class="w-4 h-4 text-sky-400"></i>
-                            CSV Olarak İndir
-                        </button>
-                        <button onclick="document.getElementById('osPdfInput').click()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 text-xs font-bold transition flex items-center gap-2">
-                            <i data-lucide="file-up" class="w-4 h-4"></i>
-                            PDF Sipariş Formu Yükle
-                        </button>
-                        <input type="file" id="osPdfInput" accept=".pdf" multiple class="hidden">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="osStatsBar">
-                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Kayıtlı Siparişler</span>
-                    <span class="text-2xl font-black text-white" id="osStatOrders">0</span>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Ayrıştırılan Kalem</span>
-                    <span class="text-2xl font-black text-amber-400" id="osStatRows">0</span>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Toplam Takım / Adet</span>
-                    <span class="text-2xl font-black text-emerald-400" id="osStatQty">0</span>
-                </div>
-                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Hat Ataması Yapılan</span>
-                    <span class="text-2xl font-black text-sky-400" id="osStatAssigned">0</span>
-                </div>
-            </div>
-
-            <!-- Giriş & Metin Kutusu Kartı -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="clipboard-paste" class="w-5 h-5 text-amber-400"></i>
-                        <h3 class="text-base font-black text-white">Sipariş Formu Yükleme & Metin Girişi</h3>
-                    </div>
-                    <span class="text-xs text-slate-400" id="osFileHint">PDF dosyalarını sürükleyip bırakabilir ya da metni yapıştırabilirsiniz.</span>
-                </div>
-
-                <textarea id="osInputText" rows="4" placeholder="Sipariş metnini buraya yapıştırın (veya yukarıdan PDF yükleyin)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-200 font-mono focus:border-amber-500 focus:outline-none transition resize-y"></textarea>
-
-                <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="osProcessInputText()" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
-                            <i data-lucide="play" class="w-4 h-4"></i>
-                            Ayır, Grupla ve Kaydet
-                        </button>
-                        <button type="button" onclick="document.getElementById('osInputText').value=''" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
-                            Kutuyu Temizle
-                        </button>
-                        <button type="button" onclick="osLoadSampleText()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs transition">
-                            Örnek Veri Yükle
-                        </button>
-                    </div>
-                    <div class="text-[11px] text-slate-500" id="osParseStatus"></div>
-                </div>
-            </div>
-
-            <!-- Kayıtlı Siparişler Accordion / Bar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4" id="osRecordsCard">
-                <div class="flex justify-between items-center mb-3">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="archive" class="w-4 h-4 text-slate-400"></i>
-                        <h4 class="text-xs font-bold text-slate-200">Sisteme Yüklü Sipariş Belgeleri (Tarih Sıralı)</h4>
-                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400" id="osRecCountBadge">0 sipariş</span>
-                    </div>
-                </div>
-                <div id="osRecordsList" class="space-y-2"></div>
-            </div>
-
-            <!-- Gruplanmış Üretim Çıktısı & Akıllı Hat Dağıtımı Tabloları -->
-            <div id="osOutputArea" class="space-y-6"></div>
-        </div><!-- end view-ordersplit -->
-
-
-<div id="view-doors" class="space-y-6 hidden">
+            <div id="view-doors" class="space-y-6 hidden">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                     <div>
@@ -11740,7 +11619,7 @@
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'planning', 'digitaltwin', 'ai', 'molds', 'daily', 'doors', 'mixer', 'settings', 'users', 'ordersplit'].forEach(t => {
+            ['dashboard', 'planning', 'digitaltwin', 'ai', 'molds', 'daily', 'doors', 'mixer', 'settings', 'users'].forEach(t => {
                 const viewEl = document.getElementById(`view-${t}`);
                 if (viewEl) viewEl.classList.add('hidden');
                 const btn = document.getElementById(`tab-${t}`);
@@ -11765,7 +11644,6 @@
                 molds: 'Kalıphane & Takım Ömrü',
                 daily: 'Günlük Veri Girişi',
                 doors: 'Kapı & Stok Takibi',
-                ordersplit: '⚡ Sipariş Ayırma & Akıllı Hat Dağıtımı',
                 mixer: 'Mikser & Geri Dönüşüm',
                 settings: 'Makineler & Ayarlar',
                 users: 'Kullanıcı Yönetimi'
@@ -17789,7 +17667,18 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                             </div>
                         </div>
                     </div>
+
+                    <!-- Akıllı Hat Dağıtım Butonu -->
+                    <div class="pt-3 border-t border-slate-800/60 mt-3">
+                        <button onclick="openSimSplitModal()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600/80 to-orange-600/80 hover:from-amber-500 hover:to-orange-500 text-white font-bold shadow-lg shadow-amber-900/30 flex items-center justify-center gap-2 transition text-xs">
+                            <i data-lucide="split" class="w-4 h-4"></i>
+                            ⚡ Bu Siparişi Akıllı Dağıt — 2 veya Daha Fazla Hatta Böl
+                        </button>
+                        <p class="text-center text-[10px] text-slate-500 mt-1.5">Sistem en ideal 2 hattı otomatik önerir. İş yükü hafifler, eşzamanlı tamamlanır.</p>
+                    </div>
                 `;
+                // Store sim data globally for split modal
+                window._lastSimData = simData;
                 safeCreateIcons();
             } catch(e) {
                 resBox.innerHTML = `<div class="p-3 text-rose-400 font-mono text-xs">Simülasyon hatası: ${e.message}</div>`;
@@ -17799,1079 +17688,484 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
     </script>
 
 <!-- ========================================================
-     MODAL: AKILLI HAT DAĞITIM & SİPARİŞ PARÇALAMA (SCADA DARK THEME)
+     AKILLI HAT DAĞITIM MODALI (Sıfır Risk Simülatörüne Entegre)
 ======================================================== -->
-<div id="mainOrderSplitModal" class="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden text-slate-100 animation-fade-in">
-        <!-- Modal Header -->
+<div id="simSplitModal" class="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto" style="display:none!important;">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden text-slate-100">
+        <!-- Header -->
         <div class="px-6 py-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center shrink-0">
                     <i data-lucide="split" class="w-5 h-5 text-amber-400"></i>
                 </div>
                 <div>
-                    <h3 class="text-base font-black text-white">Akıllı Hat Atama & Sipariş Parçalama Motoru</h3>
-                    <p class="text-[11px] text-slate-400">Ergünbaş Ekstrüzyon Kalıp Hızlarına Göre Eşzamanlı İş Yükü Dağıtıcısı</p>
+                    <h3 class="text-sm font-black text-white">⚡ Akıllı Hat Atama & Sipariş Parçalama Motoru</h3>
+                    <p class="text-[11px] text-slate-400">Ergünbaş Ekstrüzyon Kalıp Hızlarına Göre Eşzamanlı İş Yükü Dağıtıcısı (2026 Güncel)</p>
                 </div>
             </div>
-            <button onclick="closeMainSplitModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition">
+            <button onclick="closeSimSplitModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
-        <!-- Modal Body -->
-        <div class="p-6 overflow-y-auto space-y-5 flex-1 custom-scrollbar">
-            <!-- Ürün Meta Kartı -->
-            <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 p-4 rounded-xl bg-slate-950/70 border border-slate-800 text-xs">
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Model / Profil</span>
-                    <span class="font-bold text-white block truncate" id="msModel">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Renk</span>
-                    <span class="font-bold text-slate-300 block" id="msColor">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Ölçü</span>
-                    <span class="font-bold text-slate-300 block" id="msSize">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Sipariş Miktarı</span>
-                    <span class="font-black text-amber-400 text-sm block" id="msQty">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Boy Karşılığı</span>
-                    <span class="font-bold text-cyan-400 block" id="msBoy">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Toplam Ağırlık</span>
-                    <span class="font-bold text-emerald-400 block" id="msKg">-</span>
-                </div>
+        <!-- Body -->
+        <div class="p-5 overflow-y-auto space-y-4 flex-1 custom-scrollbar">
+            <!-- Ürün Meta Kutusu -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs">
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Ürün / Profil</span><span class="font-bold text-white truncate block" id="ssModel">-</span></div>
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Ölçü</span><span class="font-bold text-slate-300 block" id="ssDim">-</span></div>
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Net Sipariş</span><span class="font-black text-amber-400 text-sm block" id="ssQty">-</span></div>
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Birim</span><span class="font-bold text-slate-300 block" id="ssUnit">-</span></div>
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Profil Boy Sayısı</span><span class="font-bold text-cyan-400 block" id="ssBoy">-</span></div>
+                <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Toplam Ağırlık</span><span class="font-bold text-emerald-400 block" id="ssKg">-</span></div>
             </div>
 
-            <!-- Sistemin Akıllı Önerisi Kartı (Altın Parlak Banner) -->
-            <div class="p-4 rounded-xl bg-gradient-to-r from-amber-950/70 via-slate-900 to-amber-950/50 border border-amber-500/40 space-y-3 shadow-lg shadow-amber-950/20">
+            <!-- Sistem Tavsiyesi Altın Banner -->
+            <div class="p-4 rounded-xl bg-gradient-to-r from-amber-950/70 via-slate-900 to-amber-950/50 border border-amber-500/40 space-y-2 shadow-lg">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-                        <span class="text-xs font-black text-amber-300 uppercase tracking-wide">SİSTEMİN TAVSİYESİ (EN İDEAL 2 HAT)</span>
+                        <span class="text-[11px] font-black text-amber-300 uppercase tracking-widest">SİSTEMİN TAVSİYESİ (EN İDEAL 2 HAT)</span>
                     </div>
-                    <button type="button" onclick="msApplySystemRecommendation()" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1.5 shrink-0">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                        <span>✨ Önerilen İdeal İkiliyi Uygula</span>
+                    <button onclick="ssApplyRecommendation()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] shadow-md transition flex items-center gap-1.5 shrink-0">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> ✨ Önerilen İdeal İkiliyi Uygula
                     </button>
                 </div>
-                <div class="text-sm font-black text-white" id="msRecTitle">En İdeal 2 Hat Yükleniyor...</div>
-                <p class="text-xs text-amber-200/80 leading-relaxed" id="msRecDesc">-</p>
+                <div class="text-sm font-black text-white" id="ssRecBadge">Yükleniyor...</div>
+                <p class="text-[11px] text-amber-200/80 leading-relaxed" id="ssRecReason">-</p>
             </div>
 
-            <!-- Hat Dağıtım Kartları Listesi -->
-            <div class="space-y-3" id="msLinesContainer"></div>
+            <!-- Hat Kartları -->
+            <div class="space-y-3" id="ssLinesContainer"></div>
 
-            <!-- Dengeleme & Ekleme Barı -->
-            <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
-                <div class="flex items-center gap-2 font-bold" id="msPctIndicator">
-                    <span class="text-slate-400">Toplam Paylaşım:</span>
-                    <span id="msTotalPctVal" class="text-emerald-400 font-mono text-sm">%100.0</span>
+            <!-- Denge Barı -->
+            <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+                <div class="flex items-center gap-2 font-bold">
+                    <span class="text-slate-400">Toplam:</span>
+                    <span id="ssTotalPct" class="text-emerald-400 font-mono font-black text-sm">%100.0</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="msSyncBySpeeds()" class="px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 font-bold transition flex items-center gap-1.5">
-                        <i data-lucide="scale" class="w-3.5 h-3.5"></i>
-                        <span>⚖️ Hızlara Göre Eşzamanlı Dengele</span>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="ssSyncBySpeeds()" class="px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 font-bold transition flex items-center gap-1.5">
+                        <i data-lucide="scale" class="w-3.5 h-3.5"></i> ⚖️ Hızlara Göre Eşzamanlı Dengele
                     </button>
-                    <button type="button" onclick="msSyncEqual()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition">
-                        ➗ Eşit Paylaştır
-                    </button>
-                    <button type="button" onclick="msAddNewLine()" class="px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 font-bold transition flex items-center gap-1.5">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>➕ Yeni Hat Ekle</span>
+                    <button onclick="ssSyncEqual()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold transition">➗ Eşit Paylaştır</button>
+                    <button onclick="ssAddLine()" class="px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 font-bold transition flex items-center gap-1.5">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> ➕ Yeni Hat Ekle
                     </button>
                 </div>
             </div>
 
-            <!-- Süre Kıyaslama & Zaman Kazancı -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+            <!-- Süre Kıyaslama -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
                 <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Tek Hatta Kalsaydı</span>
-                    <span class="text-sm font-black text-slate-300 font-mono" id="msSingleHours">-</span>
+                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-0.5">Tek Hatta Kalsaydı</span>
+                    <span class="text-sm font-black text-slate-300 font-mono" id="ssSingleHours">-</span>
                 </div>
                 <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Dağıtılmış Eşzamanlı Süre</span>
-                    <span class="text-sm font-black text-amber-400 font-mono" id="msMultiHours">-</span>
+                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-0.5">Dağıtılmış Eşzamanlı Bitiş</span>
+                    <span class="text-sm font-black text-amber-400 font-mono" id="ssMultiHours">-</span>
                 </div>
                 <div class="p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-500/30 flex items-center justify-between">
                     <div>
                         <span class="text-[10px] text-emerald-400 uppercase font-bold block mb-0.5">Süre Kazancı</span>
-                        <span class="text-xs font-black text-white" id="msSavedHours">-</span>
+                        <span class="text-xs font-black text-white" id="ssSavedText">-</span>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30" id="msSavedPct">-%50</span>
+                    <span class="px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30" id="ssSavedPct">-</span>
                 </div>
             </div>
         </div>
 
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 bg-slate-950/80 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
-            <button type="button" onclick="msPrintWorkOrder()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5">
-                <i data-lucide="printer" class="w-4 h-4 text-sky-400"></i>
-                <span>Hat İş Emri Kartı Yazdır</span>
+        <!-- Footer -->
+        <div class="px-5 py-3.5 bg-slate-950/80 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0">
+            <button onclick="ssPrintWorkOrder()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+                <i data-lucide="printer" class="w-4 h-4 text-sky-400"></i> Hat İş Emri Yazdır
             </button>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="closeMainSplitModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
-                    Vazgeç
-                </button>
-                <button type="button" onclick="msSaveCurrentSplit()" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-xs shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
-                    <i data-lucide="check" class="w-4 h-4"></i>
-                    <span>Dağıtımı Kaydet ve Sisteme Yaz</span>
+                <button onclick="closeSimSplitModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">Kapat</button>
+                <button onclick="ssSaveToOrder()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-xs shadow-lg shadow-amber-600/30 transition flex items-center gap-1.5">
+                    <i data-lucide="check" class="w-4 h-4"></i> Siparişe Kaydet & Onayla
                 </button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Yazdırma Şablonu -->
-<div id="scadaPrintSection" style="display:none;"></div>
+<div id="ssPrintArea" style="display:none;"></div>
 
 
 <script>
-// =========================================================================
-// ERGÜNBAŞ SCADA SİPARİŞ AYIRMA & AKILLI HAT DAĞITIM MOTORU (2026 RESMİ)
-// =========================================================================
+// =============================================================================
+// ERGÜNBAŞ AKILLI HAT DAĞITIM MOTORU — Sıfır Risk Simülatörü Entegrasyonu
+// =============================================================================
 
-const OS_MACHINE_CATALOG = {
-  'HAT_109': { code: 'HAT 109', name: 'Hat 109 (Lokomotif Pervaz)', cat: 'PERVAZ', defaultSpeed: 50.2, desc: 'Pervaz lokomotif hat (50.2 boy/saat)' },
-  'HAT_103': { code: 'HAT 103', name: 'Hat 103 (Destek Pervaz)', cat: 'PERVAZ', defaultSpeed: 31.5, desc: '50x80 Pervaz destek hattı (31.5 boy/saat)' },
-  'HAT_101': { code: 'HAT 101', name: 'Hat 101 (80x80 Pervaz)', cat: 'PERVAZ', defaultSpeed: 28.0, desc: '80x80 Pervaz ve profil hattı (28.0 boy/saat)' },
-  
-  'HAT_106': { code: 'HAT 106', name: 'Hat 106 (140 Kasa Amiral)', cat: 'KASA', defaultSpeed: 14.0, desc: '140 mm Kasa ana taşıyıcı hat (14.0 boy/saat)' },
-  'HAT_108': { code: 'HAT 108', name: 'Hat 108 (140 & 100 Kasa Hızlı)', cat: 'KASA', defaultSpeed: 14.7, desc: '140 ve 100 mm Kasa yüksek hızlı hat (14.7 - 17.2 boy/saat)' },
-  'HAT_102': { code: 'HAT 102', name: 'Hat 102 (100 Kasa Destek)', cat: 'KASA', defaultSpeed: 15.6, desc: '100 mm Kasa ikiz destek hattı (15.6 boy/saat)' },
-  'HAT_107': { code: 'HAT 107', name: 'Hat 107 (200 Kasa Özel)', cat: 'KASA', defaultSpeed: 12.9, desc: '200 mm Kasa özel hat (12.9 boy/saat)' },
-  
-  'HAT_104': { code: 'HAT 104', name: 'Hat 104 (Kompozit Seren)', cat: 'KANAT', defaultSpeed: 31.2, desc: 'Kompozit seren çekim hattı (31.2 boy/saat)' },
-  'HAT_105': { code: 'HAT 105', name: 'Hat 105 (Kompozit Seren)', cat: 'KANAT', defaultSpeed: 30.0, desc: 'Kompozit seren ikiz hat (30.0 boy/saat)' },
-  'HAT_201': { code: 'HAT 201', name: 'Hat 201 (PVC Levha)', cat: 'KANAT', defaultSpeed: 41.7, desc: 'PVC plaka levha hattı (41.7 plaka/saat)' }
+const SS_LINES_CATALOG = {
+  HAT_109:{ code:'HAT 109', name:'Hat 109 (Lokomotif Pervaz)', speed50x80:50.2, speed80x80:38.0 },
+  HAT_103:{ code:'HAT 103', name:'Hat 103 (Destek Pervaz)',    speed50x80:31.5, speed80x80:24.0 },
+  HAT_101:{ code:'HAT 101', name:'Hat 101 (80x80 Pervaz)',     speed50x80:27.8, speed80x80:28.0 },
+  HAT_106:{ code:'HAT 106', name:'Hat 106 (140 Kasa Amiral)', speed140:14.0, speed100:11.0, speed200:10.0 },
+  HAT_108:{ code:'HAT 108', name:'Hat 108 (140 & 100 Kasa)',  speed140:14.7, speed100:17.2, speed200:10.0 },
+  HAT_102:{ code:'HAT 102', name:'Hat 102 (100 Kasa Destek)', speed140:10.4, speed100:15.6, speed200:9.0 },
+  HAT_107:{ code:'HAT 107', name:'Hat 107 (200 Kasa Özel)',   speed140:10.0, speed100:9.0,  speed200:12.9 },
+  HAT_104:{ code:'HAT 104', name:'Hat 104 (Kompozit Seren)',  speedDefault:31.2 },
+  HAT_105:{ code:'HAT 105', name:'Hat 105 (Kompozit Seren)',  speedDefault:30.0 },
+  HAT_201:{ code:'HAT 201', name:'Hat 201 (PVC Levha)',        speedDefault:41.7 }
 };
 
-const OS_CATS = {
-  KANAT:  { label: 'Kanat', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-  KASA:   { label: 'Kasa', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
-  PERVAZ: { label: 'Pervaz', color: 'bg-sky-500/20 text-sky-300 border-sky-500/30' },
-  TAKOZ:  { label: 'Köşe Birleştirme Takozu', color: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
-  MENTE:  { label: 'Menteşe', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
-  DIGER:  { label: 'Diğer / Aksesuar', color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' }
+// 2026 Resmi BOM Katsayıları
+const SS_PROFILE_SPECS = {
+  KASA_100:  { kgPerBoy:3.94, boyPerTakim:2.5, unit:'TAKIM' },
+  KASA_140:  { kgPerBoy:5.31, boyPerTakim:2.5, unit:'TAKIM' },
+  KASA_200:  { kgPerBoy:7.45, boyPerTakim:2.5, unit:'TAKIM' },
+  PERVAZ_50x80:  { kgPerBoy:1.54, boyPerTakim:5.0, unit:'TAKIM' },
+  PERVAZ_80x80:  { kgPerBoy:1.78, boyPerTakim:5.0, unit:'TAKIM' },
+  SEREN: { kgPerBoy:1.25, boyPerTakim:3.5, unit:'ADET' }
 };
 
-const OS_UNIT_RE = /([\d.]+(?:,\d{1,2})?)\s*(ADET|TAKIM|MT|M2|M3|KG|PAKET|[ÇC]?\s?[Iİ]?\s?FT|CIFT)\b/i;
-
-function osFoldTr(s){
-  return (s||'').replace(/[ıİI]/g,'I').replace(/[şŞ]/g,'S').replace(/[ğĞ]/g,'G').replace(/[çÇ]/g,'C').replace(/[öÖ]/g,'O').replace(/[üÜ]/g,'U').toUpperCase();
-}
-function osFuzzyKey(s){
-  return osFoldTr(s).replace(/[^A-Z0-9]/g,'').replace(/[ISG]/g,'');
-}
-function osIncludesLoose(haystack, keyword){
-  const h = osFoldTr(haystack);
-  if(h.includes(osFoldTr(keyword))) return true;
-  return osFuzzyKey(haystack).includes(osFuzzyKey(keyword));
-}
-
-function osDetectCategory(model){
-  if(osIncludesLoose(model,'TAKOZ')) return 'TAKOZ';
-  if(osIncludesLoose(model,'MENTE')) return 'MENTE';
-  if(osIncludesLoose(model,'KANAT')) return 'KANAT';
-  if(osIncludesLoose(model,'KASA')) return 'KASA';
-  if(osIncludesLoose(model,'PERVAZ')) return 'PERVAZ';
-  return 'DIGER';
-}
-
-function osDetectColor(model){
-  const rules = [
-    ['BEYAZTEAK','Beyaz Teak'],['MIXBTEAK','Mix Beyaz Teak'],['MBTEAK','Mix Beyaz Teak'],
-    ['MIXTEAK','Mix Teak'],['DBEYAZ','Dekor Beyaz'],['KCEVIZ','Koyu Ceviz'],
-    ['ANTRASIT','Antrasit'],['SOMONO','Somono'],['TEAK','Teak'],['BEYAZ','Beyaz'],['PASLANMAZ','Paslanmaz']
-  ];
-  for(const [key,label] of rules) if(osIncludesLoose(model,key)) return label;
-  return '';
-}
-
-function osDetectSize(model){
-  let m = model.match(/(\d{2,4})\s*[xX*]\s*(\d{2,4})\s*[xX*]\s*(\d{2,4})/);
-  if(m) return `${m[1]}x${m[2]}x${m[3]}`;
-  let m2 = model.match(/(\d{2,4})\s*[xX*]\s*(\d{2,4})/);
-  if(m2) return `${m2[1]}x${m2[2]}`;
-  return '';
-}
-
-function osRepairTr(s){
-  return (s||'').replace(/\s{2,}/g, ' ').trim();
-}
-
-function osParseOrder(text){
-  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-  const rows = [];
-  for(const line of lines){
-    const m = line.match(OS_UNIT_RE);
-    if(!m) continue;
-    const qtyRaw = m[1];
-    let unit = osFoldTr(m[2]).replace(/\s+/g,'');
-    if(unit.startsWith('C') && unit.endsWith('FT')) unit = 'ÇİFT';
-    const qty = parseFloat(qtyRaw.replace(/\./g,'').replace(',', '.'));
-
-    let modelPart = line.slice(0, m.index);
-    modelPart = modelPart.replace(/\bO[dD]?a?\s*Kilit[\s\S]*$/i, '').trim();
-    modelPart = modelPart.replace(/[\s\-\/]+$/,'').trim();
-    modelPart = osRepairTr(modelPart);
-    if(!modelPart) continue;
-    if(/^\d{2}\.\d{2}\.\d{4}$/.test(modelPart)) continue;
-
-    rows.push({
-      model: modelPart,
-      category: osDetectCategory(modelPart),
-      color: osDetectColor(modelPart),
-      size: osDetectSize(modelPart),
-      qty, unit
-    });
+function ssGetProfileKey(product, dim){
+  const p = (product || '').toUpperCase();
+  const d = (dim || '').toUpperCase();
+  if(p.includes('KASA') || p.includes('KASA')){
+    if(p.includes('100') || d.includes('100')) return 'KASA_100';
+    if(p.includes('200') || d.includes('200')) return 'KASA_200';
+    return 'KASA_140';
   }
-  return rows;
+  if(p.includes('PERVAZ')){
+    if(p.includes('80X80') || d.includes('80X80') || p.includes('GEN') || d.includes('GEN')) return 'PERVAZ_80x80';
+    return 'PERVAZ_50x80';
+  }
+  if(p.includes('SEREN') || p.includes('KANAT')) return 'SEREN';
+  return 'KASA_140';
 }
 
-function osExtractMeta(text){
-  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-  let date='', orderNo='', status='';
-  for(let i=0;i<lines.length;i++){
-    const dm = lines[i].match(/^(\d{2}\.\d{2}\.\d{4})$/);
-    if(dm){
-      date = dm[1];
-      if(lines[i+1] && /^E\d{6,}$/i.test(lines[i+1])) orderNo = lines[i+1].toUpperCase();
-      if(lines[i+2] && !/^MODEL\b/i.test(lines[i+2]) && !OS_UNIT_RE.test(lines[i+2])) status = lines[i+2];
-      break;
-    }
-  }
-  if(!date){ const dm2 = text.match(/(\d{2}\.\d{2}\.\d{4})/); if(dm2) date = dm2[1]; }
-  if(!orderNo){ const om = text.match(/\bE\d{6,}\b/i); if(om) orderNo = om[0].toUpperCase(); }
-  return {date, orderNo, status};
+function ssGetLineSpeed(lineKey, profileKey){
+  const m = SS_LINES_CATALOG[lineKey];
+  if(!m) return 15.0;
+  if(profileKey === 'KASA_100') return m.speed100 || m.speedDefault || 14.0;
+  if(profileKey === 'KASA_140') return m.speed140 || m.speedDefault || 14.0;
+  if(profileKey === 'KASA_200') return m.speed200 || m.speedDefault || 10.0;
+  if(profileKey === 'PERVAZ_50x80') return m.speed50x80 || m.speedDefault || 30.0;
+  if(profileKey === 'PERVAZ_80x80') return m.speed80x80 || m.speedDefault || 28.0;
+  return m.speedDefault || m.speed140 || 15.0;
 }
 
-async function osExtractPdfText(file){
-  if(typeof pdfjsLib === 'undefined'){
-    throw new Error('PDF.js kütüphanesi yüklenemedi.');
-  }
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const buf = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
-  let fullText = '';
-  for(let p=1;p<=pdf.numPages;p++){
-    const page = await pdf.getPage(p);
-    const content = await page.getTextContent();
-    const items = content.items
-      .map(it=>({str:it.str, x:it.transform[4], y:it.transform[5]}))
-      .filter(it=>it.str.trim().length>0);
-    items.sort((a,b)=> b.y-a.y || a.x-b.x);
-    let lines=[], cur=null, curY=null;
-    const TOL=3;
-    for(const it of items){
-      if(cur===null || Math.abs(it.y-curY)>TOL){
-        if(cur) lines.push(cur);
-        cur=[it]; curY=it.y;
-      } else cur.push(it);
-    }
-    if(cur) lines.push(cur);
-    for(const ln of lines){
-      ln.sort((a,b)=>a.x-b.x);
-      fullText += ln.map(it=>it.str).join(' ') + '\n';
-    }
-    fullText += '\n';
-  }
-  return fullText;
-}
-
-// Storage helpers with localStorage fallback
-let OS_RECORDS = [];
-let OS_ACTIVE_IDS = new Set();
-let OS_ASSIGNMENTS = {};
-
-function osLoadData(){
-  try{
-    const r = localStorage.getItem('scada_ordersplit_records');
-    OS_RECORDS = r ? JSON.parse(r) : [];
-    OS_ACTIVE_IDS = new Set(OS_RECORDS.map(x=>x.id));
-    const a = localStorage.getItem('scada_ordersplit_assignments');
-    OS_ASSIGNMENTS = a ? JSON.parse(a) : {};
-  }catch(e){
-    OS_RECORDS = [];
-    OS_ASSIGNMENTS = {};
-  }
-}
-function osSaveData(){
-  try{
-    localStorage.setItem('scada_ordersplit_records', JSON.stringify(OS_RECORDS));
-    localStorage.setItem('scada_ordersplit_assignments', JSON.stringify(OS_ASSIGNMENTS));
-  }catch(e){}
-}
-
-function osRound(n){ return Number.isInteger(n) ? n : Math.round(n*100)/100; }
-function osEscape(s){ return (s||'').toString().replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-// Profile Specs & Machine Speeds (Official 2026)
-function osGetProfileSpecs(cat, size, model){
-  const str = ((size||'') + ' ' + (model||'')).toUpperCase();
-  let kgPerBoy = 0;
-  let boyPerTakim = 1.0;
-  let speedKey = '';
-
-  if(cat === 'KASA'){
-    boyPerTakim = 2.5; // 1 Takım Kasa = 2.5 Boy
-    if(str.includes('100')){
-      kgPerBoy = 3.94; // 100 mm: 3.94 kg/boy -> 9.85 kg/tk
-      speedKey = '100';
-    } else if(str.includes('200')){
-      kgPerBoy = 7.45; // 200 mm: 7.45 kg/boy -> 18.63 kg/tk
-      speedKey = '200';
-    } else {
-      kgPerBoy = 5.31; // 140 mm: 5.31 kg/boy -> 13.28 kg/tk
-      speedKey = '140';
-    }
-  } else if(cat === 'PERVAZ'){
-    boyPerTakim = 5.0; // 1 Takım Pervaz = 5.0 Boy
-    if(str.includes('80X80') || str.includes('80*80') || str.includes('80 X 80')){
-      kgPerBoy = 1.78; // 80x80: 1.78 kg/boy -> 8.90 kg/tk
-      speedKey = '80x80';
-    } else {
-      kgPerBoy = 1.54; // 50x80: 1.54 kg/boy -> 7.70 kg/tk
-      speedKey = '50x80';
-    }
-  } else if(cat === 'KANAT'){
-    boyPerTakim = 3.5;
-    kgPerBoy = 1.25;
-    speedKey = 'seren';
-  } else {
-    boyPerTakim = 1.0;
-    kgPerBoy = 2.0;
-    speedKey = 'genel';
-  }
-
-  return { kgPerBoy, boyPerTakim, speedKey };
-}
-
-function osGetLineSpeed(lineKey, speedKey){
-  if(lineKey === 'HAT_109') return speedKey === '80x80' ? 38.0 : 50.2;
-  if(lineKey === 'HAT_108') return speedKey === '100' ? 17.2 : 14.7;
-  if(lineKey === 'HAT_102') return speedKey === '100' ? 15.6 : 10.4;
-  if(lineKey === 'HAT_106') return speedKey === '200' ? 10.0 : 14.0;
-  if(lineKey === 'HAT_107') return speedKey === '200' ? 12.9 : 10.0;
-  if(lineKey === 'HAT_103') return speedKey === '80x80' ? 24.0 : 31.5;
-  if(lineKey === 'HAT_101') return speedKey === '80x80' ? 28.0 : 27.8;
-  const m = OS_MACHINE_CATALOG[lineKey];
-  return m ? m.defaultSpeed : 20.0;
-}
-
-// Akıllı Tavsiye Motoru
-function osGetRecommendation(cat, size, model){
-  const { speedKey } = osGetProfileSpecs(cat, size, model);
-  if(cat === 'KASA'){
-    if(speedKey === '100'){
-      return {
-        lines: ['HAT_108', 'HAT_102'], ratios: [52.4, 47.6],
-        badge: 'En İdeal 2 Hat: Hat 108 (%52) & Hat 102 (%48)',
-        reason: '100 mm kasada Hat 108 (17.2 boy/saat) ve Hat 102 (15.6 boy/saat) fabrikanın en hızlı ve en uyumlu ikilisidir. %52.4 - %47.6 paylaşımla iki makine aynı dakikada işi tamamlar, vardiya kaybı yaşanmaz.'
-      };
-    } else if(speedKey === '200'){
-      return {
-        lines: ['HAT_107', 'HAT_106'], ratios: [60.0, 40.0],
-        badge: 'En İdeal 2 Hat: Hat 107 (%60) & Hat 106 (%40)',
-        reason: '200 mm geniş kasa kalıbı ve vida yapısı Hat 107 (12.9 boy/saat) için optimize edilmiştir; Hat 106 destek hattı olarak süreyi %40 öne çeker.'
-      };
-    } else {
-      return {
-        lines: ['HAT_106', 'HAT_108'], ratios: [48.8, 51.2],
-        badge: 'En İdeal 2 Hat: Hat 106 (%49) & Hat 108 (%51)',
-        reason: '140 mm kasada fabrikanın iki ana amiral hattı Hat 106 (14.0 boy/saat) ve Hat 108 (14.7 boy/saat) kafa kafaya hızdadır. Eşit paylaşımla tek hatta 2 gün sürecek iş 1 günde eşzamanlı teslim edilir.'
-      };
-    }
-  } else if(cat === 'PERVAZ'){
-    if(speedKey === '80x80'){
-      return {
-        lines: ['HAT_109', 'HAT_101'], ratios: [57.6, 42.4],
-        badge: 'En İdeal 2 Hat: Hat 109 (%58) & Hat 101 (%42)',
-        reason: '80x80 pervaz profilinde Hat 109 (38.0 boy/saat) ve Hat 101 (28.0 boy/saat) kalıp geometrisi ve yüzey parlaklığı açısından en uyumlu tandendir.'
-      };
-    } else {
-      return {
-        lines: ['HAT_109', 'HAT_103'], ratios: [61.4, 38.6],
-        badge: 'En İdeal 2 Hat: Hat 109 (%61.4) & Hat 103 (%38.6)',
-        reason: '50x80 pervazda lokomotif Hat 109 (50.2 boy/saat) ile destek Hat 103 (31.5 boy/saat) kusursuz tandendir. Bu dağıtımla her iki hat aynı dakikada işi bitirir!'
-      };
-    }
-  } else if(cat === 'KANAT'){
-    return {
-      lines: ['HAT_104', 'HAT_105'], ratios: [51.0, 49.0],
-      badge: 'En İdeal 2 Hat: Hat 104 (%51) & Hat 105 (%49)',
-      reason: 'Kompozit seren çekiminde Hat 104 (31.2 boy/saat) ve Hat 105 (30.0 boy/saat) ikiz hatlardır; %51-%49 dağıtımla en dengeli üretim sağlanır.'
-    };
-  } else {
-    return {
-      lines: ['HAT_106', 'HAT_108'], ratios: [50.0, 50.0],
-      badge: 'En İdeal 2 Hat: Hat 106 (%50) & Hat 108 (%50)',
-      reason: 'Aksesuar ve diğer profiller için en esnek iki hat önerilmiştir.'
-    };
-  }
-}
-
-// Processing inputs
-async function osProcessInputText(){
-  const text = document.getElementById('osInputText').value;
-  if(!text.trim()){
-    showScadaNotification('Lütfen sipariş metni yapıştırın veya PDF yükleyin.', 'error');
-    return;
-  }
-  const rows = osParseOrder(text);
-  if(rows.length === 0){
-    showScadaNotification('Ayrıştırılabilir ürün satırı bulunamadı.', 'error');
-    return;
-  }
-  const meta = osExtractMeta(text);
-  const id = meta.orderNo || ('T' + Date.now().toString().slice(-6));
-  const rec = {
-    id, orderNo: meta.orderNo, date: meta.date || new Date().toLocaleDateString('tr-TR'),
-    status: meta.status, savedAt: new Date().toISOString(), rows
+function ssGetRecommendation(profileKey){
+  const recs = {
+    KASA_100:    { lines:['HAT_108','HAT_102'], ratios:[52.4,47.6],
+      badge:'En İdeal 2 Hat: HAT 108 (%52) & HAT 102 (%48)',
+      reason:'100 mm kasada Hat 108 (17.2 boy/saat) ve Hat 102 (15.6 boy/saat) fabrikanın en hızlı ve kalıp uyumu en yüksek ikilisidir. Bu oranla bölündüğünde iki makine aynı dakikada işi tamamlar — hat beklemesi sıfırlanır.' },
+    KASA_140:    { lines:['HAT_106','HAT_108'], ratios:[48.8,51.2],
+      badge:'En İdeal 2 Hat: HAT 106 (%49) & HAT 108 (%51)',
+      reason:'140 mm kasada Hat 106 (14.0 boy/saat) ve Hat 108 (14.7 boy/saat) fabrikanın iki ana amiral hattıdır. %50-%50 yakın dağılımla tek hatta 2 gün sürecek sipariş 1 günde eşzamanlı teslim edilir.' },
+    KASA_200:    { lines:['HAT_107','HAT_106'], ratios:[60.0,40.0],
+      badge:'En İdeal 2 Hat: HAT 107 (%60) & HAT 106 (%40)',
+      reason:'200 mm geniş kasa kalıbı ve vida torku Hat 107 (12.9 boy/saat) için optimize edilmiştir; Hat 106 destek hattı olarak devreye sokularak teslimat süresi %40 öne çekilir.' },
+    PERVAZ_50x80:{ lines:['HAT_109','HAT_103'], ratios:[61.4,38.6],
+      badge:'En İdeal 2 Hat: HAT 109 (%61.4) & HAT 103 (%38.6)',
+      reason:'50x80 pervazda lokomotif Hat 109 (50.2 boy/saat) ile destek Hat 103 (31.5 boy/saat) kalıp ve devir olarak kusursuz tandendir. Bu dağıtımla her iki hat tam aynı dakikada işi bitirir!' },
+    PERVAZ_80x80:{ lines:['HAT_109','HAT_101'], ratios:[57.6,42.4],
+      badge:'En İdeal 2 Hat: HAT 109 (%58) & HAT 101 (%42)',
+      reason:'80x80 pervaz profilinde Hat 109 (38.0 boy/saat) ve Hat 101 (28.0 boy/saat) kalıp geometrisi ve yüzey parlaklığı açısından en uyumlu tandendir. İki hat eşzamanlı tamamlar.' },
+    SEREN:       { lines:['HAT_104','HAT_105'], ratios:[51.0,49.0],
+      badge:'En İdeal 2 Hat: HAT 104 (%51) & HAT 105 (%49)',
+      reason:'Kompozit seren çekiminde Hat 104 (31.2 boy/saat) ve Hat 105 (30.0 boy/saat) ikiz hatlardır; %51-%49 dağıtımla en dengeli üretim sağlanır.' }
   };
-
-  OS_RECORDS = OS_RECORDS.filter(r=>r.id !== id);
-  OS_RECORDS.unshift(rec);
-  OS_ACTIVE_IDS.add(id);
-  osSaveData();
-  osRenderAll();
-  showScadaNotification(`✅ Kaydedildi: ${meta.orderNo || 'Sipariş'} (${rows.length} kalem ayrıştırıldı)`, 'success');
+  return recs[profileKey] || recs.KASA_140;
 }
 
-function osLoadSampleText(){
-  const SAMPLE = `SİPARİŞ FORMU
-BAĞLANTI - AKTİF
-17.03.2026
-E202600000000666
-MODEL MİKTAR BİRİM
-ER100 KANAT D.BEYAZ KOM.SEREN STRAFOR 500X2020X40 2,00 ADET Oda Kilit-50*196 CM
-KASA DÜZ 700 BASLIK ANTRASIT 140X2140X36 120,00 TAKIM
-GEN.PERVAZ DÜZ ANTRASIT 80X80X2240 120,00 TAKIM
-PERVAZ DÜZ D.BEYAZ 50X80X2240 250,00 TAKIM
-KASA DÜZ 700 BASLIK D.BEYAZ 100X2140X36 80,00 TAKIM
-ER100 KANAT TEAK KOM.SEREN STRAFOR 800X2020X40 40,00 ADET Oda Kilit`;
-  document.getElementById('osInputText').value = SAMPLE;
-  showScadaNotification('Örnek sipariş metni yüklendi.', 'info');
-}
+function ssRound(n){ return isNaN(n) ? 0 : Math.round(n * 100) / 100; }
 
-// Rendering
-function osRenderAll(){
-  osRenderRecords();
-  osRenderOutput();
-  osUpdateStats();
+// Global State
+let SS_STATE = null;
+
+function openSimSplitModal(){
+  const sim = window._lastSimData;
+  if(!sim){ alert('Önce simülasyonu çalıştırın.'); return; }
+
+  const product = sim.product || '';
+  const dim = sim.dim || '';
+  const oQty = parseFloat(document.getElementById('sim-order-qty')?.value || 0);
+  const sQty = parseFloat(document.getElementById('sim-stock-qty')?.value || 0);
+  const netQty = Math.max(0, oQty - sQty);
+  const profileKey = ssGetProfileKey(product, dim);
+  const specs = SS_PROFILE_SPECS[profileKey] || SS_PROFILE_SPECS.KASA_140;
+  const rec = ssGetRecommendation(profileKey);
+  const totalBoy = ssRound(netQty * specs.boyPerTakim);
+  const totalKg  = ssRound(totalBoy * specs.kgPerBoy);
+
+  const lines = rec.lines.map((key, idx)=>({
+    lineKey: key,
+    pct: rec.ratios[idx],
+    qty: ssRound(netQty * (rec.ratios[idx] / 100))
+  }));
+
+  SS_STATE = { product, dim, profileKey, specs, rec, netQty, totalBoy, totalKg, lines, unit: specs.unit };
+
+  // Fill meta
+  document.getElementById('ssModel').textContent   = product;
+  document.getElementById('ssDim').textContent     = dim;
+  document.getElementById('ssQty').textContent     = `${ssRound(netQty).toLocaleString('tr-TR')} ${specs.unit}`;
+  document.getElementById('ssUnit').textContent    = specs.unit;
+  document.getElementById('ssBoy').textContent     = `${totalBoy} Boy (${specs.boyPerTakim}x)`;
+  document.getElementById('ssKg').textContent      = `${totalKg} kg`;
+  document.getElementById('ssRecBadge').textContent  = rec.badge;
+  document.getElementById('ssRecReason').textContent = rec.reason;
+
+  ssRenderLines();
+  const modal = document.getElementById('simSplitModal');
+  modal.style.display = 'flex';
+  modal.style.removeProperty('display');
+  modal.classList.remove('hidden');
   if(typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-function osUpdateStats(){
-  document.getElementById('osStatOrders').textContent = OS_RECORDS.length;
-  let totalRows = 0;
-  let totalQty = 0;
-  OS_RECORDS.forEach(r=>{
-    if(!OS_ACTIVE_IDS.has(r.id)) return;
-    totalRows += r.rows.length;
-    r.rows.forEach(rw=> totalQty += rw.qty);
-  });
-  document.getElementById('osStatRows').textContent = totalRows;
-  document.getElementById('osStatQty').textContent = osRound(totalQty).toLocaleString('tr-TR');
-  document.getElementById('osStatAssigned').textContent = Object.keys(OS_ASSIGNMENTS).length;
+function closeSimSplitModal(){
+  const modal = document.getElementById('simSplitModal');
+  modal.style.display = 'none';
 }
 
-function osRenderRecords(){
-  const list = document.getElementById('osRecordsList');
-  const countBadge = document.getElementById('osRecCountBadge');
-  if(!list) return;
-
-  if(OS_RECORDS.length === 0){
-    countBadge.textContent = '0 sipariş';
-    list.innerHTML = '<div class="text-xs text-slate-500 p-3 text-center border border-dashed border-slate-800 rounded-xl">Henüz yüklenmiş sipariş formu yok.</div>';
-    return;
-  }
-
-  countBadge.textContent = `${OS_RECORDS.length} sipariş`;
-  let html = '';
-  OS_RECORDS.forEach(r=>{
-    const checked = OS_ACTIVE_IDS.has(r.id) ? 'checked' : '';
-    html += `
-      <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" onchange="osToggleRecord('${r.id}', this.checked)" ${checked} class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0">
-          <span class="font-bold text-white">${osEscape(r.orderNo || r.id)}</span>
-          <span class="text-slate-400 font-mono text-[11px]">${osEscape(r.date)}</span>
-          <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400 font-mono">${r.rows.length} Kalem</span>
-        </label>
-        <button onclick="osDeleteRecord('${r.id}')" class="p-1 rounded text-rose-400 hover:text-white hover:bg-rose-500/20 transition text-[11px] font-bold">
-          Sil
-        </button>
-      </div>
-    `;
-  });
-  list.innerHTML = html;
-}
-
-function osToggleRecord(id, checked){
-  if(checked) OS_ACTIVE_IDS.add(id); else OS_ACTIVE_IDS.delete(id);
-  osRenderOutput();
-  osUpdateStats();
-}
-
-function osDeleteRecord(id){
-  OS_RECORDS = OS_RECORDS.filter(r=>r.id !== id);
-  OS_ACTIVE_IDS.delete(id);
-  osSaveData();
-  osRenderAll();
-  showScadaNotification('Sipariş kaydı silindi.', 'info');
-}
-
-function osConsolidateGroup(rowsWithMeta){
-  const map = new Map();
-  rowsWithMeta.forEach(item=>{
-    const r = item.row;
-    const modelKey = osFoldTr(r.model).replace(/\s+/g,' ').trim();
-    const key = [modelKey, osFoldTr(r.color), osFoldTr(r.size), osFoldTr(r.unit)].join('||');
-    if(!map.has(key)){
-      map.set(key, {
-        key, category: r.category, model: r.model, color: r.color, size: r.size, unit: r.unit,
-        qty: 0, orders: new Set(), lineCount: 0
-      });
-    }
-    const g = map.get(key);
-    g.qty += r.qty;
-    g.lineCount += 1;
-    g.orders.add(item.rec.orderNo || item.rec.date || item.rec.id);
-  });
-  return Array.from(map.values()).sort((a,b)=> b.qty - a.qty);
-}
-
-function osRenderOutput(){
-  const out = document.getElementById('osOutputArea');
-  if(!out) return;
-
-  const flat = [];
-  OS_RECORDS.forEach(rec=>{
-    if(!OS_ACTIVE_IDS.has(rec.id)) return;
-    rec.rows.forEach(row=> flat.push({ rec, row }));
-  });
-
-  if(flat.length === 0){
-    out.innerHTML = '<div class="p-8 text-center text-slate-500 bg-slate-900 border border-slate-800 rounded-2xl text-xs">Görüntülenecek sipariş kalemi yok. Yukarıdan bir sipariş ekleyin ya da işaretleyin.</div>';
-    return;
-  }
-
-  const groups = {};
-  flat.forEach(f=>{ (groups[f.row.category] = groups[f.row.category]||[]).push(f); });
-
-  let html = '';
-  const order = ['KANAT','KASA','PERVAZ','TAKOZ','MENTE','DIGER'];
-
-  order.forEach(cat=>{
-    if(!groups[cat] || groups[cat].length === 0) return;
-    const catItems = groups[cat];
-    const catInfo = OS_CATS[cat] || { label: cat, color: 'bg-slate-500/20 text-slate-300' };
-    const consolidated = osConsolidateGroup(catItems);
-
-    let rowsHtml = '';
-    consolidated.forEach(g=>{
-      const assign = OS_ASSIGNMENTS[g.key];
-      let assignBadge = '';
-      if(assign && assign.lines && assign.lines.length > 0){
-        const text = assign.lines.map(l=>`${l.code||l.lineKey} (%${osRound(l.pct)})`).join(' + ');
-        assignBadge = `<button onclick="openSmartOrderSplitModal('${g.key}')" class="px-2.5 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-          <i data-lucide="zap" class="w-3.5 h-3.5 text-sky-400"></i>
-          <span>${osEscape(text)}</span>
-          <span class="text-[10px] text-sky-400/80 ml-1">✎</span>
-        </button>`;
-      } else {
-        assignBadge = `<button onclick="openSmartOrderSplitModal('${g.key}')" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition flex items-center gap-1.5 shadow-sm shadow-amber-950 cursor-pointer">
-          <i data-lucide="split" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>⚡ Akıllı Hat Dağıt</span>
-        </button>`;
-      }
-
-      const orderList = Array.from(g.orders);
-      const srcText = orderList.length > 1 ? `${orderList.length} Siparişte` : orderList[0];
-
-      rowsHtml += `
-        <tr class="hover:bg-slate-900/60 transition group border-b border-slate-800/40">
-          <td class="p-3 font-semibold text-white">${osEscape(g.model)}</td>
-          <td class="p-3 text-slate-300">${osEscape(g.color || '-')}</td>
-          <td class="p-3 text-slate-400 font-mono text-[11px]">${osEscape(g.size || '-')}</td>
-          <td class="p-3 text-right font-black text-amber-400 font-mono text-sm">${osRound(g.qty).toLocaleString('tr-TR')}</td>
-          <td class="p-3 text-slate-400 text-xs font-medium">${osEscape(g.unit)}</td>
-          <td class="p-3">${assignBadge}</td>
-          <td class="p-3 text-slate-400 text-[11px] font-mono">${osEscape(srcText)}</td>
-        </tr>
-      `;
-    });
-
-    html += `
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div class="px-5 py-3.5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-black border ${catInfo.color}">
-              ${catInfo.label}
-            </span>
-            <span class="text-xs text-slate-400 font-mono">${consolidated.length} Çeşit Ürün</span>
-          </div>
-        </div>
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="text-slate-400 bg-slate-950/40 border-b border-slate-800 uppercase text-[10px] tracking-wider">
-              <tr>
-                <th class="p-3">Model / Profil</th>
-                <th class="p-3">Renk</th>
-                <th class="p-3">Ölçü</th>
-                <th class="p-3 text-right">Toplam Miktar</th>
-                <th class="p-3">Birim</th>
-                <th class="p-3">⚡ Akıllı Hat Dağıtımı</th>
-                <th class="p-3">Kaynak Sipariş</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/40 bg-slate-900/30">
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
-  });
-
-  out.innerHTML = html;
-}
-
-// -------------------------------------------------------------
-// MODAL CONTROLLER & LIVE SPEED AUTO-BALANCING
-// -------------------------------------------------------------
-let MS_CURRENT = null;
-
-function openSmartOrderSplitModal(keyOrOrderId){
-  // Check if key is a consolidated key or a specific order from ordersData
-  let item = null;
-  // First check consolidated
-  for(const r of OS_RECORDS){
-    for(const row of r.rows){
-      const modelKey = osFoldTr(row.model).replace(/\s+/g,' ').trim();
-      const k = [modelKey, osFoldTr(row.color), osFoldTr(row.size), osFoldTr(row.unit)].join('||');
-      if(k === keyOrOrderId){
-        // find total qty across active records
-        let sumQty = 0;
-        const ords = new Set();
-        OS_RECORDS.forEach(rc=>{
-          if(!OS_ACTIVE_IDS.has(rc.id)) return;
-          rc.rows.forEach(rw=>{
-            const mk = osFoldTr(rw.model).replace(/\s+/g,' ').trim();
-            const rk = [mk, osFoldTr(rw.color), osFoldTr(rw.size), osFoldTr(rw.unit)].join('||');
-            if(rk === k){ sumQty += rw.qty; ords.add(rc.orderNo || rc.id); }
-          });
-        });
-        item = {
-          key: k, category: row.category, model: row.model, color: row.color, size: row.size,
-          unit: row.unit, qty: sumQty, orders: Array.from(ords)
-        };
-        break;
-      }
-    }
-    if(item) break;
-  }
-
-  // Fallback: check in ordersData (from view-doors)
-  if(!item && typeof ordersData !== 'undefined'){
-    const od = ordersData.find(x=>x.id === keyOrOrderId);
-    if(od){
-      item = {
-        key: 'OD_' + od.id, category: od.category || 'KASA', model: od.product, color: od.color || '',
-        size: od.dim || '', unit: od.unit || 'TAKIM', qty: od.net_to_produce || od.order_qty,
-        orders: [od.id + ' (' + (od.customer||'') + ')']
-      };
-    }
-  }
-
-  if(!item){
-    showScadaNotification('Ürün kalemi bulunamadı.', 'error');
-    return;
-  }
-
-  const specs = osGetProfileSpecs(item.category, item.size, item.model);
-  const rec = osGetRecommendation(item.category, item.size, item.model);
-  const totalBoy = osRound(item.qty * specs.boyPerTakim);
-  const totalKg = osRound(totalBoy * specs.kgPerBoy);
-
-  let lines = [];
-  const existing = OS_ASSIGNMENTS[item.key];
-  if(existing && existing.lines && existing.lines.length > 0){
-    lines = JSON.parse(JSON.stringify(existing.lines));
-  } else {
-    rec.lines.forEach((lineKey, idx)=>{
-      const pct = rec.ratios[idx];
-      const q = osRound(item.qty * (pct / 100));
-      lines.push({ lineKey, pct, qty: q });
-    });
-  }
-
-  MS_CURRENT = {
-    key: item.key, category: item.category, model: item.model, color: item.color, size: item.size,
-    unit: item.unit, qty: item.qty, totalBoy, totalKg, specs, rec, orders: item.orders, lines
-  };
-
-  // Populate UI
-  document.getElementById('msModel').textContent = item.model || '-';
-  document.getElementById('msColor').textContent = item.color || '-';
-  document.getElementById('msSize').textContent = item.size || '-';
-  document.getElementById('msQty').textContent = `${osRound(item.qty).toLocaleString('tr-TR')} ${item.unit}`;
-  document.getElementById('msBoy').textContent = `${totalBoy} Boy (${specs.boyPerTakim}x)`;
-  document.getElementById('msKg').textContent = `${totalKg} kg (${specs.kgPerBoy} kg/boy)`;
-
-  document.getElementById('msRecTitle').textContent = rec.badge;
-  document.getElementById('msRecDesc').textContent = rec.reason;
-
-  msRenderLines();
-  document.getElementById('mainOrderSplitModal').classList.remove('hidden');
-  if(typeof lucide !== 'undefined') lucide.createIcons();
-}
-
-function closeMainSplitModal(){
-  document.getElementById('mainOrderSplitModal').classList.add('hidden');
-  MS_CURRENT = null;
-}
-
-function msRenderLines(){
-  if(!MS_CURRENT) return;
-  const container = document.getElementById('msLinesContainer');
+function ssRenderLines(){
+  if(!SS_STATE) return;
+  const { lines, specs, netQty } = SS_STATE;
+  const container = document.getElementById('ssLinesContainer');
   container.innerHTML = '';
 
-  const { qty, specs, lines } = MS_CURRENT;
   let totalPct = 0;
-  let maxLineHours = 0;
+  let maxHours = 0;
 
   lines.forEach((l, idx)=>{
     totalPct += l.pct;
-    const speed = osGetLineSpeed(l.lineKey, specs.speedKey);
-    const lineBoy = osRound(l.qty * specs.boyPerTakim);
-    const lineKg = osRound(lineBoy * specs.kgPerBoy);
-    const lineHours = speed > 0 ? (lineBoy / speed) : 0;
-    if(lineHours > maxLineHours) maxLineHours = lineHours;
+    const speed   = ssGetLineSpeed(l.lineKey, SS_STATE.profileKey);
+    const boy     = ssRound(l.qty * specs.boyPerTakim);
+    const kg      = ssRound(boy * specs.kgPerBoy);
+    const hours   = speed > 0 ? (boy / speed) : 0;
+    if(hours > maxHours) maxHours = hours;
+    const mInfo   = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
 
     let opts = '';
-    Object.keys(OS_MACHINE_CATALOG).forEach(k=>{
-      const m = OS_MACHINE_CATALOG[k];
-      const sel = k === l.lineKey ? 'selected' : '';
-      opts += `<option value="${k}" ${sel}>${m.name}</option>`;
+    Object.keys(SS_LINES_CATALOG).forEach(k=>{
+      const m = SS_LINES_CATALOG[k];
+      opts += `<option value="${k}" ${k===l.lineKey?'selected':''}>${m.name}</option>`;
     });
 
     const card = document.createElement('div');
     card.className = 'p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2.5 text-xs';
     card.innerHTML = `
-      <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
         <div class="flex items-center gap-2 flex-1">
-          <span class="font-black text-amber-400">${idx+1}. Hat:</span>
-          <select onchange="msChangeLineKey(${idx}, this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white font-bold text-xs focus:outline-none">
+          <span class="font-black text-amber-400 shrink-0">${idx+1}. Hat:</span>
+          <select onchange="ssChangeKey(${idx},this.value)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white font-bold text-xs focus:outline-none focus:border-amber-500">
             ${opts}
           </select>
-          <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30 text-[10px]">
-            ⚡ ${speed} boy/saat
-          </span>
+          <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30 text-[10px] shrink-0">⚡ ${speed} boy/saat</span>
         </div>
-        ${lines.length > 1 ? `<button onclick="msRemoveLine(${idx})" class="text-rose-400 hover:text-white hover:bg-rose-500/20 px-2 py-1 rounded text-[11px] font-bold transition">✕ Kaldır</button>` : ''}
+        ${lines.length > 1 ? `<button onclick="ssRemoveLine(${idx})" class="text-rose-400 hover:bg-rose-500/20 px-2 py-1 rounded text-[11px] font-bold transition">✕ Kaldır</button>` : ''}
       </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
         <div class="flex items-center gap-2 sm:col-span-2">
-          <input type="range" min="0" max="100" step="0.5" value="${l.pct}" oninput="msUpdateLinePct(${idx}, parseFloat(this.value))" class="w-full accent-amber-500 cursor-pointer">
-          <span class="font-mono font-black text-amber-400 w-14 text-right">%${l.pct.toFixed(1)}</span>
+          <input type="range" min="0" max="100" step="0.5" value="${l.pct}" oninput="ssUpdatePct(${idx},parseFloat(this.value))" class="w-full accent-amber-500 cursor-pointer">
+          <span class="font-mono font-black text-amber-400 w-14 text-right shrink-0">%${l.pct.toFixed(1)}</span>
         </div>
         <div>
-          <input type="number" min="0" max="${qty}" value="${osRound(l.qty)}" onchange="msUpdateLineQty(${idx}, parseFloat(this.value)||0)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-right font-black text-white focus:outline-none text-xs">
+          <input type="number" min="0" max="${netQty}" value="${ssRound(l.qty)}" onchange="ssUpdateQty(${idx},parseFloat(this.value)||0)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-right font-black text-white focus:outline-none focus:border-amber-500 text-xs">
         </div>
-        <div class="flex items-center justify-between px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[11px]">
-          <span class="text-slate-400">${lineBoy} boy / ${lineKg} kg</span>
-          <span class="font-bold text-sky-400 font-mono">${lineHours.toFixed(1)} saat</span>
+        <div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 text-[11px]">
+          <span class="text-slate-400">${boy} boy / ${kg} kg</span>
+          <span class="font-bold text-sky-400 font-mono">${hours.toFixed(1)} sa</span>
         </div>
       </div>
     `;
     container.appendChild(card);
   });
 
-  const totalValEl = document.getElementById('msTotalPctVal');
-  const roundedTotalPct = osRound(totalPct);
-  totalValEl.textContent = `%${roundedTotalPct.toFixed(1)}`;
-  if(Math.abs(roundedTotalPct - 100) < 0.5){
-    totalValEl.className = 'text-emerald-400 font-mono text-sm';
-    totalValEl.innerHTML = `%${roundedTotalPct.toFixed(1)} <span class="text-[10px] text-emerald-400 font-bold">✓ Eşit</span>`;
-  } else {
-    totalValEl.className = 'text-rose-400 font-mono text-sm';
-    totalValEl.innerHTML = `%${roundedTotalPct.toFixed(1)} <span class="text-[10px] text-rose-400 font-bold">(100% olmalı)</span>`;
+  // Balance indicator
+  const pctEl = document.getElementById('ssTotalPct');
+  const rt = ssRound(totalPct);
+  pctEl.textContent = `%${rt.toFixed(1)}`;
+  pctEl.className = Math.abs(rt-100) < 0.5
+    ? 'text-emerald-400 font-mono font-black text-sm'
+    : 'text-rose-400 font-mono font-black text-sm';
+
+  // Comparison
+  const singleSpeed = ssGetLineSpeed(lines[0].lineKey, SS_STATE.profileKey);
+  const singleHours = singleSpeed > 0 ? (SS_STATE.totalBoy / singleSpeed) : 0;
+  document.getElementById('ssSingleHours').textContent = `${singleHours.toFixed(1)} saat (~${(singleHours/24).toFixed(1)} gün)`;
+  document.getElementById('ssMultiHours').textContent  = `${maxHours.toFixed(1)} saat (~${(maxHours/24).toFixed(1)} gün)`;
+  const saved    = Math.max(0, singleHours - maxHours);
+  const savedPct = singleHours > 0 ? ssRound((saved / singleHours) * 100) : 0;
+  document.getElementById('ssSavedText').textContent = `~${saved.toFixed(1)} saat erken teslimat`;
+  document.getElementById('ssSavedPct').textContent  = `⚡ %${savedPct} Tasarruf`;
+}
+
+// --- Controls ---
+function ssChangeKey(idx, val){
+  if(!SS_STATE) return;
+  SS_STATE.lines[idx].lineKey = val;
+  ssRenderLines();
+}
+
+function ssUpdatePct(idx, val){
+  if(!SS_STATE) return;
+  SS_STATE.lines[idx].pct = val;
+  SS_STATE.lines[idx].qty = ssRound(SS_STATE.netQty * (val / 100));
+  if(SS_STATE.lines.length === 2){
+    const o = idx === 0 ? 1 : 0;
+    SS_STATE.lines[o].pct = ssRound(100 - val);
+    SS_STATE.lines[o].qty = ssRound(SS_STATE.netQty - SS_STATE.lines[idx].qty);
   }
-
-  const singleLineSpeed = osGetLineSpeed(lines[0].lineKey, specs.speedKey);
-  const singleHours = singleLineSpeed > 0 ? (MS_CURRENT.totalBoy / singleLineSpeed) : 0;
-  document.getElementById('msSingleHours').textContent = `${singleHours.toFixed(1)} saat (~${(singleHours/24).toFixed(1)} gün)`;
-  document.getElementById('msMultiHours').textContent = `${maxLineHours.toFixed(1)} saat (~${(maxLineHours/24).toFixed(1)} gün)`;
-
-  const timeSaved = Math.max(0, singleHours - maxLineHours);
-  const pctSaved = singleHours > 0 ? osRound((timeSaved / singleHours) * 100) : 0;
-  document.getElementById('msSavedHours').textContent = `~${timeSaved.toFixed(1)} saat erken teslimat`;
-  document.getElementById('msSavedPct').textContent = `⚡ %${pctSaved} Tasarruf`;
+  ssRenderLines();
 }
 
-function msChangeLineKey(idx, lineKey){
-  if(!MS_CURRENT) return;
-  MS_CURRENT.lines[idx].lineKey = lineKey;
-  msRenderLines();
-}
-
-function msUpdateLinePct(idx, val){
-  if(!MS_CURRENT) return;
-  MS_CURRENT.lines[idx].pct = val;
-  MS_CURRENT.lines[idx].qty = osRound(MS_CURRENT.qty * (val / 100));
-  if(MS_CURRENT.lines.length === 2){
-    const otherIdx = idx === 0 ? 1 : 0;
-    MS_CURRENT.lines[otherIdx].pct = osRound(100 - val);
-    MS_CURRENT.lines[otherIdx].qty = osRound(MS_CURRENT.qty - MS_CURRENT.lines[idx].qty);
+function ssUpdateQty(idx, q){
+  if(!SS_STATE) return;
+  const c = Math.max(0, Math.min(SS_STATE.netQty, q));
+  SS_STATE.lines[idx].qty = c;
+  SS_STATE.lines[idx].pct = ssRound((c / SS_STATE.netQty) * 100);
+  if(SS_STATE.lines.length === 2){
+    const o = idx === 0 ? 1 : 0;
+    SS_STATE.lines[o].qty = ssRound(SS_STATE.netQty - c);
+    SS_STATE.lines[o].pct = ssRound(100 - SS_STATE.lines[idx].pct);
   }
-  msRenderLines();
+  ssRenderLines();
 }
 
-function msUpdateLineQty(idx, q){
-  if(!MS_CURRENT) return;
-  const clamped = Math.max(0, Math.min(MS_CURRENT.qty, q));
-  MS_CURRENT.lines[idx].qty = clamped;
-  MS_CURRENT.lines[idx].pct = osRound((clamped / MS_CURRENT.qty) * 100);
-  if(MS_CURRENT.lines.length === 2){
-    const otherIdx = idx === 0 ? 1 : 0;
-    MS_CURRENT.lines[otherIdx].qty = osRound(MS_CURRENT.qty - clamped);
-    MS_CURRENT.lines[otherIdx].pct = osRound(100 - MS_CURRENT.lines[idx].pct);
-  }
-  msRenderLines();
+function ssRemoveLine(idx){
+  if(!SS_STATE || SS_STATE.lines.length <= 1) return;
+  SS_STATE.lines.splice(idx, 1);
+  ssSyncEqual();
 }
 
-function msRemoveLine(idx){
-  if(!MS_CURRENT || MS_CURRENT.lines.length <= 1) return;
-  MS_CURRENT.lines.splice(idx, 1);
-  msSyncEqual();
+function ssAddLine(){
+  if(!SS_STATE) return;
+  const used = new Set(SS_STATE.lines.map(l=>l.lineKey));
+  const avail = Object.keys(SS_LINES_CATALOG).filter(k=>!used.has(k));
+  const newKey = avail.length > 0 ? avail[0] : 'HAT_101';
+  SS_STATE.lines.push({ lineKey: newKey, pct: 0, qty: 0 });
+  ssSyncBySpeeds();
 }
 
-function msAddNewLine(){
-  if(!MS_CURRENT) return;
-  const used = new Set(MS_CURRENT.lines.map(l=>l.lineKey));
-  const available = Object.keys(OS_MACHINE_CATALOG).filter(k=>!used.has(k));
-  const newKey = available.length > 0 ? available[0] : 'HAT_101';
-  MS_CURRENT.lines.push({ lineKey: newKey, pct: 0, qty: 0 });
-  msSyncBySpeeds();
+function ssApplyRecommendation(){
+  if(!SS_STATE) return;
+  const { rec, netQty } = SS_STATE;
+  SS_STATE.lines = rec.lines.map((key, idx)=>({
+    lineKey: key, pct: rec.ratios[idx], qty: ssRound(netQty * (rec.ratios[idx] / 100))
+  }));
+  ssRenderLines();
+  if(typeof showScadaNotification === 'function')
+    showScadaNotification('🌟 Sistemin önerdiği en ideal 2 hat uygulandı!', 'success');
 }
 
-function msApplySystemRecommendation(){
-  if(!MS_CURRENT || !MS_CURRENT.rec) return;
-  const { rec, qty } = MS_CURRENT;
-  MS_CURRENT.lines = rec.lines.map((lineKey, idx)=>{
-    const pct = rec.ratios[idx];
-    return { lineKey, pct, qty: osRound(qty * (pct / 100)) };
-  });
-  msRenderLines();
-  showScadaNotification('🌟 Sistemin önerdiği en ideal 2 hat uygulandı!', 'success');
-}
-
-function msSyncBySpeeds(){
-  if(!MS_CURRENT) return;
-  const { lines, specs, qty } = MS_CURRENT;
-  let totalSpeed = 0;
-  lines.forEach(l=> totalSpeed += osGetLineSpeed(l.lineKey, specs.speedKey));
-  if(totalSpeed <= 0) return msSyncEqual();
-
+function ssSyncBySpeeds(){
+  if(!SS_STATE) return;
+  const { lines, specs, netQty, profileKey } = SS_STATE;
+  const totalSpeed = lines.reduce((s,l)=> s + ssGetLineSpeed(l.lineKey, profileKey), 0);
+  if(totalSpeed <= 0){ ssSyncEqual(); return; }
   let assigned = 0;
   lines.forEach((l, idx)=>{
-    const sp = osGetLineSpeed(l.lineKey, specs.speedKey);
-    const ratio = sp / totalSpeed;
+    const ratio = ssGetLineSpeed(l.lineKey, profileKey) / totalSpeed;
     if(idx === lines.length - 1){
-      l.qty = osRound(qty - assigned);
-      l.pct = osRound(100 - lines.slice(0, -1).reduce((s,x)=>s+x.pct, 0));
+      l.qty = ssRound(netQty - assigned);
+      l.pct = ssRound(100 - lines.slice(0,-1).reduce((s,x)=>s+x.pct, 0));
     } else {
-      l.qty = osRound(qty * ratio);
-      l.pct = osRound(ratio * 100);
+      l.qty = ssRound(netQty * ratio);
+      l.pct = ssRound(ratio * 100);
       assigned += l.qty;
     }
   });
-  msRenderLines();
-  showScadaNotification('⚖️ Hat hızlarına göre eşzamanlı dengelendi.', 'info');
+  ssRenderLines();
+  if(typeof showScadaNotification === 'function')
+    showScadaNotification('⚖️ Hat hızlarına göre eşzamanlı dengelendi.', 'info');
 }
 
-function msSyncEqual(){
-  if(!MS_CURRENT) return;
-  const { lines, qty } = MS_CURRENT;
+function ssSyncEqual(){
+  if(!SS_STATE) return;
+  const { lines, netQty } = SS_STATE;
   const count = lines.length;
-  if(count === 0) return;
-  const eachPct = osRound(100 / count);
-  const eachQty = osRound(qty / count);
+  const ep = ssRound(100 / count);
+  const eq = ssRound(netQty / count);
   let assigned = 0;
   lines.forEach((l, idx)=>{
     if(idx === count - 1){
-      l.qty = osRound(qty - assigned);
-      l.pct = osRound(100 - (eachPct * (count - 1)));
+      l.qty = ssRound(netQty - assigned);
+      l.pct = ssRound(100 - ep * (count - 1));
     } else {
-      l.qty = eachQty;
-      l.pct = eachPct;
-      assigned += eachQty;
+      l.qty = eq; l.pct = ep; assigned += eq;
     }
   });
-  msRenderLines();
+  ssRenderLines();
 }
 
-function msSaveCurrentSplit(){
-  if(!MS_CURRENT) return;
-  const { key, lines, category, model, color, size, unit, qty, specs } = MS_CURRENT;
-
-  const finalLines = lines.map(l=>{
-    const speed = osGetLineSpeed(l.lineKey, specs.speedKey);
-    const boy = osRound(l.qty * specs.boyPerTakim);
-    const kg = osRound(boy * specs.kgPerBoy);
-    const hours = speed > 0 ? (boy / speed) : 0;
-    const m = OS_MACHINE_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
-    return {
-      lineKey: l.lineKey, code: m.code, name: m.name, pct: l.pct,
-      qty: l.qty, unit, boy, kg, hours: osRound(hours)
-    };
-  });
-
-  OS_ASSIGNMENTS[key] = {
-    key, category, model, color, size, unit, qty,
-    savedAt: new Date().toISOString(), lines: finalLines
-  };
-  osSaveData();
-
-  // If this key belongs to ordersData (view-doors), also update assigned_hats
-  if(key.startsWith('OD_') && typeof ordersData !== 'undefined'){
-    const orderId = key.replace('OD_', '');
-    const od = ordersData.find(x=>x.id === orderId);
-    if(od){
-      od.assigned_hats = finalLines.map(l=>`${l.code} (%${osRound(l.pct)})`).join(' + ');
-      if(typeof renderOrdersTable === 'function') renderOrdersTable();
-    }
+function ssSaveToOrder(){
+  if(!SS_STATE) return;
+  const { lines, product, dim, specs, profileKey, unit } = SS_STATE;
+  const summary = lines.map(l=>{
+    const m = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey };
+    return `${m.code} (%${ssRound(l.pct)})`;
+  }).join(' + ');
+  
+  // Try to update ordersData if it exists
+  if(typeof ordersData !== 'undefined'){
+    ordersData.forEach(o=>{
+      const p = (o.product || '').toUpperCase();
+      if(p.includes(product.split(' ')[0].toUpperCase())){
+        o.assigned_hats = summary;
+      }
+    });
+    if(typeof renderOrdersTable === 'function') renderOrdersTable();
   }
 
-  closeMainSplitModal();
-  osRenderOutput();
-  showScadaNotification('✅ Akıllı Hat Dağıtımı başarıyla kaydedildi!', 'success');
+  if(typeof showScadaNotification === 'function')
+    showScadaNotification(`✅ Hat dağıtımı kaydedildi: ${summary}`, 'success');
+  closeSimSplitModal();
 }
 
-function msPrintWorkOrder(){
-  if(!MS_CURRENT) return;
-  const { category, model, color, size, unit, specs, lines, orders } = MS_CURRENT;
-  const printArea = document.getElementById('scadaPrintSection');
-  let slipsHtml = '';
+function ssPrintWorkOrder(){
+  if(!SS_STATE) return;
+  const { lines, product, dim, specs, profileKey } = SS_STATE;
+  const printArea = document.getElementById('ssPrintArea');
   const now = new Date().toLocaleString('tr-TR');
-  const orderListStr = orders.length > 0 ? orders.join(', ') : 'Toplu Sipariş';
-
+  let html = '';
   lines.forEach((l, idx)=>{
-    const m = OS_MACHINE_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
-    const speed = osGetLineSpeed(l.lineKey, specs.speedKey);
-    const boy = osRound(l.qty * specs.boyPerTakim);
-    const kg = osRound(boy * specs.kgPerBoy);
-    const hours = speed > 0 ? (boy / speed) : 0;
-
-    slipsHtml += `
-      <div style="border: 2px solid #111; border-radius: 8px; padding: 16px; margin-bottom: 25px; page-break-inside: avoid; font-family: sans-serif; background:#fff; color:#111;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 12px;">
-          <div style="font-size:18px; font-weight:900;">🏭 ERGÜNBAŞ GROUP - EKSTRÜZYON İŞ EMRİ KARTI</div>
-          <div style="font-size:18px; font-weight:900; color:#1e3a8a;">${m.code}</div>
-        </div>
-        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; font-size: 12px;">
-          <div><strong>Tarih:</strong> ${now}</div>
-          <div><strong>Sipariş No:</strong> ${orderListStr}</div>
-          <div><strong>Kategori:</strong> ${category}</div>
-          <div><strong>İstasyon:</strong> ${m.name}</div>
-        </div>
-        <table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:12px;">
-          <thead>
-            <tr style="background:#eee;">
-              <th style="border:1px solid #777; padding:6px; text-align:left;">Model / Profil</th>
-              <th style="border:1px solid #777; padding:6px; text-align:left;">Renk</th>
-              <th style="border:1px solid #777; padding:6px; text-align:left;">Ölçü</th>
-              <th style="border:1px solid #777; padding:6px; text-align:right;">Miktar</th>
-              <th style="border:1px solid #777; padding:6px; text-align:right;">Profil Boy Sayısı</th>
-              <th style="border:1px solid #777; padding:6px; text-align:right;">Toplam Ağırlık</th>
-              <th style="border:1px solid #777; padding:6px; text-align:right;">Planlanan Süre</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="border:1px solid #777; padding:6px;"><strong>${model}</strong></td>
-              <td style="border:1px solid #777; padding:6px;">${color}</td>
-              <td style="border:1px solid #777; padding:6px;">${size}</td>
-              <td style="border:1px solid #777; padding:6px; text-align:right; font-weight:bold;">${osRound(l.qty)} ${unit} (%${l.pct.toFixed(1)})</td>
-              <td style="border:1px solid #777; padding:6px; text-align:right; font-weight:bold;">${boy} Boy</td>
-              <td style="border:1px solid #777; padding:6px; text-align:right; font-weight:bold;">${kg} kg</td>
-              <td style="border:1px solid #777; padding:6px; text-align:right; font-weight:bold;">${hours.toFixed(1)} Saat</td>
-            </tr>
-          </tbody>
-        </table>
-        <div style="margin-top:20px; display:flex; justify-content:space-between; font-size:11px; color:#555;">
-          <div>Hat Operatörü İmza: _______________________</div>
-          <div>Vardiya Amiri Onay: _______________________</div>
-          <div>Not: 1 Takım = ${specs.boyPerTakim} Boy Profil, Kalıp Çekim Hızı: ${speed} boy/saat</div>
-        </div>
+    const m     = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
+    const speed = ssGetLineSpeed(l.lineKey, profileKey);
+    const boy   = ssRound(l.qty * specs.boyPerTakim);
+    const kg    = ssRound(boy * specs.kgPerBoy);
+    const hrs   = speed > 0 ? (boy / speed) : 0;
+    html += `<div style="border:2px solid #111;border-radius:8px;padding:16px;margin-bottom:20px;page-break-inside:avoid;font-family:sans-serif;background:#fff;color:#111;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:12px;">
+        <div style="font-size:17px;font-weight:900;">🏭 ERGÜNBAŞ GROUP — EKSTRÜZYON İŞ EMRİ</div>
+        <div style="font-size:17px;font-weight:900;color:#1e3a8a;">${m.code}</div>
       </div>
-    `;
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px;margin-bottom:10px;">
+        <div><b>Tarih:</b> ${now}</div>
+        <div><b>Ürün:</b> ${product}</div>
+        <div><b>Ölçü:</b> ${dim}</div>
+        <div><b>Hat:</b> ${m.name}</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="background:#eee;">
+          <th style="border:1px solid #777;padding:6px;">Miktar</th>
+          <th style="border:1px solid #777;padding:6px;">Boy Sayısı</th>
+          <th style="border:1px solid #777;padding:6px;">Ağırlık</th>
+          <th style="border:1px solid #777;padding:6px;">Süre</th>
+          <th style="border:1px solid #777;padding:6px;">Hız</th>
+        </tr></thead>
+        <tbody><tr>
+          <td style="border:1px solid #777;padding:6px;font-weight:bold;">${ssRound(l.qty)} ${SS_STATE.unit} (%${l.pct.toFixed(1)})</td>
+          <td style="border:1px solid #777;padding:6px;font-weight:bold;">${boy} Boy</td>
+          <td style="border:1px solid #777;padding:6px;font-weight:bold;">${kg} kg</td>
+          <td style="border:1px solid #777;padding:6px;font-weight:bold;">${hrs.toFixed(1)} Saat</td>
+          <td style="border:1px solid #777;padding:6px;">${speed} boy/saat</td>
+        </tr></tbody>
+      </table>
+      <div style="margin-top:18px;display:flex;justify-content:space-between;font-size:11px;color:#555;">
+        <div>Hat Operatörü: _______________________</div>
+        <div>Vardiya Amiri: _______________________</div>
+        <div>Not: 1 Takım = ${specs.boyPerTakim} Boy</div>
+      </div>
+    </div>`;
   });
-
-  printArea.innerHTML = slipsHtml;
+  printArea.innerHTML = html;
   window.print();
 }
-
-function exportSplitCsv(){
-  const header = ['Siparis No','Tarih','Kategori','Model','Renk','Olcu','Miktar','Birim','Atanan Hat Dagitimi'];
-  const lines = [header.join(';')];
-  OS_RECORDS.forEach(rec=>{
-    if(!OS_ACTIVE_IDS.has(rec.id)) return;
-    rec.rows.forEach(r=>{
-      const mk = osFoldTr(r.model).replace(/\s+/g,' ').trim();
-      const k = [mk, osFoldTr(r.color), osFoldTr(r.size), osFoldTr(r.unit)].join('||');
-      const asg = OS_ASSIGNMENTS[k];
-      const asgStr = (asg && asg.lines) ? asg.lines.map(l=>`${l.code}: ${l.qty} ${l.unit} (%${osRound(l.pct)})`).join(' | ') : 'Atanmadi';
-      lines.push([
-        rec.orderNo || rec.id, rec.date || '', r.category, r.model, r.color, r.size,
-        String(r.qty).replace('.',','), r.unit, asgStr
-      ].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(';'));
-    });
-  });
-
-  const blob = new Blob(['\uFEFF' + lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ergunbas-siparis-akilli-hat-plani.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  showScadaNotification('CSV dosyası başarıyla indirildi.', 'success');
-}
-
-// Global initialization
-document.addEventListener('DOMContentLoaded', ()=>{
-  osLoadData();
-  const pdfInp = document.getElementById('osPdfInput');
-  if(pdfInp){
-    pdfInp.addEventListener('change', async (e)=>{
-      const files = Array.from(e.target.files||[]);
-      if(files.length === 0) return;
-      const hint = document.getElementById('osFileHint');
-      const origText = hint.textContent;
-      for(const f of files){
-        hint.textContent = `⏳ ${f.name} okunuyor...`;
-        try{
-          const text = await osExtractPdfText(f);
-          document.getElementById('osInputText').value = text;
-          await osProcessInputText();
-        }catch(err){
-          console.error(err);
-          showScadaNotification(`PDF okunamadı: ${f.name}`, 'error');
-        }
-      }
-      hint.textContent = origText;
-      e.target.value = '';
-    });
-  }
-});
 </script>
 
 </body>

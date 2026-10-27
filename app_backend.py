@@ -3470,6 +3470,11 @@ def update_order(order_id: str, req: OrderUpdateRequest):
     save_orders(orders)
     return {"status": "ok", "order": target}
 
+@app.post("/api/orders/clear_all")
+def clear_all_orders():
+    save_orders([])
+    return {"status": "ok", "message": "Tum siparisler temizlendi"}
+
 @app.delete("/api/orders/{order_id}")
 def delete_order(order_id: str):
     orders = load_orders()

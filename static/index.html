@@ -2458,6 +2458,10 @@
                                 <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-400"></i>
                                 <span>Rotalar Excel'i</span>
                             </a>
+                            <button onclick="clearAllOrders()" class="px-3 py-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 text-xs font-semibold flex items-center gap-1.5 transition" title="Tüm Örnek / Demo Siparişleri Kalıcı Olarak Temizle">
+                                <i data-lucide="trash-2" class="w-4 h-4 text-rose-400"></i>
+                                <span>Tümünü Temizle</span>
+                            </button>
                             <button onclick="loadPlanningDashboard()" class="p-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Verileri Yenile">
                                 <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                             </button>
@@ -17338,15 +17342,16 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
         async function deletePlanningOrder(orderId) {
             if (!confirm('Sipariş No: ' + orderId + ' kalıcı olarak silinsin mi? Bu işlem geri alınamaz.')) return;
             try {
-                const res = await fetch('/api/orders/' + orderId, { method: 'DELETE' });
+                const res = await fetch('/api/orders/' + encodeURIComponent(orderId), { method: 'DELETE' });
                 if (res.ok) {
-                    if (typeof loadPlanningData === 'function') {
-                        await loadPlanningData();
-                    } else if (typeof loadOrdersTable === 'function') {
+                    if (typeof loadPlanningDashboard === 'function') {
+                        await loadPlanningDashboard();
+                    }
+                    if (typeof loadOrdersTable === 'function') {
                         await loadOrdersTable();
                     }
                     if (typeof showScadaNotification === 'function')
-                        showScadaNotification('Sipariş silindi: ' + orderId, 'success');
+                        showScadaNotification('Sipariş silindi: ' + orderId, 'warning');
                     else if (typeof showToast === 'function')
                         showToast('Sipariş silindi: ' + orderId);
                 } else {
@@ -17355,6 +17360,24 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 }
             } catch(e) {
                 console.error('deletePlanningOrder error:', e);
+                alert('Bağlantı hatası: ' + e.message);
+            }
+        }
+
+        async function clearAllOrders() {
+            if (!confirm('Tüm kayıtlı ve örnek siparişler kalıcı olarak silinecektir. Emin misiniz?')) return;
+            try {
+                const res = await fetch('/api/orders/clear_all', { method: 'POST' });
+                if (res.ok) {
+                    if (typeof loadPlanningDashboard === 'function') await loadPlanningDashboard();
+                    if (typeof loadOrdersTable === 'function') await loadOrdersTable();
+                    if (typeof showScadaNotification === 'function') showScadaNotification('Tüm siparişler temizlendi.', 'info');
+                    alert('Tüm siparişler başarıyla temizlendi.');
+                } else {
+                    alert('Siparişler temizlenirken hata oluştu.');
+                }
+            } catch(e) {
+                console.error('clearAllOrders error:', e);
                 alert('Bağlantı hatası: ' + e.message);
             }
         }

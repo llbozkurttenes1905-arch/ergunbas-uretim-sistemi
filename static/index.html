@@ -17805,18 +17805,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 <p class="text-[11px] text-amber-200/80 leading-relaxed" id="ssRecReason">-</p>
             </div>
 
-            <!-- Cift Kafa Uyarisi -->
-            <div id="ssDoubleHeadWarning" style="display:none;" class="p-4 rounded-xl bg-blue-950/70 border border-blue-500/40">
-              <div class="flex items-center gap-2 mb-1">
-                <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
-                <span class="text-blue-300 font-black text-xs">CIFT KAFA MAKİNE — SİPARİS PARCALAMA GEREKMİYOR</span>
-              </div>
-              <p class="text-blue-200/80 text-[11px] leading-relaxed">
-                Bu ürün (<strong>Seren / Seren 39mm</strong>) çift kafali makinede üretilmektedir.
-                Makine zaten 2 göz çalistigi için ayri hat atamasi gerekmez — tek makinede her iki profil ayni anda islenir.
-                Siparis parcalamasi bu ürünü <strong>etkilemez</strong>.
-              </p>
-            </div>
+
 
             <!-- Levha Tek Hat Bilgilendirmesi -->
             <div id="ssLevhaWarning" style="display:none;" class="p-4 rounded-xl bg-purple-950/70 border border-purple-500/40">
@@ -17921,8 +17910,7 @@ const SS_PROFILE_SPECS = {
   LEVHA:        { kgPerBoy:4.78, boyPerTakim:1.0, unit:'PLAKA' }
 };
 
-// Seren/Seren 39mm = çift kafa makine (2 göz) — sipariş parçalamayı ETKİLEMEZ
-const SS_DOUBLE_HEAD_PROFILES = ['SEREN', 'SEREN_39'];
+
 
 function ssGetProfileKey(product, dim){
   const p = (product || '').toUpperCase();
@@ -17976,11 +17964,11 @@ function ssGetRecommendation(profileKey){
       badge:'En Ideal 2 Hat: HAT 109 (%58) & HAT 101 (%42)',
       reason:'80x80 pervaz profilinde Hat 109 (38.0 boy/saat) ve Hat 101 (28.0 boy/saat) kalip geometrisi acisindan en uyumlu tandemdir. Iki hat eszamanli tamamlar.' },
     SEREN:        { lines:['HAT_104','HAT_105'], ratios:[51.0,49.0],
-      badge:'Seren — Cift Kafa Makine (2 Goz)',
-      reason:'BILGI: Seren uretimi cift kafali makinede yapilmaktadir. Makine zaten 2 goz calistigi icin ayri hat atamasi gerekmez — tek makinede iki profil ayni anda islenir. Siparis parca lamayi ETKILEMEZ.' },
+      badge:'En Ideal 2 Hat: HAT 104 (%51) & HAT 105 (%49)',
+      reason:'Seren cekiminde Hat 104 (31.2 boy/saat) ve Hat 105 (30.0 boy/saat) fabrikadaki cift kafa (2 gozlu) ikiz hatlardir. %51-%49 dagitimla siparis her iki makinede eszamanli olarak ayni dakikada tamamlanir.' },
     SEREN_39:     { lines:['HAT_104','HAT_105'], ratios:[51.0,49.0],
-      badge:'Seren 39mm — Cift Kafa Makine (2 Goz)',
-      reason:'BILGI: Seren 39mm uretimi cift kafali makinede yapilmaktadir. Makine zaten 2 goz calistigi icin ayri hat atamasi gerekmez — tek makinede iki profil ayni anda islenir. Siparis parcalamayi ETKILEMEZ.' },
+      badge:'En Ideal 2 Hat: HAT 104 (%51) & HAT 105 (%49)',
+      reason:'Seren 39mm profilinde Hat 104 ve Hat 105 cift kafa makineleri kalip devirlerine gore eszamanli dengelenerek teslimat suresini yariya indirir.' },
     LEVHA:        { lines:['HAT_201'], ratios:[100.0],
       badge:'Hat 201 (Levha Makinesi — Tek Hat)',
       reason:'BILGI: Fabrikada levha cekimi su anda sadece Hat 201 (Levha Hatti) uzerinde yapilmaktadir. Ilerleyen gunlerde Hat 202 hatti devreye alindiginda akilli 2li hat dagitimi aktif edilecektir. Su anda tum siparis Hat 201 uzerine atanacaktir. Ekstruder hatlari karismayacaktir.' }
@@ -18041,8 +18029,7 @@ function openSimSplitModal(){
     }
   }
 
-  // Cift kafa ve Levha uyarilari goster/gizle
-  const dhWarning = document.getElementById('ssDoubleHeadWarning');
+  // Levha uyarisi ve buton kontrolleri
   const levhaWarning = document.getElementById('ssLevhaWarning');
   const addLineBtn = document.getElementById('ssAddLineBtn');
   const syncSpeedBtn = document.getElementById('ssSyncSpeedBtn');
@@ -18052,11 +18039,10 @@ function openSimSplitModal(){
   const isLevha = (profileKey === 'LEVHA');
 
   if(levhaWarning) levhaWarning.style.display = isLevha ? 'block' : 'none';
-  if(dhWarning) dhWarning.style.display = (isDoubleHead && !isLevha) ? 'block' : 'none';
   if(addLineBtn) addLineBtn.style.display = isLevha ? 'none' : 'inline-flex';
   if(syncSpeedBtn) syncSpeedBtn.style.display = isLevha ? 'none' : 'inline-flex';
   if(syncEqualBtn) syncEqualBtn.style.display = isLevha ? 'none' : 'inline-flex';
-  if(ssBody) ssBody.style.opacity = (isDoubleHead && !isLevha) ? '0.4' : '1';
+  if(ssBody) ssBody.style.opacity = '1';
 
   ssRenderLines();
   const modal = document.getElementById('simSplitModal');

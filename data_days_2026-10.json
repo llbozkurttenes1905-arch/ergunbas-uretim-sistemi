@@ -10938,7 +10938,80 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "HAMMADDE DENEMESİ YAPILDI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Makina soğutma su deposu hasarlı olduğu için çalıştıramıyor."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 720.0,
+          "desc": "Burgu kırıldığı için depoda bulunan eski burgu takıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": "Hammadde sorunu. Ürün çekilemedi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "GENEL",
+          "fire_reason": "2 defa elektrik dalgalanması meydana geldi.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 270.0,
+          "desc": "Traktör testere arızası meydana geldiği için hat kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 450.0,
+          "desc": "Traktör testeresi encoder kablosu koptuğu için testere çalışmadığından dolayı hat kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 720.0,
+          "desc": "Hammadde kaynaklı kalıp yanmasından dolayı kalıp temizliği yapıldı. "
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

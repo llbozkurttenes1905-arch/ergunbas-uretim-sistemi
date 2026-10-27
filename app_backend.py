@@ -3162,6 +3162,7 @@ class OrderCreateRequest(BaseModel):
     order_date: str
     due_date: str
     product: str
+    dim: Optional[str] = ""
     category: Optional[str] = "Pervaz"
     unit: Optional[str] = "Boy (Adet)"
     order_qty: float
@@ -3177,6 +3178,7 @@ class OrderUpdateRequest(BaseModel):
     order_date: Optional[str] = None
     due_date: Optional[str] = None
     product: Optional[str] = None
+    dim: Optional[str] = None
     category: Optional[str] = None
     unit: Optional[str] = None
     order_qty: Optional[float] = None
@@ -3435,6 +3437,7 @@ def add_order(req: OrderCreateRequest):
         "order_date": req.order_date.strip(),
         "due_date": req.due_date.strip(),
         "product": req.product.strip(),
+        "dim": (req.dim or "").strip(),
         "category": req.category or "Profil",
         "unit": req.unit or "Boy (Adet)",
         "order_qty": req.order_qty,

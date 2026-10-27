@@ -17747,6 +17747,18 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 <div><span class="text-[10px] text-slate-500 font-bold uppercase block mb-0.5">Toplam Ağırlık</span><span class="font-bold text-emerald-400 block" id="ssKg">-</span></div>
             </div>
 
+            <!-- İş Emri & Müşteri Tanımlama -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+                <div>
+                    <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">Müşteri / İş Emri Firma Adı</label>
+                    <input type="text" id="ssCustomerInput" placeholder="Örn: Ergünbaş Stok / Müşteri Adı" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-bold text-xs focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-400 font-bold uppercase block mb-1">İstenen Termin Tarihi</label>
+                    <input type="date" id="ssDueDateInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-mono font-bold text-xs focus:outline-none focus:border-amber-500">
+                </div>
+            </div>
+
             <!-- Sistem Tavsiyesi Altın Banner -->
             <div class="p-4 rounded-xl bg-gradient-to-r from-amber-950/70 via-slate-900 to-amber-950/50 border border-amber-500/40 space-y-2 shadow-lg">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -17962,6 +17974,20 @@ function openSimSplitModal(){
   document.getElementById('ssKg').textContent      = `${totalKg} kg`;
   document.getElementById('ssRecBadge').textContent  = rec.badge;
   document.getElementById('ssRecReason').textContent = rec.reason;
+
+  const custInp = document.getElementById('ssCustomerInput');
+  if (custInp) custInp.value = `Ergünbaş Üretim - ${product}`;
+
+  const dueInp = document.getElementById('ssDueDateInput');
+  if (dueInp) {
+    const simDue = document.getElementById('sim-due-date')?.value;
+    if (simDue) dueInp.value = simDue;
+    else {
+      const d = new Date();
+      d.setDate(d.getDate() + 5);
+      dueInp.value = d.toISOString().split('T')[0];
+    }
+  }
 
   // Cift kafa uyarisi goster/gizle
   const dhWarning = document.getElementById('ssDoubleHeadWarning');
@@ -18181,28 +18207,107 @@ function ssClearAssignment(){
   closeSimSplitModal();
 }
 
-function ssSaveToOrder(){
-  if(!SS_STATE) return;
-  const { lines, product, dim, specs, profileKey, unit } = SS_STATE;
-  const summary = lines.map(l=>{
-    const m = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey };
-    return `${m.code} (%${ssRound(l.pct)})`;
-  }).join(' + ');
+async function ssSaveToOrder() {
+  if (!SS_STATE) return;
+  const { lines, product, dim, specs, profileKey, unit, netQty } = SS_STATE;
 
-  // Try to update ordersData if it exists
-  if(typeof ordersData !== 'undefined'){
-    ordersData.forEach(o=>{
-      const p = (o.product || '').toUpperCase();
-      if(p.includes(product.split(' ')[0].toUpperCase())){
-        o.assigned_hats = summary;
-      }
-    });
-    if(typeof renderOrdersTable === 'function') renderOrdersTable();
+  const btn = event?.currentTarget || document.querySelector('#simSplitModal button[onclick="ssSaveToOrder()"]');
+  let originalHtml = '';
+  if (btn) {
+    originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Makinelere Gönderiliyor...';
   }
 
-  if(typeof showScadaNotification === 'function')
-    showScadaNotification(`Hat dagitimi kaydedildi: ${summary}`, 'success');
-  closeSimSplitModal();
+  const customerName = document.getElementById('ssCustomerInput')?.value?.trim() || `Ergünbaş Üretim (${product})`;
+  const dueDateVal = document.getElementById('ssDueDateInput')?.value || document.getElementById('sim-due-date')?.value || new Date(Date.now() + 5*86400000).toISOString().split('T')[0];
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const category = (product.toUpperCase().includes('PERVAZ')) ? 'Pervaz' :
+                   (product.toUpperCase().includes('KASA')) ? 'Kasa' :
+                   (product.toUpperCase().includes('SEREN')) ? 'Seren' :
+                   (product.toUpperCase().includes('LEVHA')) ? 'Levha' : 'Profil';
+
+  try {
+    const createdOrders = [];
+
+    // Her seçilen hat için veritabanına gerçek iş emri kaydı yap
+    for (let idx = 0; idx < lines.length; idx++) {
+      const l = lines[idx];
+      if (!l.qty || l.qty <= 0) continue;
+
+      const m = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
+      const hatCode = m.code; // örn: "Hat 109"
+      const boyCount = ssRound(l.qty * specs.boyPerTakim);
+      const kgCount = ssRound(boyCount * specs.kgPerBoy);
+
+      const orderPayload = {
+        customer: `${customerName} [${hatCode}]`,
+        order_date: todayStr,
+        due_date: dueDateVal,
+        product: product,
+        dim: dim || '',
+        category: category,
+        unit: unit || 'Boy (Adet)',
+        order_qty: ssRound(l.qty),
+        stock_qty: 0.0,
+        assigned_hats: `${hatCode} (${m.name})`,
+        actual_produced: 0.0,
+        status: 'ÜRETİMDE',
+        note: `Akıllı Dağıtım: ${hatCode} (%${l.pct.toFixed(1)}) — ${ssRound(l.qty)} ${unit} (${boyCount} Boy / ${kgCount} kg)`,
+        sync_mode: 'auto'
+      };
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || `${hatCode} için sipariş oluşturulamadı.`);
+      }
+
+      const resJson = await res.json();
+      createdOrders.push(`${hatCode}: ${ssRound(l.qty)} ${unit} -> ${resJson.order?.id || 'İş Emri Verildi'}`);
+    }
+
+    if (createdOrders.length === 0) {
+      alert('Kaydedilecek hat miktarı bulunamadı.');
+      if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+      return;
+    }
+
+    // Dashboard ve tabloları anında yenile
+    if (typeof loadPlanningDashboard === 'function') {
+      await loadPlanningDashboard();
+    }
+    if (typeof loadOrdersTable === 'function') {
+      await loadOrdersTable();
+    }
+
+    closeSimSplitModal();
+    if (typeof closePlanSimulatorModal === 'function') {
+      closePlanSimulatorModal();
+    }
+
+    const summaryMsg = 'İş emirleri başarıyla oluşturuldu ve makinelere atandı:\n\n' + createdOrders.join('\n');
+    if (typeof showScadaNotification === 'function') {
+      showScadaNotification('İş emirleri makinelere başarıyla atandı!', 'success');
+    }
+    alert(summaryMsg);
+
+  } catch (err) {
+    console.error('ssSaveToOrder hatası:', err);
+    alert('İş emri kaydedilirken hata oluştu: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  }
 }
 
 function ssPrintWorkOrder(){

@@ -10775,7 +10775,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 9,
         "hours": 12.0,
         "operator": "Aykut YALÇIN",
         "extruders": [

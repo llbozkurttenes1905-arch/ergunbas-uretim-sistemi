@@ -17324,12 +17324,39 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                         🚨 Acil Yap
                                     </button>
                                 ` : ''}
+                                <button onclick="deletePlanningOrder('${o.order_id}')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-500 hover:text-white border border-slate-700 hover:border-rose-600 text-[10px] font-bold transition flex items-center gap-1" title="Siparişi Kalıcı Sil">
+                                    <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
+        }
+
+        async function deletePlanningOrder(orderId) {
+            if (!confirm('Sipariş No: ' + orderId + ' kalıcı olarak silinsin mi? Bu işlem geri alınamaz.')) return;
+            try {
+                const res = await fetch('/api/orders/' + orderId, { method: 'DELETE' });
+                if (res.ok) {
+                    if (typeof loadPlanningData === 'function') {
+                        await loadPlanningData();
+                    } else if (typeof loadOrdersTable === 'function') {
+                        await loadOrdersTable();
+                    }
+                    if (typeof showScadaNotification === 'function')
+                        showScadaNotification('Sipariş silindi: ' + orderId, 'success');
+                    else if (typeof showToast === 'function')
+                        showToast('Sipariş silindi: ' + orderId);
+                } else {
+                    const err = await res.json().catch(()=>({detail:'Bilinmeyen hata'}));
+                    alert('Silme hatası: ' + (err.detail || res.status));
+                }
+            } catch(e) {
+                console.error('deletePlanningOrder error:', e);
+                alert('Bağlantı hatası: ' + e.message);
+            }
         }
 
         function renderPlanningMixerDemands(demands) {
@@ -18186,13 +18213,16 @@ function ssPrintWorkOrder(){
   const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'});
   const timeStr = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
 
-  // Toplam sure hesapla
+  // Her hat icin max sure
   const allHours = lines.map(l=>{
     const speed = ssGetLineSpeed(l.lineKey, profileKey);
     const boy = ssRound(l.qty * specs.boyPerTakim);
     return speed > 0 ? (boy / speed) : 0;
   });
   const maxHours = Math.max(...allHours);
+
+  // Belge numarasi
+  const docNum = 'IE-' + dateStr.replace(/\./g,'') + '-' + String(Math.floor(Math.random()*9000)+1000);
 
   // Her hat icin tablo satiri
   let hatRows = '';
@@ -18203,133 +18233,130 @@ function ssPrintWorkOrder(){
     const kg    = ssRound(boy * specs.kgPerBoy);
     const hrs   = speed > 0 ? (boy / speed) : 0;
     hatRows += `
-      <tr style="background:${idx%2===0?'#f9f9f9':'#ffffff'};">
-        <td style="border:1px solid #ccc;padding:7px 10px;font-weight:700;color:#1e3a8a;">${m.code}</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;">${m.name}</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;font-weight:700;">${ssRound(l.qty).toLocaleString('tr-TR')} ${unit}</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;">%${l.pct.toFixed(1)}</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;">${boy.toLocaleString('tr-TR')} boy</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;">${kg.toLocaleString('tr-TR')} kg</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;font-weight:700;">${hrs.toFixed(1)} saat</td>
-        <td style="border:1px solid #ccc;padding:7px 10px;text-align:center;">${speed} boy/sa</td>
+      <tr style="background:${idx%2===0?'#f8fafc':'#ffffff'};">
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;font-weight:700;color:#1e3a8a;font-size:12px;">${m.code}</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;font-size:12px;">${m.name}</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;">${ssRound(l.qty).toLocaleString('tr-TR')} ${unit}</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-size:12px;">%${l.pct.toFixed(1)}</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-size:12px;">${boy.toLocaleString('tr-TR')} boy</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-size:12px;">${kg.toLocaleString('tr-TR')} kg</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-weight:700;font-size:12px;">${hrs.toFixed(1)} saat</td>
+        <td style="border:1px solid #cbd5e1;padding:8px 12px;text-align:center;font-size:11px;color:#64748b;">${speed} boy/sa</td>
       </tr>`;
   });
-
-  const docNum = `IE-${dateStr.replace(/\./g,'')}-${String(Math.floor(Math.random()*9000)+1000)}`;
 
   printArea.innerHTML = `
   <div style="font-family:'Segoe UI',Arial,sans-serif;background:#fff;color:#111;padding:0;margin:0;max-width:800px;">
 
-    <!-- HEADER -->
-    <div style="background:#1e3a8a;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;">
+    <!-- KURUMSAL HEADER -->
+    <div style="background:#1e3a8a;color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:flex-end;">
       <div>
-        <div style="font-size:22px;font-weight:900;letter-spacing:1px;">ERGÜNBAŞ GROUP</div>
-        <div style="font-size:11px;opacity:0.85;margin-top:2px;">Ekstrüzyon Üretim Yönetim Sistemi</div>
+        <div style="font-size:24px;font-weight:900;letter-spacing:2px;margin-bottom:3px;">ERGÜNBAŞ GROUP</div>
+        <div style="font-size:11px;opacity:0.75;letter-spacing:0.5px;">Profil Ekstrüzyon Üretim Birimi</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-size:15px;font-weight:900;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:6px;letter-spacing:1px;">HAT IS EMRI</div>
-        <div style="font-size:10px;opacity:0.8;margin-top:4px;">Belge No: ${docNum}</div>
+        <div style="font-size:13px;font-weight:900;background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:4px;letter-spacing:2px;">HAT İŞ EMRİ</div>
+        <div style="font-size:10px;opacity:0.7;margin-top:5px;">Belge No: ${docNum}</div>
       </div>
     </div>
 
-    <!-- BELGE BİLGİLERİ -->
-    <div style="background:#f0f4ff;border-bottom:2px solid #1e3a8a;padding:10px 24px;display:flex;justify-content:space-between;font-size:11px;">
-      <div><b>Tarih:</b> ${dateStr}</div>
-      <div><b>Saat:</b> ${timeStr}</div>
-      <div><b>Sistem:</b> Ergünbas Üretim Yönetim Sistemi v2026</div>
-      <div><b>Durum:</b> <span style="color:green;font-weight:700;">ONAYLANDI</span></div>
+    <!-- BELGE METABİLGİSİ -->
+    <div style="background:#f1f5f9;border-bottom:2px solid #1e3a8a;padding:9px 28px;display:flex;gap:32px;font-size:11px;color:#374151;">
+      <div><b style="color:#111;">Tarih:</b> ${dateStr}</div>
+      <div><b style="color:#111;">Saat:</b> ${timeStr}</div>
+      <div><b style="color:#111;">Belge No:</b> ${docNum}</div>
     </div>
 
-    <!-- ÜRÜN BİLGİLERİ -->
-    <div style="padding:14px 24px;border-bottom:1px solid #ddd;">
-      <div style="font-size:12px;font-weight:900;color:#1e3a8a;text-transform:uppercase;margin-bottom:8px;letter-spacing:1px;">URUN BILGILERI</div>
+    <!-- ÜRÜN BİLGİSİ -->
+    <div style="padding:16px 28px;border-bottom:1px solid #e2e8f0;">
+      <div style="font-size:11px;font-weight:900;color:#1e3a8a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">ÜRÜN BİLGİLERİ</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-        <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Ürün / Profil</div>
-          <div style="font-size:13px;font-weight:900;color:#111;">${product}</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fff;">
+          <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ürün / Profil</div>
+          <div style="font-size:14px;font-weight:900;color:#111;">${product}</div>
         </div>
-        <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Ölçü</div>
-          <div style="font-size:13px;font-weight:900;color:#111;">${dim || '—'}</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fff;">
+          <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Kesim Ölçüsü</div>
+          <div style="font-size:14px;font-weight:900;color:#111;">${dim || '—'}</div>
         </div>
-        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#856404;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Net Sipariş Miktarı</div>
-          <div style="font-size:14px;font-weight:900;color:#856404;">${ssRound(netQty).toLocaleString('tr-TR')} ${unit}</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fffbeb;">
+          <div style="font-size:9px;color:#92400e;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Sipariş Miktarı</div>
+          <div style="font-size:14px;font-weight:900;color:#92400e;">${ssRound(netQty).toLocaleString('tr-TR')} ${unit}</div>
         </div>
-        <div style="background:#d1ecf1;border:1px solid #bee5eb;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#0c5460;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Toplam Profil Boyu</div>
-          <div style="font-size:13px;font-weight:900;color:#0c5460;">${totalBoy.toLocaleString('tr-TR')} Boy</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#f0fdf4;">
+          <div style="font-size:9px;color:#166534;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Toplam Ağırlık</div>
+          <div style="font-size:14px;font-weight:900;color:#166534;">${totalKg.toLocaleString('tr-TR')} kg</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;">
-        <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Toplam Ağırlık</div>
-          <div style="font-size:13px;font-weight:900;">${totalKg.toLocaleString('tr-TR')} kg</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px;">
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fff;">
+          <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Toplam Profil Boyu</div>
+          <div style="font-size:13px;font-weight:900;">${totalBoy.toLocaleString('tr-TR')} boy (${specs.boyPerTakim} boy/takım)</div>
         </div>
-        <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Planlanan Bitiş</div>
-          <div style="font-size:13px;font-weight:900;color:#155724;">${maxHours.toFixed(1)} saat (${(maxHours/24).toFixed(1)} gün)</div>
-        </div>
-        <div style="background:#f9f9f9;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;">
-          <div style="font-size:9px;color:#666;font-weight:700;text-transform:uppercase;margin-bottom:3px;">Hat Sayısı</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fff;">
+          <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Hat Sayısı</div>
           <div style="font-size:13px;font-weight:900;">${lines.length} Hat</div>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;background:#fff;">
+          <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Tahmini Üretim Süresi</div>
+          <div style="font-size:13px;font-weight:900;color:#1e40af;">${maxHours.toFixed(1)} saat</div>
         </div>
       </div>
     </div>
 
     <!-- HAT DAĞILIMI TABLOSU -->
-    <div style="padding:14px 24px;">
-      <div style="font-size:12px;font-weight:900;color:#1e3a8a;text-transform:uppercase;margin-bottom:8px;letter-spacing:1px;">HAT DAGITIM PLANI</div>
-      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+    <div style="padding:16px 28px;">
+      <div style="font-size:11px;font-weight:900;color:#1e3a8a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px;">HAT DAĞILIM PLANI</div>
+      <table style="width:100%;border-collapse:collapse;">
         <thead>
           <tr style="background:#1e3a8a;color:#fff;">
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:left;">Hat Kodu</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:left;">Hat Adi</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Miktar</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Pay %</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Boy Sayisi</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Agirlik</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Sure</th>
-            <th style="border:1px solid #1e3a8a;padding:8px 10px;text-align:center;">Hiz</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;">Hat Kodu</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:left;font-size:11px;font-weight:700;">Hat Adı</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Miktar</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Pay %</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Boy Sayısı</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Ağırlık</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Süre</th>
+            <th style="border:1px solid #1e3a8a;padding:9px 12px;text-align:center;font-size:11px;font-weight:700;">Hız</th>
           </tr>
         </thead>
         <tbody>${hatRows}</tbody>
       </table>
     </div>
 
-    <!-- BİLGİ NOTU -->
-    <div style="margin:0 24px;padding:8px 12px;background:#fff8e1;border:1px solid #ffc107;border-radius:4px;font-size:10px;color:#856404;">
-      <b>NOT:</b> Bu is emri Ergünbas Üretim Yönetim Sistemi tarafindan otomatik olusturulmustur.
-      1 Takim = ${specs.boyPerTakim} Boy. 2026 BOM katsayilari kullanilmistir.
-      Belge No: ${docNum}
+    <!-- NOT -->
+    <div style="margin:0 28px 12px;padding:9px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:4px;font-size:10px;color:#64748b;">
+      <b>NOT:</b> 1 Takım = ${specs.boyPerTakim} Boy. Belge No: ${docNum} | Tarih: ${dateStr}
     </div>
 
     <!-- İMZA ALANI -->
-    <div style="padding:16px 24px;margin-top:8px;">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;font-size:11px;">
-        <div style="border-top:1.5px solid #333;padding-top:8px;">
-          <div style="font-weight:700;margin-bottom:32px;">Hat Operatörü</div>
-          <div style="color:#555;">Ad Soyad: _____________________</div>
-          <div style="color:#555;margin-top:4px;">Imza: _____________________</div>
+    <div style="padding:16px 28px 20px;border-top:1px solid #e2e8f0;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;font-size:11px;">
+        <div style="border-top:2px solid #1e3a8a;padding-top:10px;">
+          <div style="font-weight:900;color:#1e3a8a;margin-bottom:28px;font-size:11px;text-transform:uppercase;">Hat Operatörü</div>
+          <div style="color:#64748b;margin-top:4px;">Ad Soyad: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">İmza: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">Tarih: _______________________</div>
         </div>
-        <div style="border-top:1.5px solid #333;padding-top:8px;">
-          <div style="font-weight:700;margin-bottom:32px;">Vardiya Amiri</div>
-          <div style="color:#555;">Ad Soyad: _____________________</div>
-          <div style="color:#555;margin-top:4px;">Imza: _____________________</div>
+        <div style="border-top:2px solid #1e3a8a;padding-top:10px;">
+          <div style="font-weight:900;color:#1e3a8a;margin-bottom:28px;font-size:11px;text-transform:uppercase;">Vardiya Amiri</div>
+          <div style="color:#64748b;margin-top:4px;">Ad Soyad: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">İmza: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">Tarih: _______________________</div>
         </div>
-        <div style="border-top:1.5px solid #333;padding-top:8px;">
-          <div style="font-weight:700;margin-bottom:32px;">Uretim Mudürü</div>
-          <div style="color:#555;">Ad Soyad: _____________________</div>
-          <div style="color:#555;margin-top:4px;">Imza: _____________________</div>
+        <div style="border-top:2px solid #1e3a8a;padding-top:10px;">
+          <div style="font-weight:900;color:#1e3a8a;margin-bottom:28px;font-size:11px;text-transform:uppercase;">Üretim Müdürü</div>
+          <div style="color:#64748b;margin-top:4px;">Ad Soyad: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">İmza: _______________________</div>
+          <div style="color:#64748b;margin-top:6px;">Tarih: _______________________</div>
         </div>
       </div>
     </div>
 
     <!-- FOOTER -->
-    <div style="background:#f0f4ff;border-top:2px solid #1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;font-size:9px;color:#555;">
-      <div>Ergünbas Group — Ekstrüzyon Üretim Yönetim Sistemi</div>
-      <div>Belge No: ${docNum} | ${dateStr} ${timeStr}</div>
-      <div>Gizlilik: Sirket Icindedir</div>
+    <div style="background:#1e3a8a;color:rgba(255,255,255,0.6);padding:7px 28px;display:flex;justify-content:space-between;font-size:9px;">
+      <div>ERGÜNBAŞ GROUP — Profil Ekstrüzyon Üretim Birimi</div>
+      <div>${docNum}</div>
     </div>
   </div>`;
 

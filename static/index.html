@@ -17101,10 +17101,17 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 const pausedBadge = line.paused_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/60 font-mono">⏸️ ${line.paused_count} Donduruldu</span>` : '';
                 const urgentBadge = line.urgent_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-950/90 text-rose-300 border border-rose-700 animate-pulse font-mono font-bold">🚨 ${line.urgent_count} ACİL</span>` : '';
 
+                const moldDisplay = mold ? (mold.code ? `${mold.code} - ${mold.name}` : mold.name) : 'Kalıp Atanmamış';
+
                 html += `
-                    <div class="rounded-xl border ${hasWork ? 'border-slate-700 bg-slate-950/80' : 'border-slate-800/60 bg-slate-950/40'} p-3 space-y-2 relative overflow-hidden group hover:border-slate-600 transition">
-                        <div class="flex items-center justify-between">
-                            <span class="font-black text-sm text-white">${line.hat}</span>
+                    <div class="rounded-xl border ${hasWork ? 'border-amber-500/50 bg-slate-900/90 shadow-lg shadow-amber-950/20' : 'border-slate-800/80 bg-slate-950/60'} p-3 space-y-2 relative overflow-hidden group hover:border-slate-600 transition">
+                        <div class="flex items-center justify-between gap-1">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-black text-sm text-white">${line.hat}</span>
+                                ${hasWork 
+                                    ? `<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold animate-pulse">● ÜRETİMDE</span>`
+                                    : `<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium">Boşta</span>`}
+                            </div>
                             <div class="flex items-center gap-1">
                                 ${urgentBadge}
                                 ${pausedBadge}
@@ -17114,15 +17121,36 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                             </div>
                         </div>
 
-                        <div class="space-y-1">
-                            <div class="text-[11px] text-slate-200 truncate font-semibold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full ${hasWork ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}"></span>
-                                <span class="truncate">${line.active_product || '<span class="text-slate-500 italic">İş Emri Bekliyor</span>'}</span>
+                        <!-- Çekilen Ürün & Kalıp Kutusu -->
+                        <div class="space-y-1.5">
+                            <!-- Çekilen Ürün / Profil -->
+                            <div class="p-2 rounded-lg ${hasWork ? 'bg-amber-950/40 border border-amber-500/30' : 'bg-slate-900/80 border border-slate-800/80'}">
+                                <div class="flex items-center justify-between text-[10px] mb-0.5">
+                                    <span class="${hasWork ? 'text-amber-400 font-bold' : 'text-slate-400'} uppercase flex items-center gap-1">
+                                        <i data-lucide="${hasWork ? 'play' : 'pause'}" class="w-3 h-3"></i> Çekilen Ürün:
+                                    </span>
+                                    ${hasWork ? `<span class="text-amber-300 font-mono text-[10px] font-bold">${line.queue_hours} sa</span>` : ''}
+                                </div>
+                                <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-400 italic'} truncate" title="${line.active_product || 'İş Emri Bekliyor'}">
+                                    ${line.active_product || 'İş Emri Bekliyor (Hazır)'}
+                                </div>
                             </div>
-                            ${line.next_product ? `<div class="text-[10px] text-slate-400 truncate pl-3">Sıradaki: <span class="text-indigo-300 font-semibold">${line.next_product}</span></div>` : ''}
-                            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                                <span>Kuyruk Süresi:</span>
-                                <b class="${hasWork ? 'text-amber-300' : 'text-slate-500'}">${line.queue_hours > 0 ? line.queue_hours + ' sa (~' + Math.round(line.queue_hours/12*10)/10 + ' vrd)' : '0 sa'}</b>
+
+                            <!-- Takılı Kalıp -->
+                            <div class="flex items-center justify-between text-[10px] px-2 py-1 rounded bg-slate-950/90 border border-slate-800/80">
+                                <span class="text-slate-400 font-bold flex items-center gap-1 shrink-0">
+                                    <i data-lucide="wrench" class="w-3 h-3 text-sky-400"></i> Takılı Kalıp:
+                                </span>
+                                <span class="font-bold text-sky-300 truncate max-w-[150px] text-right" title="${moldDisplay}">
+                                    ${moldDisplay}
+                                </span>
+                            </div>
+
+                            ${line.next_product ? `<div class="text-[10px] text-slate-400 truncate px-1">Sıradaki: <span class="text-indigo-300 font-semibold">${line.next_product}</span></div>` : ''}
+                            
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-0.5">
+                                <span>Kuyruk: <b class="${hasWork ? 'text-amber-300' : 'text-slate-500'}">${line.queue_hours > 0 ? line.queue_hours + ' sa (~' + Math.round(line.queue_hours/12*10)/10 + ' vrd)' : '0 sa'}</b></span>
+                                <span>Sırada: <b>${line.assigned_orders.length} Sipariş</b></span>
                             </div>
                         </div>
 
@@ -17132,13 +17160,14 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                         </div>
 
                         <div class="text-[10px] text-slate-500 truncate flex items-center justify-between pt-0.5">
-                            <span>Sırada: <b>${line.assigned_orders.length} Sipariş</b></span>
+                            <span>Durum:</span>
                             ${hasWork ? `<span class="text-emerald-400 font-mono font-semibold">● Aktif Üretim</span>` : `<span class="text-slate-500">Hazır / Boşta</span>`}
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+            if (typeof safeCreateIcons === 'function') safeCreateIcons();
         }
 
         function renderPlanningOrdersTable(orders) {

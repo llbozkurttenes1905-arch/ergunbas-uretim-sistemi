@@ -17089,6 +17089,19 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             const container = document.getElementById('planning-lines-grid');
             if (!container || !lines) return;
 
+            const LAST_PROD_27 = {
+                'Hat 101': 'Boşta / Üretim Yok',
+                'Hat 102': '140 mm Kasa (330 boy)',
+                'Hat 103': '50x80 Pervaz (625 boy)',
+                'Hat 104': 'Seren (870 boy)',
+                'Hat 105': 'Seren (642 boy)',
+                'Hat 106': '140 mm Kasa (241 boy)',
+                'Hat 107': 'Seren 39mm (675 boy)',
+                'Hat 108': '200 mm Kasa (218 boy)',
+                'Hat 109': '50x80 Pervaz (1.405 boy)',
+                'Hat 201': 'PVC Levha (1.562 m²)'
+            };
+
             let html = '';
             lines.forEach(line => {
                 const hasWork = line.queue_hours > 0;
@@ -17101,7 +17114,9 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 const pausedBadge = line.paused_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/60 font-mono">⏸️ ${line.paused_count} Donduruldu</span>` : '';
                 const urgentBadge = line.urgent_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-950/90 text-rose-300 border border-rose-700 animate-pulse font-mono font-bold">🚨 ${line.urgent_count} ACİL</span>` : '';
 
-                const moldDisplay = mold ? (mold.code ? `${mold.code} - ${mold.name}` : mold.name) : 'Kalıp Atanmamış';
+                // Clean mold display without codes
+                const moldDisplay = mold && mold.name ? mold.name : 'Kalıp Takılı Değil';
+                const lastProdInfo = LAST_PROD_27[line.hat] || 'Boşta';
 
                 html += `
                     <div class="rounded-xl border ${hasWork ? 'border-amber-500/50 bg-slate-900/90 shadow-lg shadow-amber-950/20' : 'border-slate-800/80 bg-slate-950/60'} p-3 space-y-2 relative overflow-hidden group hover:border-slate-600 transition">
@@ -17127,12 +17142,12 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                             <div class="p-2 rounded-lg ${hasWork ? 'bg-amber-950/40 border border-amber-500/30' : 'bg-slate-900/80 border border-slate-800/80'}">
                                 <div class="flex items-center justify-between text-[10px] mb-0.5">
                                     <span class="${hasWork ? 'text-amber-400 font-bold' : 'text-slate-400'} uppercase flex items-center gap-1">
-                                        <i data-lucide="${hasWork ? 'play' : 'pause'}" class="w-3 h-3"></i> Çekilen Ürün:
+                                        <i data-lucide="${hasWork ? 'play' : 'history'}" class="w-3 h-3"></i> ${hasWork ? 'Çekilen Ürün:' : '27 Ekim Üretimi:'}
                                     </span>
                                     ${hasWork ? `<span class="text-amber-300 font-mono text-[10px] font-bold">${line.queue_hours} sa</span>` : ''}
                                 </div>
-                                <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-400 italic'} truncate" title="${line.active_product || 'İş Emri Bekliyor'}">
-                                    ${line.active_product || 'İş Emri Bekliyor (Hazır)'}
+                                <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-300'} truncate" title="${hasWork ? line.active_product : lastProdInfo}">
+                                    ${hasWork ? line.active_product : lastProdInfo}
                                 </div>
                             </div>
 
@@ -17141,7 +17156,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                 <span class="text-slate-400 font-bold flex items-center gap-1 shrink-0">
                                     <i data-lucide="wrench" class="w-3 h-3 text-sky-400"></i> Takılı Kalıp:
                                 </span>
-                                <span class="font-bold text-sky-300 truncate max-w-[150px] text-right" title="${moldDisplay}">
+                                <span class="font-bold text-sky-300 truncate max-w-[160px] text-right" title="${moldDisplay}">
                                     ${moldDisplay}
                                 </span>
                             </div>
@@ -17161,7 +17176,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
 
                         <div class="text-[10px] text-slate-500 truncate flex items-center justify-between pt-0.5">
                             <span>Durum:</span>
-                            ${hasWork ? `<span class="text-emerald-400 font-mono font-semibold">● Aktif Üretim</span>` : `<span class="text-slate-500">Hazır / Boşta</span>`}
+                            ${hasWork ? `<span class="text-emerald-400 font-mono font-semibold">● Aktif Üretim</span>` : `<span class="text-emerald-400/90 font-medium font-mono">Hazır (Kalıp Takılı)</span>`}
                         </div>
                     </div>
                 `;
@@ -17953,6 +17968,20 @@ const SS_LINES_CATALOG = {
 };
 
 // 2026 Resmi BOM Katsayıları
+// 27 Ekim 2026 Fiili Uretim Verilerine Gore Takili Kaliplar
+const SS_CURRENT_MOLDS_27 = {
+  HAT_101: { name: 'Kalıp Takılı Değil (Hat Boşta)', profileKey: null },
+  HAT_102: { name: '140 mm Kasa Kalıbı', profileKey: 'KASA_140' },
+  HAT_103: { name: '50x80 Pervaz Kalıbı', profileKey: 'PERVAZ_50x80' },
+  HAT_104: { name: 'Seren Kalıbı', profileKey: 'SEREN' },
+  HAT_105: { name: 'Seren Kalıbı', profileKey: 'SEREN' },
+  HAT_106: { name: '140 mm Kasa Kalıbı', profileKey: 'KASA_140' },
+  HAT_107: { name: 'Seren (39mm) Kalıbı', profileKey: 'SEREN_39' },
+  HAT_108: { name: '200 mm Kasa Kalıbı', profileKey: 'KASA_200' },
+  HAT_109: { name: '50x80 Pervaz Kalıbı', profileKey: 'PERVAZ_50x80' },
+  HAT_201: { name: 'Levha Kalıbı', profileKey: 'LEVHA' }
+};
+
 const SS_PROFILE_SPECS = {
   KASA_100:     { kgPerBoy:3.94, boyPerTakim:2.5, unit:'TAKIM' },
   KASA_140:     { kgPerBoy:5.31, boyPerTakim:2.5, unit:'TAKIM' },
@@ -18008,9 +18037,9 @@ function ssGetRecommendation(profileKey){
     KASA_140:     { lines:['HAT_106','HAT_108'], ratios:[48.8,51.2],
       badge:'En Ideal 2 Hat: HAT 106 (%49) & HAT 108 (%51)',
       reason:'140 mm kasada Hat 106 (14.0 boy/saat) ve Hat 108 (14.7 boy/saat) fabrikanin iki ana amiral hattidir. Tek hatta 2 gun surecek siparis 1 gunde eszamanli teslim edilir.' },
-    KASA_200:     { lines:['HAT_107','HAT_106'], ratios:[60.0,40.0],
-      badge:'En Ideal 2 Hat: HAT 107 (%60) & HAT 106 (%40)',
-      reason:'200 mm genis kasa kalibi Hat 107 (12.9 boy/saat) icin optimize edilmistir; Hat 106 destek hatti olarak devreye sokularak teslimat suresi one cekilir.' },
+    KASA_200:     { lines:['HAT_108','HAT_107'], ratios:[60.0,40.0],
+      badge:'En İdeal 2 Hat: HAT 108 (%60 - Kalıp Takılı) & HAT 107 (%40)',
+      reason:'200 mm geniş kasa kalıbı şu anda Hat 108 üzerinde takılıdır (Kalıp değişimi gerekmez - 0 dk). Hat 107 destek hattı olarak devreye alınabilir.' },
     PERVAZ_50x80: { lines:['HAT_109','HAT_103'], ratios:[61.4,38.6],
       badge:'En Ideal 2 Hat: HAT 109 (%61.4) & HAT 103 (%38.6)',
       reason:'50x80 pervazda lokomotif Hat 109 (50.2 boy/saat) ile destek Hat 103 (31.5 boy/saat) kalip ve devir olarak kusursuz tandemdir. Bu dagitimla her iki hat tam ayni dakikada isi bitirir.' },
@@ -18032,28 +18061,21 @@ function ssGetRecommendation(profileKey){
 
 function ssRound(n){ return isNaN(n) ? 0 : Math.round(n * 100) / 100; }
 
-// Kalip degisim toggle
+// Kalip degisim toggle & Akilli Eslesme Motoru
 function ssKalipToggleChanged(){
   const chk = document.getElementById('ssKalipToggle');
   const timeBox = document.getElementById('ssKalipTimeBox');
-  const infoBox = document.getElementById('ssKalipInfo');
-  const infoText = document.getElementById('ssKalipInfoText');
-  const dakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
-  if(chk && chk.checked){
-    if(timeBox) timeBox.style.display = 'flex';
-    if(infoBox) infoBox.style.display = 'block';
-    const saat = (dakika / 60).toFixed(2);
-    if(infoText) infoText.textContent = 'Kalip degisimi icin +' + dakika + ' dakika (' + saat + ' saat) uretim baslangicina eklenecektir. Her hat icin ayri ayri hesaplanir.';
-  } else {
-    if(timeBox) timeBox.style.display = 'none';
-    if(infoBox) infoBox.style.display = 'none';
-  }
+  if(timeBox) timeBox.style.display = (chk && chk.checked) ? 'flex' : 'none';
   ssRenderLines();
 }
 
-function ssGetKalipSetupHours(){
+function ssGetKalipSetupHours(lineKey, profileKey){
+  if(profileKey === 'LEVHA') return 0;
   const chk = document.getElementById('ssKalipToggle');
-  if(!chk || !chk.checked) return 0;
+  if(chk && !chk.checked) return 0;
+  const curMold = SS_CURRENT_MOLDS_27[lineKey] || { profileKey: null };
+  const isInstalled = (curMold.profileKey === profileKey);
+  if(isInstalled) return 0;
   const dakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
   return dakika / 60;
 }
@@ -18108,24 +18130,43 @@ function openSimSplitModal(){
     }
   }
 
+  const isLevha = (profileKey === 'LEVHA');
+
+  // Otomatik Kalıp Çakışması Kontrolü (27 Ekim Verileriyle)
+  const anyLineNeedsMold = !isLevha && lines.some(l => {
+    const curMold = SS_CURRENT_MOLDS_27[l.lineKey];
+    return !curMold || curMold.profileKey !== profileKey;
+  });
+
+  const kalipPanel = document.getElementById('ssKalipPanel');
+  if(kalipPanel) kalipPanel.style.display = isLevha ? 'none' : 'block';
+
+  const kalipToggle = document.getElementById('ssKalipToggle');
+  const kalipTimeBox = document.getElementById('ssKalipTimeBox');
+  const kalipInfo = document.getElementById('ssKalipInfo');
+  const kalipInfoText = document.getElementById('ssKalipInfoText');
+  const setupDakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
+
+  if(kalipToggle) kalipToggle.checked = anyLineNeedsMold;
+  if(kalipTimeBox) kalipTimeBox.style.display = (anyLineNeedsMold && !isLevha) ? 'flex' : 'none';
+
+  if(kalipInfo){
+    kalipInfo.style.display = isLevha ? 'none' : 'block';
+    if(anyLineNeedsMold){
+      kalipInfo.className = 'p-2.5 rounded-lg bg-amber-950/60 border border-amber-500/40 text-[11px] text-amber-200 leading-relaxed';
+      kalipInfoText.innerHTML = `⚠️ <strong>Kalıp Çakışması Uyarısı:</strong> Seçilen hat(lar) üzerinde bu ürünün kalıbı takılı değildir. Üretime başlayabilmek için kalıp değişim süresi (+${setupDakika} dk) ilgili hatların bitiş süresine otomatik eklenmiştir.`;
+    } else {
+      kalipInfo.className = 'p-2.5 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-[11px] text-emerald-200 leading-relaxed';
+      kalipInfoText.innerHTML = `✅ <strong>Kalıp Hazır:</strong> Seçilen hatlarda gereken kalıp zaten takılıdır. Ekstra kalıp değişim süresi gerekmez (0 dk).`;
+    }
+  }
+
   // Levha uyarisi ve buton kontrolleri
   const levhaWarning = document.getElementById('ssLevhaWarning');
   const addLineBtn = document.getElementById('ssAddLineBtn');
   const syncSpeedBtn = document.getElementById('ssSyncSpeedBtn');
   const syncEqualBtn = document.getElementById('ssSyncEqualBtn');
   const ssBody = document.getElementById('ssMainBody');
-
-  const isLevha = (profileKey === 'LEVHA');
-
-  // Kalip paneli - Levha icin gizle
-  const kalipPanel = document.getElementById('ssKalipPanel');
-  if(kalipPanel) kalipPanel.style.display = isLevha ? 'none' : 'block';
-  const kalipToggle = document.getElementById('ssKalipToggle');
-  if(kalipToggle) kalipToggle.checked = false;
-  const kalipTimeBox = document.getElementById('ssKalipTimeBox');
-  if(kalipTimeBox) kalipTimeBox.style.display = 'none';
-  const kalipInfo = document.getElementById('ssKalipInfo');
-  if(kalipInfo) kalipInfo.style.display = 'none';
 
   if(levhaWarning) levhaWarning.style.display = isLevha ? 'block' : 'none';
   if(addLineBtn) addLineBtn.style.display = isLevha ? 'none' : 'inline-flex';
@@ -18152,31 +18193,43 @@ function closeSimSplitModal(){
 
 function ssRenderLines(){
   if(!SS_STATE) return;
-  const { lines, specs, netQty } = SS_STATE;
+  const { lines, specs, netQty, profileKey } = SS_STATE;
   const container = document.getElementById('ssLinesContainer');
   container.innerHTML = '';
 
+  const isLevha = (profileKey === 'LEVHA');
+  const setupDakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
+  const kalipToggleChecked = document.getElementById('ssKalipToggle')?.checked !== false;
+
   let totalPct = 0;
   let maxHours = 0;
+  let anyLineNeedsMold = false;
 
   lines.forEach((l, idx)=>{
     totalPct += l.pct;
-    const speed   = ssGetLineSpeed(l.lineKey, SS_STATE.profileKey);
+    const speed   = ssGetLineSpeed(l.lineKey, profileKey);
     const boy     = ssRound(l.qty * specs.boyPerTakim);
     const kg      = ssRound(boy * specs.kgPerBoy);
-    const setupH  = ssGetKalipSetupHours();
+
+    const curMold = SS_CURRENT_MOLDS_27[l.lineKey] || { name: 'Kalıp Takılı Değil', profileKey: null };
+    const isMoldInstalled = isLevha || (curMold.profileKey === profileKey);
+    if(!isMoldInstalled) anyLineNeedsMold = true;
+
+    const setupH  = (!isMoldInstalled && kalipToggleChecked) ? (setupDakika / 60) : 0;
     const hours   = speed > 0 ? (boy / speed) + setupH : 0;
     if(hours > maxHours) maxHours = hours;
+
     const mInfo   = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
 
     let opts = '';
-    const isLevha = (SS_STATE.profileKey === 'LEVHA');
     const availableKeys = isLevha
       ? ['HAT_201']
       : Object.keys(SS_LINES_CATALOG).filter(k => k !== 'HAT_201');
     availableKeys.forEach(k=>{
       const m = SS_LINES_CATALOG[k];
-      opts += `<option value="${k}" ${k===l.lineKey?'selected':''}>${m.name}</option>`;
+      const km = SS_CURRENT_MOLDS_27[k];
+      const moldHint = km ? ` [${km.name}]` : '';
+      opts += `<option value="${k}" ${k===l.lineKey?'selected':''}>${m.name}${moldHint}</option>`;
     });
 
     const card = document.createElement('div');
@@ -18190,8 +18243,22 @@ function ssRenderLines(){
           </select>
           <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/30 text-[10px] shrink-0">${speed} boy/saat</span>
         </div>
-        ${lines.length > 1 ? `<button onclick="ssRemoveLine(${idx})" class="text-rose-400 hover:bg-rose-500/20 px-2 py-1 rounded text-[11px] font-bold transition flex items-center gap-1"><i data-lucide="trash-2" class="w-3 h-3"></i> Kaldir</button>` : ''}
+        ${lines.length > 1 ? `<button onclick="ssRemoveLine(${idx})" class="text-rose-400 hover:bg-rose-500/20 px-2 py-1 rounded text-[11px] font-bold transition flex items-center gap-1"><i data-lucide="trash-2" class="w-3 h-3"></i> Kaldır</button>` : ''}
       </div>
+
+      <!-- Kalıp Durumu Rozeti -->
+      ${!isLevha ? (isMoldInstalled ? `
+        <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold">
+          <span class="flex items-center gap-1.5"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i> Kalıp Takılı: <strong class="text-white">${curMold.name}</strong></span>
+          <span class="text-emerald-400 font-mono text-[10px]">Değişim Gerekmez (0 dk)</span>
+        </div>
+      ` : `
+        <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-amber-950/70 border border-amber-500/50 text-amber-200 text-[11px] font-bold">
+          <span class="flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i> Kalıp Takılı Değil (Şu an takılı: <strong class="text-white">${curMold.name}</strong>)</span>
+          <span class="text-amber-400 font-mono text-[10px] shrink-0 font-black">+${setupDakika} dk Kalıp Değişimi Eklendi</span>
+        </div>
+      `) : ''}
+
       <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-center">
         <div class="flex items-center gap-2 sm:col-span-2">
           <input type="range" min="0" max="100" step="0.5" value="${l.pct}" oninput="ssUpdatePct(${idx},parseFloat(this.value))" class="w-full accent-amber-500 cursor-pointer">
@@ -18202,12 +18269,25 @@ function ssRenderLines(){
         </div>
         <div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 text-[11px]">
           <span class="text-slate-400">${boy} boy / ${kg} kg</span>
-          <span class="font-bold text-sky-400 font-mono">${hours.toFixed(1)} sa${setupH > 0 ? ` <span class="text-orange-400 text-[9px]">(+${(setupH*60).toFixed(0)} dk kalip)</span>` : ``}</span>
+          <span class="font-bold text-sky-400 font-mono">${hours.toFixed(1)} sa${setupH > 0 ? ` <span class="text-amber-400 text-[9px] font-bold">(+${setupDakika} dk kalıp)</span>` : (isMoldInstalled && !isLevha ? ` <span class="text-emerald-400 text-[9px] font-bold">(Kalıp Takılı)</span>` : '')}</span>
         </div>
       </div>
     `;
     container.appendChild(card);
   });
+
+  // Kalıp bilgi kutusu güncelleme
+  const kalipInfo = document.getElementById('ssKalipInfo');
+  const kalipInfoText = document.getElementById('ssKalipInfoText');
+  if(kalipInfo && !isLevha){
+    if(anyLineNeedsMold){
+      kalipInfo.className = 'p-2.5 rounded-lg bg-amber-950/60 border border-amber-500/40 text-[11px] text-amber-200 leading-relaxed';
+      kalipInfoText.innerHTML = `⚠️ <strong>Kalıp Çakışması Uyarısı:</strong> Seçilen hat(lar) üzerinde bu ürünün kalıbı takılı değildir. Üretime başlayabilmek için kalıp değişim süresi (+${setupDakika} dk) ilgili hatların bitiş süresine otomatik eklenmiştir.`;
+    } else {
+      kalipInfo.className = 'p-2.5 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-[11px] text-emerald-200 leading-relaxed';
+      kalipInfoText.innerHTML = `✅ <strong>Kalıp Hazır:</strong> Seçilen hatlarda gereken kalıp zaten takılıdır. Ekstra kalıp değişim süresi gerekmez (0 dk).`;
+    }
+  }
 
   // Balance indicator
   const pctEl = document.getElementById('ssTotalPct');
@@ -18218,9 +18298,11 @@ function ssRenderLines(){
     : 'text-rose-400 font-mono font-black text-sm';
 
   // Comparison
-  const singleSpeed = ssGetLineSpeed(lines[0].lineKey, SS_STATE.profileKey);
-  const singleSetup = ssGetKalipSetupHours();
+  const singleSpeed = ssGetLineSpeed(lines[0].lineKey, profileKey);
+  const singleMold = SS_CURRENT_MOLDS_27[lines[0].lineKey] || { profileKey: null };
+  const singleSetup = (!isLevha && singleMold.profileKey !== profileKey && kalipToggleChecked) ? (setupDakika / 60) : 0;
   const singleHours = singleSpeed > 0 ? (SS_STATE.totalBoy / singleSpeed) + singleSetup : 0;
+
   document.getElementById('ssSingleHours').textContent = `${singleHours.toFixed(1)} saat (~${(singleHours/24).toFixed(1)} gun)`;
   document.getElementById('ssMultiHours').textContent  = `${maxHours.toFixed(1)} saat (~${(maxHours/24).toFixed(1)} gun)`;
   const saved    = Math.max(0, singleHours - maxHours);
@@ -18382,6 +18464,8 @@ async function ssSaveToOrder() {
       const boyCount = ssRound(l.qty * specs.boyPerTakim);
       const kgCount = ssRound(boyCount * specs.kgPerBoy);
 
+      const lineSetupH = ssGetKalipSetupHours(l.lineKey, profileKey);
+      const moldInfoStr = (profileKey !== 'LEVHA' && lineSetupH > 0) ? ` | Kalıp Değişimi: +${document.getElementById('ssKalipDakika')?.value || 45} dk` : (profileKey !== 'LEVHA' ? ' | Kalıp Takılı (0 dk)' : '');
       const orderPayload = {
         customer: `${customerName} [${hatCode}]`,
         order_date: todayStr,
@@ -18395,7 +18479,7 @@ async function ssSaveToOrder() {
         assigned_hats: `${hatCode} (${m.name})`,
         actual_produced: 0.0,
         status: 'ÜRETİMDE',
-        note: `Akıllı Dağıtım: ${hatCode} (%${l.pct.toFixed(1)}) — ${ssRound(l.qty)} ${unit} (${boyCount} Boy / ${kgCount} kg)${ssGetKalipSetupHours() > 0 ? ` | Kalıp Değişimi: +${document.getElementById("ssKalipDakika")?.value || 45} dk` : ""}`,
+        note: `Akıllı Dağıtım: ${hatCode} (%${l.pct.toFixed(1)}) — ${ssRound(l.qty)} ${unit} (${boyCount} Boy / ${kgCount} kg)${moldInfoStr}`,
         sync_mode: 'auto'
       };
 
@@ -18459,11 +18543,12 @@ function ssPrintWorkOrder(){
   const dateStr = now.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'numeric'});
   const timeStr = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
 
-  // Her hat icin max sure
+  // Her hat icin max sure (Kalıp setup dahil)
   const allHours = lines.map(l=>{
     const speed = ssGetLineSpeed(l.lineKey, profileKey);
     const boy = ssRound(l.qty * specs.boyPerTakim);
-    return speed > 0 ? (boy / speed) : 0;
+    const setupH = ssGetKalipSetupHours(l.lineKey, profileKey);
+    return speed > 0 ? (boy / speed) + setupH : 0;
   });
   const maxHours = Math.max(...allHours);
 

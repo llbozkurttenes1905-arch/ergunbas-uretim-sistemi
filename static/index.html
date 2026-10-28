@@ -17748,7 +17748,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
 <!-- ========================================================
      AKILLI HAT DAĞITIM MODALI (Sıfır Risk Simülatörüne Entegre)
 ======================================================== -->
-<div id="simSplitModal" class="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto" style="display:none!important;">
+<div id="simSplitModal" class="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto hidden">
     <div class="bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden text-slate-100">
         <!-- Header -->
         <div class="px-6 py-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
@@ -17995,7 +17995,6 @@ function openSimSplitModal(){
   const rec = ssGetRecommendation(profileKey);
   const totalBoy = ssRound(netQty * specs.boyPerTakim);
   const totalKg  = ssRound(totalBoy * specs.kgPerBoy);
-  const isDoubleHead = SS_DOUBLE_HEAD_PROFILES.includes(profileKey);
 
   const lines = rec.lines.map((key, idx)=>({
     lineKey: key,
@@ -18003,7 +18002,7 @@ function openSimSplitModal(){
     qty: ssRound(netQty * (rec.ratios[idx] / 100))
   }));
 
-  SS_STATE = { product, dim, profileKey, specs, rec, netQty, totalBoy, totalKg, lines, unit: specs.unit, isDoubleHead };
+  SS_STATE = { product, dim, profileKey, specs, rec, netQty, totalBoy, totalKg, lines, unit: specs.unit };
 
   // Fill meta
   document.getElementById('ssModel').textContent   = product;
@@ -18046,15 +18045,19 @@ function openSimSplitModal(){
 
   ssRenderLines();
   const modal = document.getElementById('simSplitModal');
-  modal.style.display = 'flex';
-  modal.style.removeProperty('display');
-  modal.classList.remove('hidden');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
   if(typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function closeSimSplitModal(){
   const modal = document.getElementById('simSplitModal');
-  modal.style.display = 'none';
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
 }
 
 function ssRenderLines(){

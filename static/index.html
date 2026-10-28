@@ -17099,7 +17099,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 'Hat 107': 'Seren 39mm (675 boy)',
                 'Hat 108': '200 mm Kasa (218 boy)',
                 'Hat 109': '50x80 Pervaz (1.405 boy)',
-                'Hat 201': 'PVC Levha (1.562 m²)'
+                'Hat 201': 'Dişbudak: 940 Adet | Koyu Ceviz: 70 Adet | Coco: 52 Adet (Toplam: 1.062 Adet)'
             };
 
             let html = '';
@@ -17147,7 +17147,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                     ${hasWork ? `<span class="text-amber-300 font-mono text-[10px] font-bold">${line.queue_hours} sa</span>` : ''}
                                 </div>
                                 <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-300'} truncate" title="${hasWork ? line.active_product : lastProdInfo}">
-                                    ${hasWork ? line.active_product : lastProdInfo}
+                                    ${hasWork ? line.active_product : (isLevha ? '<span class="text-purple-300 font-bold">Dişbudak: 940</span>, <span class="text-amber-300 font-bold">Ceviz: 70</span>, <span class="text-orange-300 font-bold">Coco: 52</span> <span class="text-purple-400 font-mono text-[10px] font-black">(1.062 Adet)</span>' : lastProdInfo)}
                                 </div>
                             </div>
 

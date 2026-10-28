@@ -11124,18 +11124,452 @@
       "day": "86",
       "date": "27.10.2026",
       "gunduz": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "employees": 8,
+        "hours": 12.0,
+        "operator": "Mehmet SAĞLAM",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.71,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 1291.0,
+            "fire_kg": 0.0,
+            "qty": 240,
+            "sets": 96.0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 0.67,
+            "heads": 2.0,
+            "hours": 10.0,
+            "prod_kg": 251.0,
+            "fire_kg": 322.31,
+            "qty": 160,
+            "sets": 32.0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.68,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1608.0,
+            "fire_kg": 0.0,
+            "qty": 486,
+            "sets": 138.9
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.86,
+            "heads": 2.0,
+            "hours": 10.0,
+            "prod_kg": 1154.0,
+            "fire_kg": 663.66,
+            "qty": 312,
+            "sets": 89.1
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.64,
+            "heads": 1.0,
+            "hours": 10.0,
+            "prod_kg": 533.0,
+            "fire_kg": 418.96,
+            "qty": 100,
+            "sets": 40.0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "SEREN(39mm)",
+            "length": 2.1,
+            "speed": 1.26,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 1005.0,
+            "fire_kg": 442.2,
+            "qty": 300,
+            "sets": 85.7
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "200 mm KASA",
+            "length": 2.15,
+            "speed": 0.64,
+            "heads": 1.0,
+            "hours": 5.0,
+            "prod_kg": 493.0,
+            "fire_kg": 71.44,
+            "qty": 78,
+            "sets": 31.2
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.5,
+            "speed": 1.28,
+            "heads": 2.0,
+            "hours": 8.0,
+            "prod_kg": 800.0,
+            "fire_kg": 0.0,
+            "qty": 500,
+            "sets": 100.0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 1.28,
+            "heads": 2.0,
+            "hours": 4.0,
+            "prod_kg": 396.0,
+            "fire_kg": 0.0,
+            "qty": 280,
+            "sets": 56.0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "KOYU CEVİZ",
+            "width": 94.0,
+            "length": 210.0,
+            "m2_one": 1.974,
+            "qty": 70,
+            "total_m2": 138.18,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 20.58,
+            "dead_fire_kg": 50.42,
+            "total_kg": 338.54,
+            "sets": 35.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 2.0,
+            "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "COCO",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 52,
+            "total_m2": 101.182,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 15.07,
+            "dead_fire_kg": 36.92,
+            "total_kg": 247.9,
+            "sets": 26.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 2.0,
+            "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 430,
+            "total_m2": 836.694,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 124.614,
+            "dead_fire_kg": 305.3,
+            "total_kg": 2049.9,
+            "sets": 215.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 8.0,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
       "gece": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "Aykut YALÇIN",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "KOYU CEVİZ",
+            "width": 94.0,
+            "length": 210.0,
+            "m2_one": 1.974,
+            "qty": 70,
+            "total_m2": 138.18,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 20.58,
+            "dead_fire_kg": 50.42,
+            "total_kg": 338.54,
+            "sets": 35.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 2.0,
+            "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "COCO",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 52,
+            "total_m2": 101.182,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 15.07,
+            "dead_fire_kg": 36.92,
+            "total_kg": 247.9,
+            "sets": 26.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 2.0,
+            "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 430,
+            "total_m2": 836.694,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 124.614,
+            "dead_fire_kg": 305.3,
+            "total_kg": 2049.9,
+            "sets": 215.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 8.0,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [],
+      "mixer_emp_gunduz": 0,
+      "mixer_emp_gece": 0
     }
   }
 }

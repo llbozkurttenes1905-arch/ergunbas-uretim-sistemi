@@ -17807,6 +17807,31 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
 
 
 
+            <!-- Kalip Degisimi Paneli -->
+            <div id="ssKalipPanel" class="p-3.5 rounded-xl bg-orange-950/50 border border-orange-500/30 space-y-2.5">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                    <div class="flex items-center gap-2.5">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="ssKalipToggle" onchange="ssKalipToggleChanged()" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                        <div>
+                            <span class="text-xs font-black text-orange-300 uppercase tracking-wider">Kalip Takili Degil</span>
+                            <span class="text-[10px] text-orange-400/70 block">Kalip degisim suresi ETA'ya eklenir</span>
+                        </div>
+                    </div>
+                    <div id="ssKalipTimeBox" class="flex items-center gap-2" style="display:none;">
+                        <label class="text-[10px] text-orange-300 font-bold uppercase whitespace-nowrap">Degisim Suresi:</label>
+                        <input type="number" id="ssKalipDakika" value="45" min="5" max="480" step="5" onchange="ssKalipToggleChanged()" class="w-20 bg-slate-900 border border-orange-500/40 rounded-lg px-2 py-1 text-right font-black text-orange-300 text-xs focus:outline-none focus:border-orange-400">
+                        <span class="text-[10px] text-orange-400 font-bold">dk</span>
+                    </div>
+                </div>
+                <div id="ssKalipInfo" style="display:none;" class="p-2.5 rounded-lg bg-orange-900/30 border border-orange-500/20 text-[11px] text-orange-200/80 leading-relaxed">
+                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-orange-400 inline-block mr-1" style="vertical-align:middle;"></i>
+                    <span id="ssKalipInfoText">Kalip degisim suresi uretim baslangicina eklenecektir.</span>
+                </div>
+            </div>
+
             <!-- Levha Tek Hat Bilgilendirmesi -->
             <div id="ssLevhaWarning" style="display:none;" class="p-4 rounded-xl bg-purple-950/70 border border-purple-500/40">
               <div class="flex items-center gap-2 mb-1">
@@ -17978,6 +18003,32 @@ function ssGetRecommendation(profileKey){
 
 function ssRound(n){ return isNaN(n) ? 0 : Math.round(n * 100) / 100; }
 
+// Kalip degisim toggle
+function ssKalipToggleChanged(){
+  const chk = document.getElementById('ssKalipToggle');
+  const timeBox = document.getElementById('ssKalipTimeBox');
+  const infoBox = document.getElementById('ssKalipInfo');
+  const infoText = document.getElementById('ssKalipInfoText');
+  const dakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
+  if(chk && chk.checked){
+    if(timeBox) timeBox.style.display = 'flex';
+    if(infoBox) infoBox.style.display = 'block';
+    const saat = (dakika / 60).toFixed(2);
+    if(infoText) infoText.textContent = 'Kalip degisimi icin +' + dakika + ' dakika (' + saat + ' saat) uretim baslangicina eklenecektir. Her hat icin ayri ayri hesaplanir.';
+  } else {
+    if(timeBox) timeBox.style.display = 'none';
+    if(infoBox) infoBox.style.display = 'none';
+  }
+  ssRenderLines();
+}
+
+function ssGetKalipSetupHours(){
+  const chk = document.getElementById('ssKalipToggle');
+  if(!chk || !chk.checked) return 0;
+  const dakika = parseInt(document.getElementById('ssKalipDakika')?.value || 45);
+  return dakika / 60;
+}
+
 // Global State
 let SS_STATE = null;
 
@@ -18037,6 +18088,16 @@ function openSimSplitModal(){
 
   const isLevha = (profileKey === 'LEVHA');
 
+  // Kalip paneli - Levha icin gizle
+  const kalipPanel = document.getElementById('ssKalipPanel');
+  if(kalipPanel) kalipPanel.style.display = isLevha ? 'none' : 'block';
+  const kalipToggle = document.getElementById('ssKalipToggle');
+  if(kalipToggle) kalipToggle.checked = false;
+  const kalipTimeBox = document.getElementById('ssKalipTimeBox');
+  if(kalipTimeBox) kalipTimeBox.style.display = 'none';
+  const kalipInfo = document.getElementById('ssKalipInfo');
+  if(kalipInfo) kalipInfo.style.display = 'none';
+
   if(levhaWarning) levhaWarning.style.display = isLevha ? 'block' : 'none';
   if(addLineBtn) addLineBtn.style.display = isLevha ? 'none' : 'inline-flex';
   if(syncSpeedBtn) syncSpeedBtn.style.display = isLevha ? 'none' : 'inline-flex';
@@ -18074,7 +18135,8 @@ function ssRenderLines(){
     const speed   = ssGetLineSpeed(l.lineKey, SS_STATE.profileKey);
     const boy     = ssRound(l.qty * specs.boyPerTakim);
     const kg      = ssRound(boy * specs.kgPerBoy);
-    const hours   = speed > 0 ? (boy / speed) : 0;
+    const setupH  = ssGetKalipSetupHours();
+    const hours   = speed > 0 ? (boy / speed) + setupH : 0;
     if(hours > maxHours) maxHours = hours;
     const mInfo   = SS_LINES_CATALOG[l.lineKey] || { code: l.lineKey, name: l.lineKey };
 
@@ -18111,7 +18173,7 @@ function ssRenderLines(){
         </div>
         <div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 text-[11px]">
           <span class="text-slate-400">${boy} boy / ${kg} kg</span>
-          <span class="font-bold text-sky-400 font-mono">${hours.toFixed(1)} sa</span>
+          <span class="font-bold text-sky-400 font-mono">${hours.toFixed(1)} sa${setupH > 0 ? ` <span class="text-orange-400 text-[9px]">(+${(setupH*60).toFixed(0)} dk kalip)</span>` : ``}</span>
         </div>
       </div>
     `;
@@ -18128,7 +18190,8 @@ function ssRenderLines(){
 
   // Comparison
   const singleSpeed = ssGetLineSpeed(lines[0].lineKey, SS_STATE.profileKey);
-  const singleHours = singleSpeed > 0 ? (SS_STATE.totalBoy / singleSpeed) : 0;
+  const singleSetup = ssGetKalipSetupHours();
+  const singleHours = singleSpeed > 0 ? (SS_STATE.totalBoy / singleSpeed) + singleSetup : 0;
   document.getElementById('ssSingleHours').textContent = `${singleHours.toFixed(1)} saat (~${(singleHours/24).toFixed(1)} gun)`;
   document.getElementById('ssMultiHours').textContent  = `${maxHours.toFixed(1)} saat (~${(maxHours/24).toFixed(1)} gun)`;
   const saved    = Math.max(0, singleHours - maxHours);
@@ -18303,7 +18366,7 @@ async function ssSaveToOrder() {
         assigned_hats: `${hatCode} (${m.name})`,
         actual_produced: 0.0,
         status: 'ÜRETİMDE',
-        note: `Akıllı Dağıtım: ${hatCode} (%${l.pct.toFixed(1)}) — ${ssRound(l.qty)} ${unit} (${boyCount} Boy / ${kgCount} kg)`,
+        note: `Akıllı Dağıtım: ${hatCode} (%${l.pct.toFixed(1)}) — ${ssRound(l.qty)} ${unit} (${boyCount} Boy / ${kgCount} kg)${ssGetKalipSetupHours() > 0 ? ` | Kalıp Değişimi: +${document.getElementById("ssKalipDakika")?.value || 45} dk` : ""}`,
         sync_mode: 'auto'
       };
 

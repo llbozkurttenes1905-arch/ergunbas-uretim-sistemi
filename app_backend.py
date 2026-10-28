@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Body, Header
+﻿from fastapi import FastAPI, HTTPException, Body, Header
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
@@ -330,14 +330,6 @@ def require_daily_operator(x_username: Optional[str]):
 
 app = FastAPI(title="ERGUNBAS GROUP Ekstrüder ve Levha Üretim Yönetim Sistemi")
 
-from fastapi.middleware.cors import CORSMiddleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ============================================================================
 # AY BAZINDA BÖLÜNMÜŞ DEPOLAMA (GitHub Contents API 1MB dosya sınırını aşmamak için)
@@ -7591,19 +7583,7 @@ def reorder_line_queue(req: QueueReorderRequest):
     return {"status": "ok", "order_id": req.order_id}
 
 
-@app.get("/mrp", response_class=FileResponse)
-def get_mrp_cockpit_page():
-    p = os.path.join(APP_DIR, "static", "mrp_planning.html")
-    if os.path.exists(p):
-        return FileResponse(p)
-    return HTMLResponse("<h1>MRP Planlama Ekranı Bulunamadı</h1>", status_code=404)
 
-@app.get("/planlama-mrp", response_class=FileResponse)
-def get_planlama_mrp_page():
-    p = os.path.join(APP_DIR, "static", "mrp_planning.html")
-    if os.path.exists(p):
-        return FileResponse(p)
-    return HTMLResponse("<h1>MRP Planlama Ekranı Bulunamadı</h1>", status_code=404)
 
 # Mount static files
 static_dir = os.path.join(APP_DIR, "static")

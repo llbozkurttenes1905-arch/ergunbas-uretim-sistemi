@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERGÜNBAŞ GROUP — MRP & ERP Üretim Planlama & Çizelgeleme Kokpiti</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ergunbas: {
+                            50: '#f0fdf4',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            gold: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Consolas', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* Print Mode */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .panel-card {
+                border: 1px solid #cbd5e1 !important;
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- TOP HEADER -->
+    <header class="no-print sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/80 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-600/30 font-black text-slate-950 text-xl tracking-wider">
+                    EG
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base font-black tracking-wide text-white flex items-center gap-2">
+                            ERGÜNBAŞ GROUP
+                            <span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider">MRP & ERP KOKPİTİ</span>
+                        </h1>
+                    </div>
+                    <p class="text-[11px] text-slate-400 flex items-center gap-2">
+                        <span>Ekstrüzyon & Levha Üretim Planlama, Çizelgeleme ve Malzeme İhtiyaç Motoru</span>
+                        <span class="inline-block w-1 h-1 rounded-full bg-slate-600"></span>
+                        <span class="text-slate-500 font-mono">v3.2 Canlı</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Live Status & Clock -->
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- Live Connection Badge -->
+                <div id="connection-status-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-[11px] text-emerald-300 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span id="connection-status-text">Canlı Sistem Bağlı</span>
+                </div>
+
+                <!-- Clock -->
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-300">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span id="live-clock">--:--:--</span>
+                </div>
+
+                <!-- Refresh Button -->
+                <button onclick="loadMrpData(true)" title="Verileri Yenile" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition flex items-center justify-center">
+                    <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4 text-sky-400"></i>
+                </button>
+
+                <!-- What-If Simulator Trigger -->
+                <button onclick="openMrpSimModal()" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black text-xs shadow-lg shadow-amber-600/25 transition flex items-center gap-1.5">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                    <span>Hızlı Sipariş Simülatörü</span>
+                </button>
+
+                <!-- Print Report Button -->
+                <button onclick="window.print()" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold transition flex items-center gap-1.5">
+                    <i data-lucide="printer" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Rapor Yazdır</span>
+                </button>
+
+                <!-- Back to Main App -->
+                <a href="/" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition" title="Ana Sisteme Dön">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- PRINT HEADER (Only visible when printing) -->
+    <div class="print-only p-6 border-b-2 border-slate-800">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900">ERGÜNBAŞ GROUP</h1>
+                <p class="text-xs text-slate-600 uppercase tracking-wider">MRP & ERP Ekstrüzyon Üretim Planlama & Çizelgeleme Raporu</p>
+            </div>
+            <div class="text-right text-xs text-slate-600 font-mono">
+                <div>Tarih: <span class="font-bold text-slate-900" id="print-date">-</span></div>
+                <div>Rapor Kodu: <span class="font-bold text-slate-900" id="print-doc-id">MRP-REP-2026</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 space-y-6">
+
+        <!-- EXECUTIVE KPI CARDS ROW (6 CARDS) -->
+        <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            
+            <!-- Card 1: Aktif İş Emri -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Aktif Sipariş</span>
+                    <i data-lucide="package" class="w-4 h-4 text-amber-400"></i>
+                </div>
+                <div class="text-2xl font-black text-white font-mono" id="kpi-total-orders">0</div>
+                <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>İş Listesi:</span>
+                    <span class="text-amber-400 font-bold" id="kpi-orders-subtext">0 Kalem</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700"></div>
+            </div>
+
+            <!-- Card 2: Net Planlanan Tonaj -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Planlanan Tonaj</span>
+                    <i data-lucide="scale" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-black text-emerald-400 font-mono" id="kpi-total-tonnage">0 kg</div>
+                <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>Brüt İhtiyaç:</span>
+                    <span class="text-slate-300 font-bold font-mono" id="kpi-gross-tonnage">0 kg</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-emerald-700"></div>
+            </div>
+
+            <!-- Card 3: Toplam Kuyruk Saati -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Kapasite / Kuyruk</span>
+                    <i data-lucide="clock" class="w-4 h-4 text-sky-400"></i>
+                </div>
+                <div class="text-2xl font-black text-sky-400 font-mono" id="kpi-total-hours">0 sa</div>
+                <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>Eşdeğer:</span>
+                    <span class="text-sky-300 font-bold font-mono" id="kpi-total-shifts">~0 Vardiya</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-sky-700"></div>
+            </div>
+
+            <!-- Card 4: MRP Risk Durumu -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Termin Güvenliği</span>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-black text-white font-mono flex items-center gap-1.5" id="kpi-risk-main">
+                    <span class="text-emerald-400" id="kpi-safe-count">0</span>
+                    <span class="text-slate-600 text-sm">/</span>
+                    <span class="text-rose-400 text-lg" id="kpi-risk-count">0</span>
+                </div>
+                <div class="text-[10px] text-slate-400 truncate" id="kpi-risk-summary">
+                    Termin analizi yapılıyor...
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500"></div>
+            </div>
+
+            <!-- Card 5: Mikser Şarj Talebi -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Mikser Talebi</span>
+                    <i data-lucide="cpu" class="w-4 h-4 text-purple-400"></i>
+                </div>
+                <div class="text-2xl font-black text-purple-400 font-mono" id="kpi-mixer-batches">0 Şarj</div>
+                <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>Reçete Harcı:</span>
+                    <span class="text-purple-300 font-bold font-mono" id="kpi-mixer-kg">0 kg</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-purple-700"></div>
+            </div>
+
+            <!-- Card 6: Kalıp Hazırlık Skoru -->
+            <div class="panel-card p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 space-y-2 relative overflow-hidden shadow-sm">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-black uppercase tracking-wider">Kalıp Hazırlık</span>
+                    <i data-lucide="wrench" class="w-4 h-4 text-amber-400"></i>
+                </div>
+                <div class="text-2xl font-black text-amber-400 font-mono" id="kpi-molds-ready">10 / 10</div>
+                <div class="text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>27 Ekim Verisi:</span>
+                    <span class="text-emerald-400 font-bold" id="kpi-molds-subtext">Takılı</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-emerald-500"></div>
+            </div>
+
+        </section>
+
+        <!-- 10 EKSTRÜDER HATTI ANLIK İŞ YÜKÜ & TAKILI KALIP MATRİSİ -->
+        <section class="panel-card rounded-2xl bg-slate-900/70 border border-slate-800/80 p-5 space-y-4 shadow-md">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                            10 Ekstrüder Hattı Anlık Kapasite & Takılı Kalıp Matrisi
+                        </h2>
+                        <p class="text-[11px] text-slate-400">27 Ekim fiili vardiya verilerine dayalı takılı kalıp durumu ve sıradaki iş yükü</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 text-xs font-mono">
+                    <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Çift Göz</span>
+                    <span class="flex items-center gap-1.5 text-cyan-400"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> Tek Göz</span>
+                    <span class="flex items-center gap-1.5 text-purple-400"><span class="w-2 h-2 rounded-full bg-purple-400"></span> Levha Kalıbı</span>
+                </div>
+            </div>
+
+            <!-- Lines Grid Container (10 Cards) -->
+            <div id="mrp-lines-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+                <!-- Javascript will inject 10 cards here -->
+                <div class="col-span-full py-8 text-center text-slate-500 font-mono text-xs">
+                    <i data-lucide="loader" class="w-5 h-5 animate-spin inline-block mr-2 text-amber-500"></i>
+                    Hat durumları ve kalıp verileri yükleniyor...
+                </div>
+            </div>
+
+        </section>
+
+        <!-- MASTER PRODUCTION SCHEDULE (MPS) - ANA SİPARİŞ PLANLAMA TABLOSU -->
+        <section class="panel-card rounded-2xl bg-slate-900/70 border border-slate-800/80 p-5 space-y-4 shadow-md">
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                            MRP & ERP Ana Üretim Çizelgeleme Tablosu (MPS)
+                        </h2>
+                        <p class="text-[11px] text-slate-400">Sıfır risk metodolojisi, kalıp hazırlık süresi (+45 dk) ve net teslimat tahminleri (ETA)</p>
+                    </div>
+                </div>
+
+                <!-- Filters & Search Toolbar -->
+                <div class="no-print flex flex-wrap items-center gap-2.5">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                        <input type="text" id="mrp-search-input" oninput="filterMrpOrders()" placeholder="Sipariş / Müşteri / Ürün Ara..." class="bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 w-52 font-medium">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <select id="mrp-cat-filter" onchange="filterMrpOrders()" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-bold focus:outline-none focus:border-amber-500">
+                        <option value="ALL">Tüm Kategoriler</option>
+                        <option value="Kasa">Kasa Grupları</option>
+                        <option value="Pervaz">Pervaz Grupları</option>
+                        <option value="Seren">Seren Grupları</option>
+                        <option value="Levha">PVC Levha</option>
+                    </select>
+
+                    <!-- Risk Filter -->
+                    <select id="mrp-risk-filter" onchange="filterMrpOrders()" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-bold focus:outline-none focus:border-amber-500">
+                        <option value="ALL">Tüm Risk Seviyeleri</option>
+                        <option value="SIFIR_RISK">🟢 Sıfır Risk (Güvenli)</option>
+                        <option value="KRITIK">🟡 Kritik Sınır (≤24s)</option>
+                        <option value="GECIKME_RISKI">🔴 Gecikme Riski</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="bg-slate-950/90 text-slate-400 font-mono border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                            <th class="p-3 font-bold">İş Emri / Sipariş</th>
+                            <th class="p-3 font-bold">Müşteri</th>
+                            <th class="p-3 font-bold">Ürün / Profil</th>
+                            <th class="p-3 font-bold">Kesim Ölçüsü</th>
+                            <th class="p-3 font-bold text-right">Net Sipariş</th>
+                            <th class="p-3 font-bold text-right">Brüt Tonaj</th>
+                            <th class="p-3 font-bold">Atanan Hat</th>
+                            <th class="p-3 font-bold">Kalıp Durumu</th>
+                            <th class="p-3 font-bold">Başlangıç</th>
+                            <th class="p-3 font-bold">Tahmini Bitiş (ETA)</th>
+                            <th class="p-3 font-bold">Termin</th>
+                            <th class="p-3 font-bold text-right">Emniyet Marjı</th>
+                            <th class="p-3 font-bold text-center">MRP Risk Rozeti</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mrp-orders-tbody" class="divide-y divide-slate-800/60 font-medium">
+                        <tr>
+                            <td colspan="13" class="p-8 text-center text-slate-500 font-mono">
+                                <i data-lucide="loader" class="w-5 h-5 animate-spin inline-block mr-2 text-amber-500"></i>
+                                MRP üretim planı hesaplanıyor...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- MALZEME İHTİYAÇ PLANLAMASI (BOM, MİKSER & HAMMADDE TALEBİ) -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            
+            <!-- Left: Mikser Reçete & Şarj Talebi -->
+            <div class="panel-card rounded-2xl bg-slate-900/70 border border-slate-800/80 p-5 space-y-4 shadow-md">
+                <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                        <i data-lucide="blend" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black text-white uppercase tracking-wider">Mikser Reçete & Şarj İhtiyacı</h3>
+                        <p class="text-[11px] text-slate-400">Planlanan siparişler için gereken mikser harman şarjları</p>
+                    </div>
+                </div>
+
+                <div id="mrp-mixer-container" class="space-y-2.5">
+                    <!-- Javascript will inject mixer batches -->
+                    <div class="py-6 text-center text-slate-500 font-mono text-xs">Mikser verisi yükleniyor...</div>
+                </div>
+            </div>
+
+            <!-- Right: Hammadde Stok & İhtiyaç Matrisi -->
+            <div class="panel-card rounded-2xl bg-slate-900/70 border border-slate-800/80 p-5 space-y-4 shadow-md">
+                <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="boxes" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black text-white uppercase tracking-wider">Kritik Hammadde Stok Yeterliliği</h3>
+                        <p class="text-[11px] text-slate-400">Reçetelere göre tüketilecek hammadde ve stok karşılama analizi</p>
+                    </div>
+                </div>
+
+                <div id="mrp-raw-materials-container" class="space-y-2.5">
+                    <!-- Javascript will inject raw materials demand -->
+                    <div class="py-6 text-center text-slate-500 font-mono text-xs">Hammadde verisi yükleniyor...</div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="no-print mt-12 bg-slate-950 border-t border-slate-800/80 py-4 px-4 lg:px-8 text-center text-slate-500 text-xs font-mono">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>ERGÜNBAŞ GROUP &copy; 2026 — Profil Ekstrüzyon & PVC Levha Üretim Birimi</div>
+            <div class="text-slate-400">MRP/ERP Çizelgeleme Motoru &bull; Sıfır Risk Algoritması</div>
+        </div>
+    </footer>
+
+    <!-- WHAT-IF SIMULATOR MODAL -->
+    <div id="mrpSimModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden text-slate-100">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-white">Hızlı ERP / MRP Sipariş Simülatörü</h3>
+                        <p class="text-[11px] text-slate-400">Sistemi bozmadan anında kalıp ve hat uygunluk testi yapın</p>
+                    </div>
+                </div>
+                <button onclick="closeMrpSimModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-center">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 space-y-4 overflow-y-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Ürün / Profil Seçimi</label>
+                        <select id="sim-product-select" onchange="runSimCalculation()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold text-xs focus:outline-none focus:border-amber-500">
+                            <option value="200 mm KASA">200 mm Kasa (Geniş Kasa)</option>
+                            <option value="140 mm KASA">140 mm Kasa (Standart Kasa)</option>
+                            <option value="100 mm KASA">100 mm Kasa (Dar Kasa)</option>
+                            <option value="50X80 PERVAZ">50x80 Oval / Düz Pervaz</option>
+                            <option value="80X80 PERVAZ">80x80 Düz / Oval Pervaz</option>
+                            <option value="SEREN">38x45 WPC Kapı Sereni</option>
+                            <option value="DİŞBUDAK Levha">DİŞBUDAK Levha (Hat 201)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Sipariş Miktarı (Takım / Adet)</label>
+                        <input type="number" id="sim-qty-input" value="1000" min="10" step="50" oninput="runSimCalculation()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono font-bold text-xs focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <!-- Simulation Result Card -->
+                <div id="sim-result-box" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+                    <!-- Computed by JS -->
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-5 py-3 bg-slate-950 border-t border-slate-800 flex items-center justify-end">
+                <button onclick="closeMrpSimModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT MRP / ERP LOGIC -->
+    <script>
+        // 27 Ekim 2026 Fiili Kalıp Durumları
+        const CURRENT_MOLDS_27 = {
+            'Hat 101': { name: 'Kalıp Takılı Değil (Hat Boşta)', profileKey: null },
+            'Hat 102': { name: '140 mm Kasa Kalıbı', profileKey: 'KASA_140' },
+            'Hat 103': { name: '50x80 Pervaz Kalıbı', profileKey: 'PERVAZ_50x80' },
+            'Hat 104': { name: 'Seren Kalıbı (Çift Kafa)', profileKey: 'SEREN' },
+            'Hat 105': { name: 'Seren Kalıbı (Çift Kafa)', profileKey: 'SEREN' },
+            'Hat 106': { name: '140 mm Kasa Kalıbı', profileKey: 'KASA_140' },
+            'Hat 107': { name: 'Seren (39mm) Kalıbı', profileKey: 'SEREN_39' },
+            'Hat 108': { name: '200 mm Kasa Kalıbı', profileKey: 'KASA_200' },
+            'Hat 109': { name: '50x80 Pervaz Kalıbı', profileKey: 'PERVAZ_50x80' },
+            'Hat 201': { name: 'Levha Kalender T-Die Kalıp', profileKey: 'LEVHA' }
+        };
+
+        const LAST_PROD_27 = {
+            'Hat 101': 'Boşta / Üretim Yok',
+            'Hat 102': '140 mm Kasa (330 boy)',
+            'Hat 103': '50x80 Pervaz (625 boy)',
+            'Hat 104': 'Seren (870 boy)',
+            'Hat 105': 'Seren (642 boy)',
+            'Hat 106': '140 mm Kasa (241 boy)',
+            'Hat 107': 'Seren 39mm (675 boy)',
+            'Hat 108': '200 mm Kasa (218 boy)',
+            'Hat 109': '50x80 Pervaz (1.405 boy)',
+            'Hat 201': 'Dişbudak: 940 | K.Ceviz: 70 | Coco: 52 (Top: 1.062 Adet)'
+        };
+
+        let rawMrpData = null;
+
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('tr-TR');
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) clockEl.textContent = timeStr;
+
+            const printDateEl = document.getElementById('print-date');
+            if (printDateEl) printDateEl.textContent = now.toLocaleDateString('tr-TR') + ' ' + timeStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Safe Icon Creator
+        function safeIcons() {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+        }
+
+        // Fetch Live MRP Data
+        async function loadMrpData(isManual = false) {
+            const refreshIcon = document.getElementById('refresh-icon');
+            if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            const statusText = document.getElementById('connection-status-text');
+            const statusBadge = document.getElementById('connection-status-badge');
+
+            try {
+                // Try relative API first, then fallback to local
+                const res = await fetch('/api/planning/master').catch(() => null);
+                
+                if (res && res.ok) {
+                    rawMrpData = await res.json();
+                    if (statusText) statusText.textContent = 'Canlı Sistem Bağlı';
+                    if (statusBadge) {
+                        statusBadge.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-[11px] text-emerald-300 font-bold';
+                    }
+                } else {
+                    // Try localhost:8000
+                    const resLocal = await fetch('http://127.0.0.1:8000/api/planning/master').catch(() => null);
+                    if (resLocal && resLocal.ok) {
+                        rawMrpData = await resLocal.json();
+                        if (statusText) statusText.textContent = 'Yerel Sunucu Bağlı';
+                    } else {
+                        throw new Error('API bağlantısı kurulamadı');
+                    }
+                }
+
+                renderMrpKPIs(rawMrpData.summary);
+                renderMrpLinesGrid(rawMrpData.line_schedules);
+                renderMrpOrdersTable(rawMrpData.planned_orders);
+                renderMrpMixerDemands(rawMrpData.mixer_demands);
+                renderMrpRawMaterials(rawMrpData.raw_materials_demand);
+
+            } catch (err) {
+                console.warn('Canlı API bağlanamadı, simüle MRP veri havuzu kullanılıyor:', err);
+                if (statusText) statusText.textContent = 'Simüle MRP Verisi';
+                if (statusBadge) {
+                    statusBadge.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/50 border border-amber-500/40 text-[11px] text-amber-300 font-bold';
+                }
+                loadMockMrpData();
+            } finally {
+                if (refreshIcon) {
+                    setTimeout(() => refreshIcon.classList.remove('animate-spin'), 600);
+                }
+                safeIcons();
+            }
+        }
+
+        // Render Executive KPIs
+        function renderMrpKPIs(summary) {
+            if (!summary) return;
+            document.getElementById('kpi-total-orders').textContent = summary.active_orders_count || 0;
+            document.getElementById('kpi-orders-subtext').textContent = (summary.paused_orders_count > 0) ? `${summary.paused_orders_count} Donduruldu` : 'Kesintisiz';
+            
+            document.getElementById('kpi-total-tonnage').textContent = `${(summary.total_net_kg || 0).toLocaleString('tr-TR')} kg`;
+            document.getElementById('kpi-gross-tonnage').textContent = `${(summary.total_gross_kg || 0).toLocaleString('tr-TR')} kg`;
+
+            document.getElementById('kpi-total-hours').textContent = `${(summary.total_line_hours || 0).toLocaleString('tr-TR')} sa`;
+            document.getElementById('kpi-total-shifts').textContent = `~${summary.total_shifts || 0} Vardiya`;
+
+            document.getElementById('kpi-safe-count').textContent = summary.zero_risk_count || 0;
+            document.getElementById('kpi-risk-count').textContent = summary.delayed_count || 0;
+
+            const riskSummary = document.getElementById('kpi-risk-summary');
+            if (summary.delayed_count > 0) {
+                riskSummary.innerHTML = `<span class="text-rose-400 font-bold">${summary.delayed_count} siparişte termin aşımı var!</span>`;
+            } else if (summary.critical_count > 0) {
+                riskSummary.innerHTML = `<span class="text-amber-400 font-bold">${summary.critical_count} sipariş kritik sınırda</span>`;
+            } else {
+                riskSummary.innerHTML = `<span class="text-emerald-400 font-bold">Tüm siparişler sıfır riskle güvende</span>`;
+            }
+
+            document.getElementById('kpi-mixer-batches').textContent = `${summary.total_mixer_batches || 0} Şarj`;
+            document.getElementById('kpi-mixer-kg').textContent = `${(summary.total_gross_kg || 0).toLocaleString('tr-TR')} kg`;
+        }
+
+        // Render 10 Lines Capacity & Installed Molds Matrix
+        function renderMrpLinesGrid(lines) {
+            const container = document.getElementById('mrp-lines-grid');
+            if (!container || !lines) return;
+
+            let html = '';
+            lines.forEach(l => {
+                const hatName = l.hat;
+                const hasWork = (l.queue_hours || 0) > 0;
+                const curMoldInfo = CURRENT_MOLDS_27[hatName] || { name: 'Kalıp Takılı Değil', profileKey: null };
+                const isDoubleHead = curMoldInfo.name.includes('Çift Kafa') || hatName === 'Hat 101' || hatName === 'Hat 103' || hatName === 'Hat 104' || hatName === 'Hat 105' || hatName === 'Hat 109';
+                const isLevha = hatName === 'Hat 201';
+
+                const badgeColor = isLevha ? 'border-purple-500/40 text-purple-300 bg-purple-950/60' : (isDoubleHead ? 'border-emerald-500/40 text-emerald-300 bg-emerald-950/60' : 'border-cyan-500/40 text-cyan-300 bg-cyan-950/60');
+                const eyeLabel = isLevha ? 'Levha T-Die' : (isDoubleHead ? 'Çift Göz (2 Kafa)' : 'Tek Göz (1 Kafa)');
+
+                const lastProd = LAST_PROD_27[hatName] || 'Boşta';
+
+                html += `
+                    <div class="panel-card p-3 rounded-xl ${hasWork ? 'bg-slate-900/90 border border-amber-500/40 shadow-lg shadow-amber-950/20' : 'bg-slate-950/70 border border-slate-800/80'} space-y-2.5 relative overflow-hidden group hover:border-slate-700 transition">
+                        
+                        <!-- Header -->
+                        <div class="flex items-center justify-between gap-1">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-black text-xs text-white">${hatName}</span>
+                                ${hasWork 
+                                    ? `<span class="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold text-[9px] animate-pulse">● ÜRETİMDE</span>`
+                                    : `<span class="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-medium text-[9px]">Boşta</span>`}
+                            </div>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded border font-mono ${badgeColor}">${eyeLabel}</span>
+                        </div>
+
+                        <!-- Active Product / 27 Ekim Üretimi -->
+                        <div class="p-2 rounded-lg ${hasWork ? 'bg-amber-950/40 border border-amber-500/30' : 'bg-slate-900/80 border border-slate-800/80'}">
+                            <div class="flex items-center justify-between text-[10px] mb-0.5">
+                                <span class="${hasWork ? 'text-amber-400 font-bold' : 'text-slate-400'} uppercase flex items-center gap-1">
+                                    <i data-lucide="${hasWork ? 'play' : 'history'}" class="w-3 h-3"></i> ${hasWork ? 'Çekilen Ürün:' : '27 Ekim Üretimi:'}
+                                </span>
+                                ${hasWork ? `<span class="text-amber-300 font-mono text-[10px] font-bold">${l.queue_hours} sa</span>` : ''}
+                            </div>
+                            <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-300'} truncate" title="${hasWork ? l.active_product : lastProd}">
+                                ${hasWork ? l.active_product : (isLevha ? '<span class="text-purple-300 font-bold">Dişbudak: 940, Ceviz: 70, Coco: 52</span> <span class="text-purple-400 font-mono text-[10px] font-black">(1.062 Adet)</span>' : lastProd)}
+                            </div>
+                        </div>
+
+                        <!-- Takılı Kalıp -->
+                        <div class="flex items-center justify-between text-[10px] px-2 py-1.5 rounded-lg bg-slate-950/90 border border-slate-800/80">
+                            <span class="text-slate-400 font-bold flex items-center gap-1 shrink-0">
+                                <i data-lucide="wrench" class="w-3 h-3 text-sky-400"></i> Takılı Kalıp:
+                            </span>
+                            <span class="font-bold text-sky-300 truncate max-w-[140px] text-right" title="${curMoldInfo.name}">
+                                ${curMoldInfo.name}
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar & Queue -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                                <span>Kuyruk: <b class="${hasWork ? 'text-amber-300' : 'text-slate-500'}">${hasWork ? l.queue_hours + ' sa' : '0 sa'}</b></span>
+                                <span>Sırada: <b>${(l.assigned_orders || []).length} İş</b></span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full ${hasWork ? (isDoubleHead ? 'bg-emerald-400' : 'bg-cyan-400') : 'bg-slate-700'}" style="width:${hasWork ? Math.min(100, Math.max(15, l.queue_hours * 2.5)) : 0}%"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render MRP Orders Table
+        function renderMrpOrdersTable(orders) {
+            const tbody = document.getElementById('mrp-orders-tbody');
+            if (!tbody) return;
+
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" class="p-8 text-center text-slate-500 font-mono">Aktif iş emri bulunamadı. Yeni sipariş simülatörünü kullanarak iş emri planlayabilirsiniz.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            orders.forEach(o => {
+                const hatName = o.assigned_hat || 'Hat 108';
+                const curMold = CURRENT_MOLDS_27[hatName] || { name: 'Kalıp Bilinmiyor', profileKey: null };
+                const isLevha = o.category === 'Levha' || hatName === 'Hat 201';
+                
+                // Match profile key to see if mold matches
+                const pUpper = (o.product || '').toUpperCase();
+                let pKey = 'KASA_140';
+                if (pUpper.includes('200')) pKey = 'KASA_200';
+                else if (pUpper.includes('100')) pKey = 'KASA_100';
+                else if (pUpper.includes('50X80')) pKey = 'PERVAZ_50x80';
+                else if (pUpper.includes('80X80')) pKey = 'PERVAZ_80x80';
+                else if (pUpper.includes('SEREN')) pKey = 'SEREN';
+                else if (pUpper.includes('LEVHA')) pKey = 'LEVHA';
+
+                const moldMatches = isLevha || (curMold.profileKey === pKey);
+
+                const moldBadge = isLevha 
+                    ? `<span class="px-2 py-0.5 rounded bg-purple-950/70 text-purple-300 border border-purple-800/60 font-mono text-[10px]">Levha Kalıbı</span>`
+                    : (moldMatches 
+                        ? `<span class="px-2 py-0.5 rounded bg-emerald-950/70 text-emerald-300 border border-emerald-800/60 font-mono text-[10px] flex items-center gap-1 w-max"><i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> Kalıp Takılı</span>`
+                        : `<span class="px-2 py-0.5 rounded bg-amber-950/70 text-amber-300 border border-amber-800/60 font-mono text-[10px] flex items-center gap-1 w-max"><i data-lucide="alert-triangle" class="w-3 h-3 text-amber-400"></i> +45 dk Değişim</span>`);
+
+                const riskBadgeClass = o.risk_status === 'SIFIR_RISK'
+                    ? 'bg-emerald-950/70 text-emerald-300 border-emerald-800'
+                    : (o.risk_status === 'KRITIK'
+                        ? 'bg-amber-950/70 text-amber-300 border-amber-800'
+                        : 'bg-rose-950/70 text-rose-300 border-rose-800 animate-pulse');
+
+                const marginTxt = o.margin_hours >= 0 ? `+${o.margin_hours} sa` : `${o.margin_hours} sa`;
+                const marginColor = o.margin_hours >= 24 ? 'text-emerald-400 font-bold' : (o.margin_hours >= 0 ? 'text-amber-400 font-bold' : 'text-rose-400 font-black');
+
+                html += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 font-mono font-bold text-white">${o.order_id || 'IE-2026-01'}</td>
+                        <td class="p-3 font-bold text-slate-200 truncate max-w-[150px]" title="${o.customer}">${o.customer || 'Ergünbaş Stok'}</td>
+                        <td class="p-3 font-black text-amber-400">${o.product}</td>
+                        <td class="p-3 font-mono text-slate-300">${o.dim || '2.20 m'}</td>
+                        <td class="p-3 text-right font-mono font-bold text-white">${(o.net_needed_qty || o.order_qty || 0).toLocaleString('tr-TR')} ${o.unit || 'Boy'}</td>
+                        <td class="p-3 text-right font-mono text-emerald-400">${(o.gross_kg || 0).toLocaleString('tr-TR')} kg</td>
+                        <td class="p-3 font-bold text-sky-300">${hatName}</td>
+                        <td class="p-3">${moldBadge}</td>
+                        <td class="p-3 font-mono text-slate-400 text-[11px]">${o.start_time || 'Hemen'}</td>
+                        <td class="p-3 font-mono text-amber-300 text-[11px] font-bold">${o.finish_time || 'Hesaplanıyor'}</td>
+                        <td class="p-3 font-mono text-slate-300 text-[11px]">${o.due_date || '-'}</td>
+                        <td class="p-3 text-right font-mono ${marginColor}">${marginTxt}</td>
+                        <td class="p-3 text-center">
+                            <span class="px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ${riskBadgeClass}">
+                                ${o.risk_badge || '🟢 Sıfır Risk'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Render Mixer Demands
+        function renderMrpMixerDemands(mixerDemands) {
+            const container = document.getElementById('mrp-mixer-container');
+            if (!container) return;
+
+            if (!mixerDemands || Object.keys(mixerDemands).length === 0) {
+                container.innerHTML = `<div class="py-4 text-center text-slate-500 font-mono text-xs">Aktif reçete talebi bulunamadı.</div>`;
+                return;
+            }
+
+            let html = '';
+            for (const [key, val] of Object.entries(mixerDemands)) {
+                html += `
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                            <span class="font-bold text-white">${val.recipe || key}</span>
+                        </div>
+                        <div class="flex items-center gap-4 font-mono">
+                            <span class="text-slate-400">${val.orders_count || 1} İş Emri</span>
+                            <span class="text-purple-300 font-bold">${val.batches || 0} Şarj</span>
+                            <span class="text-emerald-400 font-black">${(val.total_kg || 0).toLocaleString('tr-TR')} kg</span>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // Render Raw Materials Demand & Stock Check
+        function renderMrpRawMaterials(rawMaterials) {
+            const container = document.getElementById('mrp-raw-materials-container');
+            if (!container) return;
+
+            if (!rawMaterials || rawMaterials.length === 0) {
+                // Fallback default list
+                rawMaterials = [
+                    { material: 'PVC K-67 Polimer', required_kg: 18500, stock_kg: 42000, status: 'Yeterli' },
+                    { material: 'Kalsit (Kalsiyum Karbonat)', required_kg: 12000, stock_kg: 28500, status: 'Yeterli' },
+                    { material: 'Ca-Zn Kurşunsuz Stabilizatör', required_kg: 1100, stock_kg: 3400, status: 'Yeterli' },
+                    { material: 'Titanyum Dioksit (TiO2)', required_kg: 750, stock_kg: 1800, status: 'Yeterli' },
+                    { material: 'CPE / Akrilik Darbe Kırıcı', required_kg: 1450, stock_kg: 3100, status: 'Yeterli' },
+                    { material: 'Ahşap Unu / Talaş (WPC)', required_kg: 8400, stock_kg: 19000, status: 'Yeterli' }
+                ];
+            }
+
+            let html = '';
+            rawMaterials.forEach(m => {
+                const req = m.required_kg || 0;
+                const st = m.stock_kg || 0;
+                const pct = st > 0 ? Math.min(100, Math.round((req / st) * 100)) : 100;
+                const statusColor = pct > 90 ? 'text-rose-400' : (pct > 60 ? 'text-amber-400' : 'text-emerald-400');
+
+                html += `
+                    <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs space-y-1.5">
+                        <div class="flex items-center justify-between font-bold">
+                            <span class="text-slate-200">${m.material}</span>
+                            <span class="font-mono ${statusColor}">${req.toLocaleString('tr-TR')} kg / ${st.toLocaleString('tr-TR')} kg</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full ${pct > 90 ? 'bg-rose-500' : (pct > 60 ? 'bg-amber-500' : 'bg-emerald-500')}" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Mock Fallback Data (When backend is disconnected)
+        function loadMockMrpData() {
+            const mockSummary = {
+                active_orders_count: 5,
+                paused_orders_count: 0,
+                total_net_kg: 18450,
+                total_gross_kg: 21200,
+                total_line_hours: 86.4,
+                total_shifts: 7.2,
+                zero_risk_count: 4,
+                critical_count: 1,
+                delayed_count: 0,
+                total_mixer_batches: 28
+            };
+
+            const mockLines = [
+                { hat: 'Hat 101', queue_hours: 0, active_product: null, assigned_orders: [] },
+                { hat: 'Hat 102', queue_hours: 14.5, active_product: '140 mm Kasa (Standart)', assigned_orders: [1] },
+                { hat: 'Hat 103', queue_hours: 18.0, active_product: '50x80 Pervaz', assigned_orders: [1] },
+                { hat: 'Hat 104', queue_hours: 22.0, active_product: 'Seren (38x45)', assigned_orders: [1] },
+                { hat: 'Hat 105', queue_hours: 21.0, active_product: 'Seren (38x45)', assigned_orders: [1] },
+                { hat: 'Hat 106', queue_hours: 16.5, active_product: '140 mm Kasa (Standart)', assigned_orders: [1] },
+                { hat: 'Hat 107', queue_hours: 0, active_product: null, assigned_orders: [] },
+                { hat: 'Hat 108', queue_hours: 28.0, active_product: '200 mm Kasa (Geniş)', assigned_orders: [1] },
+                { hat: 'Hat 109', queue_hours: 12.0, active_product: '50x80 Pervaz', assigned_orders: [1] },
+                { hat: 'Hat 201', queue_hours: 32.0, active_product: 'DİŞBUDAK Levha (940 Adet)', assigned_orders: [1] }
+            ];
+
+            const mockOrders = [
+                {
+                    order_id: 'IE-2026-108',
+                    customer: 'Ergünbaş Proje Stoğu',
+                    product: '200 mm KASA',
+                    dim: '2.20 m (220 cm)',
+                    net_needed_qty: 600,
+                    gross_kg: 4470,
+                    unit: 'Takım',
+                    assigned_hat: 'Hat 108',
+                    start_time: '28.10.2026 14:00',
+                    finish_time: '29.10.2026 18:30',
+                    due_date: '02.11.2026',
+                    margin_hours: 71.5,
+                    risk_status: 'SIFIR_RISK',
+                    risk_badge: '🟢 Sıfır Risk (+72 sa)'
+                },
+                {
+                    order_id: 'IE-2026-106',
+                    customer: 'Özkan Yapı İnşaat',
+                    product: '140 mm KASA',
+                    dim: '2.20 m (220 cm)',
+                    net_needed_qty: 800,
+                    gross_kg: 4248,
+                    unit: 'Takım',
+                    assigned_hat: 'Hat 106',
+                    start_time: '28.10.2026 14:00',
+                    finish_time: '29.10.2026 16:00',
+                    due_date: '31.10.2026',
+                    margin_hours: 48.0,
+                    risk_status: 'SIFIR_RISK',
+                    risk_badge: '🟢 Sıfır Risk (+48 sa)'
+                },
+                {
+                    order_id: 'IE-2026-109',
+                    customer: 'Delta Plastik A.Ş.',
+                    product: '50X80 PERVAZ',
+                    dim: '2.20 m (220 cm)',
+                    net_needed_qty: 1200,
+                    gross_kg: 3696,
+                    unit: 'Takım',
+                    assigned_hat: 'Hat 109',
+                    start_time: '28.10.2026 14:00',
+                    finish_time: '29.10.2026 02:00',
+                    due_date: '30.10.2026',
+                    margin_hours: 22.0,
+                    risk_status: 'KRITIK',
+                    risk_badge: '🟡 Kritik (+22 sa)'
+                },
+                {
+                    order_id: 'IE-2026-104',
+                    customer: 'Erdoor İç Kapı Sistemleri',
+                    product: 'SEREN',
+                    dim: '2.20 m (220 cm)',
+                    net_needed_qty: 1500,
+                    gross_kg: 2188,
+                    unit: 'Adet',
+                    assigned_hat: 'Hat 104',
+                    start_time: '28.10.2026 14:00',
+                    finish_time: '29.10.2026 12:00',
+                    due_date: '03.11.2026',
+                    margin_hours: 110.0,
+                    risk_status: 'SIFIR_RISK',
+                    risk_badge: '🟢 Sıfır Risk (+110 sa)'
+                },
+                {
+                    order_id: 'IE-2026-201',
+                    customer: 'Fabrika Levha Stoğu',
+                    product: 'DİŞBUDAK Levha',
+                    dim: '94 x 207 cm',
+                    net_needed_qty: 500,
+                    gross_kg: 2385,
+                    unit: 'Plaka',
+                    assigned_hat: 'Hat 201',
+                    start_time: '28.10.2026 14:00',
+                    finish_time: '29.10.2026 22:00',
+                    due_date: '04.11.2026',
+                    margin_hours: 122.0,
+                    risk_status: 'SIFIR_RISK',
+                    risk_badge: '🟢 Sıfır Risk (+122 sa)'
+                }
+            ];
+
+            const mockMixer = {
+                'Kasa Pervaz Standart': { recipe: 'Kasa Pervaz Standart', batches: 16, total_kg: 12414, orders_count: 3 },
+                'Seren Özel Karışım': { recipe: 'Seren Özel Karışım', batches: 6, total_kg: 2188, orders_count: 1 },
+                'Levha Renkli (Dişbudak)': { recipe: 'Levha Renkli (Dişbudak)', batches: 6, total_kg: 2385, orders_count: 1 }
+            };
+
+            rawMrpData = {
+                summary: mockSummary,
+                line_schedules: mockLines,
+                planned_orders: mockOrders,
+                mixer_demands: mockMixer,
+                raw_materials_demand: null
+            };
+
+            renderMrpKPIs(mockSummary);
+            renderMrpLinesGrid(mockLines);
+            renderMrpOrdersTable(mockOrders);
+            renderMrpMixerDemands(mockMixer);
+            renderMrpRawMaterials(null);
+            safeIcons();
+        }
+
+        // Filter Orders Table
+        function filterMrpOrders() {
+            if (!rawMrpData || !rawMrpData.planned_orders) return;
+
+            const searchVal = (document.getElementById('mrp-search-input')?.value || '').toLowerCase().trim();
+            const catVal = document.getElementById('mrp-cat-filter')?.value || 'ALL';
+            const riskVal = document.getElementById('mrp-risk-filter')?.value || 'ALL';
+
+            const filtered = rawMrpData.planned_orders.filter(o => {
+                const matchSearch = !searchVal || 
+                    (o.customer || '').toLowerCase().includes(searchVal) ||
+                    (o.product || '').toLowerCase().includes(searchVal) ||
+                    (o.order_id || '').toLowerCase().includes(searchVal) ||
+                    (o.assigned_hat || '').toLowerCase().includes(searchVal);
+
+                const matchCat = (catVal === 'ALL') || (o.category === catVal) || (o.product || '').includes(catVal);
+                const matchRisk = (riskVal === 'ALL') || (o.risk_status === riskVal);
+
+                return matchSearch && matchCat && matchRisk;
+            });
+
+            renderMrpOrdersTable(filtered);
+            safeIcons();
+        }
+
+        // What-If Simulator Functions
+        function openMrpSimModal() {
+            const modal = document.getElementById('mrpSimModal');
+            if (modal) modal.classList.remove('hidden');
+            runSimCalculation();
+            safeIcons();
+        }
+
+        function closeMrpSimModal() {
+            const modal = document.getElementById('mrpSimModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function runSimCalculation() {
+            const prod = document.getElementById('sim-product-select')?.value || '200 mm KASA';
+            const qty = parseFloat(document.getElementById('sim-qty-input')?.value || 1000);
+            const box = document.getElementById('sim-result-box');
+            if (!box) return;
+
+            let recHat1 = 'Hat 108';
+            let recHat2 = 'Hat 107';
+            let speed1 = 14.0;
+            let speed2 = 12.9;
+            let ratio1 = 60;
+            let ratio2 = 40;
+            let boyFactor = 2.5;
+            let kgPerBoy = 7.45;
+
+            if (prod.includes('200')) {
+                recHat1 = 'Hat 108'; recHat2 = 'Hat 107';
+                speed1 = 14.0; speed2 = 12.9; ratio1 = 60; ratio2 = 40;
+            } else if (prod.includes('140')) {
+                recHat1 = 'Hat 106'; recHat2 = 'Hat 102';
+                speed1 = 14.0; speed2 = 10.4; ratio1 = 55; ratio2 = 45;
+                kgPerBoy = 5.31;
+            } else if (prod.includes('50X80')) {
+                recHat1 = 'Hat 109'; recHat2 = 'Hat 103';
+                speed1 = 50.2; speed2 = 31.5; ratio1 = 61.4; ratio2 = 38.6;
+                boyFactor = 5.0; kgPerBoy = 1.54;
+            } else if (prod.includes('SEREN')) {
+                recHat1 = 'Hat 104'; recHat2 = 'Hat 105';
+                speed1 = 31.2; speed2 = 30.0; ratio1 = 51; ratio2 = 49;
+                boyFactor = 3.5; kgPerBoy = 1.25;
+            }
+
+            const curMold1 = CURRENT_MOLDS_27[recHat1];
+            const curMold2 = CURRENT_MOLDS_27[recHat2];
+
+            const mold1Matches = prod.includes('200') ? (recHat1 === 'Hat 108') : (curMold1 && curMold1.name.includes(prod.split(' ')[0]));
+            const mold2Matches = prod.includes('200') ? (recHat2 === 'Hat 108') : (curMold2 && curMold2.name.includes(prod.split(' ')[0]));
+
+            const totalBoy = Math.round(qty * boyFactor);
+            const totalKg = Math.round(totalBoy * kgPerBoy);
+
+            const boy1 = Math.round(totalBoy * (ratio1 / 100));
+            const boy2 = Math.round(totalBoy * (ratio2 / 100));
+
+            const hours1 = (boy1 / speed1) + (mold1Matches ? 0 : 0.75);
+            const hours2 = (boy2 / speed2) + (mold2Matches ? 0 : 0.75);
+            const maxH = Math.max(hours1, hours2);
+
+            box.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <span class="text-xs font-black text-amber-400">Akıllı MRP Hat Önerisi</span>
+                    <span class="text-xs font-mono font-bold text-white">${totalBoy.toLocaleString('tr-TR')} Boy / ${totalKg.toLocaleString('tr-TR')} kg</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
+                        <div class="flex items-center justify-between font-bold">
+                            <span class="text-sky-300">${recHat1} (%${ratio1})</span>
+                            <span class="text-slate-400 font-mono">${hours1.toFixed(1)} sa</span>
+                        </div>
+                        <div class="text-[10px] ${mold1Matches ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}">
+                            ${mold1Matches ? '✅ Kalıp Takılı (0 dk Setup)' : '⚠️ Kalıp Değişimi (+45 dk Eklendi)'}
+                        </div>
+                    </div>
+                    <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
+                        <div class="flex items-center justify-between font-bold">
+                            <span class="text-sky-300">${recHat2} (%${ratio2})</span>
+                            <span class="text-slate-400 font-mono">${hours2.toFixed(1)} sa</span>
+                        </div>
+                        <div class="text-[10px] ${mold2Matches ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}">
+                            ${mold2Matches ? '✅ Kalıp Takılı (0 dk Setup)' : '⚠️ Kalıp Değişimi (+45 dk Eklendi)'}
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2.5 rounded-lg bg-emerald-950/50 border border-emerald-500/40 flex items-center justify-between text-xs">
+                    <span class="font-bold text-emerald-300">Eşzamanlı Teslimat Süresi:</span>
+                    <span class="text-emerald-400 font-mono font-black">${maxH.toFixed(1)} Saat (~${(maxH/12).toFixed(1)} Vardiya)</span>
+                </div>
+            `;
+            safeIcons();
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMrpData();
+        });
+    </script>
+</body>
+</html>

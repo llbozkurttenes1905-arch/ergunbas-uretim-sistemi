@@ -1513,6 +1513,17 @@
           "kg": 0.75
         }
       ]
+    },
+    {
+      "id": "rec_kasa_eski_form_l_11",
+      "name": "KASA(eski formül)",
+      "batch_kg": 240.0,
+      "ingredients": [
+        {
+          "material": "hurda",
+          "kg": 40.0
+        }
+      ]
     }
   ],
   "monthly_targets": {

@@ -11989,19 +11989,19 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 3413,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 5434,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 6489,
           "gece": 0,
           "status": "normal"
         },
@@ -12015,44 +12015,55 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1798,
+          "gece": 2895,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2100,
+          "gece": 2220,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1076,
+          "gece": 1595,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1662,
+          "gece": 1880,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 664,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
+          "gunduz": 1086,
           "gece": 0,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli (ÇAPAK)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 22,
+          "gece_sarj": 0,
+          "gunduz_kg": 7354.6,
+          "gece_kg": 0,
+          "toplam_kg": 7354.6
+        }
+      ],
+      "mixer_emp_gunduz": 13,
+      "mixer_emp_gece": 2
     }
   }
 }

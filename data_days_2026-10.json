@@ -11948,7 +11948,26 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Kalibre soğutma su deposu hasarlı olduğu için çalıştırılamıyor."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Kalibre soğutma su deposu hasarlı olduğu için çalıştırılamıyor."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

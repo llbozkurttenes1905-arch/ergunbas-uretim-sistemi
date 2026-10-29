@@ -12060,6 +12060,16 @@
           "gunduz_kg": 7354.6,
           "gece_kg": 0,
           "toplam_kg": 7354.6
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "SEREN (eski formül)",
+          "batch_kg": 240,
+          "gunduz_sarj": 52,
+          "gece_sarj": 0,
+          "gunduz_kg": 12480,
+          "gece_kg": 0,
+          "toplam_kg": 12480
         }
       ],
       "mixer_emp_gunduz": 13,

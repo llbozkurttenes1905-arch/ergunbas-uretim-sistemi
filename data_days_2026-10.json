@@ -11955,7 +11955,7 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
-          "down_min": 0.0,
+          "down_min": 720.0,
           "desc": "Kalibre soğutma su deposu hasarlı olduğu için çalıştırılamıyor."
         },
         {
@@ -11964,8 +11964,26 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
-          "down_min": 0.0,
+          "down_min": 720.0,
           "desc": "Kalibre soğutma su deposu hasarlı olduğu için çalıştırılamıyor."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": "Talaş bittiği için hammadde hazırlanamadı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 720.0,
+          "desc": "Talaş bittiği için hammadde hazırlanamadı."
         }
       ],
       "kirim": [

@@ -17089,19 +17089,6 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             const container = document.getElementById('planning-lines-grid');
             if (!container || !lines) return;
 
-            const LAST_PROD_27 = {
-                'Hat 101': 'Boşta / Üretim Yok',
-                'Hat 102': '140 mm Kasa (330 boy)',
-                'Hat 103': '50x80 Pervaz (625 boy)',
-                'Hat 104': 'Seren (870 boy)',
-                'Hat 105': 'Seren (642 boy)',
-                'Hat 106': '140 mm Kasa (241 boy)',
-                'Hat 107': 'Seren 39mm (675 boy)',
-                'Hat 108': '200 mm Kasa (218 boy)',
-                'Hat 109': '50x80 Pervaz (1.405 boy)',
-                'Hat 201': 'Dişbudak: 940 Adet | Koyu Ceviz: 70 Adet | Coco: 52 Adet (Toplam: 1.062 Adet)'
-            };
-
             let html = '';
             lines.forEach(line => {
                 const hasWork = line.queue_hours > 0;
@@ -17112,11 +17099,15 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 const eyeLabel = isLevha ? 'Levha Kalıbı' : (mold ? `${mold.heads} Göz (${isDoubleHead ? 'Çift' : 'Tek'} Kafa)` : 'Kalıp Boşta');
 
                 const pausedBadge = line.paused_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/60 font-mono">⏸️ ${line.paused_count} Donduruldu</span>` : '';
-                const urgentBadge = line.urgent_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-950/90 text-rose-300 border border-rose-700 animate-pulse font-mono font-bold">🚨 ${line.urgent_count} ACİL</span>` : '';
+                const urgentBadge = line.urgent_count > 0 ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-950/90 text-rose-300 border border-rose-700 animate-pulse font-mono font-bold">⚡ ${line.urgent_count} ACİL</span>` : '';
 
                 // Clean mold display without codes
                 const moldDisplay = mold && mold.name ? mold.name : 'Kalıp Takılı Değil';
-                const lastProdInfo = LAST_PROD_27[line.hat] || 'Boşta';
+                
+                // En son fiili üretim tarihi ve ürün bilgisi (Sistemden dinamik)
+                const lastProd = line.last_production;
+                const lastDateLabel = (lastProd && lastProd.date) ? `${lastProd.date} Üretimi:` : 'Son Üretim:';
+                const lastProdInfo = (lastProd && lastProd.summary) ? lastProd.summary : (line.active_product || 'Boşta / Üretim Yok');
 
                 html += `
                     <div class="rounded-xl border ${hasWork ? 'border-amber-500/50 bg-slate-900/90 shadow-lg shadow-amber-950/20' : 'border-slate-800/80 bg-slate-950/60'} p-3 space-y-2 relative overflow-hidden group hover:border-slate-600 transition">
@@ -17142,12 +17133,12 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                             <div class="p-2 rounded-lg ${hasWork ? 'bg-amber-950/40 border border-amber-500/30' : 'bg-slate-900/80 border border-slate-800/80'}">
                                 <div class="flex items-center justify-between text-[10px] mb-0.5">
                                     <span class="${hasWork ? 'text-amber-400 font-bold' : 'text-slate-400'} uppercase flex items-center gap-1">
-                                        <i data-lucide="${hasWork ? 'play' : 'history'}" class="w-3 h-3"></i> ${hasWork ? 'Çekilen Ürün:' : '27 Ekim Üretimi:'}
+                                        <i data-lucide="${hasWork ? 'play' : 'history'}" class="w-3 h-3"></i> ${hasWork ? 'Çekilen Ürün:' : lastDateLabel}
                                     </span>
                                     ${hasWork ? `<span class="text-amber-300 font-mono text-[10px] font-bold">${line.queue_hours} sa</span>` : ''}
                                 </div>
                                 <div class="text-[11px] font-black ${hasWork ? 'text-white' : 'text-slate-300'} truncate" title="${hasWork ? line.active_product : lastProdInfo}">
-                                    ${hasWork ? line.active_product : (isLevha ? '<span class="text-purple-300 font-bold">Dişbudak: 940</span>, <span class="text-amber-300 font-bold">Ceviz: 70</span>, <span class="text-orange-300 font-bold">Coco: 52</span> <span class="text-purple-400 font-mono text-[10px] font-black">(1.062 Adet)</span>' : lastProdInfo)}
+                                    ${hasWork ? line.active_product : lastProdInfo}
                                 </div>
                             </div>
 

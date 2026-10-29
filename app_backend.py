@@ -6997,6 +6997,69 @@ def get_planning_master_data():
     now_naive = now.replace(tzinfo=None) if hasattr(now, "tzinfo") and now.tzinfo else now
 
     all_hats = [f"Hat {i}" for i in range(101, 110)] + ["Hat 201"]
+    
+    # En son fiili üretim yapılan günü ve verileri otomatik tespit et
+    days_dict = data.get("days", {})
+    valid_day_keys = [k for k in days_dict.keys() if k.isdigit()]
+    latest_day_data = None
+    latest_date_label = "27 Ekim"
+
+    month_names = {
+        "01": "Ocak", "02": "Şubat", "03": "Mart", "04": "Nisan",
+        "05": "Mayıs", "06": "Haziran", "07": "Temmuz", "08": "Ağustos",
+        "09": "Eylül", "10": "Ekim", "11": "Kasım", "12": "Aralık"
+    }
+
+    if valid_day_keys:
+        valid_day_keys.sort(key=int)
+        latest_day_key = valid_day_keys[-1]
+        latest_day_data = days_dict[latest_day_key]
+        raw_date = latest_day_data.get("date", "")
+        if raw_date and "." in raw_date:
+            parts = raw_date.split(".")
+            d_num = parts[0].lstrip("0")
+            m_num = parts[1] if len(parts) > 1 else "10"
+            latest_date_label = f"{d_num} {month_names.get(m_num, 'Ekim')}"
+
+    # En son günün üretim verilerini hat bazında topla
+    last_prod_by_hat = {}
+    if latest_day_data:
+        gunduz = latest_day_data.get("gunduz", {})
+        gece = latest_day_data.get("gece", {})
+        
+        # Ekstrüderler (Hat 101-109)
+        all_extruders = (gunduz.get("extruders") or []) + (gece.get("extruders") or [])
+        for e in all_extruders:
+            h = str(e.get("hat", "")).strip()
+            if h:
+                norm_h = f"Hat {h}" if h.isdigit() else h
+                if norm_h not in last_prod_by_hat:
+                    last_prod_by_hat[norm_h] = {"product": e.get("product", ""), "qty": 0}
+                last_prod_by_hat[norm_h]["qty"] += int(e.get("qty", 0) or 0)
+                if e.get("product"):
+                    last_prod_by_hat[norm_h]["product"] = e.get("product")
+
+        # Levha (Hat 201)
+        all_levha = (gunduz.get("levha") or []) + (gece.get("levha") or [])
+        if isinstance(all_levha, dict):
+            all_levha = [all_levha]
+        levha_colors = {}
+        tot_levha_qty = 0
+        for lv in all_levha:
+            if isinstance(lv, dict):
+                col = lv.get("color", "DİŞBUDAK")
+                q = int(lv.get("qty", 0) or 0)
+                levha_colors[col] = levha_colors.get(col, 0) + q
+                tot_levha_qty += q
+        
+        if tot_levha_qty > 0:
+            color_summary = ", ".join([f"{c}: {q}" for c, q in levha_colors.items()])
+            last_prod_by_hat["Hat 201"] = {
+                "product": "Levha",
+                "qty": tot_levha_qty,
+                "summary": f"{color_summary} ({tot_levha_qty} Adet)"
+            }
+
     lines_state = {
         h: {
             "hat": h,
@@ -7006,7 +7069,13 @@ def get_planning_master_data():
             "installed_mold": None,
             "paused_count": 0,
             "urgent_count": 0,
-            "next_product": None
+            "next_product": None,
+            "last_production": {
+                "date": latest_date_label,
+                "product": (last_prod_by_hat.get(h, {}).get("product") or ""),
+                "qty": (last_prod_by_hat.get(h, {}).get("qty") or 0),
+                "summary": (last_prod_by_hat.get(h, {}).get("summary") or (f"{last_prod_by_hat.get(h, {}).get('product')} ({last_prod_by_hat.get(h, {}).get('qty')} boy)" if last_prod_by_hat.get(h, {}).get("qty", 0) > 0 else "Boşta / Üretim Yok"))
+            }
         } for h in all_hats
     }
 

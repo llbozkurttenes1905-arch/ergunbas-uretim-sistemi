@@ -7241,7 +7241,13 @@ def get_planning_master_data():
             "priority": priority,
             "priority_meta": PRIORITY_META[priority],
             "queue_order": queue_order,
-            "status": o.get("status", "SIRADA")
+            "status": o.get("status", "SIRADA"),
+            "note": o.get("note", ""),
+            "order_no": o.get("order_no", ""),
+            "source_order_no": o.get("source_order_no", o.get("order_no", "")),
+            "bom_type": o.get("bom_type", ""),
+            "bom_color": o.get("bom_color", ""),
+            "bom_kapi": int(o.get("bom_kapi", 0) or 0),
         }
 
         hat_to_orders[target_hat].append(order_item)
@@ -7416,6 +7422,156 @@ def get_planning_master_data():
             "status": "Yeterli" if shortage <= 0 else "KRİTİK EKSİK"
         })
 
+    # ── Sipariş No bazlı gruplandırma (Kasım siparişleri için) ──────────────
+    orders_by_sipno = {}
+    for p in planned_orders:
+        sno = str(p.get("source_order_no") or p.get("order_no") or p.get("customer", "")).replace("SİP-", "").strip()
+        if sno not in orders_by_sipno:
+            orders_by_sipno[sno] = {
+                "sip_no": sno,
+                "customer": f"SİP-{sno}",
+                "due_date": p.get("due_date", ""),
+                "due_naive": p.get("due_naive"),
+                "risk_status": "SIFIR_RISK",
+                "risk_badge": "🟢 Sıfır Risk",
+                "risk_color": "emerald",
+                "total_kapi": 0,
+                "levha_adet": 0,
+                "seren_boy": 0,
+                "kasa_boy": 0,
+                "pervaz_boy": 0,
+                "colors": {},
+                "mold_changes": [],
+                "components": [],
+                "earliest_start": None,
+                "final_finish": None,
+                "total_line_hours": 0.0,
+                "min_margin_hours": 9999.0,
+                "has_delay": False
+            }
+        g = orders_by_sipno[sno]
+
+        # Kapı adedini tespit et (BOM'dan veya en yüksek bileşenden)
+        bk = int(p.get("bom_kapi", 0) or 0)
+        btype = p.get("bom_type", "")
+        if btype == "SEREN" and bk > 0:
+            g["total_kapi"] = bk
+        elif g["total_kapi"] == 0 and bk > 0:
+            g["total_kapi"] = bk
+
+        # Renk takibi
+        bcol = p.get("bom_color") or ""
+        if bcol and btype in ("LEVHA", "KANAT"):
+            g["colors"][bcol] = g["colors"].get(bcol, 0) + bk
+
+        # Kalıp Değişimi Kontrolü
+        target_h = p.get("assigned_hat", "")
+        inst_m = lines_state.get(target_h, {}).get("installed_mold", {})
+        inst_name = (inst_m.get("name") or "").lower()
+        prod_name = (p.get("product") or "").lower()
+
+        needs_mold_change = False
+        mold_note = "Kalıp Hazır (0 dk duruş)"
+
+        if "100 mm" in prod_name and "100 mm" not in inst_name:
+            needs_mold_change = True
+            mold_note = f"{target_h}: 100 mm Kasa Kalıbı Takılmalı (45 dk)"
+        elif "140 mm" in prod_name and "140 mm" not in inst_name:
+            needs_mold_change = True
+            mold_note = f"{target_h}: 140 mm Kasa Kalıbı Takılmalı (45 dk)"
+        elif "200 mm" in prod_name and "200 mm" not in inst_name:
+            needs_mold_change = True
+            mold_note = f"{target_h}: 200 mm Kasa Kalıbı Takılmalı (45 dk)"
+        elif "80x80" in prod_name and "80x80" not in inst_name:
+            needs_mold_change = True
+            mold_note = f"{target_h}: 80x80 Pervaz Kalıbı Takılmalı (45 dk)"
+
+        if needs_mold_change and mold_note not in g["mold_changes"]:
+            g["mold_changes"].append(mold_note)
+
+        # Komponent satırı
+        g["components"].append({
+            "order_id": p.get("order_id"),
+            "bom_type": btype,
+            "bom_color": bcol,
+            "product": p.get("product", ""),
+            "dim": p.get("dim", ""),
+            "category": p.get("category", ""),
+            "order_qty": p.get("order_qty", 0),
+            "net_needed_qty": p.get("net_needed_qty", 0),
+            "unit": p.get("unit", ""),
+            "assigned_hat": target_h,
+            "line_hours": p.get("line_hours", 0),
+            "start_time": p.get("start_time", ""),
+            "finish_time": p.get("finish_time", ""),
+            "due_date": p.get("due_date", ""),
+            "risk_status": p.get("risk_status", ""),
+            "risk_badge": p.get("risk_badge", ""),
+            "risk_color": p.get("risk_color", ""),
+            "margin_hours": p.get("margin_hours", 0.0),
+            "mold_note": mold_note,
+            "needs_mold_change": needs_mold_change,
+            "note": p.get("note", "")
+        })
+
+        g["total_line_hours"] = round(g["total_line_hours"] + p.get("line_hours", 0), 1)
+
+        # Start & Finish tracking
+        st = p.get("start_time", "")
+        ft = p.get("finish_time", "")
+        if st and (not g["earliest_start"] or st < g["earliest_start"]):
+            g["earliest_start"] = st
+        if ft and (not g["final_finish"] or ft > g["final_finish"]):
+            g["final_finish"] = ft
+
+        # Margin hours tracking
+        m_hr = float(p.get("margin_hours", 9999.0) or 9999.0)
+        if m_hr < g["min_margin_hours"]:
+            g["min_margin_hours"] = m_hr
+
+        # Risk aggregation
+        r_stat = p.get("risk_status", "")
+        risk_rank = {"GECIKME_RISKI": 0, "KRITIK": 1, "SIFIR_RISK": 2, "TAMAMLANDI": 3}
+        if risk_rank.get(r_stat, 9) < risk_rank.get(g["risk_status"], 9):
+            g["risk_status"] = r_stat
+            g["risk_badge"] = p.get("risk_badge", "")
+            g["risk_color"] = p.get("risk_color", "")
+
+        if r_stat == "GECIKME_RISKI":
+            g["has_delay"] = True
+
+    # BOM miktarlarını kesinleştir ve rozetleri hazırla
+    for sno, g in orders_by_sipno.items():
+        kapi = g["total_kapi"]
+        g["levha_adet"] = kapi * 2
+        g["seren_boy"] = round(kapi * 3.5)
+        g["kasa_boy"] = round(kapi * 2.5)
+        g["pervaz_boy"] = kapi * 5
+
+        # Kalıp rozeti
+        if len(g["mold_changes"]) == 0:
+            g["mold_status_badge"] = "✅ Kalıplar Hazır (0 dk duruş)"
+            g["mold_status_color"] = "emerald"
+        else:
+            g["mold_status_badge"] = f"⚠️ {len(g['mold_changes'])} Kalıp Değişimi ({len(g['mold_changes']) * 45} dk)"
+            g["mold_status_color"] = "amber"
+
+        # Renk özeti string
+        if g["colors"]:
+            g["colors_summary"] = ", ".join([f"{c}: {q} kp" for c, q in g["colors"].items()])
+        else:
+            g["colors_summary"] = "Standart"
+
+    # Tarihe göre sırala
+    def sort_order_key(x):
+        dt_str = x.get("due_date", "")
+        try:
+            return datetime.strptime(dt_str, "%d.%m.%Y")
+        except:
+            return datetime(2026, 12, 31)
+
+    planned_orders_by_sipno = sorted(orders_by_sipno.values(), key=sort_order_key)
+
     return {
         "summary": {
             "total_orders": tot_orders,
@@ -7437,7 +7593,8 @@ def get_planning_master_data():
         "line_schedules": list(lines_state.values()),
         "mixer_demands": list(mixer_demands.values()),
         "raw_materials_demand": raw_demand,
-        "available_rotas": PLANNING_ROTAS
+        "available_rotas": PLANNING_ROTAS,
+        "planned_orders_by_sipno": planned_orders_by_sipno
     }
 
 @app.post("/api/planning/simulate")

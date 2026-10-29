@@ -17294,8 +17294,9 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                 <div class="font-bold text-white text-xs">${c.product}</div>
                                 ${c.bom_color ? `<div class="text-[10px] text-cyan-400">Renk: ${c.bom_color}</div>` : ''}
                             </td>
-                            <td class="py-2 px-3 font-mono font-bold text-emerald-400 text-xs">
-                                ${Number(c.order_qty).toLocaleString('tr-TR')} ${c.unit || 'Boy/Adet'}
+                            <td class="py-2 px-3">
+                                <div class="font-mono font-bold text-emerald-400 text-xs">${c.qty_display || (Number(c.order_qty).toLocaleString('tr-TR') + ' ' + (c.unit||'Boy'))}</div>
+                                <div class="text-[10px] text-slate-400 font-mono">${c.bom_type === 'KASA' ? '1 Takım = 2.5 Boy' : (c.bom_type === 'PERVAZ' ? '1 Takım = 5.0 Boy' : (c.bom_type === 'SEREN' ? '1 Kapı = 3.5 Boy' : '1 Kapı = 2 Plaka'))}</div>
                             </td>
                             <td class="py-2 px-3">
                                 <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
@@ -17337,23 +17338,27 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                 </div>
                             </div>
 
-                            <!-- Middle: BOM Badges -->
+                            <!-- Middle: BOM Badges (Takim ve Boy Gosterimi) -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                                 <div class="px-2.5 py-1.5 rounded-lg bg-purple-950/40 border border-purple-800/60">
                                     <div class="text-[10px] text-purple-300 uppercase font-semibold">Levha (x2)</div>
                                     <div class="font-mono font-bold text-white text-xs">${(s.levha_adet||0).toLocaleString('tr-TR')} Plk</div>
+                                    <div class="text-[9px] text-purple-400 font-mono">(${s.total_kapi} Kapı)</div>
                                 </div>
                                 <div class="px-2.5 py-1.5 rounded-lg bg-amber-950/40 border border-amber-800/60">
                                     <div class="text-[10px] text-amber-300 uppercase font-semibold">Seren (x3.5)</div>
                                     <div class="font-mono font-bold text-white text-xs">${(s.seren_boy||0).toLocaleString('tr-TR')} Boy</div>
+                                    <div class="text-[9px] text-amber-400 font-mono">(${s.total_kapi} Kapı)</div>
                                 </div>
                                 <div class="px-2.5 py-1.5 rounded-lg bg-blue-950/40 border border-blue-800/60">
                                     <div class="text-[10px] text-blue-300 uppercase font-semibold">Kasa (x2.5)</div>
                                     <div class="font-mono font-bold text-white text-xs">${(s.kasa_boy||0).toLocaleString('tr-TR')} Boy</div>
+                                    <div class="text-[9px] text-blue-400 font-mono">(${(s.kasa_takim||0).toLocaleString('tr-TR')} Tk)</div>
                                 </div>
                                 <div class="px-2.5 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-800/60">
                                     <div class="text-[10px] text-cyan-300 uppercase font-semibold">Pervaz (x5)</div>
                                     <div class="font-mono font-bold text-white text-xs">${(s.pervaz_boy||0).toLocaleString('tr-TR')} Boy</div>
+                                    <div class="text-[9px] text-cyan-400 font-mono">(${(s.pervaz_takim||0).toLocaleString('tr-TR')} Tk)</div>
                                 </div>
                             </div>
 

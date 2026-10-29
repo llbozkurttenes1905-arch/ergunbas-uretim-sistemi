@@ -7248,6 +7248,9 @@ def get_planning_master_data():
             "bom_type": o.get("bom_type", ""),
             "bom_color": o.get("bom_color", ""),
             "bom_kapi": int(o.get("bom_kapi", 0) or 0),
+            "takim_qty": float(o.get("takim_qty") or o.get("bom_kapi") or 0),
+            "boy_qty": float(o.get("boy_qty") or o.get("order_qty") or 0),
+            "multiplier": float(o.get("multiplier") or 1.0),
         }
 
         hat_to_orders[target_hat].append(order_item)
@@ -7439,7 +7442,9 @@ def get_planning_master_data():
                 "levha_adet": 0,
                 "seren_boy": 0,
                 "kasa_boy": 0,
+                "kasa_takim": 0,
                 "pervaz_boy": 0,
+                "pervaz_takim": 0,
                 "colors": {},
                 "mold_changes": [],
                 "components": [],
@@ -7451,7 +7456,6 @@ def get_planning_master_data():
             }
         g = orders_by_sipno[sno]
 
-        # Kapı adedini tespit et (BOM'dan veya en yüksek bileşenden)
         bk = int(p.get("bom_kapi", 0) or 0)
         btype = p.get("bom_type", "")
         if btype == "SEREN" and bk > 0:
@@ -7459,7 +7463,6 @@ def get_planning_master_data():
         elif g["total_kapi"] == 0 and bk > 0:
             g["total_kapi"] = bk
 
-        # Renk takibi
         bcol = p.get("bom_color") or ""
         if bcol and btype in ("LEVHA", "KANAT"):
             g["colors"][bcol] = g["colors"].get(bcol, 0) + bk
@@ -7489,7 +7492,20 @@ def get_planning_master_data():
         if needs_mold_change and mold_note not in g["mold_changes"]:
             g["mold_changes"].append(mold_note)
 
-        # Komponent satırı
+        # Miktar ve Takım/Boy açıklaması
+        t_qty = float(p.get("takim_qty") or p.get("bom_kapi") or 0)
+        b_qty = float(p.get("boy_qty") or p.get("order_qty") or 0)
+        mult = float(p.get("multiplier") or 1.0)
+
+        if btype in ("KASA", "PERVAZ"):
+            qty_display = f"{int(t_qty)} Tk = {int(b_qty)} Boy ({mult:.1f}x)"
+        elif btype == "SEREN":
+            qty_display = f"{int(t_qty)} Kp = {int(b_qty)} Boy (3.5x)"
+        elif btype == "LEVHA":
+            qty_display = f"{int(t_qty)} Kp = {int(b_qty)} Plk (2.0x)"
+        else:
+            qty_display = f"{int(b_qty)} {p.get('unit', '')}"
+
         g["components"].append({
             "order_id": p.get("order_id"),
             "bom_type": btype,
@@ -7497,7 +7513,11 @@ def get_planning_master_data():
             "product": p.get("product", ""),
             "dim": p.get("dim", ""),
             "category": p.get("category", ""),
-            "order_qty": p.get("order_qty", 0),
+            "order_qty": b_qty,
+            "takim_qty": t_qty,
+            "boy_qty": b_qty,
+            "multiplier": mult,
+            "qty_display": qty_display,
             "net_needed_qty": p.get("net_needed_qty", 0),
             "unit": p.get("unit", ""),
             "assigned_hat": target_h,
@@ -7516,7 +7536,6 @@ def get_planning_master_data():
 
         g["total_line_hours"] = round(g["total_line_hours"] + p.get("line_hours", 0), 1)
 
-        # Start & Finish tracking
         st = p.get("start_time", "")
         ft = p.get("finish_time", "")
         if st and (not g["earliest_start"] or st < g["earliest_start"]):
@@ -7524,12 +7543,10 @@ def get_planning_master_data():
         if ft and (not g["final_finish"] or ft > g["final_finish"]):
             g["final_finish"] = ft
 
-        # Margin hours tracking
         m_hr = float(p.get("margin_hours", 9999.0) or 9999.0)
         if m_hr < g["min_margin_hours"]:
             g["min_margin_hours"] = m_hr
 
-        # Risk aggregation
         r_stat = p.get("risk_status", "")
         risk_rank = {"GECIKME_RISKI": 0, "KRITIK": 1, "SIFIR_RISK": 2, "TAMAMLANDI": 3}
         if risk_rank.get(r_stat, 9) < risk_rank.get(g["risk_status"], 9):
@@ -7540,15 +7557,15 @@ def get_planning_master_data():
         if r_stat == "GECIKME_RISKI":
             g["has_delay"] = True
 
-    # BOM miktarlarını kesinleştir ve rozetleri hazırla
+    # BOM miktarlarını fiili bileşen toplamlarından hesapla
     for sno, g in orders_by_sipno.items():
-        kapi = g["total_kapi"]
-        g["levha_adet"] = kapi * 2
-        g["seren_boy"] = round(kapi * 3.5)
-        g["kasa_boy"] = round(kapi * 2.5)
-        g["pervaz_boy"] = kapi * 5
+        g["levha_adet"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "LEVHA"))
+        g["seren_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "SEREN"))
+        g["kasa_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "KASA"))
+        g["kasa_takim"] = int(sum(c.get("takim_qty", 0) for c in g["components"] if c.get("bom_type") == "KASA"))
+        g["pervaz_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "PERVAZ"))
+        g["pervaz_takim"] = int(sum(c.get("takim_qty", 0) for c in g["components"] if c.get("bom_type") == "PERVAZ"))
 
-        # Kalıp rozeti
         if len(g["mold_changes"]) == 0:
             g["mold_status_badge"] = "✅ Kalıplar Hazır (0 dk duruş)"
             g["mold_status_color"] = "emerald"
@@ -7556,13 +7573,11 @@ def get_planning_master_data():
             g["mold_status_badge"] = f"⚠️ {len(g['mold_changes'])} Kalıp Değişimi ({len(g['mold_changes']) * 45} dk)"
             g["mold_status_color"] = "amber"
 
-        # Renk özeti string
         if g["colors"]:
             g["colors_summary"] = ", ".join([f"{c}: {q} kp" for c, q in g["colors"].items()])
         else:
             g["colors_summary"] = "Standart"
 
-    # Tarihe göre sırala
     def sort_order_key(x):
         dt_str = x.get("due_date", "")
         try:

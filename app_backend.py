@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, HTTPException, Body, Header
+from fastapi import FastAPI, HTTPException, Body, Header
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, Response
 from pydantic import BaseModel
@@ -6999,7 +6999,7 @@ def get_planning_master_data():
     all_hats = [f"Hat {i}" for i in range(101, 110)] + ["Hat 201"]
     
     # En son fiili üretim yapılan günü ve verileri otomatik tespit et
-    days_dict = data.get("days", {})
+    days_dict = data.get("daily_data", {})
     valid_day_keys = [k for k in days_dict.keys() if k.isdigit()]
     latest_day_data = None
     latest_date_label = "27 Ekim"

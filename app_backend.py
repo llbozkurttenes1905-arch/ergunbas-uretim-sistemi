@@ -3212,6 +3212,7 @@ PRODUCT_CATALOG = {
     "AY GRİ Levha": {"unit_kg": 4.64, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 144.9},
     "ANTRASİT Levha": {"unit_kg": 4.77, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 111.8},
     "SONOMO Levha": {"unit_kg": 4.33, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1},
+    "SOMONO Levha": {"unit_kg": 4.33, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1},
     "KOYU CEVİZ Levha": {"unit_kg": 4.79, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 140.0},
     "COCO Levha": {"unit_kg": 4.79, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 140.0},
     "CAM ÇITASI": {"unit_kg": 1.50, "hats": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0},
@@ -3554,6 +3555,9 @@ HAT_CAPABILITIES = {
     "SONOMO Levha": [
         {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}
     ],
+    "SOMONO Levha": [
+        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}
+    ],
     "CAM ÇITASI": [
         {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0, "mold_code": "KLP-102", "default_setup": 40}
     ],
@@ -3603,7 +3607,10 @@ def recommend_hat(req: HatRecommendRequest):
                 candidates = v
                 break
     if not candidates:
-        candidates = [{"hat": "101", "name": "Hat 101", "speed_kg_h": 60.0, "mold_code": "KLP-101", "default_setup": 45}]
+        if "LEVHA" in prod.upper():
+            candidates = [{"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}]
+        else:
+            candidates = [{"hat": "109", "name": "Hat 109 (Extrüder 9)", "speed_kg_h": 74.0, "mold_code": "KLP-PRV-50", "default_setup": 45}]
 
     cat_info = PRODUCT_CATALOG.get(prod, {"unit_kg": 1.0})
     unit_kg = cat_info.get("unit_kg", 1.0) if "KG" not in (req.unit or "").upper() else 1.0
@@ -6898,6 +6905,20 @@ PLANNING_ROTAS = {
             {"hat": "Hat 201", "heads": 1, "speed_kg_h": 160.0, "speed_boy_h": 37.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (37.0 plaka/sa - %5 Fire)"}
         ]
     },
+    "SOMONO Levha": {
+        "category": "Levha",
+        "recipe": "Levha Renkli (Takoz)",
+        "dominant_dim": "85x210 cm",
+        "dims": {
+            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.61},
+            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.13},
+            "80x209 cm": {"unit_kg": 4.18, "ratio": 0.11},
+            "75x208 cm": {"unit_kg": 3.85, "ratio": 0.10}
+        },
+        "routes": [
+            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 160.0, "speed_boy_h": 37.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (37.0 plaka/sa - %5 Fire)"}
+        ]
+    },
     "AY GRİ Levha": {
         "category": "Levha",
         "recipe": "Levha Renkli (Takoz)",
@@ -6963,6 +6984,14 @@ def find_planning_rota(prod_name):
 
     if 'DUSB' in pn or 'DISB' in pn:
         return 'DIŞBUDAK Levha', PLANNING_ROTAS.get('DIŞBUDAK Levha')
+    if 'SOMON' in pn or 'SONOM' in pn:
+        return 'SOMONO Levha', (PLANNING_ROTAS.get('SOMONO Levha') or PLANNING_ROTAS.get('SONOMO Levha'))
+    if 'VIZON' in pn:
+        return 'VIZON Levha', PLANNING_ROTAS.get('VIZON Levha')
+    if 'TEAK' in pn and 'BEYAZ' not in pn and 'MIX' not in pn:
+        return 'TEAK Levha', PLANNING_ROTAS.get('TEAK Levha')
+    if 'ANTRAS' in pn:
+        return 'ANTRASİT Levha', PLANNING_ROTAS.get('ANTRASİT Levha')
 
     for k, v in PLANNING_ROTAS.items():
         if norm_s(k) == pn:
@@ -7111,15 +7140,49 @@ def get_planning_master_data():
         matched_name, matched_rota = find_planning_rota(prod)
         if not matched_rota:
             matched_name = prod
-            matched_rota = {
-                "category": o.get("category", "Profil"),
-                "recipe": "Kasa Pervaz",
-                "dominant_dim": "2.20 m (220 cm)",
-                "dims": {"2.20 m (220 cm)": {"unit_kg": 2.0, "ratio": 1.0}},
-                "routes": [
-                    {"hat": "Hat 101", "heads": 1, "speed_kg_h": 60.0, "speed_boy_h": 25.0, "fire_rate": 0.200, "rank": 1, "note": "Standart Hat"}
-                ]
-            }
+            is_lev = ("LEVHA" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "LEVHA") or (str(o.get("category", "")).upper() == "LEVHA")
+            is_srn = ("SEREN" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "SEREN")
+            is_kas = ("KASA" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "KASA")
+            if is_lev:
+                matched_rota = {
+                    "category": "Levha",
+                    "recipe": "Levha Renkli (Takoz)",
+                    "dominant_dim": "85x210 cm",
+                    "dims": {"85x210 cm": {"unit_kg": 4.5, "ratio": 1.0}},
+                    "routes": [
+                        {"hat": "Hat 201", "heads": 1, "speed_kg_h": 120.0, "speed_boy_h": 26.0, "fire_rate": 0.05, "rank": 1, "note": "Tek T-Die Levha Hattı"}
+                    ]
+                }
+            elif is_srn:
+                matched_rota = {
+                    "category": "Seren",
+                    "recipe": "Masif Seren",
+                    "dominant_dim": "39x45x2100",
+                    "dims": {"39x45x2100": {"unit_kg": 2.1, "ratio": 1.0}},
+                    "routes": [
+                        {"hat": "Hat 104", "heads": 2, "speed_kg_h": 105.0, "speed_boy_h": 50.0, "fire_rate": 0.04, "rank": 1, "note": "Çift Kafa Masif Seren"}
+                    ]
+                }
+            elif is_kas:
+                matched_rota = {
+                    "category": "Kasa",
+                    "recipe": "WPC Kasa",
+                    "dominant_dim": "140 mm",
+                    "dims": {"140 mm": {"unit_kg": 4.95, "ratio": 1.0}},
+                    "routes": [
+                        {"hat": "Hat 106", "heads": 1, "speed_kg_h": 74.0, "speed_boy_h": 15.0, "fire_rate": 0.08, "rank": 1, "note": "140 Kasa Ana Hat"}
+                    ]
+                }
+            else:
+                matched_rota = {
+                    "category": o.get("category", "Profil"),
+                    "recipe": "Kasa Pervaz",
+                    "dominant_dim": "2.20 m (220 cm)",
+                    "dims": {"2.20 m (220 cm)": {"unit_kg": 2.0, "ratio": 1.0}},
+                    "routes": [
+                        {"hat": "Hat 109", "heads": 2, "speed_kg_h": 74.0, "speed_boy_h": 40.0, "fire_rate": 0.150, "rank": 1, "note": "Çift Kafa Pervaz"}
+                    ]
+                }
 
         # Selected cut dimension
         selected_dim = o.get("dim") or matched_rota.get("dominant_dim")
@@ -7147,17 +7210,10 @@ def get_planning_master_data():
                     ("Hat 105", 0.49, "2 Hat Onaylı (Çift Kafa Masif Seren)"),
                 ]
         elif "50X80 PERVAZ" in prod and net_qty >= 500:
-            if net_qty >= 3000:
-                split_routes = [
-                    ("Hat 109", 0.48, "3 Hat Onaylı (Çift Kafa Hızlı Pervaz)"),
-                    ("Hat 103", 0.32, "3 Hat Onaylı (Çift Kafa Pervaz)"),
-                    ("Hat 101", 0.20, "3 Hat Onaylı (Pervaz Destek)"),
-                ]
-            else:
-                split_routes = [
-                    ("Hat 109", 0.61, "2 Hat Onaylı (Çift Kafa Hızlı Pervaz)"),
-                    ("Hat 103", 0.39, "2 Hat Onaylı (Çift Kafa Pervaz)"),
-                ]
+            split_routes = [
+                ("Hat 109", 0.60, "2 Hat Onaylı (Çift Kafa Hızlı Pervaz)"),
+                ("Hat 103", 0.40, "2 Hat Onaylı (Çift Kafa Pervaz)"),
+            ]
         elif "140 mm KASA" in prod and net_qty >= 250:
             split_routes = [
                 ("Hat 106", 0.50, "2 Hat Onaylı (140 Kasa Ana Hat)"),

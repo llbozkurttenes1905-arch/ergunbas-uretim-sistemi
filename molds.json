@@ -107,6 +107,9 @@
     "assigned_hat": "201",
     "status": "active",
     "setup_time_min": 90,
-    "notes": "Levha makinesi kalıbı."
+    "notes": "Periyodik polisaj ve yüzey temizliği tamamlandı.",
+    "current_maintenance_tons": 0.0,
+    "maintenance_count": 1,
+    "last_maintenance_date": "30.10.2026"
   }
 ]

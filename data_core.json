@@ -1538,9 +1538,9 @@
       "daily_target": 475
     },
     "2026-10": {
-      "target_doors": 12600,
-      "work_days": 28,
-      "daily_target": 450
+      "target_doors": 12500,
+      "work_days": 25,
+      "daily_target": 500
     }
   },
   "raw_materials_stock": [

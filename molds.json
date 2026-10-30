@@ -41,7 +41,10 @@
     "assigned_hat": "104",
     "status": "active",
     "setup_time_min": 45,
-    "notes": "27 Ekim verisi: Seren çalıştı."
+    "notes": "Periyodik polisaj ve yüzey temizliği tamamlandı.",
+    "current_maintenance_tons": 0.0,
+    "maintenance_count": 1,
+    "last_maintenance_date": "30.10.2026"
   },
   {
     "id": "mld_5",

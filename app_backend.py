@@ -3212,7 +3212,6 @@ PRODUCT_CATALOG = {
     "AY GRİ Levha": {"unit_kg": 4.64, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 144.9},
     "ANTRASİT Levha": {"unit_kg": 4.77, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 111.8},
     "SONOMO Levha": {"unit_kg": 4.33, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1},
-    "SOMONO Levha": {"unit_kg": 4.33, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1},
     "KOYU CEVİZ Levha": {"unit_kg": 4.79, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 140.0},
     "COCO Levha": {"unit_kg": 4.79, "hats": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 140.0},
     "CAM ÇITASI": {"unit_kg": 1.50, "hats": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0},
@@ -3555,9 +3554,6 @@ HAT_CAPABILITIES = {
     "SONOMO Levha": [
         {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}
     ],
-    "SOMONO Levha": [
-        {"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}
-    ],
     "CAM ÇITASI": [
         {"hat": "102", "name": "Hat 102 (Extrüder 2)", "speed_kg_h": 50.0, "mold_code": "KLP-102", "default_setup": 40}
     ],
@@ -3607,10 +3603,7 @@ def recommend_hat(req: HatRecommendRequest):
                 candidates = v
                 break
     if not candidates:
-        if "LEVHA" in prod.upper():
-            candidates = [{"hat": "201", "name": "Hat 201 (Levha Makinesi 1)", "speed_kg_h": 113.1, "mold_code": "KLP-201", "default_setup": 90}]
-        else:
-            candidates = [{"hat": "109", "name": "Hat 109 (Extrüder 9)", "speed_kg_h": 74.0, "mold_code": "KLP-PRV-50", "default_setup": 45}]
+        candidates = [{"hat": "101", "name": "Hat 101", "speed_kg_h": 60.0, "mold_code": "KLP-101", "default_setup": 45}]
 
     cat_info = PRODUCT_CATALOG.get(prod, {"unit_kg": 1.0})
     unit_kg = cat_info.get("unit_kg", 1.0) if "KG" not in (req.unit or "").upper() else 1.0
@@ -6905,20 +6898,6 @@ PLANNING_ROTAS = {
             {"hat": "Hat 201", "heads": 1, "speed_kg_h": 160.0, "speed_boy_h": 37.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (37.0 plaka/sa - %5 Fire)"}
         ]
     },
-    "SOMONO Levha": {
-        "category": "Levha",
-        "recipe": "Levha Renkli (Takoz)",
-        "dominant_dim": "85x210 cm",
-        "dims": {
-            "85x210 cm": {"unit_kg": 4.37, "ratio": 0.61},
-            "94x207 cm": {"unit_kg": 4.77, "ratio": 0.13},
-            "80x209 cm": {"unit_kg": 4.18, "ratio": 0.11},
-            "75x208 cm": {"unit_kg": 3.85, "ratio": 0.10}
-        },
-        "routes": [
-            {"hat": "Hat 201", "heads": 1, "speed_kg_h": 160.0, "speed_boy_h": 37.0, "fire_rate": 0.050, "rank": 1, "note": "Levha Kalıbı (37.0 plaka/sa - %5 Fire)"}
-        ]
-    },
     "AY GRİ Levha": {
         "category": "Levha",
         "recipe": "Levha Renkli (Takoz)",
@@ -6984,14 +6963,6 @@ def find_planning_rota(prod_name):
 
     if 'DUSB' in pn or 'DISB' in pn:
         return 'DIŞBUDAK Levha', PLANNING_ROTAS.get('DIŞBUDAK Levha')
-    if 'SOMON' in pn or 'SONOM' in pn:
-        return 'SOMONO Levha', (PLANNING_ROTAS.get('SOMONO Levha') or PLANNING_ROTAS.get('SONOMO Levha'))
-    if 'VIZON' in pn:
-        return 'VIZON Levha', PLANNING_ROTAS.get('VIZON Levha')
-    if 'TEAK' in pn and 'BEYAZ' not in pn and 'MIX' not in pn:
-        return 'TEAK Levha', PLANNING_ROTAS.get('TEAK Levha')
-    if 'ANTRAS' in pn:
-        return 'ANTRASİT Levha', PLANNING_ROTAS.get('ANTRASİT Levha')
 
     for k, v in PLANNING_ROTAS.items():
         if norm_s(k) == pn:
@@ -7140,49 +7111,15 @@ def get_planning_master_data():
         matched_name, matched_rota = find_planning_rota(prod)
         if not matched_rota:
             matched_name = prod
-            is_lev = ("LEVHA" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "LEVHA") or (str(o.get("category", "")).upper() == "LEVHA")
-            is_srn = ("SEREN" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "SEREN")
-            is_kas = ("KASA" in prod.upper()) or (str(o.get("bom_type", "")).upper() == "KASA")
-            if is_lev:
-                matched_rota = {
-                    "category": "Levha",
-                    "recipe": "Levha Renkli (Takoz)",
-                    "dominant_dim": "85x210 cm",
-                    "dims": {"85x210 cm": {"unit_kg": 4.5, "ratio": 1.0}},
-                    "routes": [
-                        {"hat": "Hat 201", "heads": 1, "speed_kg_h": 120.0, "speed_boy_h": 26.0, "fire_rate": 0.05, "rank": 1, "note": "Tek T-Die Levha Hattı"}
-                    ]
-                }
-            elif is_srn:
-                matched_rota = {
-                    "category": "Seren",
-                    "recipe": "Masif Seren",
-                    "dominant_dim": "39x45x2100",
-                    "dims": {"39x45x2100": {"unit_kg": 2.1, "ratio": 1.0}},
-                    "routes": [
-                        {"hat": "Hat 104", "heads": 2, "speed_kg_h": 105.0, "speed_boy_h": 50.0, "fire_rate": 0.04, "rank": 1, "note": "Çift Kafa Masif Seren"}
-                    ]
-                }
-            elif is_kas:
-                matched_rota = {
-                    "category": "Kasa",
-                    "recipe": "WPC Kasa",
-                    "dominant_dim": "140 mm",
-                    "dims": {"140 mm": {"unit_kg": 4.95, "ratio": 1.0}},
-                    "routes": [
-                        {"hat": "Hat 106", "heads": 1, "speed_kg_h": 74.0, "speed_boy_h": 15.0, "fire_rate": 0.08, "rank": 1, "note": "140 Kasa Ana Hat"}
-                    ]
-                }
-            else:
-                matched_rota = {
-                    "category": o.get("category", "Profil"),
-                    "recipe": "Kasa Pervaz",
-                    "dominant_dim": "2.20 m (220 cm)",
-                    "dims": {"2.20 m (220 cm)": {"unit_kg": 2.0, "ratio": 1.0}},
-                    "routes": [
-                        {"hat": "Hat 109", "heads": 2, "speed_kg_h": 74.0, "speed_boy_h": 40.0, "fire_rate": 0.150, "rank": 1, "note": "Çift Kafa Pervaz"}
-                    ]
-                }
+            matched_rota = {
+                "category": o.get("category", "Profil"),
+                "recipe": "Kasa Pervaz",
+                "dominant_dim": "2.20 m (220 cm)",
+                "dims": {"2.20 m (220 cm)": {"unit_kg": 2.0, "ratio": 1.0}},
+                "routes": [
+                    {"hat": "Hat 101", "heads": 1, "speed_kg_h": 60.0, "speed_boy_h": 25.0, "fire_rate": 0.200, "rank": 1, "note": "Standart Hat"}
+                ]
+            }
 
         # Selected cut dimension
         selected_dim = o.get("dim") or matched_rota.get("dominant_dim")
@@ -7194,61 +7131,29 @@ def get_planning_master_data():
 
         unit_kg = float(dim_info.get("unit_kg", 2.0))
 
-        # ── AKILLI HAT ATAMA & SİPARİŞ PARÇALAMA MOTORU (2 HAT / 3 HAT SİMÜLATÖRÜ) ──
-        split_routes = None
+        # Hat assignment
+        assigned_str = o.get("assigned_hats", "")
+        chosen_route = matched_rota["routes"][0]
+        for r in matched_rota["routes"]:
+            if r["hat"] in assigned_str:
+                chosen_route = r
+                break
+        target_hat = chosen_route["hat"]
+        if target_hat not in hat_to_orders:
+            target_hat = all_hats[0]
 
-        if "SEREN" in prod and net_qty >= 400:
-            if net_qty >= 2500:
-                split_routes = [
-                    ("Hat 104", 0.38, "3 Hat Onaylı (Masif Seren 1. Hat)"),
-                    ("Hat 105", 0.35, "3 Hat Onaylı (Masif Seren 2. Hat)"),
-                    ("Hat 107", 0.27, "3 Hat Onaylı (Seren 3. Destek Hat)"),
-                ]
-            else:
-                split_routes = [
-                    ("Hat 104", 0.51, "2 Hat Onaylı (Çift Kafa Masif Seren)"),
-                    ("Hat 105", 0.49, "2 Hat Onaylı (Çift Kafa Masif Seren)"),
-                ]
-        elif "50X80 PERVAZ" in prod and net_qty >= 500:
-            split_routes = [
-                ("Hat 109", 0.60, "2 Hat Onaylı (Çift Kafa Hızlı Pervaz)"),
-                ("Hat 103", 0.40, "2 Hat Onaylı (Çift Kafa Pervaz)"),
-            ]
-        elif "140 mm KASA" in prod and net_qty >= 250:
-            split_routes = [
-                ("Hat 106", 0.50, "2 Hat Onaylı (140 Kasa Ana Hat)"),
-                ("Hat 108", 0.50, "2 Hat Onaylı (140 Kasa İkiz Hat)"),
-            ]
-        elif "100 mm KASA" in prod and net_qty >= 200:
-            split_routes = [
-                ("Hat 102", 0.50, "2 Hat Onaylı (100 Kasa Ana Hat)"),
-                ("Hat 108", 0.50, "2 Hat Onaylı (100 Kasa Destek Hat)"),
-            ]
+        fire_rate = chosen_route["fire_rate"]
+        gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
+        gross_kg = round(gross_needed * unit_kg, 1)
+        net_kg = round(net_qty * unit_kg, 1)
 
-        # Alternative routes list for manual override
-        alt_routes = []
-        for r in matched_rota.get("routes", []):
-            alt_routes.append({
-                "hat": r["hat"],
-                "heads": r["heads"],
-                "heads_label": f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)",
-                "speed_kg_h": r["speed_kg_h"],
-                "speed_boy_h": r["speed_boy_h"],
-                "fire_rate_pct": round(r["fire_rate"] * 100, 1),
-                "is_current": False,
-                "note": r.get("note", "")
-            })
+        speed_boy_h = chosen_route["speed_boy_h"]
+        speed_kg_h = chosen_route["speed_kg_h"]
 
-        # Available cut dimensions
-        available_dims_list = []
-        for d_key, d_val in matched_rota.get("dims", {}).items():
-            pct = round(d_val.get("ratio", 0.0) * 100)
-            available_dims_list.append({
-                "dim": d_key,
-                "unit_kg": d_val.get("unit_kg", 2.0),
-                "pct": pct,
-                "label": f"{d_key} (~{d_val.get('unit_kg', 2.0)} kg/boy)"
-            })
+        prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
+        setup_hours = 0.0
+        line_hours = prod_hours
+        shifts = round(line_hours / 12.0, 1)
 
         due_str = o.get("due_date", "")
         due_dt = None
@@ -7263,178 +7168,83 @@ def get_planning_master_data():
             due_dt = now_naive + timedelta(days=7)
         due_naive = due_dt.replace(tzinfo=None) if hasattr(due_dt, "tzinfo") and due_dt.tzinfo else due_dt
 
+        # Priority & Pause flags
         is_paused = bool(o.get("is_paused", False))
         priority = str(o.get("priority", "NORMAL")).upper()
         if priority not in PRIORITY_RANKS:
             priority = "NORMAL"
         queue_order = int(o.get("queue_order", 999))
+
         recipe_name = matched_rota.get("recipe", "Kasa Pervaz")
+        batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
 
-        # ── SUB-ROUTING (Tek Hat veya 2-3 Hat Paralel Çekim) ─────────────────
-        if split_routes:
-            multi_group_label = " & ".join([sr[0] for sr in split_routes])
-            multi_badge_text = f"⚡ {len(split_routes)} Hat Onaylı ({multi_group_label})"
-            
-            for s_hat, s_ratio, s_note in split_routes:
-                sub_net_qty = round(net_qty * s_ratio, 1)
-                sub_o_qty = round(o_qty * s_ratio, 1)
-                sub_boy_qty = round(float(o.get("boy_qty", o_qty)) * s_ratio, 1)
-                sub_takim_qty = round(float(o.get("takim_qty", 0)) * s_ratio, 1)
+        # Alternative routes
+        alt_routes = []
+        for r in matched_rota.get("routes", []):
+            is_cur = (r["hat"] == target_hat and r["heads"] == chosen_route["heads"])
+            alt_r_hours = round(gross_kg / r["speed_kg_h"], 1) if r["speed_kg_h"] > 0 else 0.0
+            alt_routes.append({
+                "hat": r["hat"],
+                "heads": r["heads"],
+                "heads_label": f"{r['heads']} Göz ({'Tek' if r['heads']==1 else 'Çift'} Kafa)",
+                "speed_kg_h": r["speed_kg_h"],
+                "speed_boy_h": r["speed_boy_h"],
+                "fire_rate_pct": round(r["fire_rate"] * 100, 1),
+                "line_hours": alt_r_hours,
+                "is_current": is_cur,
+                "note": r.get("note", "")
+            })
 
-                # Find best matching route for this sub-hat
-                s_route = None
-                for r in matched_rota["routes"]:
-                    if r["hat"] == s_hat:
-                        s_route = r
-                        break
-                if not s_route:
-                    # Generic default route for this hat
-                    s_route = {
-                        "hat": s_hat, "heads": 1, "speed_kg_h": 70.0,
-                        "speed_boy_h": 25.0, "fire_rate": 0.25, "note": s_note
-                    }
+        # Available cut dimensions for dropdown
+        available_dims_list = []
+        for d_key, d_val in matched_rota.get("dims", {}).items():
+            pct = round(d_val.get("ratio", 0.0) * 100)
+            available_dims_list.append({
+                "dim": d_key,
+                "unit_kg": d_val.get("unit_kg", 2.0),
+                "pct": pct,
+                "label": f"{d_key} (~{d_val.get('unit_kg', 2.0)} kg/boy) [%{pct}]" if pct > 0 else f"{d_key} (~{d_val.get('unit_kg', 2.0)} kg/boy)"
+            })
 
-                s_fire = s_route["fire_rate"]
-                s_gross_needed = round(sub_net_qty / (1.0 - s_fire)) if sub_net_qty > 0 and s_fire < 1.0 else sub_net_qty
-                s_gross_kg = round(s_gross_needed * unit_kg, 1)
-                s_net_kg = round(sub_net_qty * unit_kg, 1)
-                s_spd_kg = s_route["speed_kg_h"]
-                s_spd_boy = s_route["speed_boy_h"]
-                s_hours = round(s_gross_kg / s_spd_kg, 1) if s_spd_kg > 0 else 0.0
-                s_shifts = round(s_hours / 12.0, 1)
-                s_batches = round(s_gross_kg / 275.65, 1) if s_gross_kg > 0 else 0.0
+        order_item = {
+            "order_id": o_id,
+            "customer": cust,
+            "product": matched_name or prod,
+            "raw_product": prod,
+            "category": matched_rota.get("category", "Profil"),
+            "unit": unit,
+            "dim": selected_dim,
+            "unit_kg": unit_kg,
+            "available_dims": available_dims_list,
+            "order_qty": o_qty,
+            "stock_qty": s_qty,
+            "actual_produced": act_qty,
+            "net_needed_qty": net_qty,
+            "fire_rate_pct": round(fire_rate * 100, 1),
+            "gross_needed_qty": gross_needed,
+            "gross_kg": gross_kg,
+            "net_kg": net_kg,
+            "assigned_hat": target_hat,
+            "heads": chosen_route["heads"],
+            "heads_label": f"{chosen_route['heads']} Göz ({'Tek' if chosen_route['heads']==1 else 'Çift'} Kafa)" if matched_rota.get("category") != "Levha" else "Levha Kalıbı",
+            "speed_kg_h": speed_kg_h,
+            "speed_boy_h": speed_boy_h,
+            "setup_hours": setup_hours,
+            "line_hours": line_hours,
+            "shifts_needed": shifts,
+            "due_date": due_naive.strftime("%d.%m.%Y"),
+            "due_naive": due_naive,
+            "recipe_name": recipe_name,
+            "batches_needed": batches,
+            "routes": alt_routes,
+            "is_paused": is_paused,
+            "priority": priority,
+            "priority_meta": PRIORITY_META[priority],
+            "queue_order": queue_order,
+            "status": o.get("status", "SIRADA")
+        }
 
-                sub_order_item = {
-                    "order_id": f"{o_id}_{s_hat.replace(' ', '')}",
-                    "parent_order_id": o_id,
-                    "customer": cust,
-                    "product": matched_name or prod,
-                    "raw_product": prod,
-                    "category": matched_rota.get("category", "Profil"),
-                    "unit": unit,
-                    "dim": selected_dim,
-                    "unit_kg": unit_kg,
-                    "available_dims": available_dims_list,
-                    "order_qty": sub_o_qty,
-                    "stock_qty": s_qty * s_ratio,
-                    "actual_produced": act_qty * s_ratio,
-                    "net_needed_qty": sub_net_qty,
-                    "fire_rate_pct": round(s_fire * 100, 1),
-                    "gross_needed_qty": s_gross_needed,
-                    "gross_kg": s_gross_kg,
-                    "net_kg": s_net_kg,
-                    "assigned_hat": s_hat,
-                    "heads": s_route["heads"],
-                    "heads_label": f"{s_route['heads']} Göz ({'Tek' if s_route['heads']==1 else 'Çift'} Kafa)",
-                    "speed_kg_h": s_spd_kg,
-                    "speed_boy_h": s_spd_boy,
-                    "setup_hours": 0.0,
-                    "line_hours": s_hours,
-                    "shifts_needed": s_shifts,
-                    "due_date": due_naive.strftime("%d.%m.%Y"),
-                    "due_naive": due_naive,
-                    "recipe_name": recipe_name,
-                    "batches_needed": s_batches,
-                    "routes": alt_routes,
-                    "is_paused": is_paused,
-                    "priority": priority,
-                    "priority_meta": PRIORITY_META[priority],
-                    "queue_order": queue_order,
-                    "status": o.get("status", "SIRADA"),
-                    "note": f"{o.get('note', '')} | {s_note}",
-                    "order_no": o.get("order_no", ""),
-                    "source_order_no": o.get("source_order_no", o.get("order_no", "")),
-                    "bom_type": o.get("bom_type", ""),
-                    "bom_color": o.get("bom_color", ""),
-                    "bom_kapi": int(o.get("bom_kapi", 0) or 0),
-                    "takim_qty": sub_takim_qty,
-                    "boy_qty": sub_boy_qty,
-                    "multiplier": float(o.get("multiplier") or 1.0),
-                    "multi_hat_mode": f"{len(split_routes)} Hat",
-                    "multi_hat_badge": multi_badge_text,
-                    "multi_hat_group": multi_group_label,
-                    "is_parallel_split": True
-                }
-
-                if s_hat not in hat_to_orders:
-                    hat_to_orders[s_hat] = []
-                hat_to_orders[s_hat].append(sub_order_item)
-
-        else:
-            # ── TEK HAT STANDART ÇEKİM ─────────────────────────────────────────
-            assigned_str = o.get("assigned_hats", "")
-            chosen_route = matched_rota["routes"][0]
-            for r in matched_rota["routes"]:
-                if r["hat"] in assigned_str:
-                    chosen_route = r
-                    break
-            target_hat = chosen_route["hat"]
-            if target_hat not in hat_to_orders:
-                target_hat = all_hats[0]
-
-            fire_rate = chosen_route["fire_rate"]
-            gross_needed = round(net_qty / (1.0 - fire_rate)) if net_qty > 0 and fire_rate < 1.0 else net_qty
-            gross_kg = round(gross_needed * unit_kg, 1)
-            net_kg = round(net_qty * unit_kg, 1)
-            speed_boy_h = chosen_route["speed_boy_h"]
-            speed_kg_h = chosen_route["speed_kg_h"]
-
-            prod_hours = round(gross_kg / speed_kg_h, 1) if speed_kg_h > 0 else 0.0
-            line_hours = prod_hours
-            shifts = round(line_hours / 12.0, 1)
-            batches = round(gross_kg / 275.65, 1) if gross_kg > 0 else 0.0
-
-            order_item = {
-                "order_id": o_id,
-                "customer": cust,
-                "product": matched_name or prod,
-                "raw_product": prod,
-                "category": matched_rota.get("category", "Profil"),
-                "unit": unit,
-                "dim": selected_dim,
-                "unit_kg": unit_kg,
-                "available_dims": available_dims_list,
-                "order_qty": o_qty,
-                "stock_qty": s_qty,
-                "actual_produced": act_qty,
-                "net_needed_qty": net_qty,
-                "fire_rate_pct": round(fire_rate * 100, 1),
-                "gross_needed_qty": gross_needed,
-                "gross_kg": gross_kg,
-                "net_kg": net_kg,
-                "assigned_hat": target_hat,
-                "heads": chosen_route["heads"],
-                "heads_label": f"{chosen_route['heads']} Göz ({'Tek' if chosen_route['heads']==1 else 'Çift'} Kafa)" if matched_rota.get("category") != "Levha" else "Levha Kalıbı",
-                "speed_kg_h": speed_kg_h,
-                "speed_boy_h": speed_boy_h,
-                "setup_hours": 0.0,
-                "line_hours": line_hours,
-                "shifts_needed": shifts,
-                "due_date": due_naive.strftime("%d.%m.%Y"),
-                "due_naive": due_naive,
-                "recipe_name": recipe_name,
-                "batches_needed": batches,
-                "routes": alt_routes,
-                "is_paused": is_paused,
-                "priority": priority,
-                "priority_meta": PRIORITY_META[priority],
-                "queue_order": queue_order,
-                "status": o.get("status", "SIRADA"),
-                "note": o.get("note", ""),
-                "order_no": o.get("order_no", ""),
-                "source_order_no": o.get("source_order_no", o.get("order_no", "")),
-                "bom_type": o.get("bom_type", ""),
-                "bom_color": o.get("bom_color", ""),
-                "bom_kapi": int(o.get("bom_kapi", 0) or 0),
-                "takim_qty": float(o.get("takim_qty") or o.get("bom_kapi") or 0),
-                "boy_qty": float(o.get("boy_qty") or o.get("order_qty") or 0),
-                "multiplier": float(o.get("multiplier") or 1.0),
-                "multi_hat_mode": "1 Hat",
-                "multi_hat_badge": "Tek Hat Standart",
-                "is_parallel_split": False
-            }
-
-            hat_to_orders[target_hat].append(order_item)
+        hat_to_orders[target_hat].append(order_item)
 
     # Dynamic line scheduling & preemption engine
     planned_orders = []
@@ -7446,7 +7256,7 @@ def get_planning_master_data():
         paused_orders = [o for o in line_orders if o["is_paused"]]
 
         # Sort active: Priority first (URGENT -> HIGH -> NORMAL -> LOW), then queue_order
-        active_orders.sort(key=lambda x: (PRIORITY_RANKS.get(x["priority"], 2), x["due_naive"], x["queue_order"]))
+        active_orders.sort(key=lambda x: (PRIORITY_RANKS.get(x["priority"], 2), x["queue_order"], x["order_id"]))
 
         lines_state[hat_id]["paused_count"] = len(paused_orders)
         lines_state[hat_id]["urgent_count"] = sum(1 for o in active_orders if o["priority"] == "URGENT")
@@ -7606,216 +7416,6 @@ def get_planning_master_data():
             "status": "Yeterli" if shortage <= 0 else "KRİTİK EKSİK"
         })
 
-    # ── Sipariş No bazlı gruplandırma (Kasım siparişleri için) ──────────────
-    orders_by_sipno = {}
-    for p in planned_orders:
-        sno = str(p.get("source_order_no") or p.get("order_no") or p.get("customer", "")).replace("SİP-", "").strip()
-        if sno not in orders_by_sipno:
-            orders_by_sipno[sno] = {
-                "sip_no": sno,
-                "customer": f"SİP-{sno}",
-                "due_date": p.get("due_date", ""),
-                "due_naive": p.get("due_naive"),
-                "risk_status": "SIFIR_RISK",
-                "risk_badge": "🟢 Sıfır Risk",
-                "risk_color": "emerald",
-                "total_kapi": 0,
-                "levha_adet": 0,
-                "seren_boy": 0,
-                "kasa_boy": 0,
-                "kasa_takim": 0,
-                "pervaz_boy": 0,
-                "pervaz_takim": 0,
-                "colors": {},
-                "mold_changes": [],
-                "multi_hat_approvals": [],
-                "components": [],
-                "earliest_start": None,
-                "final_finish": None,
-                "total_line_hours": 0.0,
-                "min_margin_hours": 9999.0,
-                "has_delay": False
-            }
-        g = orders_by_sipno[sno]
-
-        bk = int(p.get("bom_kapi", 0) or 0)
-        btype = p.get("bom_type", "")
-        if btype == "SEREN" and bk > 0:
-            g["total_kapi"] = bk
-        elif g["total_kapi"] == 0 and bk > 0:
-            g["total_kapi"] = bk
-
-        bcol = p.get("bom_color") or ""
-        if bcol and btype in ("LEVHA", "KANAT"):
-            g["colors"][bcol] = g["colors"].get(bcol, 0) + bk
-
-        # Kalıp Değişimi Kontrolü
-        target_h = p.get("assigned_hat", "")
-        inst_m = lines_state.get(target_h, {}).get("installed_mold", {})
-        inst_name = (inst_m.get("name") or "").lower()
-        prod_name = (p.get("product") or "").lower()
-
-        needs_mold_change = False
-        mold_note = "Kalıp Hazır (0 dk duruş)"
-
-        if "100 mm" in prod_name and "100 mm" not in inst_name:
-            needs_mold_change = True
-            mold_note = f"{target_h}: 100 mm Kasa Kalıbı Takılmalı (45 dk)"
-        elif "140 mm" in prod_name and "140 mm" not in inst_name:
-            needs_mold_change = True
-            mold_note = f"{target_h}: 140 mm Kasa Kalıbı Takılmalı (45 dk)"
-        elif "200 mm" in prod_name and "200 mm" not in inst_name:
-            needs_mold_change = True
-            mold_note = f"{target_h}: 200 mm Kasa Kalıbı Takılmalı (45 dk)"
-        elif "80x80" in prod_name and "80x80" not in inst_name:
-            needs_mold_change = True
-            mold_note = f"{target_h}: 80x80 Pervaz Kalıbı Takılmalı (45 dk)"
-
-        if needs_mold_change and mold_note not in g["mold_changes"]:
-            g["mold_changes"].append(mold_note)
-
-        # Miktar ve Takım/Boy açıklaması
-        t_qty = float(p.get("takim_qty") or p.get("bom_kapi") or 0)
-        b_qty = float(p.get("boy_qty") or p.get("order_qty") or 0)
-        mult = float(p.get("multiplier") or 1.0)
-
-        if btype in ("KASA", "PERVAZ"):
-            qty_display = f"{int(t_qty)} Tk = {int(b_qty)} Boy ({mult:.1f}x)"
-        elif btype == "SEREN":
-            qty_display = f"{int(t_qty)} Kp = {int(b_qty)} Boy (3.5x)"
-        elif btype == "LEVHA":
-            qty_display = f"{int(t_qty)} Kp = {int(b_qty)} Plk (2.0x)"
-        else:
-            qty_display = f"{int(b_qty)} {p.get('unit', '')}"
-
-        m_badge = p.get("multi_hat_badge")
-        if m_badge and m_badge not in g["multi_hat_approvals"] and p.get("is_parallel_split"):
-            g["multi_hat_approvals"].append(m_badge)
-
-        g["components"].append({
-            "order_id": p.get("order_id"),
-            "bom_type": btype,
-            "bom_color": bcol,
-            "product": p.get("product", ""),
-            "dim": p.get("dim", ""),
-            "category": p.get("category", ""),
-            "order_qty": b_qty,
-            "takim_qty": t_qty,
-            "boy_qty": b_qty,
-            "multiplier": mult,
-            "qty_display": qty_display,
-            "net_needed_qty": p.get("net_needed_qty", 0),
-            "unit": p.get("unit", ""),
-            "assigned_hat": target_h,
-            "line_hours": p.get("line_hours", 0),
-            "start_time": p.get("start_time", ""),
-            "finish_time": p.get("finish_time", ""),
-            "due_date": p.get("due_date", ""),
-            "risk_status": p.get("risk_status", ""),
-            "risk_badge": p.get("risk_badge", ""),
-            "risk_color": p.get("risk_color", ""),
-            "margin_hours": p.get("margin_hours", 0.0),
-            "mold_note": mold_note,
-            "needs_mold_change": needs_mold_change,
-            "multi_hat_badge": p.get("multi_hat_badge", ""),
-            "multi_hat_group": p.get("multi_hat_group", ""),
-            "is_parallel_split": bool(p.get("is_parallel_split", False)),
-            "note": p.get("note", "")
-        })
-
-        g["total_line_hours"] = round(g["total_line_hours"] + p.get("line_hours", 0), 1)
-
-        st = p.get("start_time", "")
-        ft = p.get("finish_time", "")
-
-        def _p_dt(s):
-            if not s or " " not in s: return None
-            try: return datetime.strptime(s, "%d.%m.%Y %H:%M")
-            except: return None
-
-        st_dt = _p_dt(st)
-        ft_dt = _p_dt(ft)
-
-        if st_dt:
-            if not g.get("_earliest_dt") or st_dt < g["_earliest_dt"]:
-                g["_earliest_dt"] = st_dt
-                g["earliest_start"] = st
-
-        if ft_dt:
-            if not g.get("_final_dt") or ft_dt > g["_final_dt"]:
-                g["_final_dt"] = ft_dt
-                g["final_finish"] = ft
-
-        m_hr = float(p.get("margin_hours", 9999.0) or 9999.0)
-        if m_hr < g["min_margin_hours"]:
-            g["min_margin_hours"] = m_hr
-
-        r_stat = p.get("risk_status", "")
-        risk_rank = {"GECIKME_RISKI": 0, "KRITIK": 1, "SIFIR_RISK": 2, "TAMAMLANDI": 3}
-        if risk_rank.get(r_stat, 9) < risk_rank.get(g["risk_status"], 9):
-            g["risk_status"] = r_stat
-            g["risk_badge"] = p.get("risk_badge", "")
-            g["risk_color"] = p.get("risk_color", "")
-
-        if r_stat == "GECIKME_RISKI":
-            g["has_delay"] = True
-
-    # BOM miktarlarını fiili bileşen toplamlarından hesapla
-    for sno, g in orders_by_sipno.items():
-        # Overall order finish time and security margin calculation
-        if g.get("_final_dt") and g.get("due_naive"):
-            m_sec = (g["due_naive"] - g["_final_dt"]).total_seconds()
-            m_hrs = round(m_sec / 3600.0, 1)
-            g["min_margin_hours"] = m_hrs
-            if m_hrs >= 24.0:
-                g["risk_status"] = "SIFIR_RISK"
-                g["risk_badge"] = f"🟢 Sıfır Risk (+{m_hrs:.0f} sa)"
-                g["risk_color"] = "emerald"
-            elif m_hrs >= 0.0:
-                g["risk_status"] = "KRITIK"
-                g["risk_badge"] = f"🟡 Kritik (+{m_hrs:.0f} sa)"
-                g["risk_color"] = "amber"
-            else:
-                g["risk_status"] = "GECIKME_RISKI"
-                g["risk_badge"] = f"🔴 Gecikme Riski (-{abs(m_hrs):.0f} sa)"
-                g["risk_color"] = "rose"
-
-        g["levha_adet"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "LEVHA"))
-        g["seren_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "SEREN"))
-        g["kasa_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "KASA"))
-        g["kasa_takim"] = int(sum(c.get("takim_qty", 0) for c in g["components"] if c.get("bom_type") == "KASA"))
-        g["pervaz_boy"] = int(sum(c.get("boy_qty", 0) for c in g["components"] if c.get("bom_type") == "PERVAZ"))
-        g["pervaz_takim"] = int(sum(c.get("takim_qty", 0) for c in g["components"] if c.get("bom_type") == "PERVAZ"))
-
-        if len(g["mold_changes"]) == 0:
-            g["mold_status_badge"] = "✅ Kalıplar Hazır (0 dk duruş)"
-            g["mold_status_color"] = "emerald"
-        else:
-            g["mold_status_badge"] = f"⚠️ {len(g['mold_changes'])} Kalıp Değişimi ({len(g['mold_changes']) * 45} dk)"
-            g["mold_status_color"] = "amber"
-
-        # Multi-Hat Onay Rozeti
-        if len(g["multi_hat_approvals"]) > 0:
-            g["multi_hat_badge"] = f"⚡ {len(g['multi_hat_approvals'])} Ürün Çoklu Hat Onaylı (Hızlandırıldı)"
-            g["has_multi_hat"] = True
-        else:
-            g["multi_hat_badge"] = "Tek Hat Standart"
-            g["has_multi_hat"] = False
-
-        if g["colors"]:
-            g["colors_summary"] = ", ".join([f"{c}: {q} kp" for c, q in g["colors"].items()])
-        else:
-            g["colors_summary"] = "Standart"
-
-    def sort_order_key(x):
-        dt_str = x.get("due_date", "")
-        try:
-            return datetime.strptime(dt_str, "%d.%m.%Y")
-        except:
-            return datetime(2026, 12, 31)
-
-    planned_orders_by_sipno = sorted(orders_by_sipno.values(), key=sort_order_key)
-
     return {
         "summary": {
             "total_orders": tot_orders,
@@ -7837,8 +7437,7 @@ def get_planning_master_data():
         "line_schedules": list(lines_state.values()),
         "mixer_demands": list(mixer_demands.values()),
         "raw_materials_demand": raw_demand,
-        "available_rotas": PLANNING_ROTAS,
-        "planned_orders_by_sipno": planned_orders_by_sipno
+        "available_rotas": PLANNING_ROTAS
     }
 
 @app.post("/api/planning/simulate")

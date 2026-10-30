@@ -2584,18 +2584,9 @@
                         <div class="flex items-center gap-2.5">
                             <i data-lucide="shield-alert" class="w-5 h-5 text-emerald-400"></i>
                             <div>
-                                <h2 class="text-sm font-bold text-white tracking-wide">Kasım Siparişleri Akıllı Çizelgeleme & Planlama Ekranı</h2>
-                                <p class="text-[11px] text-slate-400">Sipariş bazlı BOM dağılımı (Levha 2x, Seren 3.5x, Kasa 2.5x, Pervaz 5x), kalıp değişimi analizi ve ne zaman çıkacağı.</p>
+                                <h2 class="text-sm font-bold text-white tracking-wide">Sıfır Risk Sipariş Çizelgeleme & Termin Güvenlik Listesi</h2>
+                                <p class="text-[11px] text-slate-400">Net eksik boylar, kalıp çıkış gözü, fiili kantar hızları ve fire payı dahil kesin planlama.</p>
                             </div>
-                        </div>
-                        <!-- View Mode Switcher -->
-                        <div class="flex items-center gap-1.5 bg-slate-950/90 p-1 rounded-xl border border-slate-800">
-                            <button type="button" onclick="switchPlanningMainView('sipno')" id="btn-plan-view-sipno" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow flex items-center gap-1.5 transition">
-                                <span>📋 Sipariş Bazlı Akıllı Plan (27 Sipariş)</span>
-                            </button>
-                            <button type="button" onclick="switchPlanningMainView('table')" id="btn-plan-view-table" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition">
-                                <span>📑 Hat İş Emirleri Tablosu (179 Satır)</span>
-                            </button>
                         </div>
                         <!-- Filters -->
                         <div class="flex items-center gap-2 flex-wrap">
@@ -2609,22 +2600,8 @@
                         </div>
                     </div>
 
-                    <!-- 1. Siparis Bazli Akilli Gorunum Container (Default Active) -->
-                    <div id="planning-sipno-view-container" class="space-y-3">
-                        <div class="flex items-center justify-between text-xs text-slate-400 px-1 pb-1 border-b border-slate-800/80">
-                            <span class="font-bold text-white flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                                Toplam 27 Kasım Siparişi (Sipariş Numarasına Göre Gruplandı - Tıklayınca Alt Detaylar Açılır)
-                            </span>
-                            <span class="font-mono text-[11px] text-slate-400">Levha: 2x | Seren: 3.5x | Kasa: 2.5x | Pervaz: 5x</span>
-                        </div>
-                        <div id="planning-sipno-cards-list" class="space-y-3">
-                            <!-- Loaded dynamically via renderPlanningSipNoCards -->
-                        </div>
-                    </div>
-
-                    <!-- 2. Orders Table Responsive Container (Traditional Line View) -->
-                    <div id="planning-table-view-container" class="hidden overflow-x-auto custom-scrollbar">
+                    <!-- Orders Table Responsive Container -->
+                    <div class="overflow-x-auto custom-scrollbar">
                         <table class="w-full text-left text-xs whitespace-nowrap">
                             <thead class="bg-slate-950/70 text-slate-400 font-semibold border-b border-slate-800 text-[11px]">
                                 <tr>
@@ -17042,7 +17019,6 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
 
                 renderPlanningKPIs(currentPlanningData.summary);
                 renderPlanningLinesGrid(currentPlanningData.line_schedules);
-                renderPlanningSipNoCards(currentPlanningData.planned_orders_by_sipno);
                 renderPlanningOrdersTable(currentPlanningData.planned_orders);
                 renderPlanningMixerDemands(currentPlanningData.mixer_demands);
                 renderPlanningRawMaterials(currentPlanningData.raw_materials_demand);
@@ -17198,237 +17174,6 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             });
             container.innerHTML = html;
             if (typeof safeCreateIcons === 'function') safeCreateIcons();
-        }
-
-        // ── KASIM SIPARISLERI SIPARIS BAZLI AKILLI PLANLAMA FONKSIYONLARI ──
-        let currentPlanningMainView = 'sipno'; // 'sipno' or 'table'
-
-        function switchPlanningMainView(view) {
-            currentPlanningMainView = view;
-            const sipnoCont = document.getElementById('planning-sipno-view-container');
-            const tableCont = document.getElementById('planning-table-view-container');
-            const btnSipno = document.getElementById('btn-plan-view-sipno');
-            const btnTable = document.getElementById('btn-plan-view-table');
-
-            if (view === 'sipno') {
-                if (sipnoCont) sipnoCont.classList.remove('hidden');
-                if (tableCont) tableCont.classList.add('hidden');
-                if (btnSipno) { btnSipno.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow flex items-center gap-1.5 transition'; }
-                if (btnTable) { btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition'; }
-            } else {
-                if (sipnoCont) sipnoCont.classList.add('hidden');
-                if (tableCont) tableCont.classList.remove('hidden');
-                if (btnTable) { btnTable.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow flex items-center gap-1.5 transition'; }
-                if (btnSipno) { btnSipno.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-1.5 transition'; }
-            }
-        }
-
-        function toggleSipDetail(sipNo) {
-            const el = document.getElementById('sip-detail-' + sipNo);
-            const icon = document.getElementById('sip-icon-' + sipNo);
-            if (!el) return;
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                if (icon) icon.style.transform = 'rotate(180deg)';
-            } else {
-                el.classList.add('hidden');
-                if (icon) icon.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        function renderPlanningSipNoCards(sipOrders) {
-            const container = document.getElementById('planning-sipno-cards-list');
-            if (!container || !sipOrders) return;
-
-            if (sipOrders.length === 0) {
-                container.innerHTML = '<div class="p-8 text-center text-slate-500 font-mono">Planlanmış sipariş bulunamadı.</div>';
-                return;
-            }
-
-            let html = '';
-            sipOrders.forEach((s, idx) => {
-                const sipNo = s.sip_no || 'Bilinmeyen';
-                const kapi = s.total_kapi || 0;
-                const dueDate = s.due_date || '-';
-                const finishTime = s.final_finish || 'Hesaplanıyor';
-                const riskStatus = s.risk_status || 'SIFIR_RISK';
-                
-                let cardBorder = 'border-slate-800 hover:border-slate-700';
-                let riskBadgeClass = 'bg-emerald-950/80 text-emerald-300 border-emerald-800';
-                if (riskStatus === 'GECIKME_RISKI') {
-                    cardBorder = 'border-rose-900/60 hover:border-rose-700 bg-rose-950/10';
-                    riskBadgeClass = 'bg-rose-950/90 text-rose-300 border-rose-800 font-bold animate-pulse';
-                } else if (riskStatus === 'KRITIK') {
-                    cardBorder = 'border-amber-900/60 hover:border-amber-700 bg-amber-950/10';
-                    riskBadgeClass = 'bg-amber-950/90 text-amber-300 border-amber-800 font-bold';
-                }
-
-                // Multi-hat smart splitting badge
-                const hasMultiHat = Boolean(s.has_multi_hat || (s.multi_hat_approvals && s.multi_hat_approvals.length > 0));
-                const multiHatBadgeHtml = hasMultiHat
-                    ? `<span class="px-2.5 py-1 rounded-lg bg-cyan-950/90 text-cyan-300 border border-cyan-700/80 text-[11px] font-bold flex items-center gap-1.5" title="${(s.multi_hat_approvals||[]).join(' | ')}">
-                         ⚡ 2/3 Hat Onaylı (Süre Yarıya İndi)
-                       </span>`
-                    : '';
-
-                // Mold change summary badge
-                const hasMoldChange = (s.mold_changes && s.mold_changes.length > 0);
-                const moldBadgeHtml = hasMoldChange 
-                    ? `<span class="px-2.5 py-1 rounded-lg bg-amber-950/90 text-amber-300 border border-amber-700/80 text-[11px] font-bold flex items-center gap-1.5" title="${s.mold_changes.join(' | ')}">
-                         ⚠️ ${s.mold_changes.length} Kalıp Değişimi Gerekli (${s.mold_changes.length * 45} dk duruş)
-                       </span>`
-                    : `<span class="px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 text-[11px] font-semibold flex items-center gap-1.5">
-                         ✅ Kalıplar Hazır (0 Dk Duruş)
-                       </span>`;
-
-                // Components table rows
-                let compRows = '';
-                (s.components || []).forEach(c => {
-                    let typeBadge = '';
-                    if (c.bom_type === 'LEVHA') typeBadge = '<span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-bold">🚪 LEVHA</span>';
-                    else if (c.bom_type === 'SEREN') typeBadge = '<span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-bold">🌲 SEREN</span>';
-                    else if (c.bom_type === 'KASA') typeBadge = '<span class="px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800 text-[10px] font-bold">🔲 KASA</span>';
-                    else if (c.bom_type === 'PERVAZ') typeBadge = '<span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px] font-bold">📐 PERVAZ</span>';
-                    else typeBadge = `<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-bold">${c.bom_type}</span>`;
-
-                    let moldCell = c.needs_mold_change 
-                        ? `<span class="text-amber-400 font-semibold text-[10px]">⚠️ ${c.mold_note}</span>`
-                        : `<span class="text-emerald-400 text-[10px]">✅ Hazır</span>`;
-
-                    compRows += `
-                        <tr class="hover:bg-slate-800/40 transition border-b border-slate-800/40">
-                            <td class="py-2 px-3">${typeBadge}</td>
-                            <td class="py-2 px-3">
-                                <div class="font-bold text-white text-xs">${c.product}</div>
-                                ${c.bom_color ? `<div class="text-[10px] text-cyan-400">Renk: ${c.bom_color}</div>` : ''}
-                            </td>
-                            <td class="py-2 px-3">
-                                <div class="font-mono font-bold text-emerald-400 text-xs">${c.qty_display || (Number(c.order_qty).toLocaleString('tr-TR') + ' ' + (c.unit||'Boy'))}</div>
-                                <div class="text-[10px] text-slate-400 font-mono">${c.bom_type === 'KASA' ? '1 Takım = 2.5 Boy' : (c.bom_type === 'PERVAZ' ? '1 Takım = 5.0 Boy' : (c.bom_type === 'SEREN' ? '1 Kapı = 3.5 Boy' : '1 Kapı = 2 Plaka'))}</div>
-                            </td>
-                            <td class="py-2 px-3">
-                                <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
-                                    ${c.assigned_hat}
-                                </span>
-                                ${c.is_parallel_split ? `<div class="mt-0.5 text-[10px] text-cyan-400 font-bold flex items-center gap-1">⚡ ${c.multi_hat_badge || 'Paralel Hat'}</div>` : ''}
-                            </td>
-                            <td class="py-2 px-3">${moldCell}</td>
-                            <td class="py-2 px-3 font-mono text-slate-300 text-xs">${c.line_hours} sa</td>
-                            <td class="py-2 px-3 font-mono text-xs text-slate-400">${c.start_time || '-'}</td>
-                            <td class="py-2 px-3 font-mono text-xs font-bold text-amber-300">${c.finish_time || '-'}</td>
-                            <td class="py-2 px-3">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.risk_status === 'SIFIR_RISK' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : (c.risk_status === 'KRITIK' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-rose-950 text-rose-300 border border-rose-800')}">
-                                    ${c.risk_badge || c.risk_status}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += `
-                    <div class="rounded-2xl border ${cardBorder} bg-slate-900/80 shadow-lg overflow-hidden transition-all duration-200">
-                        <!-- Clickable Header Bar -->
-                        <div onclick="toggleSipDetail('${sipNo}')" class="p-4 cursor-pointer hover:bg-slate-800/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition select-none">
-                            <!-- Left: Sip No, Customer, Door Count -->
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-black font-mono text-sm">
-                                    #${sipNo}
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-base font-black text-white tracking-wide">SİPARİŞ NO: ${sipNo}</span>
-                                        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono text-xs font-black">
-                                            🚪 ${kapi.toLocaleString('tr-TR')} Kapı
-                                        </span>
-                                    </div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">
-                                        Renkler: <span class="text-slate-300 font-semibold">${s.colors_summary || 'Standart'}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Middle: BOM Badges (Takim ve Boy Gosterimi) -->
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                                <div class="px-2.5 py-1.5 rounded-lg bg-purple-950/40 border border-purple-800/60">
-                                    <div class="text-[10px] text-purple-300 uppercase font-semibold">Levha (x2)</div>
-                                    <div class="font-mono font-bold text-white text-xs">${(s.levha_adet||0).toLocaleString('tr-TR')} Plk</div>
-                                    <div class="text-[9px] text-purple-400 font-mono">(${s.total_kapi} Kapı)</div>
-                                </div>
-                                <div class="px-2.5 py-1.5 rounded-lg bg-amber-950/40 border border-amber-800/60">
-                                    <div class="text-[10px] text-amber-300 uppercase font-semibold">Seren (x3.5)</div>
-                                    <div class="font-mono font-bold text-white text-xs">${(s.seren_boy||0).toLocaleString('tr-TR')} Boy</div>
-                                    <div class="text-[9px] text-amber-400 font-mono">(${s.total_kapi} Kapı)</div>
-                                </div>
-                                <div class="px-2.5 py-1.5 rounded-lg bg-blue-950/40 border border-blue-800/60">
-                                    <div class="text-[10px] text-blue-300 uppercase font-semibold">Kasa (x2.5)</div>
-                                    <div class="font-mono font-bold text-white text-xs">${(s.kasa_boy||0).toLocaleString('tr-TR')} Boy</div>
-                                    <div class="text-[9px] text-blue-400 font-mono">(${(s.kasa_takim||0).toLocaleString('tr-TR')} Tk)</div>
-                                </div>
-                                <div class="px-2.5 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-800/60">
-                                    <div class="text-[10px] text-cyan-300 uppercase font-semibold">Pervaz (x5)</div>
-                                    <div class="font-mono font-bold text-white text-xs">${(s.pervaz_boy||0).toLocaleString('tr-TR')} Boy</div>
-                                    <div class="text-[9px] text-cyan-400 font-mono">(${(s.pervaz_takim||0).toLocaleString('tr-TR')} Tk)</div>
-                                </div>
-                            </div>
-
-                            <!-- Right: Term, Finish (ETA), Mold Badge, Toggle Arrow -->
-                            <div class="flex items-center gap-3 flex-wrap lg:flex-nowrap justify-end">
-                                <div class="text-right">
-                                    <div class="text-[10px] text-slate-400">Müşteri Termini</div>
-                                    <div class="font-mono font-bold text-white text-xs">📅 ${dueDate}</div>
-                                </div>
-
-                                <div class="text-right px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800">
-                                    <div class="text-[10px] text-emerald-400 font-semibold">Tahmini Bitiş (ETA)</div>
-                                    <div class="font-mono font-bold text-amber-300 text-xs">⏱️ ${finishTime}</div>
-                                </div>
-
-                                ${multiHatBadgeHtml}
-                                ${moldBadgeHtml}
-
-                                <span class="px-2.5 py-1 rounded-lg border text-[11px] font-bold ${riskBadgeClass}">
-                                    ${s.risk_badge || riskStatus}
-                                </span>
-
-                                <div id="sip-icon-${sipNo}" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-transform duration-200">
-                                    ▼
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Expandable Details Section -->
-                        <div id="sip-detail-${sipNo}" class="hidden border-t border-slate-800/80 bg-slate-950/70 p-4 space-y-3">
-                            <div class="flex items-center justify-between text-xs font-semibold text-slate-300 pb-1">
-                                <span>📦 Sipariş #${sipNo} İmalat ve Ekstrüzyon Bileşen Dağılımı (${(s.components||[]).length} Kalem):</span>
-                                ${hasMoldChange ? `<span class="text-amber-400 text-[11px]">⚠️ Not: ${s.mold_changes.join(' | ')}</span>` : '<span class="text-emerald-400 text-[11px]">✅ Tüm kalıplar takılı hazır</span>'}
-                            </div>
-
-                            <div class="overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left text-xs whitespace-nowrap">
-                                    <thead class="bg-slate-900 text-slate-400 font-semibold border-b border-slate-800 text-[11px]">
-                                        <tr>
-                                            <th class="py-2 px-3">Bileşen Grubu</th>
-                                            <th class="py-2 px-3">Ürün & Renk Tanımı</th>
-                                            <th class="py-2 px-3">Reçete Miktarı</th>
-                                            <th class="py-2 px-3">Atanan Hat & Göz</th>
-                                            <th class="py-2 px-3">Kalıp Durumu</th>
-                                            <th class="py-2 px-3">İmalat Süresi</th>
-                                            <th class="py-2 px-3">Başlama (Plan)</th>
-                                            <th class="py-2 px-3">Tahmini Bitiş</th>
-                                            <th class="py-2 px-3">Termin Güvenliği</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-800/50">
-                                        ${compRows}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
         }
 
         function renderPlanningOrdersTable(orders) {

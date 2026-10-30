@@ -17263,6 +17263,14 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                     riskBadgeClass = 'bg-amber-950/90 text-amber-300 border-amber-800 font-bold';
                 }
 
+                // Multi-hat smart splitting badge
+                const hasMultiHat = Boolean(s.has_multi_hat || (s.multi_hat_approvals && s.multi_hat_approvals.length > 0));
+                const multiHatBadgeHtml = hasMultiHat
+                    ? `<span class="px-2.5 py-1 rounded-lg bg-cyan-950/90 text-cyan-300 border border-cyan-700/80 text-[11px] font-bold flex items-center gap-1.5" title="${(s.multi_hat_approvals||[]).join(' | ')}">
+                         ⚡ 2/3 Hat Onaylı (Süre Yarıya İndi)
+                       </span>`
+                    : '';
+
                 // Mold change summary badge
                 const hasMoldChange = (s.mold_changes && s.mold_changes.length > 0);
                 const moldBadgeHtml = hasMoldChange 
@@ -17302,6 +17310,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                 <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
                                     ${c.assigned_hat}
                                 </span>
+                                ${c.is_parallel_split ? `<div class="mt-0.5 text-[10px] text-cyan-400 font-bold flex items-center gap-1">⚡ ${c.multi_hat_badge || 'Paralel Hat'}</div>` : ''}
                             </td>
                             <td class="py-2 px-3">${moldCell}</td>
                             <td class="py-2 px-3 font-mono text-slate-300 text-xs">${c.line_hours} sa</td>
@@ -17374,6 +17383,7 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                                     <div class="font-mono font-bold text-amber-300 text-xs">⏱️ ${finishTime}</div>
                                 </div>
 
+                                ${multiHatBadgeHtml}
                                 ${moldBadgeHtml}
 
                                 <span class="px-2.5 py-1 rounded-lg border text-[11px] font-bold ${riskBadgeClass}">

@@ -423,7 +423,7 @@
       "daily_capacity_tk": 115,
       "current_load_days": 39.5,
       "transferred_tk": 1955,
-      "status": "KRİTİK DARBOĞAZ (Ay Sonuna Yetişmiyor)",
+      "status": "Kapasite Yetersiz (Ay Sonu Devir)",
       "benefit": "Hat 108 desteğiyle yük 39.5 günden 22.5 güne düşer, tüm siparişler 23 Kasım'da sıfır gecikmeyle biter!"
     },
     "secondary_alternative": {

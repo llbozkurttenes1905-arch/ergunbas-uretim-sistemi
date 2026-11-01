@@ -7440,6 +7440,14 @@ def get_planning_master_data():
         "available_rotas": PLANNING_ROTAS
     }
 
+@app.get("/api/planning/kasim_calendar")
+def get_kasim_calendar_data():
+    cal_path = os.path.join(os.path.dirname(__file__), "kasim_calendar_data.json")
+    if os.path.exists(cal_path):
+        with open(cal_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"matrix": [], "strategies": [], "days": []}
+
 @app.post("/api/planning/simulate")
 def simulate_planning_job(req: PlanSimulationRequest):
     prod = req.product.strip()

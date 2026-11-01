@@ -1,0 +1,439 @@
+{
+  "title": "KASIM 2026 GÜNLÜK HAT BAZLI ÜRETİM TAKVİMİ (1 - 30 KASIM)",
+  "matrix": [
+    {
+      "hat": "Hat 101",
+      "product": "Seren (Su kazanı arızalı)",
+      "nominal_tk": 110,
+      "net_tk": 50,
+      "tolerance_drop": "%54,5",
+      "november_demand": "Kanat İhtiyacı",
+      "needed_days": "30 Gün",
+      "eta_finish": "30 Kasım"
+    },
+    {
+      "hat": "Hat 102",
+      "product": "140 mm Kasa (2,15m)",
+      "nominal_tk": 110,
+      "net_tk": 100,
+      "tolerance_drop": "%9,1",
+      "november_demand": "5.517 Takım",
+      "needed_days": "24,5 Gün",
+      "eta_finish": "25 Kasım"
+    },
+    {
+      "hat": "Hat 103",
+      "product": "50x80 Pervaz (2,20m)",
+      "nominal_tk": 151,
+      "net_tk": 140,
+      "tolerance_drop": "%7,3",
+      "november_demand": "11.474 Takım",
+      "needed_days": "32,3 Gün",
+      "eta_finish": "Ay Sonu (Takviyeli)"
+    },
+    {
+      "hat": "Hat 104",
+      "product": "Seren (2,10m)",
+      "nominal_tk": 193,
+      "net_tk": 180,
+      "tolerance_drop": "%6,7",
+      "november_demand": "Kanat İhtiyacı",
+      "needed_days": "30 Gün",
+      "eta_finish": "30 Kasım"
+    },
+    {
+      "hat": "Hat 105",
+      "product": "Seren (2,10m)",
+      "nominal_tk": 183,
+      "net_tk": 170,
+      "tolerance_drop": "%7,1",
+      "november_demand": "Kanat İhtiyacı",
+      "needed_days": "30 Gün",
+      "eta_finish": "30 Kasım"
+    },
+    {
+      "hat": "Hat 106",
+      "product": "140 mm Kasa (2,15m)",
+      "nominal_tk": 134,
+      "net_tk": 125,
+      "tolerance_drop": "%6,7",
+      "november_demand": "(Hat 102 ile ortak)",
+      "needed_days": "24,5 Gün",
+      "eta_finish": "25 Kasım"
+    },
+    {
+      "hat": "Hat 107",
+      "product": "100 mm Kasa (FAS + Normal)",
+      "nominal_tk": 191,
+      "net_tk": 115,
+      "tolerance_drop": "%39,8",
+      "november_demand": "4.543 Takım",
+      "needed_days": "39,5 Gün",
+      "eta_finish": "Ay Sonu + Devir"
+    },
+    {
+      "hat": "Hat 108",
+      "product": "200 mm Kasa (2,15m)",
+      "nominal_tk": 125,
+      "net_tk": 115,
+      "tolerance_drop": "%8,0",
+      "november_demand": "1.418 Takım",
+      "needed_days": "12,3 Gün",
+      "eta_finish": "13 Kasım (Boşa Çıkıyor!)"
+    },
+    {
+      "hat": "Hat 109",
+      "product": "50x80 Pervaz (2,2m / 2,5m)",
+      "nominal_tk": 234,
+      "net_tk": 215,
+      "tolerance_drop": "%8,1",
+      "november_demand": "(Hat 103 ile ortak)",
+      "needed_days": "32,3 Gün",
+      "eta_finish": "Ay Sonu (Takviyeli)"
+    },
+    {
+      "hat": "Hat 201",
+      "product": "Levha Hattı",
+      "nominal_tk": "Sabit",
+      "net_tk": "Sabit",
+      "tolerance_drop": "—",
+      "november_demand": "Kanat Yüzeyi",
+      "needed_days": "30 Gün",
+      "eta_finish": "30 Kasım"
+    }
+  ],
+  "strategies": [
+    "1. Hat 108 (200 MM Kasa) toplam 1.418 takımı yaklaşık 12-13 günde (13 Kasım gibi) tamamlamaktadır.",
+    "2. Hat 108 boşa çıktığında, 100 MM Kasa (Hat 107) veya 50x80 Pervaz hatlarına takviye bağlanarak ay sonu hedefleri rahatlatılabilir.",
+    "3. 11 Kasım Pervaz Hedefi (2.870 Tk): Hat 103 (140 tk) ve Hat 109 (215 tk) günlük toplam 355 takım ile 11 günde 3.905 takım üreterek hedefi fazlasıyla karşılar.",
+    "4. FAS 1000 Takım 100 MM Kasa: Hat 107 günlük 115-125 takım ile ilk 8-9 günde FAS acil ihtiyacını eksiksiz bitirir."
+  ],
+  "days": [
+    {
+      "date_label": "01.11.2026\nPazar",
+      "hat_107": "Sip 1068: 1 tk (D.BEYAZ)\nSip 1068: 1 tk (TEAK)\nSip 1068: 1 tk (BEYAZ TEAK)\nSip 1068: 1 tk (ANTRASİT)\nSip 1068: 1 tk (SOMONO)\nSip 1068: 1 tk (VİZON)\nSip 1068: 1 tk (VİZON)\nFAS: 108 tk (TEAK)",
+      "hat_102": "Sip 3360: 50 tk (D.BEYAZ)\nSip 3360: 50 tk (D.BEYAZ)",
+      "hat_106": "Sip 3360: 50 tk (D.BEYAZ)\nSip 3360: 75 tk (D.BEYAZ)",
+      "hat_108": "Sip 4421: 50 tk (D.BEYAZ)\nSip 4446: 45 tk (D.BEYAZ)\nSip 4446: 20 tk (D.BEYAZ)",
+      "hat_103": "Sip 1068: 1 tk (D.BEYAZ)\nSip 1068: 1 tk (TEAK)\nSip 1068: 1 tk (BEYAZ TEAK)\nSip 1068: 1 tk (ANTRASİT)\nSip 1068: 1 tk (SOMONO)\nSip 1068: 1 tk (VİZON)\nSip 1068: 1 tk (VİZON)\nFAS: 133 tk (TEAK)",
+      "hat_109": "FAS: 37 tk (TEAK)\nSip 3360: 178 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 400 tk)"
+    },
+    {
+      "date_label": "02.11.2026\nPazartesi",
+      "hat_107": "FAS: 62 tk (TEAK)\nSip 3360: 53 tk (VİZON)",
+      "hat_102": "Sip 3360: 75 tk (D.BEYAZ)\nSip 3360: 25 tk (VİZON)",
+      "hat_106": "Sip 3360: 55 tk (VİZON)\nSip 3360: 50 tk (VİZON)\nSip 4019: 20 tk (D.BEYAZ)",
+      "hat_108": "Sip 4446: 10 tk (D.BEYAZ)\nSip 4446: 20 tk (VİZON)\nSip 4446: 40 tk (VİZON)\nSip F: 45 tk (VİZON)",
+      "hat_103": "Sip 3360: 122 tk (D.BEYAZ)\nSip 3360: 18 tk (VİZON)",
+      "hat_109": "Sip 3360: 169 tk (VİZON)\nFAS: 46 tk (TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 800 tk)"
+    },
+    {
+      "date_label": "03.11.2026\nSalı",
+      "hat_107": "Sip 3360: 4 tk (VİZON)\nFAS: 111 tk (TEAK)",
+      "hat_102": "Sip 4019: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4019: 30 tk (D.BEYAZ)\nSip 4297: 95 tk (D.BEYAZ)",
+      "hat_108": "Sip F: 115 tk (VİZON)",
+      "hat_103": "FAS: 124 tk (TEAK)\nSip 3611: 16 tk (D.BEYAZ)",
+      "hat_109": "Sip 3611: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 1200 tk)"
+    },
+    {
+      "date_label": "04.11.2026\nÇarşamba",
+      "hat_107": "FAS: 59 tk (TEAK)\nSip 3611: 56 tk (D.BEYAZ)",
+      "hat_102": "Sip 4297: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4297: 125 tk (D.BEYAZ)",
+      "hat_108": "Sip F: 40 tk (VİZON)\nSip 4526: 70 tk (VİZON)\nSip 4714: 5 tk (D.BEYAZ)",
+      "hat_103": "Sip 3611: 19 tk (D.BEYAZ)\nFAS: 60 tk (TEAK)\nFAS: 61 tk (TEAK)",
+      "hat_109": "FAS: 49 tk (TEAK)\nFAS: 166 tk (TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 1600 tk)"
+    },
+    {
+      "date_label": "05.11.2026\nPerşembe",
+      "hat_107": "Sip 3611: 44 tk (D.BEYAZ)\nSip 3611: 50 tk (D.BEYAZ)\nFAS: 21 tk (TEAK)",
+      "hat_102": "Sip 4297: 30 tk (D.BEYAZ)\nSip 4297: 70 tk (ANTRASİT)",
+      "hat_106": "Sip 4297: 80 tk (ANTRASİT)\nSip 4401: 45 tk (D.BEYAZ)",
+      "hat_108": "Sip 4714: 35 tk (D.BEYAZ)\nSip 4714: 80 tk (BEYAZ TEAK)",
+      "hat_103": "FAS: 4 tk (TEAK)\nSip 3920: 84 tk (D.BEYAZ)\nFAS: 52 tk (TEAK)",
+      "hat_109": "FAS: 118 tk (TEAK)\nSip 4019: 97 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 2000 tk)"
+    },
+    {
+      "date_label": "06.11.2026\nCuma",
+      "hat_107": "FAS: 39 tk (TEAK)\nFAS: 76 tk (TEAK)",
+      "hat_102": "Sip 4401: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4401: 125 tk (D.BEYAZ)",
+      "hat_108": "Sip 4714: 25 tk (BEYAZ TEAK)\nSip 4714: 20 tk (ANTRASİT)\nSip 4714: 50 tk (VİZON)\nSip 5127: 20 tk (D.BEYAZ)",
+      "hat_103": "Sip 4019: 53 tk (D.BEYAZ)\nFAS: 87 tk (TEAK)",
+      "hat_109": "FAS: 63 tk (TEAK)\nFAS: 20 tk (SOMONO)\nSip 4297: 132 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 2400 tk)"
+    },
+    {
+      "date_label": "07.11.2026\nCumartesi",
+      "hat_107": "FAS: 34 tk (TEAK)\nFAS: 81 tk (TEAK)",
+      "hat_102": "Sip 4401: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4401: 30 tk (D.BEYAZ)\nSip 4401: 50 tk (ANTRASİT)\nSip 4421: 45 tk (D.BEYAZ)",
+      "hat_108": "Sip 5127: 80 tk (D.BEYAZ)\nSip 5127: 35 tk (ANTRASİT)",
+      "hat_103": "Sip 4297: 140 tk (D.BEYAZ)",
+      "hat_109": "Sip 4297: 78 tk (D.BEYAZ)\nSip 4297: 137 tk (ANTRASİT)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 2800 tk)"
+    },
+    {
+      "date_label": "08.11.2026\nPazar",
+      "hat_107": "FAS: 89 tk (TEAK)\nSip 3920: 26 tk (D.BEYAZ)",
+      "hat_102": "Sip 4421: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4421: 125 tk (D.BEYAZ)",
+      "hat_108": "Sip 5127: 15 tk (ANTRASİT)\nSip 5162: 39 tk (K.CEVİZ)\nSip 5162: 50 tk (D.BEYAZ)\nSip 5300: 11 tk (D.BEYAZ)",
+      "hat_103": "Sip 4297: 13 tk (ANTRASİT)\nFAS: 127 tk (SOMONO)",
+      "hat_109": "FAS: 43 tk (SOMONO)\nSip 4401: 129 tk (D.BEYAZ)\nSip 4401: 43 tk (ANTRASİT)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 3200 tk)"
+    },
+    {
+      "date_label": "09.11.2026\nPazartesi",
+      "hat_107": "Sip 3920: 1 tk (D.BEYAZ)\nSip 3920: 57 tk (D.BEYAZ)\nFAS: 57 tk (TEAK)",
+      "hat_102": "Sip 4421: 30 tk (D.BEYAZ)\nSip 4421: 70 tk (VİZON)",
+      "hat_106": "Sip 4421: 30 tk (VİZON)\nSip 4446: 10 tk (D.BEYAZ)\nSip 4446: 60 tk (D.BEYAZ)\nSip 4446: 25 tk (D.BEYAZ)",
+      "hat_108": "Sip 5300: 14 tk (D.BEYAZ)\nSip 5300: 2 tk (TEAK)\nSip 5300: 25 tk (ANTRASİT)\nSip 5303: 30 tk (D.BEYAZ)\nSip 5420: 3 tk (VİZON)\nSip 5420: 5 tk (VİZON)\nSip 5836: 30 tk (D.BEYAZ)\nSip 5836: 6 tk (VİZON)",
+      "hat_103": "Sip 4401: 7 tk (ANTRASİT)\nFAS: 10 tk (SOMONO)\nFAS: 123 tk (SOMONO)",
+      "hat_109": "FAS: 37 tk (SOMONO)\nSip 4421: 178 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 3600 tk)"
+    },
+    {
+      "date_label": "10.11.2026\nSalı",
+      "hat_107": "FAS: 113 tk (TEAK)\nFAS: 2 tk (TEAK)",
+      "hat_102": "Sip 4446: 55 tk (D.BEYAZ)\nSip 4446: 5 tk (VİZON)\nSip 4446: 40 tk (VİZON)",
+      "hat_106": "Sip 4446: 30 tk (VİZON)\nSip 4446: 60 tk (VİZON)\nSip 4526: 35 tk (VİZON)",
+      "hat_108": "Sip 5836: 4 tk (VİZON)\nSip 2053: 20 tk (D.BEYAZ)\nSip 2053: 40 tk (D.BEYAZ)\nSip 2053: 51 tk (D.BEYAZ)",
+      "hat_103": "Sip 4421: 140 tk (D.BEYAZ)",
+      "hat_109": "Sip 4421: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 4000 tk)"
+    },
+    {
+      "date_label": "11.11.2026\nÇarşamba",
+      "hat_107": "FAS: 115 tk (TEAK)",
+      "hat_102": "Sip 4526: 100 tk (VİZON)",
+      "hat_106": "Sip 4526: 5 tk (VİZON)\nSip 4526: 90 tk (VİZON)\nSip 4664: 1 tk (ANTRASİT)\nSip 4714: 29 tk (D.BEYAZ)",
+      "hat_108": "Sip 2053: 49 tk (D.BEYAZ)\nSip 2053: 30 tk (BEYAZ TEAK)\nSip 2053: 36 tk (BEYAZ TEAK)",
+      "hat_103": "Sip 4421: 140 tk (D.BEYAZ)",
+      "hat_109": "Sip 4421: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 4400 tk)"
+    },
+    {
+      "date_label": "12.11.2026\nPerşembe",
+      "hat_107": "FAS: 33 tk (TEAK)\nFAS: 20 tk (SOMONO)\nFAS: 62 tk (SOMONO)",
+      "hat_102": "Sip 4714: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 4714: 1 tk (D.BEYAZ)\nSip 4714: 55 tk (BEYAZ TEAK)\nSip 4714: 50 tk (VİZON)\nSip 4980: 19 tk (D.BEYAZ)",
+      "hat_108": "Sip 2053: 14 tk (BEYAZ TEAK)\nSip 2053: 50 tk (BEYAZ TEAK)",
+      "hat_103": "Sip 4421: 140 tk (D.BEYAZ)",
+      "hat_109": "Sip 4421: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 4800 tk)"
+    },
+    {
+      "date_label": "13.11.2026\nCuma",
+      "hat_107": "FAS: 108 tk (SOMONO)\nFAS: 7 tk (SOMONO)",
+      "hat_102": "Sip 4980: 92 tk (D.BEYAZ)\nSip 5125: 8 tk (D.BEYAZ)",
+      "hat_106": "Sip 5125: 44 tk (D.BEYAZ)\nSip 5125: 19 tk (D.BEYAZ)\nSip 5127: 62 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 4421: 107 tk (D.BEYAZ)\nSip 4421: 33 tk (ANTRASİT)",
+      "hat_109": "Sip 4421: 67 tk (ANTRASİT)\nFAS: 140 tk (SOMONO)\nFAS: 8 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 5200 tk)"
+    },
+    {
+      "date_label": "14.11.2026\nCumartesi",
+      "hat_107": "FAS: 3 tk (SOMONO)\nFAS: 112 tk (SOMONO)",
+      "hat_102": "Sip 5127: 38 tk (D.BEYAZ)\nSip 5127: 50 tk (D.BEYAZ)\nSip 5127: 12 tk (ANTRASİT)",
+      "hat_106": "Sip 5127: 38 tk (ANTRASİT)\nSip 5162: 10 tk (D.BEYAZ)\nSip 5162: 77 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 22 tk (BEYAZ TEAK)\nSip 4446: 118 tk (D.BEYAZ)",
+      "hat_109": "Sip 4446: 12 tk (D.BEYAZ)\nSip 4446: 10 tk (D.BEYAZ)\nSip 4446: 145 tk (D.BEYAZ)\nSip 4446: 48 tk (VİZON)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 5600 tk)"
+    },
+    {
+      "date_label": "15.11.2026\nPazar",
+      "hat_107": "FAS: 48 tk (SOMONO)\nFAS: 67 tk (SOMONO)",
+      "hat_102": "Sip 5162: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 5162: 23 tk (D.BEYAZ)\nSip 5218: 102 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 4446: 72 tk (VİZON)\nSip 4446: 5 tk (VİZON)\nSip 4446: 63 tk (VİZON)",
+      "hat_109": "Sip 4446: 42 tk (VİZON)\nFAS: 170 tk (BEYAZ TEAK)\nSip 4526: 3 tk (VİZON)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 6000 tk)"
+    },
+    {
+      "date_label": "16.11.2026\nPazartesi",
+      "hat_107": "FAS: 73 tk (SOMONO)\nFAS: 30 tk (BEYAZ TEAK)\nSip 4446: 12 tk (D.BEYAZ)",
+      "hat_102": "Sip 5218: 98 tk (D.BEYAZ)\nSip 5862: 2 tk (D.BEYAZ)",
+      "hat_106": "Sip 5862: 1 tk (D.BEYAZ)\nSip 5862: 121 tk (D.BEYAZ)\nSip 5862: 3 tk (VİZON)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 4526: 140 tk (VİZON)",
+      "hat_109": "Sip 4526: 17 tk (VİZON)\nSip 4526: 198 tk (VİZON)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 6400 tk)"
+    },
+    {
+      "date_label": "17.11.2026\nSalı",
+      "hat_107": "Sip 4446: 18 tk (D.BEYAZ)\nSip 4446: 20 tk (D.BEYAZ)\nSip 4446: 10 tk (VİZON)\nSip 4446: 20 tk (VİZON)\nFAS: 47 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5862: 100 tk (VİZON)",
+      "hat_106": "Sip 5862: 14 tk (VİZON)\nSip 5862: 111 tk (VİZON)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 4526: 140 tk (VİZON)",
+      "hat_109": "Sip 4526: 2 tk (VİZON)\nFAS: 170 tk (BEYAZ TEAK)\nSip 4664: 10 tk (ANTRASİT)\nFAS: 30 tk (BEYAZ TEAK)\nFAS: 3 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 6800 tk)"
+    },
+    {
+      "date_label": "18.11.2026\nÇarşamba",
+      "hat_107": "FAS: 115 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5862: 98 tk (VİZON)\nSip 5300: 2 tk (D.BEYAZ)",
+      "hat_106": "Sip 5300: 125 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 137 tk (BEYAZ TEAK)\nSip 4714: 3 tk (D.BEYAZ)",
+      "hat_109": "Sip 4714: 167 tk (D.BEYAZ)\nSip 4714: 48 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 7200 tk)"
+    },
+    {
+      "date_label": "19.11.2026\nPerşembe",
+      "hat_107": "FAS: 8 tk (BEYAZ TEAK)\nFAS: 107 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5300: 98 tk (D.BEYAZ)\nSip 5300: 2 tk (ANTRASİT)",
+      "hat_106": "Sip 5300: 125 tk (ANTRASİT)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 4714: 112 tk (BEYAZ TEAK)\nSip 4714: 20 tk (ANTRASİT)\nSip 4714: 8 tk (VİZON)",
+      "hat_109": "Sip 4714: 92 tk (VİZON)\nFAS: 123 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 7600 tk)"
+    },
+    {
+      "date_label": "20.11.2026\nCuma",
+      "hat_107": "FAS: 63 tk (BEYAZ TEAK)\nSip 4664: 9 tk (ANTRASİT)\nSip 4664: 1 tk (ANTRASİT)\nSip 4664: 1 tk (ANTRASİT)\nFAS: 30 tk (BEYAZ TEAK)\nFAS: 11 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5300: 48 tk (ANTRASİT)\nSip 5303: 52 tk (D.BEYAZ)",
+      "hat_106": "Sip 5303: 103 tk (D.BEYAZ)\nSip 5420: 6 tk (D.BEYAZ)\nSip 5420: 5 tk (VİZON)\nSip 5494: 11 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 47 tk (BEYAZ TEAK)\nSip 4882: 93 tk (D.BEYAZ)",
+      "hat_109": "Sip 4882: 192 tk (D.BEYAZ)\nFAS: 23 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 8000 tk)"
+    },
+    {
+      "date_label": "21.11.2026\nCumartesi",
+      "hat_107": "FAS: 115 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5494: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 5494: 125 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 140 tk (BEYAZ TEAK)",
+      "hat_109": "FAS: 7 tk (BEYAZ TEAK)\nSip 4980: 111 tk (D.BEYAZ)\nFAS: 97 tk (BEYAZ TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 8400 tk)"
+    },
+    {
+      "date_label": "22.11.2026\nPazar",
+      "hat_107": "FAS: 14 tk (BEYAZ TEAK)\nFAS: 101 tk (BEYAZ TEAK)",
+      "hat_102": "Sip 5494: 100 tk (D.BEYAZ)",
+      "hat_106": "Sip 5494: 125 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 23 tk (BEYAZ TEAK)\nFAS: 50 tk (M.TEAK)\nSip 5125: 67 tk (D.BEYAZ)",
+      "hat_109": "Sip 5125: 4 tk (D.BEYAZ)\nFAS: 170 tk (M.TEAK)\nSip 5127: 41 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 8800 tk)"
+    },
+    {
+      "date_label": "23.11.2026\nPazartesi",
+      "hat_107": "FAS: 69 tk (BEYAZ TEAK)\nSip 4882: 46 tk (D.BEYAZ)",
+      "hat_102": "Sip 5494: 39 tk (D.BEYAZ)\nSip 5693: 12 tk (VİZON)\nSip 5836: 24 tk (D.BEYAZ)\nSip 5836: 12 tk (VİZON)\nSip 2053: 13 tk (D.BEYAZ)",
+      "hat_106": "Sip 2053: 47 tk (D.BEYAZ)\nSip 2053: 78 tk (D.BEYAZ)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5127: 140 tk (D.BEYAZ)",
+      "hat_109": "Sip 5127: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 9200 tk)"
+    },
+    {
+      "date_label": "24.11.2026\nSalı",
+      "hat_107": "Sip 4882: 115 tk (D.BEYAZ)",
+      "hat_102": "Sip 2053: 42 tk (D.BEYAZ)\nSip 2053: 58 tk (D.BEYAZ)",
+      "hat_106": "Sip 2053: 22 tk (D.BEYAZ)\nSip 2053: 50 tk (BEYAZ TEAK)\nSip 2053: 53 tk (BEYAZ TEAK)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5127: 4 tk (D.BEYAZ)\nSip 5127: 136 tk (ANTRASİT)",
+      "hat_109": "Sip 5127: 14 tk (ANTRASİT)\nFAS: 170 tk (M.TEAK)\nSip 5162: 31 tk (K.CEVİZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 9600 tk)"
+    },
+    {
+      "date_label": "25.11.2026\nÇarşamba",
+      "hat_107": "Sip 4882: 115 tk (D.BEYAZ)",
+      "hat_102": "Sip 2053: 47 tk (BEYAZ TEAK)\nSip 2053: 53 tk (BEYAZ TEAK)",
+      "hat_106": "Sip 2053: 17 tk (BEYAZ TEAK)",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5162: 8 tk (K.CEVİZ)\nSip 5162: 132 tk (D.BEYAZ)",
+      "hat_109": "Sip 5162: 140 tk (D.BEYAZ)\nFAS: 10 tk (M.TEAK)\nFAS: 65 tk (M.TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 10000 tk)"
+    },
+    {
+      "date_label": "26.11.2026\nPerşembe",
+      "hat_107": "Sip 4882: 9 tk (D.BEYAZ)\nFAS: 106 tk (BEYAZ TEAK)",
+      "hat_102": "—",
+      "hat_106": "—",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 95 tk (M.TEAK)\nSip 5218: 45 tk (D.BEYAZ)",
+      "hat_109": "Sip 5218: 155 tk (D.BEYAZ)\nFAS: 60 tk (M.TEAK)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 10400 tk)"
+    },
+    {
+      "date_label": "27.11.2026\nCuma",
+      "hat_107": "FAS: 64 tk (BEYAZ TEAK)\nFAS: 51 tk (BEYAZ TEAK)",
+      "hat_102": "—",
+      "hat_106": "—",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "FAS: 110 tk (M.TEAK)\nFAS: 30 tk (M.TEAK)",
+      "hat_109": "FAS: 140 tk (M.TEAK)\nSip 5862: 75 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 10800 tk)"
+    },
+    {
+      "date_label": "28.11.2026\nCumartesi",
+      "hat_107": "FAS: 69 tk (BEYAZ TEAK)\nFAS: 46 tk (M.TEAK)",
+      "hat_102": "—",
+      "hat_106": "—",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5862: 49 tk (D.BEYAZ)\nSip 5862: 91 tk (VİZON)",
+      "hat_109": "Sip 5862: 215 tk (VİZON)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 11200 tk)"
+    },
+    {
+      "date_label": "29.11.2026\nPazar",
+      "hat_107": "FAS: 4 tk (M.TEAK)\nFAS: 111 tk (M.TEAK)",
+      "hat_102": "—",
+      "hat_106": "—",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5862: 20 tk (VİZON)\nFAS: 100 tk (M.TEAK)\nSip 5300: 20 tk (D.BEYAZ)",
+      "hat_109": "Sip 5300: 215 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 11600 tk)"
+    },
+    {
+      "date_label": "30.11.2026\nPazartesi",
+      "hat_107": "FAS: 59 tk (M.TEAK)\nSip 5127: 56 tk (D.BEYAZ)",
+      "hat_102": "—",
+      "hat_106": "—",
+      "hat_108": "TAMAMLANDI\n(100 Kasa / Pervaz Takviye)",
+      "hat_103": "Sip 5300: 15 tk (D.BEYAZ)\nSip 5300: 2 tk (TEAK)\nSip 5300: 123 tk (ANTRASİT)",
+      "hat_109": "Sip 5300: 77 tk (ANTRASİT)\nSip 5303: 138 tk (D.BEYAZ)",
+      "seren": "Seren Üretimi: 400 tk\n(Kümülatif: 12000 tk)"
+    }
+  ],
+  "bottleneck_alert": {
+    "free_hat": "Hat 108",
+    "product_completed": "200 mm Kasa (2,15m)",
+    "finish_date": "13 Kasım 2026",
+    "free_days_count": 17,
+    "free_capacity_tk": 1955,
+    "primary_urgency": {
+      "hat": "Hat 107",
+      "product": "100 mm Kasa (FAS + Normal)",
+      "demand_tk": 4543,
+      "daily_capacity_tk": 115,
+      "current_load_days": 39.5,
+      "transferred_tk": 1955,
+      "status": "KRİTİK DARBOĞAZ (Ay Sonuna Yetişmiyor)",
+      "benefit": "Hat 108 desteğiyle yük 39.5 günden 22.5 güne düşer, tüm siparişler 23 Kasım'da sıfır gecikmeyle biter!"
+    },
+    "secondary_alternative": {
+      "hat": "Hat 103 & Hat 109",
+      "product": "50x80 Pervaz",
+      "demand_tk": 11474,
+      "current_load_days": 32.3,
+      "transferred_tk": 1500,
+      "benefit": "Pervaz hatlarının yükünü hafifletir, ay sonu takviyesini güvenceye alır."
+    },
+    "recommended_action": "14 Kasım'dan itibaren Hat 108'e 100 mm Kasa kalıbı takılması (45 dk setup) önerilir."
+  }
+}

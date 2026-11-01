@@ -2469,7 +2469,188 @@
                     </div>
                 </div>
 
-                <!-- 5 Key Metric Cards (KPI Bar) -->
+                
+            <!-- Planning View Switcher Mode -->
+            <div class="flex items-center justify-between gap-3 bg-slate-900/90 p-2.5 rounded-2xl border border-slate-800 shadow-xl flex-wrap">
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="switchPlanningMainTab('calendar')" id="btn-tab-kasim-calendar" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition active:scale-95">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>📅 Kasım Günlük Hat Çizelgesi (1 - 30 Kasım)</span>
+                    </button>
+                    <button type="button" onclick="switchPlanningMainTab('standard')" id="btn-tab-planning-standard" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition active:scale-95">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        <span>📋 Standart Hat İş Yükü & Sipariş Listesi</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400 font-mono pr-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-emerald-400 font-semibold">2 Vardiya / 24 Saat Net Kapasite</span>
+                </div>
+            </div>
+
+            <!-- CONTAINER 1: KASIM GÜNLÜK HAT ÇİZELGESİ (Default Active) -->
+            <div id="planning-calendar-view" class="space-y-5">
+                
+                <!-- ⚡ Akıllı Hat Darboğaz & Kapasite Alarm Kartı (Hat 108 Önerisi) -->
+                <div class="rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-emerald-950/40 border border-amber-600/40 p-5 shadow-2xl relative overflow-hidden">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-lg shadow-amber-500/10">
+                                <i data-lucide="zap" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                        ⚡ AKILLI HAT DARBOĞAZ ÖNERİSİ: Hat 108 (13 Kasım'da Boşa Çıkıyor!)
+                                    </h3>
+                                    <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold">
+                                        17 Gün / 1.955 Takım Boş Kapasite
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                                    Hat 108, 200 mm Kasa siparişlerini 13 Kasım'da eksiksiz tamamlayarak boşa çıkmaktadır. En acil darboğaz olan 
+                                    <strong class="text-amber-300 font-semibold">Hat 107 (100 mm Kasa - 39,5 Günlük Yük)</strong> siparişlerinin 
+                                    <strong class="text-emerald-400 font-semibold">1.955 takımını Hat 108'e kaydırarak</strong> ay sonu gecikmesini tamamen sıfırlayabilirsiniz!
+                                </p>
+                                <div class="flex items-center gap-2 mt-2.5 text-[11px] text-emerald-300 font-mono flex-wrap">
+                                    <span class="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/60 font-semibold">
+                                        💡 Önerilen Aksiyon: 14 Kasım sabahı Hat 108'e 100 mm Kasa kalıbı takılması (45 dk setup).
+                                    </span>
+                                    <span class="text-slate-400">
+                                        (Alternatif: 50x80 Pervaz'a 1.500 takım takviye verilebilir)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 self-end lg:self-center flex-shrink-0">
+                            <button type="button" onclick="filterCalendarHat('hat_108')" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs shadow-lg shadow-amber-600/30 flex items-center gap-1.5 transition active:scale-95">
+                                <span>Hat 108 Çizelgesini İncele</span>
+                            </button>
+                            <button type="button" onclick="toggleMatrixDetails()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition active:scale-95">
+                                <span>Kapasite Matrisi</span>
+                                <i data-lucide="chevron-down" id="matrix-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Expandable Kapasite Matrisi Details -->
+                    <div id="kasim-matrix-details" class="hidden mt-4 pt-4 border-t border-slate-800/80 space-y-3">
+                        <div class="text-xs font-bold text-slate-300 flex items-center justify-between">
+                            <span>📊 Ekstrüzyon Hatları Kapasite ve Tolerans Analizi (24 Saat / 2 Vardiya)</span>
+                            <span class="text-[11px] text-slate-400 font-mono">Kasım Ayı Toplam İhtiyaç ve Tahmini Bitiş</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800 text-[11px]">
+                                    <tr>
+                                        <th class="py-2 px-3">HAT NO</th>
+                                        <th class="py-2 px-3">ÜRETİLEN ÜRÜN</th>
+                                        <th class="py-2 px-3">NOMİNAL (TK/GÜN)</th>
+                                        <th class="py-2 px-3">NET (TK/GÜN)</th>
+                                        <th class="py-2 px-3">TOLERANS DÜŞÜŞÜ</th>
+                                        <th class="py-2 px-3">KASIM İHTİYACI</th>
+                                        <th class="py-2 px-3">GEREKEN SÜRE</th>
+                                        <th class="py-2 px-3">BİTİŞ HEDEFİ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kasim-matrix-tbody" class="divide-y divide-slate-800/50 font-mono text-[11px]">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arama ve Hafta Filtre Çubuğu -->
+                <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-slate-900/80 p-3 rounded-2xl border border-slate-800 shadow-lg">
+                    <!-- Search Input -->
+                    <div class="relative flex-1 max-w-md">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="calendar-search-input" oninput="onCalendarSearch(this.value)" placeholder="Sipariş / Ürün / Renk Ara (örn: 3360, TEAK, FAS)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+                    <!-- Week Filter Buttons -->
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <button type="button" onclick="filterCalendarWeek('all')" id="btn-week-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow">Tüm Ay (1-30 Kas)</button>
+                        <button type="button" onclick="filterCalendarWeek(1)" id="btn-week-1" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800">1. Hafta (1-7 Kas)</button>
+                        <button type="button" onclick="filterCalendarWeek(2)" id="btn-week-2" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800">2. Hafta (8-14 Kas)</button>
+                        <button type="button" onclick="filterCalendarWeek(3)" id="btn-week-3" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800">3. Hafta (15-21 Kas)</button>
+                        <button type="button" onclick="filterCalendarWeek(4)" id="btn-week-4" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800">4. Hafta (22-30 Kas)</button>
+                    </div>
+                </div>
+
+                <!-- Günlük Hat Çizelgesi Ana Tablosu (1 - 30 Kasım) -->
+                <div class="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl overflow-hidden">
+                    <div class="overflow-x-auto custom-scrollbar max-h-[750px]">
+                        <table class="w-full text-left text-xs whitespace-nowrap border-collapse">
+                            <thead class="bg-slate-950 text-slate-400 font-semibold border-b border-slate-800 text-[11px] sticky top-0 z-20 shadow-md">
+                                <tr>
+                                    <th class="py-3 px-3.5 border-r border-slate-800/80 min-w-[130px] bg-slate-950">
+                                        <div class="text-white font-bold">TARİH / GÜN</div>
+                                        <div class="text-[10px] text-slate-400">Kasım 2026</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[180px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                            <span>HAT 107 (100 KASA)</span>
+                                        </div>
+                                        <div class="text-[10px] text-amber-400 font-mono">[115 Tk/Gün - 39,5 Gün]</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[170px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                                            <span>HAT 102 (140 KASA)</span>
+                                        </div>
+                                        <div class="text-[10px] text-blue-400 font-mono">[100 Tk/Gün]</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[170px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                                            <span>HAT 106 (140 KASA)</span>
+                                        </div>
+                                        <div class="text-[10px] text-blue-400 font-mono">[125 Tk/Gün]</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[190px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                            <span>HAT 108 (200 KASA)</span>
+                                        </div>
+                                        <div class="text-[10px] text-purple-300 font-mono">[115 Tk/Gün - 13 Kas Bitiş]</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[175px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                            <span>HAT 103 (50x80 PERVAZ)</span>
+                                        </div>
+                                        <div class="text-[10px] text-cyan-400 font-mono">[140 Tk/Gün]</div>
+                                    </th>
+                                    <th class="py-3 px-3 border-r border-slate-800/80 min-w-[175px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                            <span>HAT 109 (50x80 PERVAZ)</span>
+                                        </div>
+                                        <div class="text-[10px] text-cyan-400 font-mono">[215 Tk/Gün]</div>
+                                    </th>
+                                    <th class="py-3 px-3 min-w-[170px] bg-slate-950">
+                                        <div class="text-white font-bold flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                            <span>SEREN (101-104-105)</span>
+                                        </div>
+                                        <div class="text-[10px] text-emerald-400 font-mono">[400 Tk/Gün]</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="kasim-calendar-tbody" class="divide-y divide-slate-800/60 font-sans">
+                                <!-- Populated dynamically via renderKasimCalendar() -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CONTAINER 2: STANDART HAT İŞ YÜKÜ & SİPARİŞ LİSTESİ (Initially Hidden) -->
+            <div id="planning-standard-view" class="space-y-6 hidden">
+<!-- 5 Key Metric Cards (KPI Bar) -->
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5" id="planning-kpi-bar">
                     <!-- KPI 1 -->
                     <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-4 shadow-lg flex flex-col justify-between">
@@ -2719,6 +2900,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
 
 
@@ -17023,6 +17205,8 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 renderPlanningMixerDemands(currentPlanningData.mixer_demands);
                 renderPlanningRawMaterials(currentPlanningData.raw_materials_demand);
 
+                loadKasimCalendarData();
+
                 safeCreateIcons();
             } catch (err) {
                 console.error("loadPlanningDashboard hatası:", err);
@@ -17032,6 +17216,221 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 }
             }
         }
+        // ==========================================
+        // KASIM GÜNLÜK HAT ÇİZELGESİ & DARBOĞAZ MOTORU
+        // ==========================================
+        let kasimCalendarData = null;
+        let currentCalendarWeekFilter = 'all';
+        let currentCalendarSearch = '';
+        let currentCalendarHatFilter = 'all';
+
+        function switchPlanningMainTab(tab) {
+            const btnCal = document.getElementById('btn-tab-kasim-calendar');
+            const btnStd = document.getElementById('btn-tab-planning-standard');
+            const viewCal = document.getElementById('planning-calendar-view');
+            const viewStd = document.getElementById('planning-standard-view');
+            if (!viewCal || !viewStd) return;
+
+            if (tab === 'calendar') {
+                viewCal.classList.remove('hidden');
+                viewStd.classList.add('hidden');
+                if (btnCal) btnCal.className = "px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition active:scale-95";
+                if (btnStd) btnStd.className = "px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition active:scale-95";
+                if (!kasimCalendarData) loadKasimCalendarData();
+            } else {
+                viewCal.classList.add('hidden');
+                viewStd.classList.remove('hidden');
+                if (btnStd) btnStd.className = "px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition active:scale-95";
+                if (btnCal) btnCal.className = "px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition active:scale-95";
+            }
+            if (typeof safeCreateIcons === 'function') safeCreateIcons();
+        }
+
+        async function loadKasimCalendarData() {
+            try {
+                const res = await fetch('/api/planning/kasim_calendar');
+                if (!res.ok) return;
+                kasimCalendarData = await res.json();
+                renderKasimMatrix();
+                renderKasimCalendar();
+                if (typeof safeCreateIcons === 'function') safeCreateIcons();
+            } catch (e) {
+                console.error("Kasım takvimi yükleme hatası:", e);
+            }
+        }
+
+        function toggleMatrixDetails() {
+            const el = document.getElementById('kasim-matrix-details');
+            const icon = document.getElementById('matrix-toggle-icon');
+            if (!el) return;
+            const isHidden = el.classList.contains('hidden');
+            if (isHidden) {
+                el.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                el.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function renderKasimMatrix() {
+            const tbody = document.getElementById('kasim-matrix-tbody');
+            if (!tbody || !kasimCalendarData || !kasimCalendarData.matrix) return;
+
+            let html = '';
+            kasimCalendarData.matrix.forEach(m => {
+                let statusBadge = `<span class="text-slate-300 font-semibold">${m.eta_finish}</span>`;
+                if (m.hat === 'Hat 108') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 animate-pulse">⚡ 13 Kasım (Boşa Çıkıyor!)</span>`;
+                } else if (m.hat === 'Hat 107') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold border border-rose-500/40">🔴 39,5 Gün (Darboğaz)</span>`;
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="py-2 px-3 font-bold text-white">${m.hat}</td>
+                        <td class="py-2 px-3 text-slate-300 font-sans">${m.product}</td>
+                        <td class="py-2 px-3 text-slate-400">${m.nominal_tk}</td>
+                        <td class="py-2 px-3 text-emerald-400 font-bold">${m.net_tk}</td>
+                        <td class="py-2 px-3 text-amber-400 font-bold">${m.tolerance_drop}</td>
+                        <td class="py-2 px-3 text-slate-200 font-semibold">${m.november_demand}</td>
+                        <td class="py-2 px-3 text-slate-300">${m.needed_days}</td>
+                        <td class="py-2 px-3">${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function formatCalendarCellContent(rawText, query) {
+            if (!rawText || !rawText.trim()) {
+                return `<div class="text-[10px] text-slate-600 italic py-1 text-center font-mono">—</div>`;
+            }
+
+            const lines = rawText.split('\n');
+            let itemsHtml = '';
+
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+
+                if (trimmed.includes('TAMAMLANDI')) {
+                    itemsHtml += `
+                        <div class="my-1 p-2 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-300 font-bold text-center text-[10px] shadow-sm animate-pulse">
+                            ⚡ TAMAMLANDI<br>
+                            <span class="text-[9px] text-amber-200/90 font-normal">100 Kasa / Pervaz Takviye</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (trimmed.includes('Seren Üretimi:')) {
+                    itemsHtml += `
+                        <div class="my-1 p-1.5 rounded-lg bg-emerald-950/50 border border-emerald-800/40 text-emerald-300 text-[10px] font-mono leading-tight">
+                            🪵 ${trimmed}
+                        </div>
+                    `;
+                    return;
+                }
+
+                let colorClass = "bg-slate-950 border-slate-800 text-slate-200";
+                if (trimmed.includes('D.BEYAZ')) colorClass = "bg-slate-900 border-slate-700 text-slate-100";
+                else if (trimmed.includes('TEAK') && !trimmed.includes('BEYAZ TEAK')) colorClass = "bg-amber-950/30 border-amber-700/50 text-amber-200";
+                else if (trimmed.includes('BEYAZ TEAK') || trimmed.includes('M.B.TEAK')) colorClass = "bg-teal-950/30 border-teal-700/50 text-teal-200";
+                else if (trimmed.includes('VİZON')) colorClass = "bg-stone-900 border-stone-600 text-stone-200";
+                else if (trimmed.includes('ANTRASİT')) colorClass = "bg-zinc-950 border-zinc-700 text-zinc-300";
+                else if (trimmed.includes('SOMONO')) colorClass = "bg-orange-950/30 border-orange-700/40 text-orange-200";
+
+                let isHighlighted = false;
+                if (query && trimmed.toLowerCase().includes(query.toLowerCase())) {
+                    isHighlighted = true;
+                }
+
+                itemsHtml += `
+                    <div class="calendar-item my-1 px-2 py-1 rounded-md border ${colorClass} ${isHighlighted ? 'ring-2 ring-emerald-400 font-bold shadow-md shadow-emerald-500/30 bg-emerald-950/80 text-white' : ''} text-[10px] leading-snug flex items-center justify-between gap-1 transition">
+                        <span>${trimmed}</span>
+                    </div>
+                `;
+            });
+
+            return itemsHtml;
+        }
+
+        function renderKasimCalendar() {
+            const tbody = document.getElementById('kasim-calendar-tbody');
+            if (!tbody || !kasimCalendarData || !kasimCalendarData.days) return;
+
+            let html = '';
+            const query = currentCalendarSearch ? currentCalendarSearch.trim() : '';
+
+            kasimCalendarData.days.forEach((day, index) => {
+                const dayNum = index + 1;
+
+                if (currentCalendarWeekFilter === 1 && (dayNum < 1 || dayNum > 7)) return;
+                if (currentCalendarWeekFilter === 2 && (dayNum < 8 || dayNum > 14)) return;
+                if (currentCalendarWeekFilter === 3 && (dayNum < 15 || dayNum > 21)) return;
+                if (currentCalendarWeekFilter === 4 && (dayNum < 22 || dayNum > 30)) return;
+
+                const dateParts = day.date_label.split('\n');
+                const dateStr = dateParts[0] || '';
+                const dayName = dateParts[1] || '';
+                const isWeekend = dayName.includes('Pazar') || dayName.includes('Cumartesi');
+
+                const h107 = formatCalendarCellContent(day.hat_107, query);
+                const h102 = formatCalendarCellContent(day.hat_102, query);
+                const h106 = formatCalendarCellContent(day.hat_106, query);
+                const h108 = formatCalendarCellContent(day.hat_108, query);
+                const h103 = formatCalendarCellContent(day.hat_103, query);
+                const h109 = formatCalendarCellContent(day.hat_109, query);
+                const seren = formatCalendarCellContent(day.seren, query);
+
+                html += `
+                    <tr class="hover:bg-slate-800/30 transition ${isWeekend ? 'bg-slate-950/40' : ''}">
+                        <td class="py-2.5 px-3 border-r border-slate-800/80 font-mono text-[11px] bg-slate-950/90 sticky left-0 z-10">
+                            <div class="font-bold text-white">${dateStr}</div>
+                            <div class="text-[10px] ${isWeekend ? 'text-amber-400 font-semibold' : 'text-slate-400'}">${dayName}</div>
+                        </td>
+                        <td class="p-2 border-r border-slate-800/60 align-top">${h107}</td>
+                        <td class="p-2 border-r border-slate-800/60 align-top">${h102}</td>
+                        <td class="p-2 border-r border-slate-800/60 align-top">${h106}</td>
+                        <td class="p-2 border-r border-slate-800/60 align-top ${dayNum >= 13 ? 'bg-amber-950/10' : ''}">${h108}</td>
+                        <td class="p-2 border-r border-slate-800/60 align-top">${h103}</td>
+                        <td class="p-2 border-r border-slate-800/60 align-top">${h109}</td>
+                        <td class="p-2 align-top">${seren}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function filterCalendarWeek(week) {
+            currentCalendarWeekFilter = week;
+            ['all', 1, 2, 3, 4].forEach(w => {
+                const btn = document.getElementById(`btn-week-${w}`);
+                if (btn) {
+                    if (w === week) {
+                        btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow";
+                    } else {
+                        btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800";
+                    }
+                }
+            });
+            renderKasimCalendar();
+        }
+
+        function onCalendarSearch(val) {
+            currentCalendarSearch = val;
+            renderKasimCalendar();
+        }
+
+        function filterCalendarHat(hatKey) {
+            const table = document.getElementById('kasim-calendar-tbody');
+            if (table) {
+                table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
 
         function renderPlanningKPIs(summary) {
             if (!summary) return;

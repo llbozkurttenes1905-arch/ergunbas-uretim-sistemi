@@ -435,5 +435,51 @@
       "benefit": "Pervaz hatlarının yükünü hafifletir, ay sonu takviyesini güvenceye alır."
     },
     "recommended_action": "14 Kasım'dan itibaren Hat 108'e 100 mm Kasa kalıbı takılması (45 dk setup) önerilir."
+  },
+  "weekend_optimization": {
+    "recommended_4_lines": [
+      {
+        "hat": "Hat 107",
+        "product": "100 mm Kasa",
+        "reason": "39,5 gün yük (en kritik darboğaz)",
+        "priority": 1
+      },
+      {
+        "hat": "Hat 109",
+        "product": "50x80 Pervaz",
+        "reason": "32,3 gün yük (çift kafa yüksek hız)",
+        "priority": 2
+      },
+      {
+        "hat": "Hat 103",
+        "product": "50x80 Pervaz",
+        "reason": "32,3 gün yük (pervaz açığı tamamlama)",
+        "priority": 3
+      },
+      {
+        "hat": "Hat 106",
+        "product": "140 mm Kasa",
+        "reason": "24,5 gün yük (140 kasa ana çekim hattı)",
+        "priority": 4
+      }
+    ],
+    "safe_to_rest_lines": [
+      {
+        "hat": "Hat 108",
+        "product": "200 mm Kasa",
+        "reason": "13 Kasım'da erken bitiyor, çok rahat"
+      },
+      {
+        "hat": "Hat 102",
+        "product": "140 mm Kasa",
+        "reason": "Hat 106 yükü karşılarken dinlenebilir"
+      },
+      {
+        "hat": "Hat 101",
+        "product": "Seren",
+        "reason": "Su kazanı arızalı / düşük hız"
+      }
+    ],
+    "strategy_note": "Cumartesi günleri 3-4 makine çalışıldığında sistem sipariş terminlerine ve hat iş yüklerine göre en acil 4 makineyi (Hat 107, Hat 109, Hat 103, Hat 106) otomatik devreye alır. Diğer makinelerin işleri Pazartesiye güvenle sarkar."
   }
 }

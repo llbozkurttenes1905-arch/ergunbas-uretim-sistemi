@@ -17356,12 +17356,83 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
             return itemsHtml;
         }
 
+        // Hafta sonu modları: 'recommended' (En acil 4 hat), 'full' (Tam kapasite), 'off' (Tatil)
+        let weekendDayModes = {};
+        // Rollover (Dünden devreden bakiyeler) tablosu: { [dayIndex]: { [hatKey]: [items...] } }
+        let calendarRolloverCache = {};
+
+        function onWeekendModeChange(dayNum, mode) {
+            weekendDayModes[dayNum] = mode;
+            renderKasimCalendar();
+        }
+
+        function calculateRollover() {
+            calendarRolloverCache = {};
+            if (!kasimCalendarData || !kasimCalendarData.days) return;
+
+            // En acil 4 hat: hat_107 (1), hat_109 (2), hat_103 (3), hat_106 (4)
+            const activeRecommendedHats = ['hat_107', 'hat_109', 'hat_103', 'hat_106'];
+            const allHats = ['hat_107', 'hat_102', 'hat_106', 'hat_108', 'hat_103', 'hat_109', 'seren'];
+
+            let pendingRollover = {}; // { [hat]: [strings...] }
+
+            kasimCalendarData.days.forEach((day, index) => {
+                const dayNum = index + 1;
+                const isSaturday = day.date_label.includes('Cumartesi');
+                const isSunday = day.date_label.includes('Pazar');
+                const isWeekend = isSaturday || isSunday;
+
+                let mode = weekendDayModes[dayNum] || (isSaturday ? 'recommended' : 'full');
+
+                // Önceki günden devredenler bu güne eklenir
+                calendarRolloverCache[dayNum] = {};
+                for (const h of allHats) {
+                    if (pendingRollover[h] && pendingRollover[h].length > 0) {
+                        calendarRolloverCache[dayNum][h] = [...pendingRollover[h]];
+                        pendingRollover[h] = [];
+                    }
+                }
+
+                // Eğer tatil ise veya kısmi mesai ise çalışmayan hatlar ertesi güne devreder
+                if (isWeekend) {
+                    if (mode === 'off') {
+                        // Tüm hatlar tatile girer, tüm işler ertesi güne kayar
+                        for (const h of allHats) {
+                            const raw = day[h];
+                            if (raw && raw.trim() && !raw.includes('TAMAMLANDI')) {
+                                pendingRollover[h] = pendingRollover[h] || [];
+                                pendingRollover[h].push(`⚠️ Dünden Devir (${dateStrShort(day.date_label)}): ${raw.replace(/\n/g, ' / ')}`);
+                            }
+                        }
+                    } else if (mode === 'recommended') {
+                        // Sadece acil 4 hat çalışır, dinlenen hatlar (hat_102, hat_108, seren) ertesi güne kayar
+                        for (const h of allHats) {
+                            if (!activeRecommendedHats.includes(h)) {
+                                const raw = day[h];
+                                if (raw && raw.trim() && !raw.includes('TAMAMLANDI')) {
+                                    pendingRollover[h] = pendingRollover[h] || [];
+                                    pendingRollover[h].push(`⚠️ Cumartesi'den Devir: ${raw.replace(/\n/g, ' / ')}`);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function dateStrShort(lbl) {
+            return lbl ? lbl.split('\n')[0] : '';
+        }
+
         function renderKasimCalendar() {
             const tbody = document.getElementById('kasim-calendar-tbody');
             if (!tbody || !kasimCalendarData || !kasimCalendarData.days) return;
 
+            calculateRollover();
+
             let html = '';
             const query = currentCalendarSearch ? currentCalendarSearch.trim() : '';
+            const activeRecommendedHats = ['hat_107', 'hat_109', 'hat_103', 'hat_106'];
 
             kasimCalendarData.days.forEach((day, index) => {
                 const dayNum = index + 1;
@@ -17374,21 +17445,104 @@ ${s.materials.map(m => `- ${m.material}: Gereken ${m.required_kg.toLocaleString(
                 const dateParts = day.date_label.split('\n');
                 const dateStr = dateParts[0] || '';
                 const dayName = dateParts[1] || '';
-                const isWeekend = dayName.includes('Pazar') || dayName.includes('Cumartesi');
+                const isSaturday = dayName.includes('Cumartesi');
+                const isSunday = dayName.includes('Pazar');
+                const isWeekend = isSaturday || isSunday;
 
-                const h107 = formatCalendarCellContent(day.hat_107, query);
-                const h102 = formatCalendarCellContent(day.hat_102, query);
-                const h106 = formatCalendarCellContent(day.hat_106, query);
-                const h108 = formatCalendarCellContent(day.hat_108, query);
-                const h103 = formatCalendarCellContent(day.hat_103, query);
-                const h109 = formatCalendarCellContent(day.hat_109, query);
-                const seren = formatCalendarCellContent(day.seren, query);
+                // Hafta sonu modu belirleme
+                let mode = weekendDayModes[dayNum] || (isSaturday ? 'recommended' : 'full');
+
+                // Hücre içeriklerini render etme (çalışan / dinlenen / devreden)
+                function renderCellWithRollover(hatKey, rawVal, isUrgentRecommended) {
+                    let cellHtml = '';
+
+                    // Dünden devreden var mı?
+                    const rollItems = (calendarRolloverCache[dayNum] && calendarRolloverCache[dayNum][hatKey]) || [];
+                    if (rollItems.length > 0) {
+                        rollItems.forEach(ri => {
+                            cellHtml += `
+                                <div class="my-1 p-1.5 rounded-lg bg-amber-950/70 border border-amber-600/60 text-amber-300 font-mono text-[9px] font-bold shadow animate-pulse">
+                                    ${ri}
+                                </div>
+                            `;
+                        });
+                    }
+
+                    // Günün kendi durumu
+                    if (isWeekend) {
+                        if (mode === 'off') {
+                            cellHtml += `
+                                <div class="p-2 rounded-lg bg-slate-950/80 border border-dashed border-slate-800 text-center font-mono text-[10px] text-slate-500">
+                                    ⛔ Tatil / Kapalı<br>
+                                    <span class="text-[9px] text-slate-600 font-sans">İşler Pazartesiye Devretti</span>
+                                </div>
+                            `;
+                            return cellHtml;
+                        } else if (mode === 'recommended' && !isUrgentRecommended) {
+                            cellHtml += `
+                                <div class="p-2 rounded-lg bg-slate-950/80 border border-dashed border-slate-800 text-center font-mono text-[10px] text-slate-400">
+                                    💤 Dinlenmede<br>
+                                    <span class="text-[9px] text-slate-500 font-sans">İş Pazartesiye Devretti</span>
+                                </div>
+                            `;
+                            return cellHtml;
+                        }
+                    }
+
+                    // Normal içerik
+                    cellHtml += formatCalendarCellContent(rawVal, query);
+
+                    // Eğer acil önerilen 4 hattan biriyse ve Cumartesi ise rozet ekle
+                    if (isWeekend && mode === 'recommended' && isUrgentRecommended) {
+                        let rankBadge = '';
+                        if (hatKey === 'hat_107') rankBadge = '<span class="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded bg-rose-950/80 border border-rose-700 text-rose-300 font-bold">🔴 1. Acil (100 Kasa)</span>';
+                        else if (hatKey === 'hat_109') rankBadge = '<span class="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 border border-amber-700 text-amber-300 font-bold">🟠 2. Acil (Pervaz)</span>';
+                        else if (hatKey === 'hat_103') rankBadge = '<span class="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-700 text-cyan-300 font-bold">🟡 3. Acil (Pervaz)</span>';
+                        else if (hatKey === 'hat_106') rankBadge = '<span class="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-700 text-blue-300 font-bold">🔵 4. Acil (140 Kasa)</span>';
+                        cellHtml += `<div class="mt-1">${rankBadge}</div>`;
+                    }
+
+                    return cellHtml;
+                }
+
+                const h107 = renderCellWithRollover('hat_107', day.hat_107, true);
+                const h102 = renderCellWithRollover('hat_102', day.hat_102, false);
+                const h106 = renderCellWithRollover('hat_106', day.hat_106, true);
+                const h108 = renderCellWithRollover('hat_108', day.hat_108, false);
+                const h103 = renderCellWithRollover('hat_103', day.hat_103, true);
+                const h109 = renderCellWithRollover('hat_109', day.hat_109, true);
+                const seren = renderCellWithRollover('seren', day.seren, false);
+
+                // Hafta sonu seçim kutusu HTML
+                let selectorHtml = '';
+                if (isSaturday) {
+                    selectorHtml = `
+                        <div class="mt-1.5 pt-1 border-t border-slate-800">
+                            <select onchange="onWeekendModeChange(${dayNum}, this.value)" class="w-full bg-slate-900 border border-amber-600/50 rounded px-1 py-0.5 text-[10px] text-amber-300 font-bold focus:outline-none cursor-pointer">
+                                <option value="recommended" ${mode === 'recommended' ? 'selected' : ''}>⚡ En Acil 4 Hat</option>
+                                <option value="full" ${mode === 'full' ? 'selected' : ''}>✅ Tam (10 Hat)</option>
+                                <option value="off" ${mode === 'off' ? 'selected' : ''}>⛔ Tatil / Kapalı</option>
+                            </select>
+                        </div>
+                    `;
+                } else if (isSunday) {
+                    selectorHtml = `
+                        <div class="mt-1.5 pt-1 border-t border-slate-800">
+                            <select onchange="onWeekendModeChange(${dayNum}, this.value)" class="w-full bg-slate-900 border border-slate-700 rounded px-1 py-0.5 text-[10px] text-slate-300 font-semibold focus:outline-none cursor-pointer">
+                                <option value="full" ${mode === 'full' ? 'selected' : ''}>✅ Pazar Mesai</option>
+                                <option value="recommended" ${mode === 'recommended' ? 'selected' : ''}>⚡ En Acil 4 Hat</option>
+                                <option value="off" ${mode === 'off' ? 'selected' : ''}>⛔ Pazar Tatil</option>
+                            </select>
+                        </div>
+                    `;
+                }
 
                 html += `
-                    <tr class="hover:bg-slate-800/30 transition ${isWeekend ? 'bg-slate-950/40' : ''}">
+                    <tr class="hover:bg-slate-800/30 transition ${isWeekend ? (mode === 'recommended' ? 'bg-amber-950/10' : 'bg-slate-950/50') : ''}">
                         <td class="py-2.5 px-3 border-r border-slate-800/80 font-mono text-[11px] bg-slate-950/90 sticky left-0 z-10">
                             <div class="font-bold text-white">${dateStr}</div>
                             <div class="text-[10px] ${isWeekend ? 'text-amber-400 font-semibold' : 'text-slate-400'}">${dayName}</div>
+                            ${selectorHtml}
                         </td>
                         <td class="p-2 border-r border-slate-800/60 align-top">${h107}</td>
                         <td class="p-2 border-r border-slate-800/60 align-top">${h102}</td>

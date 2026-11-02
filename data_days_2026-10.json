@@ -12956,17 +12956,362 @@
       "date": "31.10.2026",
       "gunduz": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.65,
+            "heads": 1.0,
+            "hours": 4.0,
+            "prod_kg": 289.0,
+            "fire_kg": 114.26,
+            "qty": 52,
+            "sets": 20.8
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 0.75,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 568.0,
+            "fire_kg": 206.55,
+            "qty": 360,
+            "sets": 72.0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "",
+            "length": 2.1,
+            "speed": 0.6,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1063.0,
+            "fire_kg": 338.76,
+            "qty": 312,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "DP130-99x42-ANT",
+            "length": 3.0,
+            "speed": 0.5,
+            "heads": 1.0,
+            "hours": 8.0,
+            "prod_kg": 150.0,
+            "fire_kg": 202.94,
+            "qty": 34,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "200 mm KASA",
+            "length": 2.15,
+            "speed": 0.6,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 561.0,
+            "fire_kg": 0.0,
+            "qty": 85,
+            "sets": 34.0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 0.9,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 963.0,
+            "fire_kg": 0.0,
+            "qty": 630,
+            "sets": 126.0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "VIZON",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 515,
+            "total_m2": 1002.087,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 149.247,
+            "dead_fire_kg": 365.66,
+            "total_kg": 2455.11,
+            "sets": 257.5,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 12.0,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
       "gece": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 0.75,
+            "heads": 2.0,
+            "hours": 8.0,
+            "prod_kg": 320.0,
+            "fire_kg": 203.64,
+            "qty": 200,
+            "sets": 40.0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.6,
+            "heads": 2.0,
+            "hours": 9.0,
+            "prod_kg": 680.0,
+            "fire_kg": 369.14,
+            "qty": 200,
+            "sets": 57.1
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "DP130-99x42-ANT",
+            "length": 3.0,
+            "speed": 0.5,
+            "heads": 1.0,
+            "hours": 8.0,
+            "prod_kg": 160.0,
+            "fire_kg": 195.56,
+            "qty": 36,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "200 mm KASA",
+            "length": 2.15,
+            "speed": 0.75,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 1650.0,
+            "fire_kg": 7.67,
+            "qty": 250,
+            "sets": 100.0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 1.1,
+            "heads": 2.0,
+            "hours": 11.0,
+            "prod_kg": 1007.0,
+            "fire_kg": 15.49,
+            "qty": 650,
+            "sets": 130.0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "VIZON",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 350,
+            "total_m2": 681.03,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 101.43,
+            "dead_fire_kg": 248.5,
+            "total_kg": 1668.52,
+            "sets": 175.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 9.5,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [],
+      "mixer_emp_gunduz": 0,
+      "mixer_emp_gece": 0
     }
   }
 }

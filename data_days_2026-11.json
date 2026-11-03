@@ -416,7 +416,7 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 2742,
           "gece": 0,
           "status": "normal"
         },
@@ -428,7 +428,7 @@
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 5324,
           "gece": 0,
           "status": "normal"
         },
@@ -442,19 +442,19 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2958,
+          "gece": 3630,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1886,
+          "gece": 2090,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
+          "gunduz": 1200,
           "gece": 0,
           "status": "normal"
         },
@@ -462,24 +462,45 @@
           "hat": "Mikronize 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 612,
+          "gece": 675,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 44,
+          "gece_sarj": 0,
+          "gunduz_kg": 12128.599999999999,
+          "gece_kg": 0,
+          "toplam_kg": 12128.599999999999
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "Levha Renkli (ÇAPAK)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 8,
+          "gece_sarj": 0,
+          "gunduz_kg": 2674.4,
+          "gece_kg": 0,
+          "toplam_kg": 2674.4
+        }
+      ],
+      "mixer_emp_gunduz": 13,
+      "mixer_emp_gece": 1
     }
   }
 }

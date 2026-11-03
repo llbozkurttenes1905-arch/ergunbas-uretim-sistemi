@@ -402,6 +402,15 @@
           "down_reason": "Elektrik / Elektronik Arıza",
           "down_min": 540.0,
           "desc": "Testere arızasındn dolayı hat kapatıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "ISILAR BEKLENDİĞİ İÇİN HATLAR GEÇ AÇILDI.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
         }
       ],
       "kirim": [

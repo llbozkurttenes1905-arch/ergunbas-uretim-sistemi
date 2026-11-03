@@ -348,7 +348,62 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 420.0,
+          "desc": "Burgu ve kovan değişimi sonrası kalıp montajı yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 180.0,
+          "desc": "Hammadde değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 420.0,
+          "desc": "Hammadde yandığı için kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 180.0,
+          "desc": "Hammadde değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 120.0,
+          "desc": "Hammadde değişimi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 540.0,
+          "desc": "Testere arızasındn dolayı hat kapatıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

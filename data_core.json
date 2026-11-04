@@ -1602,45 +1602,6 @@
           "kg": 0.1
         }
       ]
-    },
-    {
-      "id": "rec_levha_fenol_15",
-      "name": "LEVHA(FENOL)",
-      "batch_kg": 285.0,
-      "ingredients": [
-        {
-          "material": "PVC RESİN (SHINTECH)",
-          "kg": 125.0
-        },
-        {
-          "material": "KALSİT 1K(Calsıum Carbonat) NİĞTAŞ",
-          "kg": 150.0
-        },
-        {
-          "material": "LRF 8194",
-          "kg": 3.8
-        },
-        {
-          "material": "LPM 88",
-          "kg": 0.35
-        },
-        {
-          "material": "PA 140",
-          "kg": 0.8
-        },
-        {
-          "material": "AIM 511",
-          "kg": 4.0
-        },
-        {
-          "material": "NLS 1510",
-          "kg": 0.5
-        },
-        {
-          "material": "CARBON BLACK",
-          "kg": 0.1
-        }
-      ]
     }
   ],
   "monthly_targets": {

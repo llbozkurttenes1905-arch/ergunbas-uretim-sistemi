@@ -676,10 +676,10 @@
             "speed": 0.63,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 310.0,
+            "fire_kg": 857.91,
+            "qty": 56,
+            "sets": 22.4
           },
           {
             "row": 0,
@@ -689,10 +689,10 @@
             "speed": 0.81,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 739.0,
+            "fire_kg": 193.87,
+            "qty": 420,
+            "sets": 84.0
           },
           {
             "row": 0,
@@ -702,10 +702,10 @@
             "speed": 0.48,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 561.0,
+            "fire_kg": 593.06,
+            "qty": 160,
+            "sets": 45.7
           },
           {
             "row": 0,
@@ -715,10 +715,10 @@
             "speed": 0.6,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 991.0,
+            "fire_kg": 547.59,
+            "qty": 265,
+            "sets": 75.7
           },
           {
             "row": 0,
@@ -728,10 +728,10 @@
             "speed": 0.56,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 745.0,
+            "fire_kg": 252.95,
+            "qty": 140,
+            "sets": 56.0
           },
           {
             "row": 0,
@@ -741,9 +741,9 @@
             "speed": 0.77,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
+            "prod_kg": 751.0,
+            "fire_kg": 42.06,
+            "qty": 175,
             "sets": 0
           },
           {
@@ -754,10 +754,10 @@
             "speed": 0.66,
             "heads": 1.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 766.0,
+            "fire_kg": 773.13,
+            "qty": 110,
+            "sets": 44.0
           },
           {
             "row": 0,
@@ -767,31 +767,31 @@
             "speed": 1.59,
             "heads": 2.0,
             "hours": 12.0,
-            "prod_kg": 0.0,
-            "fire_kg": 0.0,
-            "qty": 0,
-            "sets": 0.0
+            "prod_kg": 711.0,
+            "fire_kg": 933.35,
+            "qty": 450,
+            "sets": 90.0
           }
         ],
         "levha": [
           {
             "row": 0,
             "hat": "201",
-            "color": "",
-            "width": 93.0,
-            "length": 208.0,
-            "m2_one": 1.9344,
-            "qty": 0,
-            "total_m2": 0.0,
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 425,
+            "total_m2": 826.965,
             "width_fire_cm": 0,
-            "dead_fire_m2": 0.0,
-            "dead_fire_kg": 0.0,
-            "total_kg": 0.0,
-            "sets": 0.0,
+            "dead_fire_m2": 123.165,
+            "dead_fire_kg": 301.75,
+            "total_kg": 2026.06,
+            "sets": 212.5,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": null,
-            "en_firesi_cm": 15.0
+            "hours": 12.0,
+            "en_firesi_cm": 14.0
           }
         ]
       },

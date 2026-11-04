@@ -55,6 +55,13 @@
       "password": "34ER3100",
       "role": "admin",
       "name": "Ferhat ERGÜNBAŞ"
+    },
+    {
+      "id": "u12_mis",
+      "username": "misafir kullanıcı",
+      "password": "Erdoor1234!",
+      "role": "viewer",
+      "name": "MİSAFİR KULLANICI"
     }
   ]
 }

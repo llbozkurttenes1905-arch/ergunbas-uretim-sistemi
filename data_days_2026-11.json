@@ -1225,7 +1225,35 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Elektronik Arıza",
+          "down_min": 300.0,
+          "desc": "Genel elektrik arızaları düzeltildi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "GENEL",
+          "fire_reason": "ELEKTRİK DALGALANMASI",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Enerji Kesintisi",
+          "down_min": 0.0,
+          "desc": "2 defa elektrik dalgalanması meydana geldi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 0.0,
+          "desc": "Kalıp değişimi yapıldı. 100 mm kasa takıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

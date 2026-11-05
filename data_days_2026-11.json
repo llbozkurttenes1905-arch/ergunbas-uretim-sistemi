@@ -1252,6 +1252,15 @@
           "down_reason": "Kalıp / Ürün Değişimi & Ayar",
           "down_min": 0.0,
           "desc": "Kalıp değişimi yapıldı. 100 mm kasa takıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı."
         }
       ],
       "kirim": [

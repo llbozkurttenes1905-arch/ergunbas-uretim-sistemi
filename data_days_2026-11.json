@@ -1511,7 +1511,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 9,
         "hours": 12.0,
         "operator": "Mehmet SAĞLAM",
         "extruders": [
@@ -1693,7 +1693,80 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "101",
+          "fire_reason": "Hammadde denemesi yapılı.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "Elektrik dalgalanması.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "109",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 360.0,
+          "desc": "Kalıp ustası tarafından kalıp iyileştirme çalışması yapıldı. Kalibre iyileştirmesi yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 60.0,
+          "desc": "Testere arızası."
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 720.0,
+          "desc": "Kalibre Arızasından dolayı ürün alınamadı. Hat kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "GENEL",
+          "fire_reason": "Elektrik dalgalanması.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": "2 defa elektrik dalgalanması meydana geldi."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 0.0,
+          "desc": "Kalıp temizliği yapıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

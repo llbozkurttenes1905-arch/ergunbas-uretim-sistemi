@@ -1770,25 +1770,25 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 1987,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 3021,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 5232,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0,
+          "gunduz": 2350,
           "gece": 0,
           "status": "normal"
         }
@@ -1796,31 +1796,31 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2480,
+          "gece": 3875,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1689,
+          "gece": 2500,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1050,
+          "gece": 1831,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
+          "gunduz": 610,
           "gece": 0,
           "status": "normal"
         },
@@ -1828,12 +1828,33 @@
           "hat": "Mikronize 6",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "arizali"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 44,
+          "gece_sarj": 0,
+          "gunduz_kg": 12128.599999999999,
+          "gece_kg": 0,
+          "toplam_kg": 12128.599999999999
+        },
+        {
+          "makine": "Mixer 2",
+          "recipe": "LEVHA(FENOL)",
+          "batch_kg": 285,
+          "gunduz_sarj": 16,
+          "gece_sarj": 0,
+          "gunduz_kg": 4560,
+          "gece_kg": 0,
+          "toplam_kg": 4560
+        }
+      ],
+      "mixer_emp_gunduz": 14,
+      "mixer_emp_gece": 2
     }
   }
 }

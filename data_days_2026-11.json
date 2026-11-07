@@ -1861,17 +1861,381 @@
       "date": "06.11.2026",
       "gunduz": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "Aykut YALÇIN",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "SEREN(39mm)",
+            "length": 2.1,
+            "speed": 0.63,
+            "heads": 1.0,
+            "hours": 4.0,
+            "prod_kg": 185.0,
+            "fire_kg": 81.4,
+            "qty": 50,
+            "sets": 14.3
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.59,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 300.0,
+            "fire_kg": 885.49,
+            "qty": 50,
+            "sets": 20.0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "50X80 PERVAZ",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0.0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.5,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 356.0,
+            "fire_kg": 864.57,
+            "qty": 100,
+            "sets": 28.6
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.57,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1285.0,
+            "fire_kg": 94.81,
+            "qty": 364,
+            "sets": 104.0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.47,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 332.0,
+            "fire_kg": 471.93,
+            "qty": 65,
+            "sets": 26.0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "100 mm KASA",
+            "length": 2.15,
+            "speed": 0.66,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 784.0,
+            "fire_kg": 152.66,
+            "qty": 185,
+            "sets": 74.0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "200 mm KASA",
+            "length": 2.15,
+            "speed": 0.69,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 1435.0,
+            "fire_kg": 182.49,
+            "qty": 205,
+            "sets": 82.0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 1.46,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1185.0,
+            "fire_kg": 314.91,
+            "qty": 755,
+            "sets": 151.0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "VIZON",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 240,
+            "total_m2": 466.992,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 69.552,
+            "dead_fire_kg": 170.4,
+            "total_kg": 1144.13,
+            "sets": 120.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 6.0,
+            "en_firesi_cm": 14.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 300,
+            "total_m2": 583.74,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 86.94,
+            "dead_fire_kg": 213.0,
+            "total_kg": 1430.16,
+            "sets": 150.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 6.0,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
       "gece": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "Mehmet SAĞLAM",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "SEREN(39mm)",
+            "length": 2.1,
+            "speed": 0.63,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 559.0,
+            "fire_kg": 172.78,
+            "qty": 165,
+            "sets": 47.1
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.6,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 668.0,
+            "fire_kg": 499.14,
+            "qty": 115,
+            "sets": 46.0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 0.8,
+            "heads": 2.0,
+            "hours": 8.0,
+            "prod_kg": 504.0,
+            "fire_kg": 82.47,
+            "qty": 300,
+            "sets": 60.0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.5,
+            "heads": 2.0,
+            "hours": 3.0,
+            "prod_kg": 114.0,
+            "fire_kg": 211.71,
+            "qty": 30,
+            "sets": 8.6
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "SEREN",
+            "length": 2.1,
+            "speed": 0.56,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1204.0,
+            "fire_kg": 197.02,
+            "qty": 330,
+            "sets": 94.3
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "140 mm KASA",
+            "length": 2.15,
+            "speed": 0.57,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 853.0,
+            "fire_kg": 164.65,
+            "qty": 160,
+            "sets": 64.0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "100 mm KASA",
+            "length": 2.15,
+            "speed": 0.67,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 522.0,
+            "fire_kg": 314.59,
+            "qty": 140,
+            "sets": 56.0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "200 mm KASA",
+            "length": 2.15,
+            "speed": 0.79,
+            "heads": 1.0,
+            "hours": 12.0,
+            "prod_kg": 1185.0,
+            "fire_kg": 715.01,
+            "qty": 165,
+            "sets": 66.0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "50X80 PERVAZ",
+            "length": 2.2,
+            "speed": 1.5,
+            "heads": 2.0,
+            "hours": 12.0,
+            "prod_kg": 1394.0,
+            "fire_kg": 216.18,
+            "qty": 850,
+            "sets": 170.0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 94.0,
+            "length": 207.0,
+            "m2_one": 1.9458,
+            "qty": 510,
+            "total_m2": 992.358,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 147.798,
+            "dead_fire_kg": 362.11,
+            "total_kg": 2431.28,
+            "sets": 255.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 12.0,
+            "en_firesi_cm": 14.0
+          }
+        ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [],
+      "mixer_emp_gunduz": 0,
+      "mixer_emp_gece": 0
     }
   }
 }

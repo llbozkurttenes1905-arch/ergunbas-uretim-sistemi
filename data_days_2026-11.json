@@ -2605,7 +2605,7 @@
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Mekanik Arıza / Onarım",
-          "down_min": 0.0,
+          "down_min": 120.0,
           "desc": "Vakum arızası."
         },
         {
@@ -2616,6 +2616,15 @@
           "down_reason": "Periyodik / Kalıp Bakımı",
           "down_min": 420.0,
           "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "104",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 480.0,
+          "desc": "Helezon arızası giderildi.Kalibre bakım ve onarımı yapıldı. "
         }
       ],
       "kirim": [

@@ -1563,6 +1563,25 @@
           "kg": 0.1
         }
       ]
+    },
+    {
+      "id": "rec_i_mpak_13",
+      "name": "İMPAK",
+      "batch_kg": 260.0,
+      "ingredients": [
+        {
+          "material": "GERİ DÖNÜŞÜM",
+          "kg": 200.0
+        },
+        {
+          "material": "KALSİT 5K",
+          "kg": 40.0
+        },
+        {
+          "material": "STABİLİZATÖR",
+          "kg": 20.0
+        }
+      ]
     }
   ],
   "monthly_targets": {

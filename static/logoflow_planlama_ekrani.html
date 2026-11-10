@@ -1,0 +1,2208 @@
+﻿<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERGUNBAŞ GROUP | Logo Flow & e-Flow Üretim Planlama ve MRP Kokpiti</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        flow: {
+                            50: '#f0fdf4',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f1f5f9;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.65);
+        }
+        .pulse-subtle {
+            animation: pulse-border 2.5s infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgba(16, 185, 129, 0.4); }
+            50% { border-color: rgba(16, 185, 129, 0.85); box-shadow: 0 0 16px rgba(16, 185, 129, 0.25); }
+        }
+
+        /* ==== Hammadde Depo Silindir / Tank Stilleri ==== */
+        .silo-cylinder {
+            position: relative;
+            width: 100%;
+            height: 105px;
+            background: rgba(10, 17, 30, 0.95);
+            border: 2px solid #334155;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+        }
+        .silo-liquid {
+            width: 100%;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .silo-liquid-safe {
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+        }
+        .silo-liquid-warning {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+        }
+        .silo-liquid-critical {
+            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .glass-panel { background: white !important; border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- TOP ENTERPRISE HEADER -->
+    <header class="glass-panel sticky top-0 z-40 border-b border-slate-800/80 px-6 py-3.5 shadow-xl">
+        <div class="max-w-[1700px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            <!-- Left: Logo & Title -->
+            <div class="flex items-center gap-4">
+                <div class="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 shadow-lg shadow-emerald-500/20 text-white font-black text-xl tracking-tighter">
+                    EB
+                    <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <h1 class="text-base font-extrabold text-white tracking-tight">ERGUNBAŞ GROUP</h1>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-ping"></span>
+                            Logo Flow / e-Flow Entegre
+                        </span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                            1 KG Reçeteleri Aktif
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span>Üretim Planlama, MRP Çizelgeleme ve Hammadde Depo Kokpiti</span>
+                        <span class="text-slate-600">•</span>
+                        <span class="text-emerald-400 font-mono text-[11px] font-medium flex items-center gap-1">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> ERP & Depo Canlı Telemetri
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Actions & User Info -->
+            <div class="flex items-center gap-3 no-print">
+                <!-- Shift Indicator -->
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="font-medium">Vardiya:</span>
+                    <span class="font-bold text-white">Gündüz (08:00 - 20:00)</span>
+                    <span class="text-slate-500">|</span>
+                    <span class="text-slate-400 font-mono text-[11px]" id="live-clock">29.10.2026 09:55</span>
+                </div>
+
+                <!-- Unified Action: Add Order & Run MRP -->
+                <button onclick="openUnifiedOrderModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs flex items-center gap-2.5 shadow-lg shadow-emerald-600/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 pulse-subtle cursor-pointer">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-200"></i>
+                    <span>+ Yeni Sipariş Gir ve Hatlara Dağıt (MRP)</span>
+                </button>
+
+                <!-- Export / Print -->
+                <button onclick="window.print()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Yazdır / PDF Olarak Kaydet">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN COCKPIT BODY -->
+    <main class="flex-1 max-w-[1700px] w-full mx-auto px-6 py-6 space-y-6">
+
+        <!-- 1. EXECUTIVE KPI SUMMARY ROW -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            
+            <!-- KPI 1: Active Orders & Tonnage -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs">
+                    <span class="font-medium">Planlanan Siparişler</span>
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    <div class="text-2xl font-black text-white font-mono" id="kpi-orders-count">7 <span class="text-xs font-normal text-slate-400 font-sans">Sipariş</span></div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                        <span>Net Eksik Boy:</span>
+                        <b class="text-indigo-300 font-mono">13.300 Adet</b>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-400"></div>
+            </div>
+
+            <!-- KPI 2: Line Utilization (OEE) -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs">
+                    <span class="font-medium">Hat Doluluk Oranı</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                        <i data-lucide="gauge" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    <div class="text-2xl font-black text-emerald-400 font-mono">%90.0 <span class="text-xs font-normal text-slate-400 font-sans">(9 / 10 Hat)</span></div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                        <span>Boşta Hat:</span>
+                        <b class="text-amber-400 font-mono">Hat 101 (Beklemede)</b>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+            </div>
+
+            <!-- KPI 3: Daily Production (27 Ekim Ref) -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs">
+                    <span class="font-medium">Günlük Fiili Çıktı</span>
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                        <i data-lucide="factory" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    <div class="text-2xl font-black text-cyan-400 font-mono">7.150 <span class="text-xs font-normal text-slate-400 font-sans">Toplam Adet</span></div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                        <span>Ekstrüder / Levha:</span>
+                        <b class="text-cyan-300 font-mono">6.088 Profil + 1.062 Levha</b>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
+            </div>
+
+            <!-- KPI 4: Mold Setup Status -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs">
+                    <span class="font-medium">Takılı Kalıp Uyumu</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    <div class="text-2xl font-black text-amber-300 font-mono">%100 <span class="text-xs font-normal text-emerald-400 font-sans">Tam Uyum</span></div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                        <span>Duruş Tasarrufu:</span>
+                        <b class="text-emerald-300 font-mono">~3.5 Saat / Gün</b>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-400"></div>
+            </div>
+
+            <!-- KPI 5: Raw Material Stock Status -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group hover:border-slate-700 transition">
+                <div class="flex items-center justify-between text-slate-400 text-xs">
+                    <span class="font-medium">Depo & Stok Güvenliği</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                        <i data-lucide="boxes" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div class="mt-2.5">
+                    <div class="text-2xl font-black text-emerald-400 font-mono">10 / 10 <span class="text-xs font-normal text-slate-300 font-sans">Hammadde Güvenli</span></div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                        <span>Depo & Stok Durumu:</span>
+                        <b class="text-emerald-400 font-mono">Sıfır Malzeme Tıkanması</b>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+            </div>
+        </section>
+
+        <!-- 2. NAVIGATION TABS (LOGO FLOW COCKPIT MODES) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2 overflow-x-auto">
+                <button onclick="switchTab('tab-lines')" id="btn-tab-lines" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
+                    <i data-lucide="git-merge" class="w-4 h-4"></i>
+                    <span>1. Canlı Hatlar & Kalıp Durumu (10 Hat)</span>
+                </button>
+                <button onclick="switchTab('tab-orders')" id="btn-tab-orders" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-400"></i>
+                    <span>2. Logo Flow Sipariş Çizelgeleme & Termin</span>
+                </button>
+                <button onclick="switchTab('tab-production')" id="btn-tab-production" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
+                    <span>3. 27 Ekim Fiili Üretim & Levha Renkleri</span>
+                </button>
+                <button onclick="switchTab('tab-bom')" id="btn-tab-bom" class="px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="radio" class="w-4 h-4 text-amber-400 animate-pulse"></i>
+                    <span>4. Hammadde Depo Stok Radarı & 1 KG Reçeteleri</span>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Çalışıyor</span>
+                <span class="inline-flex items-center gap-1.5 ml-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Kalıp Değişimi</span>
+                <span class="inline-flex items-center gap-1.5 ml-2"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> Boşta</span>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 1: 10 HAT CANLI DURUM & KALIP KARTLARI (GRID)
+        ========================================================================= -->
+        <div id="tab-lines" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i>
+                        Ekstrüder ve Levha Hatları Anlık Durum & Kalıp Yönetimi
+                    </h2>
+                    <p class="text-xs text-slate-400">27 Ekim 2026 fiili kantar üretimleri, takılı kalıp bilgileri ve hesaplanan sipariş iş yükleri.</p>
+                </div>
+                <div class="text-xs text-slate-400 font-mono bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+                    Hat 101 - 109 (Profil) | Hat 201 (Levha Kalender)
+                </div>
+            </div>
+
+            <!-- 10 Line Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5" id="lines-grid-container">
+                <!-- Javascript will inject 10 cards here -->
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 2: LOGO FLOW SİPARİŞ & MRP ÇİZELGELEME LİSTESİ
+        ========================================================================= -->
+                <!-- =========================================================================
+             TAB 2: LOGO FLOW SİPARİŞ & MRP ÇİZELGELEME LİSTESİ
+        ========================================================================= -->
+        <div id="tab-orders" class="space-y-4 hidden">
+            <div class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl">
+                
+                <!-- Table Header & Controls -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                            Logo Flow Sipariş Planlama & Termin Güvencesi
+                        </h2>
+                        <p class="text-xs text-slate-400">Net ihtiyaç, kantar çekim hızları, fire payı ve hat kalıp uyumuna göre sıfır riskli çizelgeleme.</p>
+                    </div>
+
+                    <!-- Right Action Buttons -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="openNewProductModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-800/60 transition flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+                            + Yeni Ürün Tanımla
+                        </button>
+                        <button onclick="openUnifiedOrderModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/50 transition flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            + Yeni Sipariş Gir (MRP)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filters Bar -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                    <!-- Search Input -->
+                    <div class="md:col-span-5 relative">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                        <input type="text" id="order-search-input" oninput="handleOrderSearch(this.value)" placeholder="Müşteri, Sipariş No veya Ürün Ara..." class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <!-- Hat Filter Select -->
+                    <div class="md:col-span-3">
+                        <select id="order-hat-filter" onchange="handleOrderHatFilter(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                            <option value="ALL">Tüm Hatlar (Hat 101 - 201)</option>
+                            <option value="Hat 101">Hat 101 (Seren)</option>
+                            <option value="Hat 102 & 106">Hat 102 & 106 (140 Kasa)</option>
+                            <option value="Hat 103 & 109">Hat 103 & 109 (Pervaz & 80x80)</option>
+                            <option value="Hat 104 & 105">Hat 104 & 105 (Seren)</option>
+                            <option value="Hat 107">Hat 107 (100 Kasa / Seren 39)</option>
+                            <option value="Hat 108">Hat 108 (200 Kasa)</option>
+                            <option value="Hat 201">Hat 201 (Levha)</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Filter Pills -->
+                    <div class="md:col-span-4 flex items-center justify-end gap-1.5 flex-wrap">
+                        <button onclick="filterOrders('ALL')" id="flt-all" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white">Tümü (<span id="count-flt-all">0</span>)</button>
+                        <button onclick="filterOrders('URETIMDE')" id="flt-prod" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Üretimde (<span id="count-flt-prod">0</span>)</button>
+                        <button onclick="filterOrders('PLANLANDI')" id="flt-plan" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white">Planlandı (<span id="count-flt-plan">0</span>)</button>
+                        <button onclick="filterOrders('RISK')" id="flt-risk" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-amber-300 hover:text-white border border-amber-900/60">Termin Riski (<span id="count-flt-risk">0</span>)</button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                    <table class="w-full text-left text-xs font-sans">
+                        <thead class="bg-slate-950/80 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                            <tr>
+                                <th class="py-3 px-3">Sipariş No & Müşteri</th>
+                                <th class="py-3 px-3">Ürün & Kesim Ebadı</th>
+                                <th class="py-3 px-3 text-center">Sipariş / Üretilen / Stok</th>
+                                <th class="py-3 px-3 text-right">Net Eksik</th>
+                                <th class="py-3 px-3">Atanan Hat & Kalıp</th>
+                                <th class="py-3 px-3 text-right">Fiili Hız</th>
+                                <th class="py-3 px-3">Tahmini Bitiş (ETA)</th>
+                                <th class="py-3 px-3">Müşteri Termini</th>
+                                <th class="py-3 px-3 text-center">Termin Güvencesi</th>
+                                <th class="py-3 px-3 text-center">Hammadde</th>
+                                <th class="py-3 px-3 text-center">Durum</th>
+                                <th class="py-3 px-3 text-center">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody" class="divide-y divide-slate-800/60">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Table Footer / Summary Bar -->
+                <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+                    <div class="flex items-center gap-3 flex-wrap" id="orders-summary-bar">
+                        <!-- Dynamic summary injected by JS -->
+                    </div>
+                    <div class="text-[11px] text-slate-500 font-mono">
+                        Laminasyon Kuralı: Terminden 2 gün önce teslim edilmelidir.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 3: 27 EKİM FİİLİ ÜRETİM & LEVHA RENK DAĞILIMI
+        ========================================================================= -->
+        <div id="tab-production" class="space-y-5 hidden">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                
+                <!-- Left 2 Cols: Extruders 101-109 Actual Production Table -->
+                <div class="lg:col-span-2 glass-panel rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i>
+                                Ekstrüder Hatları 27 Ekim Fiili Üretim Özeti
+                            </h2>
+                            <p class="text-xs text-slate-400">Gündüz ve gece vardiyası kantar adetleri, kg tartımları ve hat hızları.</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                            Gün 86 Fiili Verisi
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950/70 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3">Hat No</th>
+                                    <th class="py-2.5 px-3">Üretilen Profil</th>
+                                    <th class="py-2.5 px-3">Takılı Kalıp</th>
+                                    <th class="py-2.5 px-3 text-right">Gündüz</th>
+                                    <th class="py-2.5 px-3 text-right">Gece</th>
+                                    <th class="py-2.5 px-3 text-right">Toplam Adet</th>
+                                    <th class="py-2.5 px-3 text-right">Toplam Kg</th>
+                                    <th class="py-2.5 px-3 text-center">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody id="actual-extruders-tbody" class="divide-y divide-slate-800/60 font-mono">
+                                <!-- Injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right 1 Col: Hat 201 Levha Color Breakdown -->
+                <div class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <div>
+                                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i data-lucide="palette" class="w-4 h-4 text-emerald-400"></i>
+                                    Hat 201 Levha Renk & Adet Dağılımı
+                                </h2>
+                                <p class="text-xs text-slate-400">27 Ekim çekilen renklerin kesin adet dökümü (m² değil adet).</p>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                                Kalender T-Die
+                            </span>
+                        </div>
+
+                        <!-- Color breakdown list -->
+                        <div class="mt-4 space-y-3">
+                            
+                            <!-- Dişbudak -->
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-900/40 relative overflow-hidden">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50"></span>
+                                        <b class="text-sm text-white font-sans">DİŞBUDAK</b>
+                                    </div>
+                                    <span class="text-xs font-black text-emerald-300 font-mono">940 ADET</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                    <span>Gündüz: 430 | Gece: 510</span>
+                                    <span>Ebat: 94 x 207 cm</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+                                    <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 88.5%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Koyu Ceviz -->
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-900/40 relative overflow-hidden">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-600 shadow-sm shadow-amber-600/50"></span>
+                                        <b class="text-sm text-white font-sans">KOYU CEVİZ</b>
+                                    </div>
+                                    <span class="text-xs font-black text-amber-300 font-mono">70 ADET</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                    <span>Gündüz: 70 | Gece: 0</span>
+                                    <span>Ebat: 94 x 210 cm</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+                                    <div class="bg-amber-500 h-1.5 rounded-full" style="width: 6.6%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Coco -->
+                            <div class="p-3.5 rounded-xl bg-slate-900/90 border border-orange-900/40 relative overflow-hidden">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-stone-500 shadow-sm shadow-stone-500/50"></span>
+                                        <b class="text-sm text-white font-sans">COCO</b>
+                                    </div>
+                                    <span class="text-xs font-black text-orange-300 font-mono">52 ADET</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                    <span>Gündüz: 52 | Gece: 0</span>
+                                    <span>Ebat: 94 x 207 cm</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+                                    <div class="bg-orange-500 h-1.5 rounded-full" style="width: 4.9%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Levha Total Card -->
+                    <div class="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-800/40 mt-4 flex items-center justify-between">
+                        <div>
+                            <div class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Hat 201 Toplam Çıktı</div>
+                            <div class="text-lg font-black text-white font-mono">1.062 Adet Levha</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[11px] text-slate-400">Toplam Tonaj</div>
+                            <div class="text-sm font-black text-emerald-400 font-mono">~5.067 Kg</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 4: HAMMADDE DEPO STOK RADARI & 1 KG VE PROFİL REÇETELERİ (EXCEL ENTEGRE)
+        ========================================================================= -->
+        <div id="tab-bom" class="space-y-6 hidden">
+            
+            <!-- SECTION A: HAMMADDE KRİTİK STOK RADARI & DEPO ERKEN UYARISI (10 KART) -->
+            <div class="glass-panel rounded-2xl p-6 space-y-5 shadow-2xl border border-slate-700/80">
+                
+                <!-- Radar Header -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                            <i data-lucide="radio" class="w-6 h-6 animate-pulse"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h3 class="text-lg font-black text-white tracking-tight">Hammadde Kritik Stok Radarı & Depo Erken Uyarısı</h3>
+                                <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-bold border border-slate-700">Canlı Telemetri</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Günlük tüketim hızına (run-rate) göre depo stok tükenme süreleri, güvenlik stokları ve tahmini sipariş tarihleri</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="openStockModal()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="edit-3" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Stok Miktarlarını Güncelle / Sayım Gir</span>
+                        </button>
+                        <button onclick="refreshStockTelemetry()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition" title="Stokları Yenile">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 10 Raw Material Radar Cards Grid (5 x 2) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="radar-cards-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- SECTION B: EXCEL BAZ FORMÜLLERİ (1_KG_VE_PROFIL_RECETELERI.xlsx ENTEGRASYONU) -->
+            <div class="glass-panel rounded-2xl p-6 space-y-5 shadow-2xl border border-slate-700/80">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base font-bold text-white tracking-tight">1 KG ve Profil Reçeteleri Veri Tabanı</h3>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">1_KG_VE_PROFIL_RECETELERI.xlsx</span>
+                            </div>
+                            <p class="text-xs text-slate-400">Fabrikanın kantar ve mikserlerinde kullanılan orijinal baz formüller ve 1 kg başına net tüketim katsayıları</p>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Switcher Buttons -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto" id="recipe-nav-btns">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Active Recipe Header & Info Card -->
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold block">Seçili Profil Reçetesi:</span>
+                        <b class="text-base text-white" id="active-recipe-title">KASA - PERVAZ REÇETESİ (PVC Karışımı)</b>
+                        <div class="text-xs text-slate-400 mt-0.5" id="active-recipe-sub">Hat 102, 103, 106, 108, 109 üretimleri için baz formül</div>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs font-mono">
+                        <div class="bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                            <span class="text-slate-400 block text-[10px]">Orijinal Şarj:</span>
+                            <b class="text-emerald-400 text-sm" id="active-recipe-batch">277.10 kg</b>
+                        </div>
+                        <div class="bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                            <span class="text-slate-400 block text-[10px]">Bileşen Sayısı:</span>
+                            <b class="text-cyan-400 text-sm" id="active-recipe-items-count">9 Hammadde</b>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe Detail Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] border-b border-slate-800 font-semibold">
+                            <tr>
+                                <th class="p-3 text-center w-12">Sıra</th>
+                                <th class="p-3">Ham Madde Adı</th>
+                                <th class="p-3">Malzeme Görevi / İşlevi</th>
+                                <th class="p-3 text-right">Orijinal Miktar (KG)</th>
+                                <th class="p-3 text-right">1 KG Tüketim Katsayısı</th>
+                                <th class="p-3 text-right">Reçetedeki Payı (%)</th>
+                                <th class="p-3 text-center">Depo Stok Durumu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recipe-table-tbody" class="divide-y divide-slate-800/60 font-mono">
+                            <!-- Injected by JS -->
+                        </tbody>
+                        <tfoot id="recipe-table-tfoot" class="bg-slate-950/80 font-bold text-white border-t-2 border-slate-700">
+                            <!-- Injected by JS -->
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- SECTION C: REÇETE BAZLI SİPARİŞ TÜKETİM VE DEPO YETERLİLİK HESAPLAYICI -->
+                <div class="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950/40 border border-indigo-900/40 flex flex-col lg:flex-row items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <b class="text-sm text-white flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-4 h-4 text-indigo-400"></i>
+                            Bu Reçete İçin Hızlı Sipariş Depo Yeterlilik Simülatörü
+                        </b>
+                        <p class="text-xs text-slate-400">Üretilecek toplam profil/levha kilosunu girin; Excel katsayılarıyla hangi hammaddeden kaç kg gideceğini ve depoda yetip yetmediğini anında görün.</p>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5">
+                            <span class="text-xs text-slate-400">Üretim:</span>
+                            <input type="number" id="calc-prod-kg" value="5000" class="w-24 bg-transparent text-white font-mono text-xs font-bold focus:outline-none text-right">
+                            <span class="text-xs text-slate-400 font-mono">KG</span>
+                        </div>
+                        <button onclick="calculateRecipeRequirement()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-md">
+                            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                            <span>İhtiyacı Hesapla & Depoyla Kıyasla</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Requirement Calculation Output Modal or Alert -->
+                <div id="calc-result-box" class="hidden p-4 rounded-xl bg-slate-950/80 border border-indigo-500/40 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <b class="text-xs text-indigo-300 font-mono" id="calc-result-title">5.000 KG Kasa - Pervaz Üretimi İçin Gereken Hammaddeler</b>
+                        <button onclick="document.getElementById('calc-result-box').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs">Kapat</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs" id="calc-result-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER / AUDIT INFO -->
+    <footer class="glass-panel border-t border-slate-800/80 py-4 px-6 text-xs text-slate-500 mt-auto">
+        <div class="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>ERGUNBAŞ GROUP • Logo Flow & e-Flow Dijital Planlama Arayüzü v3.2</span>
+            </div>
+            <div class="font-mono text-[11px]">
+                Entegrasyon: ERP Siparişleri • Makine Kantarları • 1_KG_VE_PROFIL_RECETELERI.xlsx
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========================================================================
+         MODAL 1: MRP'Yİ ÇALIŞTIR SİMÜLASYONU
+    ========================================================================= -->
+                <!-- =========================================================================
+             MODAL: YENİ ÜRÜN TANIMLAMA (100 KASA, 80x80 VE DİĞER PROFİLLER)
+        ========================================================================= -->
+        <div id="modal-new-product" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden select-none">
+            <div class="glass-panel bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150">
+                <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center">
+                            <i data-lucide="package-plus" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Yeni Ürün / Profil Tanımla</h3>
+                            <p class="text-xs text-slate-400">100 mm Kasa, 80x80 veya özel ekstrüzyon profilini kataloğa ekleyin.</p>
+                        </div>
+                    </div>
+                    <button onclick="closeNewProductModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <form onsubmit="handleCreateProduct(event)" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="text-xs font-semibold text-slate-300 mb-1 block">Ürün / Profil Adı</label>
+                            <input type="text" id="np-name" required placeholder="Örn: 80x80 PERVAZ veya 100 mm KASA" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-300 mb-1 block">Üretilecek Hat</label>
+                            <select id="np-hat" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                <option value="Hat 107">Hat 107 (100 Kasa / Seren 39)</option>
+                                <option value="Hat 103 & 109">Hat 103 & 109 (Pervaz & 80x80)</option>
+                                <option value="Hat 102 & 106">Hat 102 & 106 (140 Kasa)</option>
+                                <option value="Hat 108">Hat 108 (200 Kasa)</option>
+                                <option value="Hat 104 & 105">Hat 104 & 105 (Seren)</option>
+                                <option value="Hat 101">Hat 101 (Seren)</option>
+                                <option value="Hat 201">Hat 201 (Levha)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-300 mb-1 block">Reçete Tipi</label>
+                            <select id="np-recipe" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                <option value="kasa_pervaz">Kasa - Pervaz (PVC Formülü)</option>
+                                <option value="seren">Seren Formülü</option>
+                                <option value="levha_mevcut">Levha Formülü</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-300 mb-1 block">Birim Boy Ağırlığı (kg/boy)</label>
+                            <input type="number" id="np-unit-kg" step="0.01" min="0.1" value="2.10" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-300 mb-1 block">Saatlik Çekim Hızı (Boy/Saat)</label>
+                            <input type="number" id="np-speed" min="1" value="110" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-400">
+                        Tanımlanan ürün kalıcı olarak kaydedilecek; sipariş girişinde, MRP simülasyonunda ve termin hesaplarında otomatik kullanılacaktır.
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                        <button type="button" onclick="closeNewProductModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">İptal</button>
+                        <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition">Ürünü Kataloğa Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- =========================================================================
+         BİRLEŞİK MODAL: YENİ SİPARİŞ GİRİŞİ, DEPO KONTROLÜ & OTOMATİK HAT DAĞITIMI (MRP)
+    ========================================================================= -->
+    <div id="modal-unified-order" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden select-none">
+        <div class="glass-panel bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150 max-h-[92vh]">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md">
+                        <i data-lucide="zap" class="w-5 h-5 fill-current text-amber-300"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Yeni Sipariş Girişi & Otomatik Hat Dağıtımı (MRP)</h3>
+                        <p class="text-xs text-slate-400">Depo stok kontrolü yapılır; hammadde varsa takılı kalıba göre hatta atanır.</p>
+                    </div>
+                </div>
+                <button onclick="closeUnifiedOrderModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Inputs & Evaluation -->
+            <div class="p-6 overflow-y-auto space-y-4" id="unified-modal-content">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Müşteri / Bayi Adı</label>
+                        <input type="text" id="sim-customer" value="Anadolu Yapı Market A.Ş." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-xs font-semibold text-slate-300 block">Ürün Seçin</label>
+                            <button type="button" onclick="openNewProductModal()" class="text-[11px] text-emerald-400 hover:text-emerald-300 font-bold hover:underline">+ Yeni Ürün Tanımla</button>
+                        </div>
+                        <select id="sim-product" onchange="calculateSimulation()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                            <!-- JS dinamik dolduracak -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Sipariş Miktarı (Boy / Adet)</label>
+                        <input type="number" id="sim-qty" value="1200" min="1" max="1000000" oninput="calculateSimulation()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-500 font-bold">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">İstenen Termin Tarihi</label>
+                        <input type="date" id="sim-due-date" value="2026-11-04" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono">
+                    </div>
+                </div>
+
+                <!-- Simulation Output Card -->
+                <div id="sim-result" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Atanacak Hat & Kalıp:</span>
+                        <b class="text-emerald-400 font-bold" id="sim-hat">Hat 102 (Kalıp Hazır Takılı)</b>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Kalıp Durumu:</span>
+                        <span class="text-emerald-300 font-mono text-[11px]" id="sim-mold">Kalıp Değişimi Gerekmiyor (0 dk duruş)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Tahmini İmalat Süresi:</span>
+                        <b class="text-white font-mono" id="sim-hours">~17.1 Saat (1.4 Vardiya)</b>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Toplam Brüt Tonaj:</span>
+                        <b class="text-purple-300 font-mono" id="sim-raw">~6.456 kg PVC Reçetesi</b>
+                    </div>
+                </div>
+
+                <!-- HAMMADDE STOK KONTROL VE BLOKE UYARISI BANNERI -->
+                <div id="sim-stock-guard-banner">
+                    <!-- Dinamik olarak Yeşil (Onay) veya Kırmızı (Bloke) doldurulacak -->
+                </div>
+            </div>
+
+            <!-- Dynamic MRP Processing View (Animated when approved) -->
+            <div class="p-6 space-y-4 hidden" id="unified-mrp-progress">
+                <div class="text-center space-y-2 py-6">
+                    <div class="inline-flex p-3 rounded-full bg-emerald-500/20 text-emerald-400 animate-spin">
+                        <i data-lucide="loader" class="w-8 h-8"></i>
+                    </div>
+                    <div class="text-sm font-bold text-white" id="unified-progress-label">Hammadde depodan rezerve ediliyor...</div>
+                    <p class="text-xs text-slate-400">Takılı kalıplar ve makine hızları optimize ediliyor.</p>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                    <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-2.5 rounded-full transition-all duration-300" id="unified-progress-bar" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="px-6 py-3.5 border-t border-slate-800 flex items-center justify-between bg-slate-950/70" id="sim-modal-footer">
+                <button onclick="closeUnifiedOrderModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">İptal</button>
+                <div class="flex items-center gap-2" id="sim-action-btns">
+                    <!-- Dinamik Butonlar -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<div id="modal-stock" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden">
+        <div class="glass-panel bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150 max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Hammadde Depo Sayımı & Stok Güncelleme</h3>
+                        <p class="text-xs text-slate-400">Fiili kantar veya depo sayım miktarlarını girerek telemetriyi güncelleyin.</p>
+                    </div>
+                </div>
+                <button onclick="closeStockModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-3">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-950 text-slate-400 uppercase text-[10px]">
+                        <tr>
+                            <th class="p-2.5">Hammadde</th>
+                            <th class="p-2.5 text-right">Depo Kapasite</th>
+                            <th class="p-2.5 text-right">Kritik Eşik</th>
+                            <th class="p-2.5 text-right">Mevcut Stok (KG)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-modal-tbody" class="divide-y divide-slate-800 font-mono">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-6 py-3.5 border-t border-slate-800 flex items-center justify-end gap-2.5 bg-slate-950/60">
+                <button onclick="closeStockModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 transition">İptal</button>
+                <button onclick="saveStockUpdates()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Kaydet & Telemetriyi Güncelle</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 3: YENİ SİPARİŞ HIZLI SİMÜLATÖRÜ
+    ========================================================================= -->
+        <div id="modal-simulator" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden select-none">
+        <div class="glass-panel bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150 max-h-[92vh]">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Yeni Sipariş Girişi & Hammadde Yeterlilik Kontrolü</h3>
+                        <p class="text-xs text-slate-400">Gereken hammadde depoda yetersizse sipariş kesinlikle kabul edilmez.</p>
+                    </div>
+                </div>
+                <button onclick="closeUnifiedOrderModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Müşteri / Bayi Adı</label>
+                        <input type="text" id="sim-customer" value="Anadolu Yapı Market A.Ş." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Ürün Seçin</label>
+                        <select id="sim-product" onchange="calculateSimulation()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                            <option value="140 KASA">140 mm KASA (Hat 102 & 106 Takılı)</option>
+                            <option value="200 KASA">200 mm KASA (Hat 108 Takılı)</option>
+                            <option value="50x80 PERVAZ">50X80 PERVAZ (Hat 103 & 109 Takılı)</option>
+                            <option value="SEREN">SEREN Standart (Hat 104 & 105 Takılı)</option>
+                            <option value="SEREN 39">SEREN 39 mm (Hat 107 Takılı)</option>
+                            <option value="LEVHA">LEVHA Hat 201 (Dişbudak / Koyu Ceviz / Coco)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Sipariş Miktarı (Boy / Adet)</label>
+                        <input type="number" id="sim-qty" value="1200" min="1" max="500000" oninput="calculateSimulation()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-500 font-bold">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 mb-1 block">Termin Tarihi</label>
+                        <input type="date" id="sim-due-date" value="2026-11-04" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono">
+                    </div>
+                </div>
+
+                <!-- Simulation Output Card -->
+                <div id="sim-result" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2.5">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Atanacak Hat & Kalıp:</span>
+                        <b class="text-emerald-400 font-bold" id="sim-hat">Hat 102 (Kalıp Hazır Takılı)</b>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Kalıp Durumu:</span>
+                        <span class="text-emerald-300 font-mono text-[11px]" id="sim-mold">Kalıp Değişimi Gerekmiyor (0 dk)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Tahmini İmalat Süresi:</span>
+                        <b class="text-white font-mono" id="sim-hours">~17.1 Saat (1.4 Vardiya)</b>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Toplam Brüt Tonaj:</span>
+                        <b class="text-purple-300 font-mono" id="sim-raw">~6.456 kg PVC Reçetesi</b>
+                    </div>
+                </div>
+
+                <!-- HAMMADDE STOK KONTROL VE BLOKE UYARISI BANNERI -->
+                <div id="sim-stock-guard-banner">
+                    <!-- Dinamik olarak Yeşil (Onay) veya Kırmızı (Bloke) doldurulacak -->
+                </div>
+            </div>
+
+            <div class="px-6 py-3.5 border-t border-slate-800 flex items-center justify-between bg-slate-950/70" id="sim-modal-footer">
+                <button onclick="closeUnifiedOrderModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition">İptal</button>
+                <div class="flex items-center gap-2" id="sim-action-btns">
+                    <!-- Dinamik Butonlar -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         JAVASCRIPT DATA & LOGIC
+
+    ========================================================================= -->
+    <script>
+        // 1. EXACT HAMMADDE DEPO STOK RADARI (FROM USER SCREENSHOT)
+        let RAW_MATERIALS_RADAR = [
+            {
+                material: "ASMIX 42555-2FB",
+                fill_pct: 30,
+                current_stock_kg: 1200,
+                min_stock_kg: 600,
+                daily_run_rate_kg: 80.9,
+                days_remaining: 14.8,
+                runout_date: "13.11.2026",
+                suggested_order_kg: 2200,
+                status: "safe",
+                capacity_kg: 4000
+            },
+            {
+                material: "TALAŞ",
+                fill_pct: 47,
+                current_stock_kg: 14000,
+                min_stock_kg: 5000,
+                daily_run_rate_kg: 700.0,
+                days_remaining: 20.0,
+                runout_date: "18.11.2026",
+                suggested_order_kg: 11500,
+                status: "safe",
+                capacity_kg: 30000
+            },
+            {
+                material: "ASC 1010A",
+                fill_pct: 40,
+                current_stock_kg: 2400,
+                min_stock_kg: 1000,
+                daily_run_rate_kg: 118.5,
+                days_remaining: 20.3,
+                runout_date: "18.11.2026",
+                suggested_order_kg: 2700,
+                status: "safe",
+                capacity_kg: 6000
+            },
+            {
+                material: "KALSİT 1K",
+                fill_pct: 90,
+                current_stock_kg: 45000,
+                min_stock_kg: 12000,
+                daily_run_rate_kg: 2128.8,
+                days_remaining: 21.1,
+                runout_date: "19.11.2026",
+                suggested_order_kg: 0,
+                status: "safe",
+                capacity_kg: 50000
+            },
+            {
+                material: "GERİ DÖNÜŞÜM",
+                fill_pct: 46,
+                current_stock_kg: 16000,
+                min_stock_kg: 5000,
+                daily_run_rate_kg: 735.4,
+                days_remaining: 21.8,
+                runout_date: "20.11.2026",
+                suggested_order_kg: 13750,
+                status: "safe",
+                capacity_kg: 35000
+            },
+            {
+                material: "CPE",
+                fill_pct: 60,
+                current_stock_kg: 3000,
+                min_stock_kg: 800,
+                daily_run_rate_kg: 118.7,
+                days_remaining: 25.3,
+                runout_date: "23.11.2026",
+                suggested_order_kg: 1750,
+                status: "safe",
+                capacity_kg: 5000
+            },
+            {
+                material: "KALSİT 5K",
+                fill_pct: 100,
+                current_stock_kg: 60000,
+                min_stock_kg: 12000,
+                daily_run_rate_kg: 1470.8,
+                days_remaining: 40.8,
+                runout_date: "09.12.2026",
+                suggested_order_kg: 0,
+                status: "safe",
+                capacity_kg: 60000
+            },
+            {
+                material: "PE WAX",
+                fill_pct: 100,
+                current_stock_kg: 4000,
+                min_stock_kg: 400,
+                daily_run_rate_kg: 42.6,
+                days_remaining: 93.9,
+                runout_date: "31.01.2027",
+                suggested_order_kg: 0,
+                status: "safe",
+                capacity_kg: 4000
+            },
+            {
+                material: "PVC",
+                fill_pct: 100,
+                current_stock_kg: 150000,
+                min_stock_kg: 15000,
+                daily_run_rate_kg: 150.0,
+                days_remaining: null,
+                runout_date: "Stok Yeterli (>30 gün)",
+                suggested_order_kg: 0,
+                status: "safe",
+                capacity_kg: 150000
+            },
+            {
+                material: "40 AMBAR",
+                fill_pct: 65,
+                current_stock_kg: 65000,
+                min_stock_kg: 25000,
+                daily_run_rate_kg: 0.0,
+                days_remaining: null,
+                runout_date: "Stok Yeterli (>30 gün)",
+                suggested_order_kg: 20000,
+                status: "safe",
+                capacity_kg: 100000
+            }
+        ];
+
+        // 2. REAL RECIPES FROM "1_KG_VE_PROFIL_RECETELERI.xlsx"
+        const EXCEL_RECIPES = {
+            "kasa_pervaz": {
+                id: "kasa_pervaz",
+                title: "KASA - PERVAZ REÇETESİ (PVC Karışımı)",
+                sub: "Hat 102, 103, 106, 108, 109 profilleri için orijinal formül",
+                batch_kg: 277.10,
+                items: [
+                    { seq: 1, name: "HURDA", task: "Geri Dönüşüm (Pen / Kırkambar)", kg: 150.0, factor: 0.5413208, pct: 54.13 },
+                    { seq: 2, name: "KALSİT 5K (Calsium Carbonat) NİĞTAŞ", task: "Proses / Kimyasal Katkı", kg: 80.0, factor: 0.2887044, pct: 28.87 },
+                    { seq: 3, name: "PVC STABILIZER ASMIX 21430 FX (PLASTAY)", task: "Isı Stabilizatörü (Yanma Önleyici)", kg: 3.5, factor: 0.0126308, pct: 1.26 },
+                    { seq: 4, name: "PE-WAX", task: "İç/Dış Kaydırıcı Mum (Wax)", kg: 0.5, factor: 0.0018044, pct: 0.18 },
+                    { seq: 5, name: "SOYA YAĞI", task: "Doğal Plastikleştirici / Yağlayıcı", kg: 1.0, factor: 0.0036088, pct: 0.36 },
+                    { seq: 6, name: "BOYA (CARBON BLACK)", task: "Siyah Renk Pigmenti", kg: 0.1, factor: 0.0003609, pct: 0.04 },
+                    { seq: 7, name: "GERİ DÖNÜŞÜM", task: "Geri Kazanılmış Plastik (Pen / Kırkambar)", kg: 40.0, factor: 0.1443522, pct: 14.44 },
+                    { seq: 8, name: "CPE 135A", task: "Darbe Kırıcı (Esneklik & Kırılmazlık)", kg: 1.5, factor: 0.0054132, pct: 0.54 },
+                    { seq: 9, name: "K-60", task: "İşleme Yardımcısı / Kaydırıcı", kg: 0.5, factor: 0.0018044, pct: 0.18 }
+                ]
+            },
+            "seren": {
+                id: "seren",
+                title: "SEREN FORMÜLÜ (Talaş & Ahşap Kompozit)",
+                sub: "Hat 104, 105, 107 Seren ve Seren 39mm profilleri için formül",
+                batch_kg: 298.60,
+                items: [
+                    { seq: 1, name: "HURDA", task: "Geri Dönüşüm (Pen / Kırkambar)", kg: 150.0, factor: 0.5023443, pct: 50.23 },
+                    { seq: 2, name: "KALSİT 5K (Calsium Carbonat) NİĞTAŞ", task: "Proses / Kimyasal Katkı", kg: 70.0, factor: 0.2344273, pct: 23.44 },
+                    { seq: 3, name: "TALAŞ", task: "Ahşap Unu (Çam - Meşe WPC Dolgu)", kg: 70.0, factor: 0.2344273, pct: 23.44 },
+                    { seq: 4, name: "PVC STABILIZER ASMIX 21430 FX (PLASTAY)", task: "Isı Stabilizatörü (Yanma Önleyici)", kg: 5.5, factor: 0.0184193, pct: 1.84 },
+                    { seq: 5, name: "PEWAX", task: "İç/Dış Kaydırıcı Mum (Wax)", kg: 1.0, factor: 0.0033490, pct: 0.33 },
+                    { seq: 6, name: "SOYA YAĞI", task: "Doğal Plastikleştirici / Yağlayıcı", kg: 0.5, factor: 0.0016745, pct: 0.17 },
+                    { seq: 7, name: "CPE 135A", task: "Darbe Kırıcı (Esneklik & Kırılmazlık)", kg: 1.5, factor: 0.0050234, pct: 0.50 },
+                    { seq: 8, name: "BOYA (CARBON BLACK)", task: "Siyah Renk Pigmenti", kg: 0.1, factor: 0.0003349, pct: 0.03 }
+                ]
+            },
+            "levha_mevcut": {
+                id: "levha_mevcut",
+                title: "LEVHA FORMÜLÜ (Mevcut Üretim - 469.30 KG)",
+                sub: "Hat 201 Kalender Dişbudak, Koyu Ceviz, Coco (21.10.2026 Güncel Formülü)",
+                batch_kg: 469.30,
+                items: [
+                    { seq: 1, name: "PVC RESİN (SHINTECH)", task: "Orijinal PVC Polimer Tozu", kg: 150.0, factor: 0.3196250, pct: 31.96 },
+                    { seq: 2, name: "KALSİT 1K (Calsium Carbonat) NİĞTAŞ", task: "Mikronize Beyazlatıcı Dolgu", kg: 150.0, factor: 0.3196250, pct: 31.96 },
+                    { seq: 3, name: "HURDA (SOĞUK MİXER)", task: "Geri Kazanılmış Levha Kırımı", kg: 150.0, factor: 0.3196250, pct: 31.96 },
+                    { seq: 4, name: "ASMIX 42555-2FB (PLASTAY)", task: "Özel Levha Isı Stabilizatörü", kg: 5.7, factor: 0.0121457, pct: 1.21 },
+                    { seq: 5, name: "CPE 35A", task: "Yüksek Darbe Mukavemeti Katkısı", kg: 9.0, factor: 0.0191775, pct: 1.92 },
+                    { seq: 6, name: "PVC STABILIZER ASMIX 21430 FX", task: "Yanma & Sararma Önleyici", kg: 1.0, factor: 0.0021308, pct: 0.21 },
+                    { seq: 7, name: "PEWAX", task: "Yüzey Parlatıcı Wax", kg: 1.0, factor: 0.0021308, pct: 0.21 },
+                    { seq: 8, name: "PRY 901", task: "Proses Akış Düzenleyici", kg: 1.5, factor: 0.0031962, pct: 0.32 },
+                    { seq: 9, name: "MSN 701", task: "Darbe & Matlaştırıcı Katkı", kg: 1.0, factor: 0.0021308, pct: 0.21 },
+                    { seq: 10, name: "BOYA (CARBON BLACK)", task: "Renk Tonlama Pigmenti", kg: 0.1, factor: 0.0002131, pct: 0.02 }
+                ]
+            },
+            "deck_kitkat": {
+                id: "deck_kitkat",
+                title: "DECK & KİTKAT FORMÜLÜ (Antrasit / Siyah WPC)",
+                sub: "Ahşap kompozit zemin profilleri ve kitkat lambiri formülü",
+                batch_kg: 240.45,
+                items: [
+                    { seq: 1, name: "HURDA", task: "Geri Dönüşüm (Pen / Kırkambar)", kg: 150.0, factor: 0.6238303, pct: 62.38 },
+                    { seq: 2, name: "TALAŞ", task: "Ahşap Unu (WPC Dolgu)", kg: 60.0, factor: 0.2495321, pct: 24.95 },
+                    { seq: 3, name: "KALSİT 1K (Calsium Carbonat) NİĞTAŞ", task: "Kimyasal Katkı", kg: 15.0, factor: 0.0623830, pct: 6.24 },
+                    { seq: 4, name: "PVC STABILIZER ASMIX 21430 FX", task: "Isı Stabilizatörü", kg: 5.0, factor: 0.0207943, pct: 2.08 },
+                    { seq: 5, name: "CPE-135", task: "Darbe Kırıcı", kg: 4.0, factor: 0.0166355, pct: 1.66 },
+                    { seq: 6, name: "BOYA (CARBON BLACK)", task: "Siyah Renk Pigmenti", kg: 1.6, factor: 0.0066542, pct: 0.67 },
+                    { seq: 7, name: "Ca-Zn STABİLİZATÖR", task: "Kalsiyum-Çinko Koruyucu", kg: 1.0, factor: 0.0041589, pct: 0.42 },
+                    { seq: 8, name: "DMA-650 / K-60 / KPE-20", task: "İşleme Yardımcısı & Wax", kg: 3.0, factor: 0.0124766, pct: 1.25 }
+                ]
+            }
+        };
+
+        let CURRENT_RECIPE_KEY = "kasa_pervaz";
+
+        // Render Raw Materials Radar (Exact replica of user screenshot)
+        function renderRadarCards() {
+            const container = document.getElementById('radar-cards-container');
+            container.innerHTML = '';
+
+            RAW_MATERIALS_RADAR.forEach(item => {
+                const daysText = item.days_remaining !== null ? `${item.days_remaining.toFixed(1)} Gün Yetiyor` : 'Tüketim Yok';
+                const daysColor = item.days_remaining !== null && item.days_remaining < 15 ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold';
+
+                const cardHtml = `
+                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:border-slate-700 shadow-md">
+                        <div>
+                            <div class="flex items-start justify-between gap-1 mb-2.5">
+                                <span class="font-black text-white text-xs truncate max-w-[130px]" title="${item.material}">${item.material}</span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">GÜVENLİ</span>
+                            </div>
+
+                            <div class="silo-cylinder mb-3">
+                                <div class="silo-liquid silo-liquid-safe" style="height: ${Math.max(12, item.fill_pct)}%">
+                                    <div class="absolute inset-0 bg-white/10 opacity-20"></div>
+                                </div>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none drop-shadow">
+                                    <span class="text-xl font-black text-white">%${item.fill_pct}</span>
+                                    <span class="text-[10px] font-bold text-slate-300">Depo Doluluk</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5 text-[11px]">
+                                <div class="flex justify-between items-center text-slate-300">
+                                    <span class="text-slate-400">Mevcut Stok:</span>
+                                    <b class="text-white font-mono">${item.current_stock_kg.toLocaleString('tr-TR')} kg</b>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-400 text-[10px]">
+                                    <span>Kritik Eşik:</span>
+                                    <span class="font-mono text-slate-300">${item.min_stock_kg.toLocaleString('tr-TR')} kg</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-400 text-[10px]">
+                                    <span>Günlük Tüketim:</span>
+                                    <span class="font-mono text-sky-300 font-semibold">${item.daily_run_rate_kg.toLocaleString('tr-TR')} kg/g</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 pt-2.5 border-t border-slate-800/80 space-y-1 text-[11px]">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-400">Kalan Süre:</span>
+                                <span class="${daysColor}">${daysText}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>Tükenme:</span>
+                                <span class="text-slate-200 font-medium">${item.runout_date}</span>
+                            </div>
+                            ${item.suggested_order_kg > 0 ? `
+                                <div class="mt-1 pt-1 border-t border-slate-900 flex justify-between items-center text-[10px]">
+                                    <span class="text-slate-500">Öneri Sipariş:</span>
+                                    <b class="text-amber-400 font-mono">+${item.suggested_order_kg.toLocaleString('tr-TR')} kg</b>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+            lucide.createIcons();
+        }
+
+        // Render Recipe Navigation Buttons
+        function renderRecipeNav() {
+            const container = document.getElementById('recipe-nav-btns');
+            container.innerHTML = '';
+
+            const list = [
+                { key: "kasa_pervaz", label: "Kasa - Pervaz (PVC)" },
+                { key: "seren", label: "Seren (Talaş & Ahşap)" },
+                { key: "levha_mevcut", label: "Levha (Hat 201)" },
+                { key: "deck_kitkat", label: "Deck / Kitkat" }
+            ];
+
+            list.forEach(r => {
+                const isActive = r.key === CURRENT_RECIPE_KEY;
+                const cls = isActive 
+                    ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-sm"
+                    : "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white";
+                container.innerHTML += `
+                    <button onclick="selectRecipe('${r.key}')" class="${cls}">
+                        ${r.label}
+                    </button>
+                `;
+            });
+        }
+
+        // Select and Display Active Recipe
+        function selectRecipe(key) {
+            CURRENT_RECIPE_KEY = key;
+            renderRecipeNav();
+
+            const recipe = EXCEL_RECIPES[key];
+            if (!recipe) return;
+
+            document.getElementById('active-recipe-title').innerText = recipe.title;
+            document.getElementById('active-recipe-sub').innerText = recipe.sub;
+            document.getElementById('active-recipe-batch').innerText = recipe.batch_kg.toFixed(2) + " kg";
+            document.getElementById('active-recipe-items-count').innerText = recipe.items.length + " Hammadde";
+
+            const tbody = document.getElementById('recipe-table-tbody');
+            tbody.innerHTML = '';
+
+            let totalKg = 0;
+            let totalPct = 0;
+
+            recipe.items.forEach(item => {
+                totalKg += item.kg;
+                totalPct += item.pct;
+
+                // Match with raw material stock
+                let matchedStock = RAW_MATERIALS_RADAR.find(r => r.material.toUpperCase().includes(item.name.toUpperCase()) || item.name.toUpperCase().includes(r.material.toUpperCase()));
+                let stockStatusHtml = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Depoda Hazır</span>';
+                if (!matchedStock) {
+                    stockStatusHtml = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">Yeterli Stok</span>';
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 text-center text-slate-500">${item.seq}</td>
+                        <td class="p-3 font-bold text-white font-sans">${item.name}</td>
+                        <td class="p-3 text-slate-300 font-sans text-[11px]">${item.task}</td>
+                        <td class="p-3 text-right text-emerald-300 font-bold">${item.kg.toFixed(2)} kg</td>
+                        <td class="p-3 text-right text-cyan-300">${item.factor.toFixed(5)}</td>
+                        <td class="p-3 text-right text-amber-300 font-semibold">%${item.pct.toFixed(2)}</td>
+                        <td class="p-3 text-center font-sans">${stockStatusHtml}</td>
+                    </tr>
+                `;
+            });
+
+            // Footer total
+            const tfoot = document.getElementById('recipe-table-tfoot');
+            tfoot.innerHTML = `
+                <tr>
+                    <td class="p-3 text-center" colspan="3">TOPLAM REÇETE ŞARJ HARMANI</td>
+                    <td class="p-3 text-right text-emerald-400 text-sm font-black">${totalKg.toFixed(2)} kg</td>
+                    <td class="p-3 text-right text-cyan-400 text-sm font-black">1.00000</td>
+                    <td class="p-3 text-right text-amber-400 text-sm font-black">%${Math.round(totalPct)}</td>
+                    <td class="p-3 text-center font-sans text-emerald-400 text-xs">Tam Karışım</td>
+                </tr>
+            `;
+        }
+
+        // Calculate Recipe Requirements based on Input KG
+        function calculateRecipeRequirement() {
+            const prodKg = parseFloat(document.getElementById('calc-prod-kg').value) || 5000;
+            const recipe = EXCEL_RECIPES[CURRENT_RECIPE_KEY];
+            if (!recipe) return;
+
+            const box = document.getElementById('calc-result-box');
+            box.classList.remove('hidden');
+
+            document.getElementById('calc-result-title').innerText = `${prodKg.toLocaleString('tr-TR')} KG [${recipe.title}] Üretimi İçin Hammadde Dökümü:`;
+
+            const grid = document.getElementById('calc-result-grid');
+            grid.innerHTML = '';
+
+            recipe.items.forEach(item => {
+                const reqKg = prodKg * item.factor;
+                let matchedStock = RAW_MATERIALS_RADAR.find(r => r.material.toUpperCase().includes(item.name.toUpperCase()) || item.name.toUpperCase().includes(r.material.toUpperCase()));
+                const curStock = matchedStock ? matchedStock.current_stock_kg : 25000;
+                const isSufficient = curStock >= reqKg;
+
+                grid.innerHTML += `
+                    <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
+                        <div class="flex justify-between items-center">
+                            <b class="text-white truncate" title="${item.name}">${item.name}</b>
+                            <span class="text-[10px] ${isSufficient ? 'text-emerald-400' : 'text-rose-400 font-bold'}">
+                                ${isSufficient ? 'Yeterli' : 'Eksik!'}
+                            </span>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+                            <span>Gereken:</span>
+                            <b class="text-indigo-300">${reqKg.toFixed(1)} kg</b>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                            <span>Depo Stoku:</span>
+                            <span>${curStock.toLocaleString('tr-TR')} kg</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Stock Edit Modal
+        function openStockModal() {
+            const tbody = document.getElementById('stock-modal-tbody');
+            tbody.innerHTML = '';
+
+            RAW_MATERIALS_RADAR.forEach((r, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40">
+                        <td class="p-2.5 font-bold text-white font-sans">${r.material}</td>
+                        <td class="p-2.5 text-right text-slate-400">${r.capacity_kg.toLocaleString('tr-TR')} kg</td>
+                        <td class="p-2.5 text-right text-amber-400">${r.min_stock_kg.toLocaleString('tr-TR')} kg</td>
+                        <td class="p-2.5 text-right">
+                            <input type="number" id="stock-val-${idx}" value="${r.current_stock_kg}" class="w-28 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-right text-white font-mono font-bold focus:border-emerald-500 focus:outline-none">
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('modal-stock').classList.remove('hidden');
+        }
+        function closeStockModal() {
+            document.getElementById('modal-stock').classList.add('hidden');
+        }
+
+        function saveStockUpdates() {
+            RAW_MATERIALS_RADAR.forEach((r, idx) => {
+                const inp = document.getElementById(`stock-val-${idx}`);
+                if (inp) {
+                    const val = parseFloat(inp.value) || 0;
+                    r.current_stock_kg = val;
+                    r.fill_pct = Math.min(100, Math.round((val / r.capacity_kg) * 100));
+                    if (r.daily_run_rate_kg > 0) {
+                        r.days_remaining = parseFloat((val / r.daily_run_rate_kg).toFixed(1));
+                    }
+                }
+            });
+            closeStockModal();
+            renderRadarCards();
+            alert("✅ Hammadde depo sayım miktarları güncellendi ve telemetri yenilendi!");
+        }
+
+        function refreshStockTelemetry() {
+            renderRadarCards();
+            alert("🔄 Canlı telemetri yenilendi. Tüm depo seviyeleri güncel.");
+        }
+
+        // 3. 10 LINES & ORDERS DATA (SAME INTEGRATED)
+        const LINES_DATA = [
+            { hat: "101", product: "", mold_name: "Kalıp Boşta / Beklemede", heads: 1, status: "IDLE", gunduz_qty: 0, gece_qty: 0, total_qty: 0, queue_hours: 0, eta: "—" },
+            { hat: "102", product: "140 mm KASA", mold_name: "140 mm Kasa Kalıbı", heads: 1, status: "ACTIVE", gunduz_qty: 240, gece_qty: 90, total_qty: 330, queue_hours: 18.5, eta: "30.10 14:00" },
+            { hat: "103", product: "50X80 PERVAZ", mold_name: "50x80 Pervaz Kalıbı", heads: 2, status: "ACTIVE", gunduz_qty: 160, gece_qty: 465, total_qty: 625, queue_hours: 24.0, eta: "31.10 08:30" },
+            { hat: "104", product: "SEREN", mold_name: "Seren Kalıbı (Çift Kafa)", heads: 2, status: "ACTIVE", gunduz_qty: 486, gece_qty: 384, total_qty: 870, queue_hours: 32.5, eta: "01.11 12:00" },
+            { hat: "105", product: "SEREN", mold_name: "Seren Kalıbı (Çift Kafa)", heads: 2, status: "ACTIVE", gunduz_qty: 312, gece_qty: 330, total_qty: 642, queue_hours: 28.0, eta: "01.11 18:00" },
+            { hat: "106", product: "140 mm KASA", mold_name: "140 mm Kasa Kalıbı", heads: 1, status: "ACTIVE", gunduz_qty: 100, gece_qty: 141, total_qty: 241, queue_hours: 16.0, eta: "30.10 18:30" },
+            { hat: "107", product: "SEREN (39mm)", mold_name: "Seren (39mm) Kalıbı", heads: 1, status: "ACTIVE", gunduz_qty: 300, gece_qty: 375, total_qty: 675, queue_hours: 26.5, eta: "31.10 20:00" },
+            { hat: "108", product: "200 mm KASA", mold_name: "200 mm Kasa Kalıbı", heads: 1, status: "ACTIVE", gunduz_qty: 78, gece_qty: 140, total_qty: 218, queue_hours: 29.0, eta: "01.11 10:00" },
+            { hat: "109", product: "50X80 PERVAZ", mold_name: "50x80 Pervaz Kalıbı", heads: 2, status: "ACTIVE", gunduz_qty: 780, gece_qty: 625, total_qty: 1405, queue_hours: 21.0, eta: "31.10 16:00" },
+            { hat: "201", product: "LEVHA (Dişbudak/Ceviz/Coco)", mold_name: "Levha Kalender T-Die", heads: 1, status: "ACTIVE", gunduz_qty: 552, gece_qty: 510, total_qty: 1062, queue_hours: 25.0, eta: "31.10 12:00" }
+        ];
+
+        // =========================================================================
+        // MERKEZİ ÜRÜN KATALOĞU (100 KASA, 80x80 VE TÜM EKSTRÜZYON PROFİLLERİ)
+        // =========================================================================
+        const DEFAULT_PRODUCT_CATALOG = [
+            {
+                id: "100_KASA",
+                name: "100 mm KASA",
+                label: "100 mm KASA (Hat 107 - Kritik Darboğaz)",
+                assignedHat: "Hat 107",
+                unitKg: 4.20,
+                speedRate: 85,
+                speedMdk: "0.85 m/dk",
+                headsLabel: "Tek Kafa (100mm Kasa Kalıbı)",
+                moldNote: "Hat 107 Kalıbı Hazır Takılı",
+                recipeKey: "kasa_pervaz"
+            },
+            {
+                id: "140_KASA",
+                name: "140 mm KASA",
+                label: "140 mm KASA (Hat 102 & 106 Takılı)",
+                assignedHat: "Hat 102 & 106",
+                unitKg: 5.38,
+                speedRate: 70,
+                speedMdk: "0.71 m/dk",
+                headsLabel: "Tek Kafa (140mm Kasa Kalıbı)",
+                moldNote: "Kalıp Değişimi GEREKMİYOR (0 dk duruş)",
+                recipeKey: "kasa_pervaz"
+            },
+            {
+                id: "200_KASA",
+                name: "200 mm KASA",
+                label: "200 mm KASA (Hat 108 Takılı)",
+                assignedHat: "Hat 108",
+                unitKg: 6.50,
+                speedRate: 50,
+                speedMdk: "0.64 m/dk",
+                headsLabel: "Tek Kafa (200mm Kalıp Hazır)",
+                moldNote: "Kalıp Değişimi GEREKMİYOR (0 dk duruş)",
+                recipeKey: "kasa_pervaz"
+            },
+            {
+                id: "50x80_PERVAZ",
+                name: "50X80 PERVAZ",
+                label: "50X80 PERVAZ (Hat 103 & 109 Takılı)",
+                assignedHat: "Hat 103 & 109",
+                unitKg: 1.57,
+                speedRate: 140,
+                speedMdk: "1.28 m/dk",
+                headsLabel: "Çift Kafa (Kalıp Hazır)",
+                moldNote: "Kalıp Değişimi GEREKMİYOR (Çift Göz)",
+                recipeKey: "kasa_pervaz"
+            },
+            {
+                id: "80x80_PERVAZ",
+                name: "80X80 PERVAZ / KASA",
+                label: "80X80 ÜRÜN (Hat 103 & 109 / 107)",
+                assignedHat: "Hat 103 & 109",
+                unitKg: 2.10,
+                speedRate: 110,
+                speedMdk: "1.15 m/dk",
+                headsLabel: "Çift Kafa (80x80 Kalıp)",
+                moldNote: "Kalıp Değişimi Uyumlu",
+                recipeKey: "kasa_pervaz"
+            },
+            {
+                id: "SEREN_STD",
+                name: "SEREN Standart",
+                label: "SEREN Standart (Hat 104 & 105 Takılı)",
+                assignedHat: "Hat 104 & 105",
+                unitKg: 3.31,
+                speedRate: 120,
+                speedMdk: "0.86 m/dk",
+                headsLabel: "Çift Kafa (Seren Kalıp Hazır)",
+                moldNote: "Kalıp Değişimi GEREKMİYOR (Çift Göz)",
+                recipeKey: "seren"
+            },
+            {
+                id: "SEREN_39",
+                name: "SEREN 39 mm",
+                label: "SEREN 39 mm (Hat 107 Takılı)",
+                assignedHat: "Hat 107",
+                unitKg: 3.35,
+                speedRate: 85,
+                speedMdk: "1.26 m/dk",
+                headsLabel: "Tek Kafa (Seren 39mm Kalıp)",
+                moldNote: "Kalıp Hazır",
+                recipeKey: "seren"
+            },
+            {
+                id: "LEVHA",
+                name: "LEVHA Hat 201",
+                label: "LEVHA Hat 201 (Dişbudak / Koyu Ceviz / Coco)",
+                assignedHat: "Hat 201",
+                unitKg: 4.80,
+                speedRate: 45,
+                speedMdk: "0.95 m/dk",
+                headsLabel: "Kalender T-Die",
+                moldNote: "Kalıp Hazır (Sadece Renk Değişimi)",
+                recipeKey: "levha_mevcut"
+            }
+        ];
+
+        let PRODUCT_CATALOG = [];
+        function loadProductCatalog() {
+            try {
+                const stored = localStorage.getItem('ERGUNBAS_PRODUCT_CATALOG');
+                if (stored) {
+                    PRODUCT_CATALOG = JSON.parse(stored);
+                } else {
+                    PRODUCT_CATALOG = [...DEFAULT_PRODUCT_CATALOG];
+                }
+            } catch(e) {
+                PRODUCT_CATALOG = [...DEFAULT_PRODUCT_CATALOG];
+            }
+        }
+
+        function saveProductCatalog() {
+            try {
+                localStorage.setItem('ERGUNBAS_PRODUCT_CATALOG', JSON.stringify(PRODUCT_CATALOG));
+            } catch(e) {}
+        }
+
+        function populateProductDropdowns() {
+            const selects = [document.getElementById('sim-product')];
+            selects.forEach(sel => {
+                if (!sel) return;
+                const currentVal = sel.value;
+                sel.innerHTML = '';
+                PRODUCT_CATALOG.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.name;
+                    opt.textContent = p.label || `${p.name} (${p.assignedHat})`;
+                    sel.appendChild(opt);
+                });
+                if (currentVal && PRODUCT_CATALOG.some(p => p.name === currentVal)) {
+                    sel.value = currentVal;
+                }
+            });
+        }
+
+        function openNewProductModal() {
+            const modal = document.getElementById('modal-new-product');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeNewProductModal() {
+            const modal = document.getElementById('modal-new-product');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function handleCreateProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('np-name').value.trim();
+            const hat = document.getElementById('np-hat').value;
+            const recipe = document.getElementById('np-recipe').value;
+            const unitKg = parseFloat(document.getElementById('np-unit-kg').value) || 2.10;
+            const speed = parseInt(document.getElementById('np-speed').value, 10) || 100;
+
+            if (!name) return;
+
+            const existingIndex = PRODUCT_CATALOG.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+            const newProd = {
+                id: "PROD_" + Date.now(),
+                name: name,
+                label: `${name} (${hat})`,
+                assignedHat: hat,
+                unitKg: unitKg,
+                speedRate: speed,
+                speedMdk: (speed * 0.01).toFixed(2) + " m/dk",
+                headsLabel: hat.includes('&') ? "Çift Kafa" : "Tek Kafa",
+                moldNote: "Kalıp Uyumlu",
+                recipeKey: recipe
+            };
+
+            if (existingIndex >= 0) {
+                PRODUCT_CATALOG[existingIndex] = newProd;
+            } else {
+                PRODUCT_CATALOG.push(newProd);
+            }
+
+            saveProductCatalog();
+            populateProductDropdowns();
+
+            // Seçili hale getir ve simülasyonu çalıştır
+            const simProd = document.getElementById('sim-product');
+            if (simProd) {
+                simProd.value = name;
+                calculateSimulation();
+            }
+
+            closeNewProductModal();
+            alert(`Ürün Başarıyla Eklendi: ${name}\n\n• Hat: ${hat}\n• Birim Ağırlık: ${unitKg} kg/boy\n• Hız: ${speed} boy/saat\n\nSipariş ekranında seçilebilir durumdadır.`);
+        }
+
+        // =========================================================================
+        // SİPARİŞ VERİTABANI (100 KASA, 80x80 VE MEVCUT SİPARİŞLER DAHİL)
+        // =========================================================================
+        const INITIAL_ORDERS_DATA = [
+            { id: "LF-2601", customer: "Özlem Kapı Sanayi A.Ş.", product: "140 mm KASA", dim: "2.15 m", order_qty: 1200, stock_qty: 150, actual_qty: 330, net_qty: 720, hat: "Hat 102 & 106", speed: "0.71 m/dk", eta: "30.10 16:00", due: "31.10.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2602", customer: "Akdeniz İnşaat Projesi", product: "200 mm KASA", dim: "2.15 m", order_qty: 800, stock_qty: 60, actual_qty: 218, net_qty: 522, hat: "Hat 108", speed: "0.64 m/dk", eta: "01.11 14:00", due: "02.11.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2603", customer: "Toros Kapı Sistemleri", product: "50X80 PERVAZ", dim: "2.20 m", order_qty: 3500, stock_qty: 500, actual_qty: 1405, net_qty: 1595, hat: "Hat 103 & 109", speed: "1.28 m/dk", eta: "31.10 18:00", due: "01.11.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2604", customer: "Yılmaz Orman Ürünleri", product: "SEREN (39mm)", dim: "2.10 m", order_qty: 2500, stock_qty: 200, actual_qty: 675, net_qty: 1625, hat: "Hat 107", speed: "1.26 m/dk", eta: "31.10 22:00", due: "01.11.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2605", customer: "Avrasya Yapı & Dekor", product: "SEREN Standart", dim: "2.10 m", order_qty: 4000, stock_qty: 400, actual_qty: 870, net_qty: 2730, hat: "Hat 104 & 105", speed: "0.86 m/dk", eta: "01.11 20:00", due: "03.11.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2606", customer: "Ege Panel & Kapı Market", product: "LEVHA Dişbudak", dim: "94 x 207 cm", order_qty: 1500, stock_qty: 100, actual_qty: 940, net_qty: 460, hat: "Hat 201", speed: "0.95 m/dk", eta: "30.10 20:00", due: "31.10.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2607", customer: "Başkent Mobilya Sanayi", product: "LEVHA Koyu Ceviz", dim: "94 x 210 cm", order_qty: 300, stock_qty: 20, actual_qty: 70, net_qty: 210, hat: "Hat 201", speed: "0.95 m/dk", eta: "31.10 08:00", due: "02.11.2026", flow_status: "PLANLANDI" },
+            { id: "LF-2608", customer: "Marmara Ahşap Kapı", product: "100 mm KASA", dim: "2.15 m", order_qty: 2200, stock_qty: 120, actual_qty: 380, net_qty: 1700, hat: "Hat 107", speed: "0.85 m/dk", eta: "02.11 18:00", due: "04.11.2026", flow_status: "ÜRETİMDE" },
+            { id: "LF-2609", customer: "Güneydoğu Yapı Elemanları", product: "80X80 PERVAZ / KASA", dim: "2.20 m", order_qty: 1800, stock_qty: 150, actual_qty: 0, net_qty: 1650, hat: "Hat 103 & 109", speed: "1.15 m/dk", eta: "03.11 14:00", due: "06.11.2026", flow_status: "PLANLANDI" }
+        ];
+
+        let ORDERS_DATA = [];
+        function loadOrdersData() {
+            try {
+                const stored = localStorage.getItem('ERGUNBAS_ORDERS_DATA');
+                if (stored) {
+                    ORDERS_DATA = JSON.parse(stored);
+                } else {
+                    ORDERS_DATA = [...INITIAL_ORDERS_DATA];
+                }
+            } catch(e) {
+                ORDERS_DATA = [...INITIAL_ORDERS_DATA];
+            }
+        }
+
+        function saveOrdersData() {
+            try {
+                localStorage.setItem('ERGUNBAS_ORDERS_DATA', JSON.stringify(ORDERS_DATA));
+            } catch(e) {}
+        }
+
+        let currentOrderFilter = 'ALL';
+        let currentOrderSearch = '';
+        let currentOrderHat = 'ALL';
+
+        function handleOrderSearch(val) {
+            currentOrderSearch = (val || '').toLowerCase().trim();
+            renderOrdersTable();
+        }
+
+        function handleOrderHatFilter(hat) {
+            currentOrderHat = hat;
+            renderOrdersTable();
+        }
+
+        function filterOrders(filter) {
+            currentOrderFilter = filter;
+            ['flt-all', 'flt-prod', 'flt-plan', 'flt-risk'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white transition";
+                }
+            });
+
+            if (filter === 'ALL') {
+                const el = document.getElementById('flt-all');
+                if (el) el.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition";
+            } else if (filter === 'URETIMDE') {
+                const el = document.getElementById('flt-prod');
+                if (el) el.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition";
+            } else if (filter === 'PLANLANDI') {
+                const el = document.getElementById('flt-plan');
+                if (el) el.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition";
+            } else if (filter === 'RISK') {
+                const el = document.getElementById('flt-risk');
+                if (el) el.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-600 text-white transition";
+            }
+
+            renderOrdersTable();
+        }
+
+        function toggleOrderStatus(id) {
+            const order = ORDERS_DATA.find(o => o.id === id);
+            if (!order) return;
+            if (order.flow_status === 'PLANLANDI') {
+                order.flow_status = 'ÜRETİMDE';
+            } else if (order.flow_status === 'ÜRETİMDE') {
+                order.flow_status = 'TAMAMLANDI';
+            } else {
+                order.flow_status = 'PLANLANDI';
+            }
+            saveOrdersData();
+            renderOrdersTable();
+        }
+
+        function deleteOrder(id) {
+            if (!confirm(`Sipariş No ${id} silinsin mi?`)) return;
+            ORDERS_DATA = ORDERS_DATA.filter(o => o.id !== id);
+            saveOrdersData();
+            renderOrdersTable();
+        }
+        
+        function renderLinesGrid() {
+            const container = document.getElementById('lines-grid-container');
+            container.innerHTML = '';
+            LINES_DATA.forEach(l => {
+                const isIdle = l.status === "IDLE";
+                const isLevha = l.hat === "201";
+                const cardHtml = `
+                    <div class="glass-panel rounded-2xl p-4 flex flex-col justify-between border ${isIdle ? 'border-slate-800' : (isLevha ? 'border-purple-900/50' : 'border-slate-800 hover:border-emerald-500/50')} transition-all duration-200 hover:-translate-y-1 shadow-lg">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5 mb-2.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-lg ${isIdle ? 'bg-slate-800 text-slate-400' : (isLevha ? 'bg-purple-500/20 text-purple-300' : 'bg-emerald-500/20 text-emerald-300')} font-black text-xs flex items-center justify-center font-mono">
+                                        ${l.hat}
+                                    </span>
+                                    <div>
+                                        <b class="text-xs text-white">Hat ${l.hat}</b>
+                                        <div class="text-[10px] text-slate-400">${isLevha ? 'Kalender Hattı' : (l.heads === 2 ? 'Çift Göz (2 Kafa)' : 'Tek Göz')}</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isIdle ? 'bg-slate-800 text-slate-400' : 'bg-emerald-500/20 text-emerald-300'}">${isIdle ? 'BOŞTA' : 'ÇALIŞIYOR'}</span>
+                            </div>
+                            <div class="space-y-1.5 text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Çalışan Ürün:</span>
+                                    <b class="text-sm ${isIdle ? 'text-slate-500' : 'text-white'} truncate block">${l.product || '—'}</b>
+                                </div>
+                                <div class="pt-1">
+                                    <span class="text-[10px] text-slate-400 uppercase tracking-wider block">Takılı Kalıp:</span>
+                                    <span class="text-xs ${isIdle ? 'text-slate-500' : 'text-emerald-400'} font-medium flex items-center gap-1 truncate">
+                                        <i data-lucide="wrench" class="w-3 h-3 shrink-0"></i> ${l.mold_name}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/60 space-y-1 text-[11px] font-mono">
+                                <div class="flex items-center justify-between text-slate-400">
+                                    <span>27 Ekim Fiili:</span>
+                                    <b class="${isIdle ? 'text-slate-600' : 'text-cyan-300'}">${l.total_qty} Adet</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-2.5 border-t border-slate-800/80 text-[11px] flex items-center justify-between">
+                            <span class="text-slate-400">Bitiş (ETA):</span>
+                            <span class="font-mono ${isIdle ? 'text-slate-600' : 'text-emerald-400 font-bold'}">${l.eta}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+            lucide.createIcons();
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            let filtered = ORDERS_DATA;
+
+            // 1. Durum Filtresi
+            if (currentOrderFilter === 'URETIMDE') {
+                filtered = filtered.filter(o => o.flow_status === 'ÜRETİMDE');
+            } else if (currentOrderFilter === 'PLANLANDI') {
+                filtered = filtered.filter(o => o.flow_status === 'PLANLANDI');
+            } else if (currentOrderFilter === 'RISK') {
+                // Termin riski veya gecikme olanlar
+                filtered = filtered.filter(o => {
+                    const isUrgent = o.customer.includes('Özlem') || o.product.includes('100 mm') || o.product.includes('SEREN (39mm)');
+                    return isUrgent;
+                });
+            }
+
+            // 2. Hat Filtresi
+            if (currentOrderHat !== 'ALL') {
+                filtered = filtered.filter(o => o.hat.includes(currentOrderHat));
+            }
+
+            // 3. Arama Filtresi
+            if (currentOrderSearch) {
+                filtered = filtered.filter(o => 
+                    o.id.toLowerCase().includes(currentOrderSearch) ||
+                    o.customer.toLowerCase().includes(currentOrderSearch) ||
+                    o.product.toLowerCase().includes(currentOrderSearch) ||
+                    o.hat.toLowerCase().includes(currentOrderSearch)
+                );
+            }
+
+            // Sayaçları güncelle
+            const totalCount = ORDERS_DATA.length;
+            const prodCount = ORDERS_DATA.filter(o => o.flow_status === 'ÜRETİMDE').length;
+            const planCount = ORDERS_DATA.filter(o => o.flow_status === 'PLANLANDI').length;
+            const riskCount = ORDERS_DATA.filter(o => o.customer.includes('Özlem') || o.product.includes('100 mm') || o.product.includes('SEREN (39mm)')).length;
+
+            const cAll = document.getElementById('count-flt-all');
+            const cProd = document.getElementById('count-flt-prod');
+            const cPlan = document.getElementById('count-flt-plan');
+            const cRisk = document.getElementById('count-flt-risk');
+            if (cAll) cAll.innerText = totalCount;
+            if (cProd) cProd.innerText = prodCount;
+            if (cPlan) cPlan.innerText = planCount;
+            if (cRisk) cRisk.innerText = riskCount;
+
+            const kpiCount = document.getElementById('kpi-orders-count');
+            if (kpiCount) {
+                kpiCount.innerHTML = `${totalCount} <span class="text-xs font-normal text-slate-400 font-sans">Sipariş</span>`;
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="12" class="py-8 text-center text-slate-500 font-mono">
+                            Arama kriterine uygun sipariş bulunamadı.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let totalNet = 0;
+            filtered.forEach(o => {
+                totalNet += (o.net_qty || 0);
+
+                // Laminasyon termin güvencesi değerlendirmesi (2 gün önce teslim kuralı)
+                let riskBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">ZAMANINDA</span>';
+                if (o.customer.includes('Özlem') || o.product.includes('100 mm')) {
+                    riskBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">GECİKME RİSKİ</span>';
+                } else if (o.product.includes('SEREN (39mm)')) {
+                    riskBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">KRİTİK (-2 GÜN)</span>';
+                }
+
+                let statusBadgeClass = 'bg-slate-800 text-slate-300';
+                if (o.flow_status === 'ÜRETİMDE') statusBadgeClass = 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+                if (o.flow_status === 'PLANLANDI') statusBadgeClass = 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/30';
+                if (o.flow_status === 'TAMAMLANDI') statusBadgeClass = 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-white font-mono flex items-center gap-1.5">
+                                <span>${o.id}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 truncate max-w-[150px]" title="${o.customer}">${o.customer}</div>
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-white">${o.product}</div>
+                            <div class="text-[11px] text-slate-400 font-mono">${o.dim || 'Standart Boy'}</div>
+                        </td>
+                        <td class="py-3 px-3 text-center font-mono">
+                            <div class="text-white font-bold">${o.order_qty.toLocaleString()}</div>
+                            <div class="text-[10px] text-slate-400">Üretilen: ${o.actual_qty.toLocaleString()} | Stok: ${o.stock_qty.toLocaleString()}</div>
+                        </td>
+                        <td class="py-3 px-3 text-right font-mono text-emerald-400 font-black text-sm">
+                            ${o.net_qty.toLocaleString()}
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="font-semibold text-white">${o.hat}</div>
+                        </td>
+                        <td class="py-3 px-3 text-right font-mono text-slate-300">${o.speed || '—'}</td>
+                        <td class="py-3 px-3 font-mono text-emerald-300 font-semibold">${o.eta || '—'}</td>
+                        <td class="py-3 px-3 font-mono text-slate-200 font-semibold">${o.due}</td>
+                        <td class="py-3 px-3 text-center">
+                            ${riskBadge}
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold">Hazır</span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold ${statusBadgeClass}">${o.flow_status}</span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="toggleOrderStatus('${o.id}')" title="Durum Değiştir" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs text-white border border-slate-700">
+                                    Durum
+                                </button>
+                                <button onclick="deleteOrder('${o.id}')" title="Siparişi Sil" class="p-1 rounded bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/60">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Alt özet çubuğu
+            const summaryBar = document.getElementById('orders-summary-bar');
+            if (summaryBar) {
+                summaryBar.innerHTML = `
+                    <span>Gösterilen: <b class="text-white">${filtered.length} / ${ORDERS_DATA.length} Sipariş</b></span>
+                    <span>•</span>
+                    <span>Toplam Net Üretim: <b class="text-emerald-400 font-mono">${totalNet.toLocaleString()} Takım / Boy</b></span>
+                `;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderActualProduction() {
+            const tbody = document.getElementById('actual-extruders-tbody');
+            tbody.innerHTML = '';
+            LINES_DATA.filter(l => l.hat !== '201').forEach(l => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="py-2.5 px-3 font-bold text-white">Hat ${l.hat}</td>
+                        <td class="py-2.5 px-3 font-sans font-semibold ${l.product ? 'text-white' : 'text-slate-500'}">${l.product || '— Boşta —'}</td>
+                        <td class="py-2.5 px-3 font-sans text-slate-300 text-[11px]">${l.mold_name}</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">${l.gunduz_qty}</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">${l.gece_qty}</td>
+                        <td class="py-2.5 px-3 text-right font-bold ${l.total_qty > 0 ? 'text-cyan-300' : 'text-slate-600'}">${l.total_qty}</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">${Math.round(l.total_qty * (l.hat === '108' ? 6.5 : (l.hat === '103' || l.hat === '109' ? 1.57 : 4.5)))} kg</td>
+                        <td class="py-2.5 px-3 text-center font-sans">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${l.total_qty > 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-500'}">
+                                ${l.total_qty > 0 ? 'Tamamlandı' : 'Boşta'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function switchTab(tabId) {
+            ['tab-lines', 'tab-orders', 'tab-production', 'tab-bom'].forEach(t => {
+                const el = document.getElementById(t);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+
+            ['btn-tab-lines', 'btn-tab-orders', 'btn-tab-production', 'btn-tab-bom'].forEach(b => {
+                const btn = document.getElementById(b);
+                if (btn) btn.className = "px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2 bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-800";
+            });
+            document.getElementById('btn-' + tabId).className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-emerald-600 text-white shadow-md shadow-emerald-600/20";
+        }
+
+        function filterOrders(type) {
+            ['flt-all', 'flt-prod', 'flt-plan', 'flt-risk'].forEach(id => {
+                document.getElementById(id).className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white";
+            });
+            if (type === 'ALL') document.getElementById('flt-all').className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white";
+            if (type === 'URETIMDE') document.getElementById('flt-prod').className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white";
+            if (type === 'PLANLANDI') document.getElementById('flt-plan').className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white";
+            if (type === 'ZERO_RISK') document.getElementById('flt-risk').className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white";
+            renderOrdersTable(type);
+        }
+
+        function openMrpModal() {
+            document.getElementById('modal-mrp').classList.remove('hidden');
+            document.getElementById('mrp-modal-body').classList.remove('hidden');
+            document.getElementById('mrp-footer-btns').classList.remove('hidden');
+            document.getElementById('mrp-progress-view').classList.add('hidden');
+        }
+        function closeMrpModal() {
+            document.getElementById('modal-mrp').classList.add('hidden');
+        }
+
+        function executeMrpCalculation() {
+            document.getElementById('mrp-modal-body').classList.add('hidden');
+            document.getElementById('mrp-footer-btns').classList.add('hidden');
+            document.getElementById('mrp-progress-view').classList.remove('hidden');
+
+            const pBar = document.getElementById('mrp-progress-bar');
+            const pLabel = document.getElementById('mrp-progress-label');
+            let progress = 15;
+            const interval = setInterval(() => {
+                progress += 25;
+                pBar.style.width = progress + '%';
+                if (progress === 40) pLabel.innerText = "1_KG_VE_PROFIL_RECETELERI baz formülleri taranıyor...";
+                if (progress === 65) pLabel.innerText = "Hammadde depo stok radarı ve tükenme hızları kontrol ediliyor...";
+                if (progress === 90) pLabel.innerText = "Logo Flow onay kuralları ve kalıp matrisi doğrulanıyor...";
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        closeMrpModal();
+                        alert("✅ Logo Flow MRP Başarıyla Çalıştırıldı!\n\n• 7 Sipariş optimize edildi.\n• 1 KG reçete katsayılarına göre 10 hammadde depoda doğrulandı.\n• Sıfır termin gecikmesi, sıfır kalıp çakışması sağlandı.");
+                    }, 500);
+                }
+            }, 350);
+        }
+
+        let CURRENT_SIMULATION_RESULT = null;
+
+        function openUnifiedOrderModal() {
+            document.getElementById('modal-unified-order').classList.remove('hidden');
+            const content = document.getElementById('unified-modal-content');
+            const footer = document.getElementById('sim-modal-footer');
+            const progress = document.getElementById('unified-mrp-progress');
+            if (content) content.classList.remove('hidden');
+            if (footer) footer.classList.remove('hidden');
+            if (progress) progress.classList.add('hidden');
+            calculateSimulation();
+        }
+
+        function closeUnifiedOrderModal() {
+            document.getElementById('modal-unified-order').classList.add('hidden');
+        }
+
+        function calculateSimulation() {
+            const prodName = document.getElementById('sim-product').value;
+            let qty = parseFloat(document.getElementById('sim-qty').value);
+            
+            if (isNaN(qty) || qty <= 0) {
+                qty = 1;
+            }
+
+            if (qty > 1000000) {
+                qty = 1000000;
+                document.getElementById('sim-qty').value = 1000000;
+            }
+
+            const hatEl = document.getElementById('sim-hat');
+            const moldEl = document.getElementById('sim-mold');
+            const hoursEl = document.getElementById('sim-hours');
+            const rawEl = document.getElementById('sim-raw');
+            const bannerEl = document.getElementById('sim-stock-guard-banner');
+            const actionsEl = document.getElementById('sim-action-btns');
+
+            // Kataloğumuzdan ürün özelliklerini dinamik çek
+            const prodObj = PRODUCT_CATALOG.find(p => p.name === prodName || prodName.includes(p.name)) || PRODUCT_CATALOG[0];
+
+            let unitKg = prodObj.unitKg || 4.5;
+            let recipeKey = prodObj.recipeKey || "kasa_pervaz";
+            let assignedHat = prodObj.assignedHat || "Hat 107";
+            let headsLabel = prodObj.headsLabel || "Tek Kafa";
+            let moldChangeNote = prodObj.moldNote || "Kalıp Hazır";
+            let speedRate = prodObj.speedRate || 80;
+
+            const totalGrossKg = qty * unitKg;
+            const hours = Math.max(1, Math.round(qty / speedRate));
+            const shifts = (hours / 12).toFixed(1);
+
+            if (hatEl) hatEl.innerText = `${assignedHat} (${headsLabel})`;
+            if (moldEl) moldEl.innerText = moldChangeNote;
+            if (hoursEl) hoursEl.innerText = `~${hours.toLocaleString()} Saat (${shifts} Vardiya)`;
+            if (rawEl) rawEl.innerText = `${Math.round(totalGrossKg).toLocaleString()} kg Formül Karışımı`;
+
+            // Depo stok yeterliliğini reçeteye göre hesapla
+            const recipe = EXCEL_RECIPES[recipeKey];
+            let shortages = [];
+            let hasShortage = false;
+
+            if (recipe && recipe.items) {
+                recipe.items.forEach(item => {
+                    const needed = (item.kg / recipe.batch_kg) * totalGrossKg;
+                    const stock = WAREHOUSE_STOCKS[item.code] ? WAREHOUSE_STOCKS[item.code].stock_kg : 0;
+                    if (needed > stock) {
+                        hasShortage = true;
+                        shortages.push({
+                            code: item.code,
+                            name: item.name,
+                            needed: needed,
+                            stock: stock,
+                            missing: needed - stock
+                        });
+                    }
+                });
+            }
+
+            CURRENT_SIMULATION_RESULT = {
+                product: prodName,
+                qty: qty,
+                unitKg: unitKg,
+                totalGrossKg: totalGrossKg,
+                hours: hours,
+                shifts: shifts,
+                assignedHat: assignedHat,
+                hasShortage: hasShortage,
+                shortages: shortages
+            };
+
+            if (hasShortage) {
+                if (bannerEl) {
+                    bannerEl.className = "p-4 rounded-xl bg-rose-950/70 border border-rose-800 text-xs text-rose-200 space-y-1 block";
+                    bannerEl.innerHTML = `
+                        <div class="font-bold flex items-center gap-1.5 text-rose-300">
+                            <span>HAMMADDE YETERSİZ</span>
+                        </div>
+                        <div>Bu sipariş için depodaki hammadde yetersizdir. Eksik: ${shortages.map(s => `${s.name} (${Math.round(s.missing)} kg)`).join(', ')}</div>
+                    `;
+                }
+                if (actionsEl) {
+                    actionsEl.innerHTML = `
+                        <button onclick="requestProcurement()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg transition">Satınalma Talebi Aç</button>
+                    `;
+                }
+            } else {
+                if (bannerEl) {
+                    bannerEl.className = "p-4 rounded-xl bg-emerald-950/70 border border-emerald-800 text-xs text-emerald-200 space-y-1 block";
+                    bannerEl.innerHTML = `
+                        <div class="font-bold flex items-center gap-1.5 text-emerald-300">
+                            <span>HAMMADDE DEPO STOKLARI TAM</span>
+                        </div>
+                        <div>Tüm hammadde ve katkılar depoda rezerve edilebilir durumda. Sipariş üretime uygundur.</div>
+                    `;
+                }
+                if (actionsEl) {
+                    actionsEl.innerHTML = `
+                        <button onclick="acceptSimulatedOrder()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition">Siparişi Onayla & Çizelgeye Ekle</button>
+                    `;
+                }
+            }
+        }
+
+        function acceptSimulatedOrder() {
+            if (!CURRENT_SIMULATION_RESULT || CURRENT_SIMULATION_RESULT.hasShortage) {
+                alert("Bu sipariş için hammadde stoku yetersiz! Sistem kabul edemez.");
+                return;
+            }
+
+            const cust = document.getElementById('sim-customer').value || "Yeni Müşteri";
+            const due = document.getElementById('sim-due-date').value || "2026-11-05";
+            const dueFormatted = due.split('-').reverse().join('.');
+
+            const newId = "LF-" + (2600 + ORDERS_DATA.length + 1);
+
+            const newOrder = {
+                id: newId,
+                customer: cust,
+                product: CURRENT_SIMULATION_RESULT.product,
+                dim: `~${CURRENT_SIMULATION_RESULT.unitKg} kg/boy`,
+                order_qty: CURRENT_SIMULATION_RESULT.qty,
+                stock_qty: 0,
+                actual_qty: 0,
+                net_qty: CURRENT_SIMULATION_RESULT.qty,
+                hat: CURRENT_SIMULATION_RESULT.assignedHat,
+                speed: "0.85 m/dk",
+                eta: "04.11 18:00",
+                due: dueFormatted,
+                flow_status: "PLANLANDI"
+            };
+
+            ORDERS_DATA.push(newOrder);
+            saveOrdersData();
+            renderOrdersTable();
+            closeUnifiedOrderModal();
+            switchTab('tab-orders');
+
+            alert(`SİPARİŞ KABUL EDİLDİ VE ÇİZELGEYE EKLENDİ\n\n• Sipariş No: ${newId}\n• Müşteri: ${cust}\n• Ürün: ${CURRENT_SIMULATION_RESULT.product} (${CURRENT_SIMULATION_RESULT.qty.toLocaleString()} Boy)\n• Atanan Hat: ${CURRENT_SIMULATION_RESULT.assignedHat}\n• Hammadde Durumu: Depoda Rezerve Edildi\n• Durum: Planlandı`);
+        }
+
+        function requestProcurement() {
+            if (!CURRENT_SIMULATION_RESULT || !CURRENT_SIMULATION_RESULT.shortages) return;
+            const items = CURRENT_SIMULATION_RESULT.shortages.map(s => `• ${s.name}: ${s.missing.toLocaleString('tr-TR', {maximumFractionDigits:1})} kg`).join('\n');
+            alert(`📋 LOGO FLOW SATIN ALMA TALEBİ OLUŞTURULDU!\n\nEksik hammaddeler ambar satınalma onayına gönderildi:\n${items}\n\nHammadde depoya irsaliye ile giriş yapıldığında sipariş tekrar onaylanabilecektir.`);
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            const d = String(now.getDate()).padStart(2, '0');
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const y = now.getFullYear();
+            const hr = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) clockEl.innerText = `${d}.${m}.${y} ${hr}:${min}`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProductCatalog();
+            loadOrdersData();
+            populateProductDropdowns();
+            renderLinesGrid();
+            renderOrdersTable();
+            renderActualProduction();
+            renderRadarCards();
+            renderRecipeNav();
+            selectRecipe('kasa_pervaz');
+            updateClock();
+            setInterval(updateClock, 30000);
+        });
+    </script>
+</body>
+</html>

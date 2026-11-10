@@ -3290,7 +3290,7 @@
         ]
       },
       "gece": {
-        "employees": 10,
+        "employees": 8,
         "hours": 12.0,
         "operator": "Mehmet SAĞLAM",
         "extruders": [

@@ -4352,7 +4352,35 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "201",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 480.0,
+          "desc": "Kalıp değişimi yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "106",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 540.0,
+          "desc": "Hammadde helezon arızasından dolayı hat kapatıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "Vakum pompası arızası meydana geldi.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

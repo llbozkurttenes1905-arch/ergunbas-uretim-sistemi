@@ -5062,12 +5062,12 @@
       "gece": {
         "employees": 10,
         "hours": 12.0,
-        "operator": "",
+        "operator": "Mehmet SAĞLAM",
         "extruders": [
           {
             "row": 0,
             "hat": "101",
-            "product": "",
+            "product": "SEREN(39mm)",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -5075,12 +5075,12 @@
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "102",
-            "product": "",
+            "product": "140 mm KASA",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -5088,51 +5088,51 @@
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "103",
-            "product": "",
+            "product": "50X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
-            "heads": 1.0,
+            "heads": 2.0,
             "hours": 0.0,
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "104",
-            "product": "",
+            "product": "SEREN",
             "length": 0.0,
             "speed": 0.0,
-            "heads": 1.0,
+            "heads": 2.0,
             "hours": 0.0,
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "105",
-            "product": "",
+            "product": "SEREN",
             "length": 0.0,
             "speed": 0.0,
-            "heads": 1.0,
+            "heads": 2.0,
             "hours": 0.0,
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "106",
-            "product": "",
+            "product": "140 mm KASA",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -5140,12 +5140,12 @@
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "107",
-            "product": "",
+            "product": "100 mm KASA",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -5153,12 +5153,12 @@
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "108",
-            "product": "",
+            "product": "200 mm KASA",
             "length": 0.0,
             "speed": 0.0,
             "heads": 1.0,
@@ -5166,20 +5166,20 @@
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           },
           {
             "row": 0,
             "hat": "109",
-            "product": "",
+            "product": "50X80 PERVAZ",
             "length": 0.0,
             "speed": 0.0,
-            "heads": 1.0,
+            "heads": 2.0,
             "hours": 0.0,
             "prod_kg": 0.0,
             "fire_kg": 0.0,
             "qty": 0,
-            "sets": 0
+            "sets": 0.0
           }
         ],
         "levha": [

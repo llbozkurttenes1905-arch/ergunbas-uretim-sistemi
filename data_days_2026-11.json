@@ -5337,17 +5337,381 @@
       "date": "14.11.2026",
       "gunduz": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "Aykut YALÇIN",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "MIX BEYAZ TEAK",
+            "width": 75.0,
+            "length": 210.0,
+            "m2_one": 1.575,
+            "qty": 530,
+            "total_m2": 834.75,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 367.29,
+            "dead_fire_kg": 899.86,
+            "total_kg": 2045.14,
+            "sets": 265.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 12.0,
+            "en_firesi_cm": 33.0
+          }
+        ]
       },
       "gece": {
         "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
+        "hours": 12.0,
+        "operator": "Mehmet SAĞLAM",
+        "extruders": [
+          {
+            "row": 0,
+            "hat": "101",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "102",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "103",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "104",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "105",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "106",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "107",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "108",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          },
+          {
+            "row": 0,
+            "hat": "109",
+            "product": "",
+            "length": 0.0,
+            "speed": 0.0,
+            "heads": 1.0,
+            "hours": 0.0,
+            "prod_kg": 0.0,
+            "fire_kg": 0.0,
+            "qty": 0,
+            "sets": 0
+          }
+        ],
+        "levha": [
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "MIX BEYAZ TEAK",
+            "width": 75.0,
+            "length": 210.0,
+            "m2_one": 1.575,
+            "qty": 250,
+            "total_m2": 393.75,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 173.25,
+            "dead_fire_kg": 424.46,
+            "total_kg": 964.69,
+            "sets": 125.0,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 6.0,
+            "en_firesi_cm": 33.0
+          },
+          {
+            "row": 0,
+            "hat": "201",
+            "color": "DIŞBUDAK",
+            "width": 93.0,
+            "length": 208.0,
+            "m2_one": 1.9344,
+            "qty": 215,
+            "total_m2": 415.896,
+            "width_fire_cm": 0,
+            "dead_fire_m2": 67.08,
+            "dead_fire_kg": 164.35,
+            "total_kg": 1018.95,
+            "sets": 107.5,
+            "kg_per_m2": 2.45,
+            "kalip_cikis_eni": 108.0,
+            "hours": 6.0,
+            "en_firesi_cm": 15.0
+          }
+        ]
       },
-      "downtimes": []
+      "downtimes": [],
+      "kirim": [
+        {
+          "hat": "Kırım 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Kırım 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mikronize": [
+        {
+          "hat": "Mikronize 1",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 2",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 3",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 4",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 5",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        },
+        {
+          "hat": "Mikronize 6",
+          "gunduz": 0,
+          "gece": 0,
+          "status": "normal"
+        }
+      ],
+      "mixer": [],
+      "mixer_emp_gunduz": 0,
+      "mixer_emp_gece": 0
     }
   }
 }

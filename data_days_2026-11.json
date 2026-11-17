@@ -6531,23 +6531,23 @@
       "mixer": [
         {
           "makine": "Mixer 1",
-          "recipe": "Seren",
-          "batch_kg": 291.15,
+          "recipe": "Seren(FENOL)",
+          "batch_kg": 298.75,
           "gunduz_sarj": 17,
           "gece_sarj": 0,
-          "gunduz_kg": 4949.549999999999,
+          "gunduz_kg": 5078.75,
           "gece_kg": 0,
-          "toplam_kg": 4949.549999999999
+          "toplam_kg": 5078.75
         },
         {
           "makine": "Mixer 1",
-          "recipe": "Kasa Pervaz",
-          "batch_kg": 275.65,
+          "recipe": "Kasa-Pervaz(FENOL)",
+          "batch_kg": 256.4,
           "gunduz_sarj": 20,
           "gece_sarj": 0,
-          "gunduz_kg": 5513,
+          "gunduz_kg": 5128,
           "gece_kg": 0,
-          "toplam_kg": 5513
+          "toplam_kg": 5128
         },
         {
           "makine": "Mixer 2",

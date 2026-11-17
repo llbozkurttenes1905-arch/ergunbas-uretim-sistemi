@@ -6384,7 +6384,7 @@
             "sets": 85.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": 2.0,
+            "hours": 3.0,
             "en_firesi_cm": 14.0
           },
           {
@@ -6403,7 +6403,7 @@
             "sets": 180.0,
             "kg_per_m2": 2.45,
             "kalip_cikis_eni": 108.0,
-            "hours": 10.0,
+            "hours": 9.0,
             "en_firesi_cm": 14.0
           }
         ]

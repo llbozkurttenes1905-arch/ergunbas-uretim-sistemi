@@ -1629,6 +1629,49 @@
           "kg": 0.5
         }
       ]
+    },
+    {
+      "id": "rec_seren_fenol_15",
+      "name": "Seren(FENOL)",
+      "batch_kg": 298.75,
+      "ingredients": [
+        {
+          "material": "HURDA",
+          "kg": 150.0
+        },
+        {
+          "material": "KALSİT 5K(Calsıum Carbonat) NİĞTAŞ",
+          "kg": 70.0
+        },
+        {
+          "material": "LRF 8194 (FENOL STABİLİZER)",
+          "kg": 5.5
+        },
+        {
+          "material": "PEWAX",
+          "kg": 0.75
+        },
+        {
+          "material": "SOYA YAĞI",
+          "kg": 0.5
+        },
+        {
+          "material": "TALAŞ",
+          "kg": 70.0
+        },
+        {
+          "material": "BOYA(CARBON BLACK)",
+          "kg": 0.1
+        },
+        {
+          "material": "PA 140",
+          "kg": 0.15
+        },
+        {
+          "material": "CPE-135A",
+          "kg": 0.75
+        }
+      ]
     }
   ],
   "monthly_targets": {

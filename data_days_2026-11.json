@@ -6907,7 +6907,7 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 2741,
           "gece": 0,
           "status": "normal"
         },
@@ -6915,11 +6915,11 @@
           "hat": "Kırım 2",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 6336,
           "gece": 0,
           "status": "normal"
         },
@@ -6927,7 +6927,7 @@
           "hat": "Kırım 4",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         }
       ],
       "mikronize": [

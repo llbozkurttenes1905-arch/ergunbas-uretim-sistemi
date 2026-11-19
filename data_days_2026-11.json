@@ -7305,7 +7305,26 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "105",
+          "fire_reason": "Barrel soğutma fanı arızası.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 180.0,
+          "desc": "Kalibrenin piston bacağı kırıldığı için hat kapatıldı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

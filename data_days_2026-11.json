@@ -7774,7 +7774,44 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "2 DEFA ELEKTRİK DALGALANMASI MEYDANA GELDİ.",
+          "fire_kg": 0.0,
+          "down_reason": "Elektrik / Enerji Kesintisi",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 720.0,
+          "desc": "Kalibre piston bacağı kırıldı. Onarım gerçekleştiriyor."
+        },
+        {
+          "shift": "Gece",
+          "hat": "103",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 320.0,
+          "desc": "Kalibre montajı yapıldı. denemesi yapıldı. Kalibre düzgün çalışmadı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Kalıp / Ürün Değişimi & Ayar",
+          "down_min": 720.0,
+          "desc": "200 mm kasa yerine 100 mm kasa bağlandı."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

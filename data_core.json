@@ -1586,7 +1586,7 @@
     {
       "id": "rec_kasa_pervaz_14",
       "name": "Kasa-Pervaz(FENOL)",
-      "batch_kg": 256.4,
+      "batch_kg": 266.4,
       "ingredients": [
         {
           "material": "HURDA",
@@ -1614,7 +1614,7 @@
         },
         {
           "material": "GERİ DÖNÜŞÜM",
-          "kg": 20.0
+          "kg": 30.0
         },
         {
           "material": "PA 140",

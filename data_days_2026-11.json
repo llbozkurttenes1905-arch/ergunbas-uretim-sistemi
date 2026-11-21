@@ -8190,9 +8190,9 @@
             "length": 2.15,
             "speed": 0.6,
             "heads": 1.0,
-            "hours": 7.0,
+            "hours": 8.0,
             "prod_kg": 70.0,
-            "fire_kg": 442.79,
+            "fire_kg": 516.05,
             "qty": 16,
             "sets": 6.4
           },
@@ -8232,7 +8232,53 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gündüz",
+          "hat": "GENEL",
+          "fire_reason": "SOĞUTMA SU ARIZASI (35 dk)",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": "Soğutma su kesildi. Bütün makinelerde ürünler koptu."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": "Hat soğutma su pompası arızalandı.",
+          "fire_kg": 0.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 120.0,
+          "desc": "Extruder besleme helezon arızası onarımı gerçekleştirildi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 120.0,
+          "desc": "Extruder besleme helezonda sıkışma oldu. Arıza giderildi."
+        },
+        {
+          "shift": "Gece",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Hammadde / Dozajlama Bekleme",
+          "down_min": 240.0,
+          "desc": "Hammadde kaynaklı üretim alınamadı.Hammadde değiştirildi."
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",

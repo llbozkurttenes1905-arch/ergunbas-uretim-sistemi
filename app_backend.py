@@ -1156,7 +1156,14 @@ def get_dashboard_summary():
                 ],
                 key=lambda x: x["prod_kg"], reverse=True
             )
-            products_summary = ", ".join(f"{p['name']} ({p['qty']:g} adet)" for p in products_list) if products_list else "-"
+            # Takım hesabı ekleme
+            def _calc_tk(pname, q):
+                pl = pname.lower()
+                r = 5.0 if "pervaz" in pl else (2.5 if "kasa" in pl else (3.5 if "seren" in pl else (2.0 if "levha" in pl else 1.0)))
+                val = round(q / r, 1) if r > 0 else q
+                return f"{int(val)}" if float(val).is_integer() else f"{val}"
+
+            products_summary = ", ".join(f"{p['name']} ({p['qty']:g} ad · {_calc_tk(p['name'], p['qty'])} tk)" for p in products_list) if products_list else "-" 
 
             day_machines_list.append({
                 "hat": dm["hat"],
@@ -5548,6 +5555,7 @@ def export_daily_pdf(date: Optional[str] = None):
     ext_rows = []
     lev_rows = []
     ext_total_qty = 0
+    ext_total_takim = 0.0
     lev_total_qty = 0
 
     for shift_name, shift_lbl in [("gunduz", "Gündüz"), ("gece", "Gece")]:
@@ -5562,12 +5570,37 @@ def export_daily_pdf(date: Optional[str] = None):
                 except Exception:
                     h_val = 1
                 ext_total_qty += qty
+
+                # Takım hesabı (Kasa: 2.5, Pervaz: 5.0, Seren: 3.5 boy/takım)
+                raw_prod = (ext.get("product") or "").strip()
+                raw_p_lower = raw_prod.lower()
+                takim_ratio = 1.0
+                if "pervaz" in raw_p_lower:
+                    takim_ratio = 5.0
+                elif "kasa" in raw_p_lower:
+                    takim_ratio = 2.5
+                elif "seren" in raw_p_lower:
+                    takim_ratio = 3.5
+                elif "levha" in raw_p_lower:
+                    takim_ratio = 2.0
+                else:
+                    for p_item in db_data.get("products", []):
+                        if p_item.get("name", "").strip().lower() == raw_p_lower:
+                            r = float(p_item.get("door_ratio") or 0)
+                            if r > 0:
+                                takim_ratio = r
+                                break
+
+                takim_val = round(qty / takim_ratio, 1) if takim_ratio > 0 else float(qty)
+                ext_total_takim += takim_val
+
                 ext_rows.append([
                     shift_lbl,
                     str(ext.get("hat", "")),
                     f"{h_val} Kafa",
-                    ext.get("product", "") or "—",
+                    raw_prod or "—",
                     f"{fmt_tr(qty, 0)} ad",
+                    f"{fmt_tr(takim_val, 0 if float(takim_val).is_integer() else 1)} tk",
                     f"{fmt_tr(p_kg)} kg",
                     f"{fmt_tr(f_kg)} kg"
                 ])
@@ -5838,11 +5871,11 @@ def export_daily_pdf(date: Optional[str] = None):
     # ---- EKSTRÜDER HATLARI TABLOSU (KAFA SAYILARI DAHİL) ----
     if ext_rows:
         story.append(Paragraph(f"Ekstrüder Hatları Üretim ve Fire Detayı ({len(ext_rows)} Kayıt)", h2_style))
-        ext_head = ["Vardiya", "Hat No", "Kafa Sayısı", "Ürün / Profil", "Adet", "Üretim (kg)", "Fire (kg)"]
+        ext_head = ["Vardiya", "Hat No", "Kafa Sayısı", "Ürün / Profil", "Adet", "Takım", "Üretim (kg)", "Fire (kg)"]
         ext_rows_with_total = ext_rows + [
-            ["TOPLAM (Ekstrüder)", "—", "—", f"{len(ext_rows)} hat kaydı", f"{fmt_tr(ext_total_qty, 0)} ad", f"{fmt_tr(ext_p)} kg", f"{fmt_tr(ext_f)} kg"]
+            ["TOPLAM (Ekstrüder)", "—", "—", f"{len(ext_rows)} hat kaydı", f"{fmt_tr(ext_total_qty, 0)} ad", f"{fmt_tr(ext_total_takim, 0 if float(ext_total_takim).is_integer() else 1)} tk", f"{fmt_tr(ext_p)} kg", f"{fmt_tr(ext_f)} kg"]
         ]
-        story.append(make_table(ext_head, ext_rows_with_total, col_widths=[2.2 * cm, 1.8 * cm, 1.8 * cm, 5.0 * cm, 2.4 * cm, 2.7 * cm, 2.7 * cm], align_cols=['C', 'C', 'C', 'L', 'R', 'R', 'R']))
+        story.append(make_table(ext_head, ext_rows_with_total, col_widths=[2.0 * cm, 1.5 * cm, 1.8 * cm, 4.6 * cm, 2.1 * cm, 2.0 * cm, 2.3 * cm, 2.3 * cm], align_cols=['C', 'C', 'C', 'L', 'R', 'R', 'R', 'R']))
         story.append(Spacer(1, 4))
 
     # ---- LEVHA HATLARI TABLOSU ----

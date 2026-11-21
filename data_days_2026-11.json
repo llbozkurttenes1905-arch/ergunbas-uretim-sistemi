@@ -6971,13 +6971,13 @@
       "mixer": [
         {
           "makine": "Mixer 1",
-          "recipe": "Kasa Pervaz",
-          "batch_kg": 275.65,
+          "recipe": "Kasa-Pervaz(FENOL)",
+          "batch_kg": 266.4,
           "gunduz_sarj": 31,
           "gece_sarj": 0,
-          "gunduz_kg": 8545.15,
+          "gunduz_kg": 8258.4,
           "gece_kg": 0,
-          "toplam_kg": 8545.15
+          "toplam_kg": 8258.4
         },
         {
           "makine": "Mixer 2",

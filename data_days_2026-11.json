@@ -8356,12 +8356,12 @@
         {
           "makine": "Mixer 1",
           "recipe": "Kasa-Pervaz(FENOL)",
-          "batch_kg": 256.4,
+          "batch_kg": 266.4,
           "gunduz_sarj": 28,
           "gece_sarj": 0,
-          "gunduz_kg": 7179.199999999999,
+          "gunduz_kg": 7459.199999999999,
           "gece_kg": 0,
-          "toplam_kg": 7179.199999999999
+          "toplam_kg": 7459.199999999999
         },
         {
           "makine": "Mixer 1",

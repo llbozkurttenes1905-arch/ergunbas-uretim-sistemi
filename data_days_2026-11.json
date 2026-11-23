@@ -8813,33 +8813,33 @@
       "mixer": [
         {
           "makine": "Mixer 1",
-          "recipe": "Kasa Pervaz",
-          "batch_kg": 275.65,
+          "recipe": "Kasa-Pervaz(FENOL)",
+          "batch_kg": 266.4,
           "gunduz_sarj": 14,
           "gece_sarj": 0,
-          "gunduz_kg": 3859.0999999999995,
+          "gunduz_kg": 3729.5999999999995,
           "gece_kg": 0,
-          "toplam_kg": 3859.0999999999995
+          "toplam_kg": 3729.5999999999995
         },
         {
           "makine": "Mixer 1",
-          "recipe": "Seren",
-          "batch_kg": 291.15,
+          "recipe": "Seren(FENOL)",
+          "batch_kg": 298.75,
           "gunduz_sarj": 9,
           "gece_sarj": 0,
-          "gunduz_kg": 2620.35,
+          "gunduz_kg": 2688.75,
           "gece_kg": 0,
-          "toplam_kg": 2620.35
+          "toplam_kg": 2688.75
         },
         {
           "makine": "Mixer 2",
-          "recipe": "Levha Renkli (ÇAPAK)",
-          "batch_kg": 334.3,
+          "recipe": "LEVHA(FENOL)",
+          "batch_kg": 285,
           "gunduz_sarj": 26,
           "gece_sarj": 0,
-          "gunduz_kg": 8691.800000000001,
+          "gunduz_kg": 7410,
           "gece_kg": 0,
-          "toplam_kg": 8691.800000000001
+          "toplam_kg": 7410
         }
       ],
       "mixer_emp_gunduz": 13,

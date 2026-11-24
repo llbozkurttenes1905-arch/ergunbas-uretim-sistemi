@@ -1,22 +1,5 @@
 {
   "days": {
-    "91": {
-      "day": "91",
-      "date": "01.11.2026",
-      "gunduz": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "gece": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "downtimes": []
-    },
     "92": {
       "day": "92",
       "date": "02.11.2026",

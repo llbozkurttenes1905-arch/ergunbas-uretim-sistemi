@@ -9263,23 +9263,6 @@
         "levha": []
       },
       "downtimes": []
-    },
-    "114": {
-      "day": "114",
-      "date": "24.11.2026",
-      "gunduz": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "gece": {
-        "employees": 10,
-        "hours": 12,
-        "extruders": [],
-        "levha": []
-      },
-      "downtimes": []
     }
   }
 }

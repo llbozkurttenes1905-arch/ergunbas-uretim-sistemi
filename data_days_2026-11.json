@@ -9620,7 +9620,7 @@
       "kirim": [
         {
           "hat": "Kırım 1",
-          "gunduz": 0,
+          "gunduz": 3895,
           "gece": 0,
           "status": "normal"
         },
@@ -9628,17 +9628,17 @@
           "hat": "Kırım 2",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 4454,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0,
+          "gunduz": 2100,
           "gece": 0,
           "status": "normal"
         }
@@ -9646,44 +9646,75 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 3059,
+          "gece": 3426,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2546,
+          "gece": 2845,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1487,
+          "gece": 1795,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1543,
+          "gece": 1107,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1325,
+          "gece": 1222,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1138,
+          "gece": 1106,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Seren(FENOL)",
+          "batch_kg": 298.75,
+          "gunduz_sarj": 8,
+          "gece_sarj": 0,
+          "gunduz_kg": 2390,
+          "gece_kg": 0,
+          "toplam_kg": 2390
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa-Pervaz(FENOL)",
+          "batch_kg": 266.4,
+          "gunduz_sarj": 28,
+          "gece_sarj": 0,
+          "gunduz_kg": 7459.199999999999,
+          "gece_kg": 0,
+          "toplam_kg": 7459.199999999999
+        },
+        {
+          "makine": "Mixer 1",
+          "recipe": "Levha Renkli (ÇAPAK)",
+          "batch_kg": 334.3,
+          "gunduz_sarj": 22,
+          "gece_sarj": 0,
+          "gunduz_kg": 7354.6,
+          "gece_kg": 0,
+          "toplam_kg": 7354.6
+        }
+      ],
+      "mixer_emp_gunduz": 13,
+      "mixer_emp_gece": 2
     }
   }
 }

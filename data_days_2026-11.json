@@ -10105,7 +10105,34 @@
       "downtimes": [
         {
           "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 120.0,
+          "desc": "Kesme sehpası kaynak işlemi uygulandı."
+        },
+        {
+          "shift": "Gece",
           "hat": "101",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 120.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "107",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Soğutma Suyu / Kompresör Arızası",
+          "down_min": 180.0,
+          "desc": "Soğutma suyu gelmediği için hat kapatıldı."
+        },
+        {
+          "shift": "Gece",
+          "hat": "109",
           "fire_reason": "",
           "fire_kg": 0.0,
           "down_reason": "Periyodik / Kalıp Bakımı",

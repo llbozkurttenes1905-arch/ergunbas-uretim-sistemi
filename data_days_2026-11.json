@@ -10443,7 +10443,7 @@
           {
             "row": 0,
             "hat": "104",
-            "product": "",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.43,
             "heads": 2.0,
@@ -10451,12 +10451,12 @@
             "prod_kg": 574.0,
             "fire_kg": 483.8,
             "qty": 160,
-            "sets": 0
+            "sets": 45.7
           },
           {
             "row": 0,
             "hat": "105",
-            "product": "",
+            "product": "SEREN",
             "length": 2.1,
             "speed": 0.42,
             "heads": 2.0,
@@ -10464,7 +10464,7 @@
             "prod_kg": 763.0,
             "fire_kg": 235.84,
             "qty": 220,
-            "sets": 0
+            "sets": 62.9
           },
           {
             "row": 0,

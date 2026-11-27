@@ -10630,23 +10630,23 @@
           "hat": "Kırım 1",
           "gunduz": 0,
           "gece": 0,
-          "status": "normal"
+          "status": "personel_yok"
         },
         {
           "hat": "Kırım 2",
-          "gunduz": 0,
+          "gunduz": 4590,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 3",
-          "gunduz": 0,
+          "gunduz": 7986,
           "gece": 0,
           "status": "normal"
         },
         {
           "hat": "Kırım 4",
-          "gunduz": 0,
+          "gunduz": 2500,
           "gece": 0,
           "status": "normal"
         }
@@ -10654,44 +10654,55 @@
       "mikronize": [
         {
           "hat": "Mikronize 1",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 2848,
+          "gece": 3898,
           "status": "normal"
         },
         {
           "hat": "Mikronize 2",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1804,
+          "gece": 1980,
           "status": "normal"
         },
         {
           "hat": "Mikronize 3",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1212,
+          "gece": 1803,
           "status": "normal"
         },
         {
           "hat": "Mikronize 4",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1213,
+          "gece": 1242,
           "status": "normal"
         },
         {
           "hat": "Mikronize 5",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1344,
+          "gece": 1305,
           "status": "normal"
         },
         {
           "hat": "Mikronize 6",
-          "gunduz": 0,
-          "gece": 0,
+          "gunduz": 1355,
+          "gece": 1356,
           "status": "normal"
         }
       ],
-      "mixer": [],
-      "mixer_emp_gunduz": 0,
-      "mixer_emp_gece": 0
+      "mixer": [
+        {
+          "makine": "Mixer 1",
+          "recipe": "Kasa Pervaz",
+          "batch_kg": 275.65,
+          "gunduz_sarj": 43,
+          "gece_sarj": 0,
+          "gunduz_kg": 11852.949999999999,
+          "gece_kg": 0,
+          "toplam_kg": 11852.949999999999
+        }
+      ],
+      "mixer_emp_gunduz": 12,
+      "mixer_emp_gece": 2
     }
   }
 }

@@ -10997,7 +10997,53 @@
           }
         ]
       },
-      "downtimes": [],
+      "downtimes": [
+        {
+          "shift": "Gece",
+          "hat": "101",
+          "fire_reason": "Traktör arızası.",
+          "fire_kg": 80.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gece",
+          "hat": "102",
+          "fire_reason": "",
+          "fire_kg": 0.0,
+          "down_reason": "Mekanik Arıza / Onarım",
+          "down_min": 0.0,
+          "desc": "Helezon arızası."
+        },
+        {
+          "shift": "Gece",
+          "hat": "105",
+          "fire_reason": "Kalıp temizliği yapıldı.",
+          "fire_kg": 300.0,
+          "down_reason": "Periyodik / Kalıp Bakımı",
+          "down_min": 0.0,
+          "desc": "Kalıp temizliği yapıldı."
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "108",
+          "fire_reason": "Kalıp et kalınlığı dengesizliği",
+          "fire_kg": 500.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        },
+        {
+          "shift": "Gündüz",
+          "hat": "107",
+          "fire_reason": " Ürün kılıçlama sorunu.",
+          "fire_kg": 650.0,
+          "down_reason": "",
+          "down_min": 0.0,
+          "desc": ""
+        }
+      ],
       "kirim": [
         {
           "hat": "Kırım 1",
